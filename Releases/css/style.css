@@ -1,0 +1,22 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#wrapper {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: 0 0 6em;
+  position: relative;
+}
+footer {
+  bottom: 0;
+  height: 6em;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+footer div img { margin: 0 15px;}

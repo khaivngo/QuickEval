@@ -1,0 +1,102 @@
+<fieldset style='margin:10px; width:100%'>
+    <legend>View Experiments</legend>
+
+    <div class="listview-outlook" data-role="listview">
+        <div class="list-group">
+            <a href="#" class="group-title">Public Experiments</a>
+            <div class="group-content public-experiments">
+
+            </div>
+        </div>
+        <div class="list-group">
+            <a href="#" class="group-title">Hidden Experiments</a>
+            <div class="group-content hidden-experiments">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="selected-experiment" style="margin:20px 0">
+        <fieldset>
+            <h2 id="experiment-name">Experiment Name</h2>
+            <p id="experiment-type"></p>
+            <p id="experiment-description">Description yo. Shizzle fo nizzle no shizzle ka fizzle ya nizzle?</p>
+            <p id="experiment-url" style="position: absolute">Dis URL yo</p>
+            <button id="export-experiment" class="primary" style="margin-top: 30px; width:140px">Export Experiment</button> <br/>
+            <button id="set-hidden" class="primary" style="margin: 10px 0; width:140px">Set Hidden</button>
+            <button id="set-public" class="primary" style="margin: 10px 0; width:140px">Set Public</button><br/>
+            <button id="delete-experiment" class="danger" style="width:140px">Delete Experiment</button>
+        </fieldset>  
+        <div id='export-parameters'>
+        <fieldset>
+            <div id="parameter-complete" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Only exports results from observers who completed the full experiment" data-hint-position="right">Complete Results</span>
+                </label>
+            </div> <br/>
+            <legend id="paramters-title">Parameters</legend>
+            <div id="parameter-metadata" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Experiment information like name, description, timestamp, scientist" data-hint-position="right">Metadata</span>
+                </label>
+            </div> <br/>
+            <div id="parameter-parameters" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Displays parameters like display original, display timer etc" data-hint-position="right">Parameters</span>
+                </label>
+            </div> <br/>
+            <div id="parameter-instructions" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Displays instructions used in experiment." data-hint-position="right">Instructions</span>
+                </label>
+            </div> <br/>
+            <div id="parameter-image-sets" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Displays imagesets with their names and images" data-hint-position="right">Image Sets</span>
+                </label>
+            </div> <br/>
+            <div id="parameter-observer-data" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Displays all observers used in experiment and their userdata" data-hint-position="right">Observer Data</span>
+                </label>
+            </div> <br/>
+            <div id="parameter-input-field-data" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Displays all inputfields used in experiment and results from observers like first name, age" data-hint-position="right">Input Field Data</span>
+                </label>
+            </div> <br/>
+            <div id="parameter-results" class="input-control checkbox hei" data-role="input-control">
+                <label>
+                    <input type="checkbox" checked/>
+                    <span class="check"></span>
+                    <span class="hint-trigger" data-hint="Displays results for experiment." data-hint-position="right">Results</span>
+                </label>
+            </div> <br/>
+        </fieldset>
+    </div>
+    <button id="export-results" class="primary" style="margin: 10px 0; width:140px">Export Results</button><br/>
+    <div id="experiment-results">
+
+    </div>
+    <h3 id="no-results-warning">No results yet</h3>  
+
+
+    </div>    
+
+
+    
+</fieldset>

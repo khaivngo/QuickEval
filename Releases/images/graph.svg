@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created by Crotalus horridus in January 2008. This diagram    -->
+<!--  is released under the GFDL (any version desired). The markup -->
+<!--  was constructed by hand using Notepad. Employment reference  -->
+<!--  data was obtained from the U.S. Census Bureau Statistical    -->
+<!--  Abstracts (CT1970p1-05.pdf, p. 17, D127).                    -->
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.0"
+   width="1070px"
+   height="850px"
+   viewBox="0 0 535 425"
+   id="U.S. Employment Graph - 1920 to 1940">
+  <defs>
+     <linearGradient id="MainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="20%"  stop-color="#FF0000" />
+        <stop offset="50%"  stop-color="#FFFF00" />
+        <stop offset="100%" stop-color="#00FF00" />
+     </linearGradient>
+  </defs>
+  <g transform="translate (95,360) scale (2,-1)">
+    <path
+       fill="none"
+       stroke="#CCCCCC"
+       stroke-width="1.0"
+       d="M 0,0   v +360  M 0,0   h +220
+          M 10,0  v +360  M 0,20  h +220
+          M 20,0  v +360  M 0,40  h +220
+          M 30,0  v +360  M 0,60  h +220
+          M 40,0  v +360  M 0,80  h +220
+          M 50,0  v +360  M 0,100 h +220
+          M 60,0  v +360  M 0,120 h +220
+          M 70,0  v +360  M 0,140 h +220
+          M 80,0  v +360  M 0,160 h +220
+          M 90,0  v +360  M 0,180 h +220
+          M 100,0 v +360  M 0,200 h +220
+          M 110,0 v +360  M 0,220 h +220
+          M 120,0 v +360  M 0,240 h +220
+          M 130,0 v +360  M 0,260 h +220
+          M 140,0 v +360  M 0,280 h +220
+          M 150,0 v +360  M 0,300 h +220
+          M 160,0 v +360  M 0,320 h +220
+          M 170,0 v +360  M 0,340 h +220
+          M 180,0 v +360  M 0,360 h +220
+          M 190,0 v +360
+          M 200,0 v +360
+          M 210,0 v +360
+          M 220,0 v +360"
+       id="Grid Lines" />
+    <g transform="scale (1,20) translate (0,-19)">
+      <path
+         fill="url(#MainGradient)"
+         fill-opacity="0.7"
+         stroke="#000000"
+         stroke-width="0.1"
+         d="M   0,27.270
+            L  10,27.434
+            L  20,24.542
+            L  30,26.616
+            L  40,29.231
+            L  50,28.577
+            L  60,29.751
+            L  70,30.599
+            L  80,30.481
+            L  90,30.539
+            L 100,31.339
+            L 110,29.424
+            L 120,26.649
+            L 130,23.628
+            L 140,23.711
+            L 150,25.953
+            L 160,27.053
+            L 170,29.082
+            L 180,31.026
+            L 190,29.209
+            L 200,30.618
+            L 210,32.376
+            L 220,36.554
+            v -17.554
+            h -220
+            Z"
+         id="Employment Graph Line" />
+    </g>
+    <path
+       fill="none"
+       stroke="#000000"
+       stroke-width="1.0"
+       d="M 220,0 h -222
+          M 0,360 v -364"
+       id="Graph Axes" />
+    <path
+       fill="none"
+       stroke="#000000"
+       stroke-width="1.0"
+       d="M 2,20  h -4
+          M 2,40  h -4
+          M 2,60  h -4
+          M 2,80  h -4
+          M 2,100 h -4
+          M 2,120 h -4
+          M 2,140 h -4
+          M 2,160 h -4
+          M 2,180 h -4
+          M 2,200 h -4
+          M 2,220 h -4
+          M 2,240 h -4
+          M 2,260 h -4
+          M 2,280 h -4
+          M 2,300 h -4
+          M 2,320 h -4
+          M 2,340 h -4
+          M 10,4  v -8
+          M 20,4  v -8
+          M 30,4  v -8
+          M 40,4  v -8
+          M 50,4  v -8
+          M 60,4  v -8
+          M 70,4  v -8
+          M 80,4  v -8
+          M 90,4  v -8
+          M 100,4 v -8
+          M 110,4 v -8
+          M 120,4 v -8
+          M 130,4 v -8
+          M 140,4 v -8
+          M 150,4 v -8
+          M 160,4 v -8
+          M 170,4 v -8
+          M 180,4 v -8
+          M 190,4 v -8
+          M 200,4 v -8
+          M 210,4 v -8"
+       id="Axis Tick Marks" />
+  </g>
+  <text
+    font-family="Courier New, Nimbus Mono L, monospace"
+    font-weight="bold"
+    font-size="12"
+    fill="#000000">
+      <tspan x="12.2" y="23.8">36,000,000</tspan>
+      <tspan x="12.2" y="43.8">35,000,000</tspan>
+      <tspan x="12.2" y="63.8">34,000,000</tspan>
+      <tspan x="12.2" y="83.8">33,000,000</tspan>
+      <tspan x="12.2" y="103.8">32,000,000</tspan>
+      <tspan x="12.2" y="123.8">31,000,000</tspan>
+      <tspan x="12.2" y="143.8">30,000,000</tspan>
+      <tspan x="12.2" y="163.8">29,000,000</tspan>
+      <tspan x="12.2" y="183.8">28,000,000</tspan>
+      <tspan x="12.2" y="203.8">27,000,000</tspan>
+      <tspan x="12.2" y="223.8">26,000,000</tspan>
+      <tspan x="12.2" y="243.8">25,000,000</tspan>
+      <tspan x="12.2" y="263.8">24,000,000</tspan>
+      <tspan x="12.2" y="283.8">23,000,000</tspan>
+      <tspan x="12.2" y="303.8">22,000,000</tspan>
+      <tspan x="12.2" y="323.8">21,000,000</tspan>
+      <tspan x="12.2" y="343.8">20,000,000</tspan>
+  </text>
+  <text
+    font-family="Courier New, Nimbus Mono L, monospace"
+    font-weight="bold"
+    font-size="12"
+    fill="#000000"
+    transform="rotate (270)">
+      <tspan x="-399.6" y="118.7">1920</tspan>
+      <tspan x="-399.6" y="138.7">1921</tspan>
+      <tspan x="-399.6" y="158.7">1922</tspan>
+      <tspan x="-399.6" y="178.7">1923</tspan>
+      <tspan x="-399.6" y="198.7">1924</tspan>
+      <tspan x="-399.6" y="218.7">1925</tspan>
+      <tspan x="-399.6" y="238.7">1926</tspan>
+      <tspan x="-399.6" y="258.7">1927</tspan>
+      <tspan x="-399.6" y="278.7">1928</tspan>
+      <tspan x="-399.6" y="298.7">1929</tspan>
+      <tspan x="-399.6" y="318.7">1930</tspan>
+      <tspan x="-399.6" y="338.7">1931</tspan>
+      <tspan x="-399.6" y="358.7">1932</tspan>
+      <tspan x="-399.6" y="378.7">1933</tspan>
+      <tspan x="-399.6" y="398.7">1934</tspan>
+      <tspan x="-399.6" y="418.7">1935</tspan>
+      <tspan x="-399.6" y="438.7">1936</tspan>
+      <tspan x="-399.6" y="458.7">1937</tspan>
+      <tspan x="-399.6" y="478.7">1938</tspan>
+      <tspan x="-399.6" y="498.7">1939</tspan>
+      <tspan x="-399.6" y="518.7">1940</tspan>
+  </text>
+</svg>

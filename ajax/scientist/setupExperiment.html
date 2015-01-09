@@ -1,0 +1,188 @@
+<div id="ex-set-up-experiment-div"><div id="stepper" class="stepper" data-steps="5" data-role="stepper" ></div>
+
+<script>
+    var customFieldAmount = 0;
+    var experimentQueueAmount = 0;
+</script>
+<div style="width: 100%; height: 30px;">
+    <button class="button next-button" style="float: right;" onclick="$('#stepper').stepper('next')">Next</button>
+    <button class="success finish" style="float: right; ">Finish</button>
+    <button class="button previous-button" style="float: right; margin-right: 6px" onclick="$('#stepper').stepper('prior')">Back</button>
+</div>
+<div class="steps" >
+
+    <div id="ex-step1">
+        <form>
+            <fieldset>
+                <legend>Experiment Information</legend>
+                <div  class="input-control text" data-role="input-control" style="margin:15px 0">
+                    <label>Name</label>
+                    <input id="ex-name" type="text" placeholder="Experiment Name">
+                </div>
+                <div  class="input-control text" data-role="input-control" style="margin:15px 0">
+                    <label>Short Description</label>
+                    <input id="ex-short-description" type="text" placeholder="Short Description">
+                </div>
+                
+                <div class="input-control textarea" data-role="input-control" style="margin:15px 0">
+                    <label>Description</label>
+                    <textarea id="ex-long-description" placeholder="Long Description"></textarea>
+                </div>
+
+
+                <div class="input-control select">
+
+                    <label>Experiment type</label>
+                    <select id="experiment-type" name="experimenttype">
+
+                    </select>
+
+                </div>
+
+                <div class="input-control select">
+
+                    <label>Algorithm</label>
+                    <select id="algorithm-type" name="algorithmtype">
+
+                    </select>
+                </div>
+
+
+                <a id="ex-open-optional-fields" href="#" style="margin: 1px;">
+                    <h4>
+                        <span>Optional Fields</span>
+                        <i id="ex-description-down" class="icon-arrow-down-5"></i>
+                        <i id="ex-description-up"   class="icon-arrow-up-5"></i>
+                    </h4>
+                </a>
+                <div id="ex-optional-fields">
+                    <label>Screen Whitepoint</label>
+                    <div  class="input-control text" data-role="input-control">
+                        <input id="ex-screen-whitepoint" type="text" placeholder="Screen Whitepoint">
+                    </div>
+                    <label>Screen Lumineance (cd/m<sup>2</sup>)</label>
+                    <div  class="input-control text" data-role="input-control">
+                        <input id="ex-luminance-screen" type="text" placeholder="Screen Luminance">
+                    </div>
+                    <label>Whitepoint Room Illumination</label>
+                    <div  class="input-control text" data-role="input-control">
+                        <input id="ex-room-whitepoint" type="text" placeholder="Whitepoint Room">
+                    </div>
+                    <label>Ambient Illumination (lux)</label>
+                    <div  class="input-control text" data-role="input-control">
+                        <input id="ex-ambient-illumination" type="text" placeholder="Short Description">
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div id="ex-step2"> 
+        <form>
+            <fieldset>
+                <legend>Parameters</legend>
+                <div  class="input-control text" data-role="input-control">
+                    <label class="hint-trigger" data-hint="Background colour of the experiment as a observer. 
+                    Use RGB hex values in the format 'xxxxxx', for example the default value 808080, which is gray." data-hint-position="right">Background Colour</label>
+                    <input id="background-color" type="text" placeholder="Background Colour (xxxxxx)" value="808080" style="margin-bottom: 30px">
+                </div><br/>
+                <div id="display-original" class="input-control checkbox hei" data-role="input-control">
+                    <label>
+                        <input type="checkbox"/>
+                        <span class="check"></span>
+                        <span class="hint-trigger" data-hint="Displays the original image as well as the reproductions." data-hint-position="right">Display Original</span>
+                    </label>
+                </div> <br/>
+                <div id="allow-colourblind" class="input-control checkbox" data-role="input-control">
+                    <label>
+                        <input type="checkbox"/>
+                        <span class="check"></span>
+                        <span class="hint-trigger" data-hint="Allows observers to participate in this experiment without passing the Ishihara Test on beforehand." 
+                        data-hint-position="right">Allow Colourblind</span>
+                    </label>
+                </div> <br/>
+                <div id="hidden-experiment" class="input-control checkbox" data-role="input-control">
+                    <label>
+                        <input type="checkbox"/>
+                        <span class="check"></span>
+                        <span class="hint-trigger" data-hint="Hides the experiment, making it hidden for any observer before you publicise it." data-hint-position="right">Hidden Experiment</span>
+                    </label>
+                </div> <br/>
+                <div id="display-clock" class="input-control checkbox" data-role="input-control">
+                    <label>
+                        <input type="checkbox"/>
+                        <span class="check"></span>
+                        <span class="hint-trigger" data-hint="Displays a timer on the top of the screen for the observer." data-hint-position="right">Display Timer for Observer</span>
+                    </label>
+                </div> <br/>
+                <div id="forced-pick" class="input-control checkbox" data-role="input-control">
+                    <label>
+                        <input type="checkbox"/>
+                        <span class="check"></span>
+                        <span class="hint-trigger" data-hint="Forces the observer to pick one image before continuing." data-hint-position="right">Forced Choice</span>
+                    </label>
+                </div> <br/>
+
+                <div id="same-pair" class="input-control checkbox" data-role="input-control">
+                    <label>
+                        <input type="checkbox"/>
+                        <span class="check"></span>
+                        <span class="hint-trigger" data-hint="Each pair of images will have their position flipped in the queue, leading to double the comparisons for the user." 
+                        data-hint-position="right">Same Pair Twice (Flipped)</span>
+                    </label>
+                </div> <br/>
+            </fieldset>
+        </form>
+
+
+    </div>
+    <div id="ex-step3">
+        <form>
+            <fieldset>
+                <legend>Observer Input Fields</legend>
+                <div id="ex-default-fieldset">
+                </div>
+                <div style="margin:20px 0px">
+                    <button id="ex-add-field" onclick="return false;">Add Custom Field</button>
+                    <button id="ex-add-field-history" onclick="return false;">Add Field From History</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div id="ex-step4">
+        <form>
+            <fieldset>
+                <legend>Instructions and Image Sets</legend>
+                <div style="margin:20px 0px">
+                    <button id="ex-add-image-set" onclick="return false;">Add Image Set</button>
+                    <button id="ex-add-instruction" onclick="return false;">Add Instruction</button>
+                    <button id="ex-add-instruction-history" onclick="return false;">Add Instruction From History</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div id="ex-step5">
+        <fieldset id="ex-image-queues">
+            <legend>Image Queues</legend>
+            <div id="ex-image-sets" style="margin:20px 0px">
+
+            </div>
+        </fieldset>
+        <fieldset id="ex-setup-categories">
+            <legend>Categories</legend>
+            <div id="ex-categories" style="margin:20px 0px">
+                <div style="margin:20px 0px">
+                    <button id="ex-add-category" onclick="return false;">Add Custom Category</button>
+                    <button id="ex-add-category-history" onclick="return false;">Add Category From History</button>
+                </div>
+            </div>
+        </fieldset>
+
+    </div>
+
+</div>
+<div class="place-right">
+    <button id="previous-button" class="button previous-button" onclick="$('#stepper').stepper('prior')">Back</button>
+    <button id="next-button" class="button next-button"  onclick="$('#stepper').stepper('next')">Next</button>
+    <button id="finish" class="success finish">Finish</button>
+</div>
+</div>

@@ -1,0 +1,445 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * Gets imagesets. Sorts them based on parameter, by name if no parameter,
+<span class='line'>  3</span>  * by date if true
+<span class='line'>  4</span>  * @param {type} $sort Will sort by date if true
+<span class='line'>  5</span>  * @returns {data|getImageSets.imageSets}   Two dimensional array containing image sets and data
+<span class='line'>  6</span>  */</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getImageSets</span><span class="PUNC">(</span><span class="NAME">$sort</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  8</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">imageSets</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>  9</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 10</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getImageSets.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 11</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 12</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 13</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 14</span> </span><span class="WHIT">            </span><span class="NAME">imageSets</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 15</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 16</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">$sort</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//Returns a unsorted list if sorting by date</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">imageSets</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 22</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 23</span> 
+<span class='line'> 24</span> </span><span class="WHIT">    </span><span class="NAME">imageSets.sort</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">a</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">b</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//Sorts the list based on name</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">a.name</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">b.name</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 27</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">a.name</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NAME">b.name</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 29</span> </span><span class="WHIT">            </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">        </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 33</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">imageSets</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 34</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 35</span> 
+<span class='line'> 36</span> </span><span class="COMM">/**
+<span class='line'> 37</span>  * @return Gets an array of all earlier instructions for inlogged scientist.
+<span class='line'> 38</span>  */</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getInstructions</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">instructions</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getInstructions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'getInstructions'</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 47</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">            </span><span class="NAME">instructions</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 52</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">instructions</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 57</span> 
+<span class='line'> 58</span> </span><span class="COMM">/**
+<span class='line'> 59</span>  * Rturns all inputfields from logged in user
+<span class='line'> 60</span>  * @return {array} array with inputfields
+<span class='line'> 61</span>  */</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getInputfields</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">inputfields</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 65</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getInputfields.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 66</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 67</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 68</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'getInputfields'</span><span class="WHIT">
+<span class='line'> 69</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 70</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">            </span><span class="NAME">inputfields</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">inputfields</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 80</span> 
+<span class='line'> 81</span> </span><span class="COMM">/**
+<span class='line'> 82</span>  * Function makes a new experiment and stores it in the database.
+<span class='line'> 83</span>  * Stores data from step 1 in experiment creation.
+<span class='line'> 84</span>  * @return Id of the newly created experiment.
+<span class='line'> 85</span>  */</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">startNewExperiment</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">shortDescription</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">description</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">exType</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">    </span><span class="NAME">screenWhitePoint</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">screenLuminance</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">roomIllumination</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">ambientIllumination</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 90</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/experimentFunctions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 91</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 92</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 93</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'newExperiment'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">            </span><span class="STRN">'name'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">            </span><span class="STRN">'shortDescription'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">shortDescription</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">            </span><span class="STRN">'description'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">description</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">            </span><span class="STRN">'exType'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">exType</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">            </span><span class="STRN">'screenWhitePoint'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">screenWhitePoint</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">            </span><span class="STRN">'screenLuminance'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">screenLuminance</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">            </span><span class="STRN">'roomIllumination'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">roomIllumination</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">            </span><span class="STRN">'ambientIllumination'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">ambientIllumination</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">        </span><span class="NAME">datatype</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>105</span> </span><span class="WHIT">            </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>106</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>107</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>108</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>109</span> </span><span class="WHIT">            </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="COMM">//If error</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">experimentId.replace</span><span class="PUNC">(</span><span class="REGX">/"/g</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>113</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>114</span> 
+<span class='line'>115</span> </span><span class="COMM">/**
+<span class='line'>116</span>  * @returns Gets the ID for the active experiment which is in creation.
+<span class='line'>117</span>  */</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getActiveExperimentInCreation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/experimentFunctions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>124</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'getExperimentId'</span><span class="WHIT">
+<span class='line'>125</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>126</span> </span><span class="WHIT">        </span><span class="NAME">datatype</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">            </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>133</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">experimentId.replace</span><span class="PUNC">(</span><span class="REGX">/"/g</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="STRN">""</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>136</span> 
+<span class='line'>137</span> </span><span class="COMM">/**
+<span class='line'>138</span>  * Will alter required data for a experiment.
+<span class='line'>139</span>  * The params are all standard parametres except for the customFields.
+<span class='line'>140</span>  * @param customFields is an array containing ID's of the custom fields
+<span class='line'>141</span>  * that the user wants to add.
+<span class='line'>142</span>  */</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addObserverInputFields</span><span class="PUNC">(</span><span class="NAME">defaultFields</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">customFields</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>145</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/experimentFunctions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>146</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>147</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>148</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'addObserverInputFields'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">            </span><span class="STRN">'defaultFields'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">defaultFields</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">            </span><span class="STRN">'customFields'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">customFields</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>152</span> 
+<span class='line'>153</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>156</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>158</span> 
+<span class='line'>159</span> </span><span class="COMM">/**
+<span class='line'>160</span>  * Adds parameters to a experiment!
+<span class='line'>161</span>  * @param forcePick true or false
+<span class='line'>162</span>  * @param samePairTwice true or false
+<span class='line'>163</span>  * @param showOriginal true or false
+<span class='line'>164</span>  * @param experimentId the Id of the experiment to use.  Will use the last one
+<span class='line'>165</span>  * in the database if no experimentID is supplied.
+<span class='line'>166</span>  */</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addObserverParametersPair</span><span class="PUNC">(</span><span class="NAME">backgroundColour</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">forcedPick</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">samePairTwice</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">showOriginal</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">colorblind</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">hidden</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">timer</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">    </span><span class="WHIT">
+<span class='line'>169</span> 
+<span class='line'>170</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">        </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">getActiveExperimentInCreation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">timer</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">timer</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">        </span><span class="NAME">timer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/experimentFunctions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>178</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>179</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>180</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'addParametersPair'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>181</span> </span><span class="WHIT">            </span><span class="STRN">'backgroundColour'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">backgroundColour</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">            </span><span class="STRN">'forcedPick'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">forcedPick</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>184</span> </span><span class="WHIT">            </span><span class="STRN">'samePairTwice'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">samePairTwice</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>185</span> </span><span class="WHIT">            </span><span class="STRN">'showOriginal'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">showOriginal</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>186</span> </span><span class="WHIT">            </span><span class="STRN">'colorblind'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">colorblind</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>187</span> </span><span class="WHIT">            </span><span class="STRN">'hidden'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">hidden</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">            </span><span class="STRN">'timer'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">timer</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>190</span> 
+<span class='line'>191</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>195</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>196</span> 
+<span class='line'>197</span> </span><span class="COMM">/**
+<span class='line'>198</span>  * Will add a pictureQueue to experimentOrder in the database.
+<span class='line'>199</span>  * @param pictureQueueId the ID of the pictureQueue which you want to add to the experimentOrder
+<span class='line'>200</span>  * @param experimentId the Id of the experiment to use.  Will use the last one
+<span class='line'>201</span>  * in the database if no experimentID is supplied.
+<span class='line'>202</span>  */</span><span class="WHIT">
+<span class='line'>203</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addPictureQueueToExperiment</span><span class="PUNC">(</span><span class="NAME">pictureQueueId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">        </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">getActiveExperimentInCreation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>206</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>207</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>208</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/experimentFunctions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>209</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'addPictureQueueOrInstruction'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">            </span><span class="STRN">'pictureQueueId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">pictureQueueId</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>215</span> 
+<span class='line'>216</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>217</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>218</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>219</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>221</span> 
+<span class='line'>222</span> </span><span class="COMM">/**
+<span class='line'>223</span>  * Will create a new experimentOrder in the database for the given instruction
+<span class='line'>224</span>  * @param instructionId Id of the experimentInstruction to add to the experimentOrder
+<span class='line'>225</span>  * @param experimentId the Id of the experiment to use.  Will use the last one
+<span class='line'>226</span>  * in the database if no experimentID is supplied.
+<span class='line'>227</span>  */</span><span class="WHIT">
+<span class='line'>228</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addInstructionToExperiment</span><span class="PUNC">(</span><span class="NAME">instructionId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>229</span> </span><span class="WHIT">    </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="WHIT"> </span><span class="PUNC">||</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>230</span> </span><span class="WHIT">        </span><span class="NAME">experimentId</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">getActiveExperimentInCreation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>231</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>232</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/experimentFunctions.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>235</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">            </span><span class="STRN">'option'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'addPictureQueueOrInstruction'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>237</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">            </span><span class="STRN">'experimentInstructionId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">instructionId</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>240</span> 
+<span class='line'>241</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>242</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>243</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>244</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>245</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>246</span> 
+<span class='line'>247</span> </span><span class="COMM">/**
+<span class='line'>248</span>  * Gets the earlier pictureQueues for a given pictureSet
+<span class='line'>249</span>  * @param pictureSetId the ID for a pictureSet you want to find every pictureQueue for
+<span class='line'>250</span>  * @return array of the pictureQueues with ID and name.
+<span class='line'>251</span>  */</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getEarlierPictureQueues</span><span class="PUNC">(</span><span class="NAME">pictureSetId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>253</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">pictureQueues</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>254</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>255</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getEarlierPictureQueues.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>256</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">            </span><span class="STRN">'pictureSetId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">pictureSetId</span><span class="WHIT">
+<span class='line'>259</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>260</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>261</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>262</span> </span><span class="WHIT">            </span><span class="NAME">pictureQueues</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>263</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">pictureQueues</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>270</span> 
+<span class='line'>271</span> </span><span class="COMM">/**
+<span class='line'>272</span>  * Checks if pictureset has an original
+<span class='line'>273</span>  * @param  {int}  pictureSetId id of pictureset
+<span class='line'>274</span>  * @return {int}              0 if no original
+<span class='line'>275</span>  */</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">hasOriginal</span><span class="PUNC">(</span><span class="NAME">pictureSetId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>277</span> 
+<span class='line'>278</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bool</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>279</span> 
+<span class='line'>280</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/hasOriginal.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>282</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">            </span><span class="STRN">'pictureSetId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">pictureSetId</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>287</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>288</span> </span><span class="WHIT">            </span><span class="NAME">bool</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>289</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>290</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="WHIT">            </span><span class="NAME">bool</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>293</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>294</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>295</span> 
+<span class='line'>296</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">bool</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>297</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>298</span> 
+<span class='line'>299</span> </span><span class="COMM">/**
+<span class='line'>300</span>  * Creates a new category and connects it to experiment
+<span class='line'>301</span>  * @param {string} categoryText text of category
+<span class='line'>302</span>  * @param {int} experimentId id of experiment
+<span class='line'>303</span>  */</span><span class="WHIT">
+<span class='line'>304</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addCategory</span><span class="PUNC">(</span><span class="NAME">categoryText</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>305</span> 
+<span class='line'>306</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/addCategory.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">            </span><span class="STRN">'categoryText'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">categoryText</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>313</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>314</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>315</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>316</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>317</span> 
+<span class='line'>318</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>319</span> 
+<span class='line'>320</span> </span><span class="COMM">/**
+<span class='line'>321</span>  * Adds a existing category to experiment
+<span class='line'>322</span>  * @param {int} categoryNameId id of category
+<span class='line'>323</span>  * @param {int} experimentId   id of experiment
+<span class='line'>324</span>  */</span><span class="WHIT">
+<span class='line'>325</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">addExistingCategory</span><span class="PUNC">(</span><span class="NAME">categoryNameId</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>326</span> 
+<span class='line'>327</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>328</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/addExistingCategory.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>329</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="WHIT">            </span><span class="STRN">'categoryNameId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">categoryNameId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>335</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>336</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>337</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>338</span> 
+<span class='line'>339</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>340</span> 
+<span class='line'>341</span> </span><span class="COMM">/**
+<span class='line'>342</span>  * Gets all categories of logged in user
+<span class='line'>343</span>  * @return {array} array of categories
+<span class='line'>344</span>  */</span><span class="WHIT">
+<span class='line'>345</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getCategories</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>346</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">categories</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Array</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>347</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getCategory.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>349</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>350</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>351</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">            </span><span class="NAME">categories</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>353</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>354</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>355</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>356</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>357</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>358</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">categories</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>359</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>360</span> 
+<span class='line'>361</span> </span><span class="COMM">/**
+<span class='line'>362</span>  * Gets all experiments which are public
+<span class='line'>363</span>  * @return {array} array of experiments
+<span class='line'>364</span>  */</span><span class="WHIT">
+<span class='line'>365</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getExperiments</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>366</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">result</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>367</span> 
+<span class='line'>368</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>369</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getExperiments.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>370</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>371</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>372</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>373</span> </span><span class="WHIT">            </span><span class="NAME">result</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>374</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>375</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>376</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>377</span> </span><span class="WHIT">            </span><span class="NAME">result</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>378</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>379</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>380</span> 
+<span class='line'>381</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">result</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>382</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>383</span> 
+<span class='line'>384</span> </span><span class="COMM">/**
+<span class='line'>385</span>  * Gets experimentdata by id
+<span class='line'>386</span>  * @param  {int} $experimentId id of experiment
+<span class='line'>387</span>  * @return {array}               array with experimentdata
+<span class='line'>388</span>  */</span><span class="WHIT">
+<span class='line'>389</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getExperimentById</span><span class="PUNC">(</span><span class="NAME">$experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>390</span> </span><span class="WHIT">    </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">result</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>391</span> 
+<span class='line'>392</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>393</span> </span><span class="WHIT">        </span><span class="NAME">type</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"post"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>394</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/scientist/getExperimentById.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>395</span> </span><span class="WHIT">        </span><span class="NAME">async</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>396</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>397</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">$experimentId</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>398</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>399</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>400</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>401</span> </span><span class="WHIT">            </span><span class="NAME">result</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">data</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>402</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>403</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>404</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>405</span> </span><span class="WHIT">            </span><span class="NAME">result</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>406</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>407</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>408</span> 
+<span class='line'>409</span> </span><span class="WHIT">    </span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">result</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>410</span> </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>411</span> 
+<span class='line'>412</span> </span><span class="COMM">/**
+<span class='line'>413</span>  * Deletes experiment based on id
+<span class='line'>414</span>  * @param  {int} experimentId id of experiment
+<span class='line'>415</span>  */</span><span class="WHIT">
+<span class='line'>416</span> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">deleteExperiment</span><span class="PUNC">(</span><span class="NAME">experimentId</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>417</span> </span><span class="WHIT">    </span><span class="NAME">$.ajax</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>418</span> </span><span class="WHIT">        </span><span class="NAME">type</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'POST'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>419</span> </span><span class="WHIT">        </span><span class="NAME">url</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'ajax/admin/deleteExperiment.php'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>420</span> </span><span class="WHIT">        </span><span class="NAME">data</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>421</span> </span><span class="WHIT">            </span><span class="STRN">'experimentId'</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="NAME">experimentId</span><span class="WHIT">
+<span class='line'>422</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>423</span> </span><span class="WHIT">        </span><span class="NAME">dataType</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'json'</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>424</span> </span><span class="WHIT">        </span><span class="NAME">success</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">data</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>425</span> </span><span class="WHIT">            </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">data</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//that particular experiment was successfully deleted.</span><span class="WHIT">
+<span class='line'>426</span> </span><span class="WHIT">                </span><span class="NAME">$.Notify</span><span class="PUNC">(</span><span class="PUNC">{</span><span class="WHIT"> </span><span class="COMM">//notifies user about successfull experiment deletion change.</span><span class="WHIT">
+<span class='line'>427</span> </span><span class="WHIT">                    </span><span class="NAME">content</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">"Experiment successfully deleted"</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>428</span> </span><span class="WHIT">                    </span><span class="NAME">style</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>429</span> </span><span class="WHIT">                        </span><span class="NAME">background</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'lime'</span><span class="WHIT">
+<span class='line'>430</span> </span><span class="WHIT">                    </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>431</span> </span><span class="WHIT">                </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>432</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>433</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT">
+<span class='line'>434</span> </span><span class="WHIT">        </span><span class="NAME">error</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">request</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">status</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">error</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>435</span> </span><span class="WHIT">            </span><span class="NAME">alert</span><span class="PUNC">(</span><span class="NAME">request.responseText</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>436</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>437</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>438</span> </span><span class="PUNC">}</span></pre></body></html>

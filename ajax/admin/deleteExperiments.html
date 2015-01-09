@@ -1,0 +1,43 @@
+<div id="delete-experiments-field">
+    <fieldset>
+        <legend>Delete Experiments</legend>
+        <label>Input Age</label>
+        <div class="input-control select">
+            <select id="delete-experiments-select" name="age">
+				<option value="" disabled selected>Select interval</option>                
+				<option>Delete All</option>
+                <option>A Month</option>
+                <option>Six Months</option>
+                <option>A Year</option>
+            </select>
+        </div>
+        <label>Or Pick Date</label>
+        <div id="calendar-div" class="input-control text">
+            <input id="delete-experiments-datepicker" name="age" type="text" placeholder="dd.mm.yyyy" >
+            <button id="delete-experiments-date" class="btn-date"></button>
+        </div><br/>
+        <div style="margin-top: 20px;">
+            <button id="delete-experiments-submit" class="button primary" style="margin:20px 0">Delete Experiments</submit>
+        </div>
+    </fieldset>
+</div> 
+
+<div id="change-experiment-field" style="margin-top: 10px">
+    <fieldset>
+        <legend>Change Experiment State</legend>
+        <label>Select Experiment</label>
+        <div class="input-control text" data-role="input-control">
+            <input id="change-experiment-state" type="text" placeholder="Experiment">
+        </div>
+
+        <label>Experiment State</label>
+        <div class="input-control select" style="margin-right: 40px;">
+            <select id="change-state-experiment">
+
+            </select>
+        </div>
+        <div style="margin-top: 10px;">
+            <button id="submit-change-experiment" class="button primary" style="margin:20px 0">Change User Level</submit>
+        </div>
+    </fieldset>
+</div>

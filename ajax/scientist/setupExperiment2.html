@@ -1,0 +1,88 @@
+<h2>Experiment Setup</h2>
+<div id="stepper" class="stepper" data-steps="3" data-role="stepper" data-start="1"></div>
+<div class="wizard" id="wizard">
+    <div class="steps">
+        <div class="step">
+        	<form>
+                <fieldset>
+                    <legend>Experiment Information</legend>
+                    <label>Name</label>
+                    <div  class="input-control text" data-role="input-control">
+                        <input id="ex-name" type="text" placeholder="Experiment Name">
+                        <button class="btn-clear" tabindex="-1"></button>
+                    </div>
+                    <label>Short Description</label>
+                    <div  class="input-control text" data-role="input-control">
+                        <input id="ex-short-description" type="text" placeholder="Short Description" autofocus>
+                        <button class="btn-reveal" tabindex="-1"></button>
+                    </div>
+                    <label>Description</label>
+                    
+                    <div class="input-control textarea" data-role="input-control">
+                    	<textarea id="ex-long-description" placeholder="Long Description"></textarea>
+                    </div>
+    			</fieldset>
+    		</form>
+        </div>
+        <div class="step">
+        	<form>
+                <fieldset>
+                   	<legend>Observer Input Fields</legend>
+					<div id="ex-default-fieldset">
+						<div class="input-control text size6" data-role="input-control">
+	                    	<input id="ex-first-name" type="text" value="First Name" disabled/>
+	                    	<button class="btn-clear"></button>
+	                    </div>
+	                    <div class="input-control switch margin10" data-role="input-control">
+	                        <label>
+	                            <input id="ex-first-name-check" type="checkbox" checked/>
+	                            <span class="check"></span>
+	                        </label>
+	                    </div>
+	                    
+						<div class="input-control text size6" data-role="input-control">
+	                    	<input id="ex-last-name" type="text" value="Last Name" disabled/>
+	                    	<button class="btn-clear"></button>
+	                    </div>
+	                    <div class="input-control switch margin10" data-role="input-control">
+	                        <label>
+	                            <input id="ex-first-last-check" type="checkbox" checked/>
+	                            <span class="check"></span>
+	                        </label>
+	                    </div>
+	                    
+						<div class="input-control text size6" data-role="input-control">
+	                    	<input id="ex-age" type="text" value="Age" disabled/>
+	                    	<button class="btn-clear"></button>
+	                    </div>
+	                    <div class="input-control switch margin10" data-role="input-control">
+	                        <label>
+	                            <input id="ex-age-check" type="checkbox" checked/>
+	                            <span class="check"></span>
+	                        </label>
+	                    </div>
+	                    
+	                    <div class="input-control text size6" data-role="input-control">
+	                    	<input id="ex-sex" type="text" value="Sex" disabled/>
+	                    	<button class="btn-clear"></button>
+	                    </div>
+	                    <div class="input-control switch margin10" data-role="input-control">
+	                        <label>
+	                            <input id="ex-sex-check" type="checkbox" checked/>
+	                            <span class="check"></span>
+	                        </label>
+	                    </div>
+					</div>
+					<div style="margin:20px 0px">
+						<button id="ex-add-field">Add Custom Field</button>
+					</div>
+                    
+					
+                    
+
+    			</fieldset>
+    		</form>
+        </div>
+        <div class="step">Page 3</div>
+    </div>
+</div>
