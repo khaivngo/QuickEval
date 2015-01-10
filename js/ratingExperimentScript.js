@@ -31,7 +31,8 @@ $(document).ready(function() {
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
             contain: 'invert',
-            minScale: 0,
+            minScale:1,
+            maxScale: 1.30
            // maxScale: 0,
          //   disableZoom: true
 

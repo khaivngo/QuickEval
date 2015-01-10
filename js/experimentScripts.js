@@ -16,6 +16,8 @@ $(document).ready(function() {
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
             contain: 'invert',
+            minScale:1,
+            maxScale: 1.30
         }).panzoom('zoom');
     })();
 
