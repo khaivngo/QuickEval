@@ -132,7 +132,7 @@ $(document).ready(function() {
             experimentQueueAmount++;
             var div = $('<div></div>');
             div.load('ajax/scientist/setupexperiment/imageSetDropDown.html', function() {
-                $('#ex-add-image-set').before(div);
+                $('#ex-add-instruction').before(div);
                 $('.dropdown-menu').dropdown();
                 var currentSet = $('.ex-image-set-inner').last();
                 var width = $('.ex-img').outerWidth(true) * (currentSet.children().length + 1);
@@ -166,7 +166,7 @@ $(document).ready(function() {
             div.load('ajax/scientist/setupexperiment/addInstructionField.html', function() {
                 setUpDragNDrop();
             });
-            $('#ex-add-image-set').before(div);
+            $('#ex-add-instruction').before(div);
             setUpDragNDrop();
             return null;
         });
@@ -179,7 +179,7 @@ $(document).ready(function() {
                     div.find('select').append('<option instruction="' + t['id'] + '">' + t['text'] + '</option>');
                 });
             });
-            $('#ex-add-image-set').before(div);
+            $('#ex-add-instruction').before(div);
             setUpDragNDrop();
             return null;
         });
