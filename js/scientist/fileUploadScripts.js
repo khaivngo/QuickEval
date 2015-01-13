@@ -133,13 +133,16 @@ function startUploader(imagesetId, target) {
 
                         console.log("Stop picture set");
                         stopPictureSet();
+
                         $.Notify({style: {background: 'green', color: 'white'},
                             content: "Upload complete!"
                         });
-
-                        // target.empty();
-
-                        // showPictureSet(imageSet);
+                        setTimeout(function(){
+                            $('#right-menu').empty();   
+                            setActive($(this));
+                            enterName($('#right-panel'));
+                            addOriginalButtonListener();
+                        }, 1000);
                     }
 
                     else 					//When uploading to an existing pictureset
