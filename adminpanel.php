@@ -51,7 +51,6 @@
                             <li id="delete-images"><a href="#"><i class="icon-remove"></i>Delete Images</a></li>
 
                             <li class="title">Users</li>
-                            <li id="register-scientist" ><a href="#"><i class="icon-user"></i>Register Scientist</a></li>
                             <li id="delete-anonymous" ><a href="#"><i class="icon-cycle"></i>Clean Up Anonymous Users</a></li>
                             <li id="change-access" ><a href="#"><i class="icon-user-3"></i>Change User Access</a></li>
                             
