@@ -11,7 +11,7 @@ require_once('ChromePhp.php');
  * Forces a session update for user and returns the users userType 
  * @return null If there is an error, or userType if not
  */
-function checkLogin() {
+function checkLogin($db) {
 	try {
         if (isset($_SESSION['user'])) {     //Checks for existing session
 

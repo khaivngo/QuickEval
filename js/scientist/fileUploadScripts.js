@@ -1,4 +1,5 @@
-﻿$(document).ready(function() {
+$(document).ready(function() {
+    
     $("#upload-image").click(function() {
         $('#right-menu').empty();   //Empties right menu if user came from function using menu
 

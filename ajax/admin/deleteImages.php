@@ -3,7 +3,7 @@
  * Used for deleting old pictures and pictureSets.
  */
 require_once('../../db.php');
-require_once('functions.php');
+require_once('../../functions.php');
 
 if (!isset($_SESSION['user'])) {
                header("Location: ../../login.php"); 
@@ -13,7 +13,7 @@ $option = $_GET['option'];	//imageset, images
 $access = $_SESSION['user']['userType'];
 $userId = $_SESSION['user']['id'];
 
-if(checkLogin > 2) {
+if(checkLogin($db) > 2) {
  return;
 }
 
