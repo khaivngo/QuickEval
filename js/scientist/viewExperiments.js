@@ -398,9 +398,14 @@ function printResults($experimentId) {
                     //console.log(data['imageUrl'][i]['url']);
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
+                    $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
+
                     //sends all imagestitles, calculated results and the name of picture set
                     setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url']);
                     imageTitleArray = [];   //empties array for next picture set
+
+
+                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
 
                     highLightFirstTable();
                     activeSeriesClickListener();
@@ -444,9 +449,13 @@ function printResults($experimentId) {
                         var currentRow = data[3][i][j]; //saves current row
                         var tableRow = '<tr><th>' + currentRow['person'] + '</th>'; //creates new row and adds observer name
 
-                        //Iterates through all results and adds them to row
-                        for (var index = 0; index < (Object.size(currentRow) - 2); index++) {
+                        //console.log("Object size = "+(Object.size(currentRow) - 2));
+                        //var dummy = 0;
+                        //Iterates through all results and adds them to row. -3 compensates for original?
+                        for (var index = 0; index < (Object.size(currentRow) - 3); index++) {
                             tableRow += '<td>' + currentRow[index] + '</td>';
+                            //console.log("Counter = "+dummy++);
+
                         }
 
                         //Ends and appends row
@@ -460,9 +469,13 @@ function printResults($experimentId) {
 
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
+                    $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
+
                     //sends all imagestitles, calculated results and the name of picture set
                     setZScores(imageTitleArray, zScoreArray, t['name'],data['imageUrl'][i]['url']);
                     imageTitleArray = [];   //empties array for next picture set
+
+                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
 
                     highLightFirstTable();
                     activeSeriesClickListener();
@@ -527,11 +540,15 @@ function printResults($experimentId) {
 
                     addSeries(imageTitleArray, zScoreArray, data[1][l]['name']);        //Add experiments data to graph
 
+                    $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
+
                     //sends all imagestitles, calculated results and the name of picture set
                     setZScores(imageTitleArray, zScoreArray, data[1][l]['name'], data['imageUrl'][imageUrlIterator]['url']);
                     imageTitleArray = [];   //empties array for next picture set
 
                     imageUrlIterator++;
+
+                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
 
                     highLightFirstTable();
                     activeSeriesClickListener();
@@ -543,6 +560,8 @@ function printResults($experimentId) {
         }
     }
     return resultsArray;
+
+
 }
 //http://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
 function arrayObjectIndexOf(myArray, searchTerm, property) {
