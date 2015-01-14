@@ -41,6 +41,7 @@ $(document).ready(function() {
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
+    //left drag panner/ drop area
     $(function() {
         $(".draggable").draggable();
         $("#drop-left").droppable({
@@ -49,17 +50,20 @@ $(document).ready(function() {
                 var aId = ui.draggable.find('a').attr("id");
                 var droppableId = $(this).attr("id");
                 var draggableUrl = ui.draggable.find('img').attr("src");
-                console.log(draggableUrl);
+                var fetchedInitialPosition = ui.draggable.find('#initial-position').text();
+
+               // console.log(draggableUrl);
+
                 $('#drop-left').find('img').attr('src', draggableUrl);
-
                 $('#drop-left').find('img').remove();
-
                 $('#pan1').prepend('<img class= "picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
 
-                pictureInPanner(aId, draggableId, "left");
+                pictureInPanner(fetchedInitialPosition, "left");
             }
         });
     });
+
+    //right drag panner/drop area
     $(function() {
         $(".draggable").draggable();
         $("#drop-right").droppable({
@@ -68,14 +72,14 @@ $(document).ready(function() {
                 var aId2 = ui.draggable.find('a').attr("id");
                 var droppableId = $(this).attr("id");
                 var draggableUrl = ui.draggable.find('img').attr("src");
+                var fetchedInitialPosition2 = ui.draggable.find('#initial-position').text();
 
                 $('#drop-right').find('img').attr('src', draggableUrl);
-
                 $('#drop-right').find('img').remove();
-
                 $('#pan2').prepend('<img class="picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
 
-                pictureInPanner(aId2, draggableId, "right");
+
+                pictureInPanner(fetchedInitialPosition2, "right");
             }
         });
     });
@@ -153,9 +157,8 @@ $(document).ready(function() {
         hideIndicators();
 
         //indicates which two pictures are default loaded into panner. (Always number 1 and 2)
-        pictureInPanner("panner-side1", null, "left");
-        // pictureInPanner("panner-side1", "511", "right");
-        pictureInPanner("panner-side2", null, "right");
+       pictureInPanner("A", "left");
+       pictureInPanner( "B", "right");
     }
 
     IESpecific();
@@ -223,6 +226,9 @@ function removeOriginal() {
  */
 function loadReproductionsSortable(data) {
     var length;
+    var initialPosition;
+    var letterCounter = 0;
+
     $('#rating-images').empty();                //empties div for the next pictures to be loaded
     length = Object.keys(data).length - 1;
 
@@ -238,18 +244,24 @@ function loadReproductionsSortable(data) {
             loadImageIntoPanner(reproductionPictureOrder, reproductionImageUrl, "right");
         }
 
-        //each picture is appended to the sortable
-        $('#rating-images').append('<div class="image-position" id=' + i + '><a href="#" id="panner-side' + i + '" target="" class="panner-side-left"></a><a href="#" id="panner-side' + i + '" target="" class="panner-side-right"></a><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + i + '</span></div>');
-    }
-    $('a').nextAll('.panner-side-left').hide();
-    $('a').prevAll('.panner-side-left').hide();
 
-    $('a').nextAll('.panner-side-right').hide();
-    $('a').prevAll('.panner-side-right').hide();
+       initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
+        console.log(initialPosition);
+        letterCounter++;
+
+        //each picture is appended to the sortable
+        $('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
+    }
+
+    //$('a').nextAll('.panner-side-left').hide();
+    //$('a').prevAll('.panner-side-left').hide();
+    //
+    //$('a').nextAll('.panner-side-right').hide();
+    //$('a').prevAll('.panner-side-right').hide();
 
     //indicates which two pictures are default loaded into panner. (Always number 1 and 2)
-    pictureInPanner("panner-side1", null, "left");
-    pictureInPanner("panner-side2", null, "right");
+    //pictureInPanner("panner-side1", null, "left");
+    //pictureInPanner("panner-side2", null, "right");
 
     updateSortablePosition();
 }
@@ -324,95 +336,24 @@ function loadExperiment() {
     }
 }
 
-var lastLeft;
-var lastRight;
-var lastLeftId;
-var lastRightId;
-var indicationRunned;
+
 /**
- * Applies a indicator for which picture in is loaded into panner
- * @param {type} pictureId id of picture
- * @param {type} side which panner, left or right
- * @returns {undefined}
+ *  Applies a indicator for which picture in is loaded into panner
+ * @param initPos the initial position of an image IDed by a letter.
+ * @param side which panner to update.
  */
-function pictureInPanner(aId, draggableId, side) {
-    var imagePannerIdLeft = $('#pan1').find('img').attr('pictureOrderId');
-    var imagePannerIdRight = $('#pan2').find('img').attr('pictureOrderId');
-    var initialPositionCheck = $('image-position').find()
+function pictureInPanner(initPos, side) {
+
+
+   // console.log(initPos);
 
     if (side == "left") {
-        //  $('#' + aId + '').show();
+        $('#picture-in-panner-left').find('span strong').text(initPos);
 
-        $('a').nextAll('.panner-side-left').hide();
-        $('a').prevAll('.panner-side-left').hide();
-
-        if (imagePannerIdLeft != draggableId) {
-            $('#' + aId + '').show();
-        }
-
-        if (imagePannerIdLeft == draggableId) {
-            $('#' + aId + '').show();
-        }
-
-        if (lastRight == lastLeft) {
-            $('#' + lastRight + '').removeClass("panner-side-right");
-        }
-
-        if (imagePannerIdLeft == draggableId && imagePannerIdRight == draggableId) {
-            $('#' + aId + '').addClass("panner-side-left");
-            $('#' + aId + '').next().addClass("panner-side-right");
-            $('#' + aId + '').show();
-            $('#' + aId + '').next().show();
-        }
-
-        if (draggableId == "null") {
-            $('#' + aId + '').next().show();
-        }
-        
-//        
-//       if($('#' + lastLeftId + '').is(":visible") && $('#' + lastLeftId + '').next.is(":visible")) {
-//            $('#' + lastLeftId + '').show();
-//        }
-
-        lastLeftId = draggableId;
-        lastLeft = aId;
-        $("#rating-images").sortable("refresh");
     }
     else if (side == "right") {
+        $('#picture-in-panner-right').find('span strong').text(initPos);
 
-        $('a').nextAll('.panner-side-right').hide();
-        $('a').prevAll('.panner-side-right').hide();
-
-        if (imagePannerIdRight != draggableId && draggableId != null) {
-            $('#' + aId + '').addClass("panner-side-right");
-            $('#' + aId + '').show();
-        }
-
-        if (lastRight == lastLeft && draggableId != null) {
-            $('#' + lastLeft + '').removeClass("panner-side-left");
-        }
-
-        if (imagePannerIdLeft == draggableId && imagePannerIdRight == draggableId) {
-            $('#' + aId + '').addClass("panner-side-left");
-            $('#' + aId + '').next().addClass("panner-side-right");
-            $('#' + aId + '').show();
-            $('#' + aId + '').next().show();
-
-            $('a').nextAll('.panner-side-right').hide();
-        }
-
-        if (imagePannerIdLeft != lastRightId) {          //CHANGE TO == when handle for ID.
-            $('#' + lastRight + '').hide();
-            $('#' + aId + '').next().show();
-        }
-
-        if (draggableId == null) {
-            $('#' + aId + '').next().show();
-        }
-
-        lastRighId = draggableId;
-        lastRight = aId;
-        $("#rating-images").sortable("refresh");
     }
 }
 
