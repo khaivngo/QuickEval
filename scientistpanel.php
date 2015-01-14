@@ -107,7 +107,7 @@ if (isset($_SESSION['user'])) {
         <div id="wrapper">
             <?php include_once("includes/header.html"); ?>
 
-            <div id="panels" style="width:1200px; margin:auto; margin-bottom: 560px;">
+            <div id="panels" style="width: 1200px; margin:auto; margin-bottom: 560px;">
                 <div id="left-panel" class="span4" style="float:left">
                     <nav class="sidebar light" >
                         <ul>
