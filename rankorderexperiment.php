@@ -170,7 +170,7 @@ if (isset($_GET["invite"])) {
             </div>
 
         </section>
-        <div id="picture-in-panner-left">Picture in panner: <span><strong></strong></span></div>
+        <div id="picture-in-panner-left"><span><strong></strong></span></div>
     </div>
 
     <div id="original" style="margin-left:1%; margin-right:1%; float:left; height:25%; width: 25%;">
@@ -197,7 +197,7 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
         </section>
-        <div id="picture-in-panner-right">Picture in panner right: <span><strong></strong></span></div>
+        <div id="picture-in-panner-right"><span><strong></strong></span></div>
     </div>
 
 </div>
