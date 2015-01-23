@@ -16,11 +16,11 @@ $(document).ready(function() {
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
             contain: 'invert',
-            minScale:1,
-            maxScale: 1.30
+            minScale: 1,
+            maxScale: 1.3
+
         }).panzoom('zoom');
     })();
-
 //
 //$('#pictureOriginal').panzoom({
 //    maxScale: this.naturalWidth / this.clientWidth
@@ -75,8 +75,7 @@ $(document).ready(function() {
     IESpecific();
     allowTies();
     getSpecificExperimentData(experimentId);
-	
-	console.log("All functions OK");
+    //console.log("All functions OK");
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
@@ -107,9 +106,11 @@ $(document).ready(function() {
         $('#instruction-continue').hide();
     });
 
-
 });
 //----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 /**
  * Check if either of the reproductions is selected and then updates none button.
@@ -336,7 +337,8 @@ function removeOriginal() {
 function nextStep(receivedObject) {
     var instruction;
     var data = receivedObject;
-    console.log(receivedObject);
+
+    //console.log(receivedObject);
 
     if (data['type'] == "experimentinstruction") {     //object contains and instruction
         instruction = data['experimentinstruction'];
@@ -346,8 +348,9 @@ function nextStep(receivedObject) {
 
     if (data['type'] == "pictureQueue") {               //received array contains data about the reproduction
         var originalUrl = data[1]['originalUrl'].url; //getting url of original image
-        setOriginal(originalUrl); // calls function for setting image.
 
+        panningCheck(originalUrl);
+        setOriginal(originalUrl); // calls function for setting image.
         setPictures(data);
         setOriginal();
     }
