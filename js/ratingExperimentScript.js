@@ -1,7 +1,7 @@
-
 var type;
 
-$(document).ready(function() {
+$(document).ready(function () {
+
     var container = $('body');
     $('#rating-images').sortable({
         containment: container,
@@ -10,7 +10,7 @@ $(document).ready(function() {
         zIndex: 105, //or greater than any other relative/absolute/fixed elements and droppables
         scroll: true,
         handle: $('#rating-images'),
-        stop: function(event, ui) {
+        stop: function (event, ui) {
             var position = ui.item.index() + 1; //getting new position of element
             var id = ui.item[0].id; //getting id of touched element
             $("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
@@ -19,10 +19,10 @@ $(document).ready(function() {
         }
     });
     $('#rating-images').disableSelection();
-    
+
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
-    (function() {
+    (function () {
         var $section = $('#set1, #set2, #set3');
         $section.find('.panzoom').panzoom({
             $zoomIn: $section.find(".zoom-in"),
@@ -31,28 +31,25 @@ $(document).ready(function() {
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
             contain: 'invert',
-            minScale:1,
+            minScale: 1,
             maxScale: 1.30
-           // maxScale: 0,
-         //   disableZoom: true
-
         }).panzoom('zoom');
     })();
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
     //left drag panner/ drop area
-    $(function() {
+    $(function () {
         $(".draggable").draggable();
         $("#drop-left").droppable({
-            drop: function(event, ui) {
+            drop: function (event, ui) {
                 var draggableId = ui.draggable.find('img').attr("id");
                 var aId = ui.draggable.find('a').attr("id");
                 var droppableId = $(this).attr("id");
                 var draggableUrl = ui.draggable.find('img').attr("src");
                 var fetchedInitialPosition = ui.draggable.find('#initial-position').text();
 
-               // console.log(draggableUrl);
+                // console.log(draggableUrl);
 
                 $('#drop-left').find('img').attr('src', draggableUrl);
                 $('#drop-left').find('img').remove();
@@ -64,10 +61,10 @@ $(document).ready(function() {
     });
 
     //right drag panner/drop area
-    $(function() {
+    $(function () {
         $(".draggable").draggable();
         $("#drop-right").droppable({
-            drop: function(event, ui) {
+            drop: function (event, ui) {
                 var draggableId = ui.draggable.find('img').attr("id");
                 var aId2 = ui.draggable.find('a').attr("id");
                 var droppableId = $(this).attr("id");
@@ -83,48 +80,48 @@ $(document).ready(function() {
             }
         });
     });
-    
+
 //---------------------------------------------Button listeners---------------------------------------------------------------------------------------
 
-    $('#left-reproduction-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    $('#left-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#left-reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#original-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    $('#original-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#original-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#right-reproduction-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    $('#right-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#right-reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $("#button-next").on('click', function() {              //REMOVE?
+    $("#button-next").on('click', function () {              //REMOVE?
         //finished();
     });
 
-    $('#quit').click(function() {       //If user confirms cancel he is returned to main page
+    $('#quit').click(function () {       //If user confirms cancel he is returned to main page
         window.location = 'index.php';
     });
 
-    $('#quit2').click(function() {       //If user confirms cancel he is returned to main page
+    $('#quit2').click(function () {       //If user confirms cancel he is returned to main page
         window.location = 'index.php';
     });
 
-    $('#button-next').click(function() {       //If user confirms cancel he is returned to main page
-        //postRating();
+    $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
+                                                //postRating();
         loadExperiment();
     });
 
-    $('#button-finished').click(function() {       //If user confirms cancel he is to return to main page
+    $('#button-finished').click(function () {       //If user confirms cancel he is to return to main page
 
         if (isAllVisited()) {
             loadExperiment();
@@ -138,9 +135,9 @@ $(document).ready(function() {
         }
     });
 
-    $('#button-next-rating').click(function() {
+    $('#button-next-rating').click(function () {
         loadExperiment();
-        
+
     });
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
@@ -148,17 +145,32 @@ $(document).ready(function() {
     getExperimentIdPost();
     experimentType(experimentId);        //checks epxerime
 
+    //console.log($( window ).width());
+    //
+    //if($( window ).width() <= 1366)    {
+    //    adjustScaling();
+    //}
+    //
+    //$( window ).resize(function() {
+    //
+    //
+    //    if($( window ).width() < 1366)  {
+    //        adjustScaling();
+    //    }
+    //
+    //});
+
+
     if (type == 1) {
-        postStartData(experimentId); 
+        postStartData(experimentId);
         getSpecificExperimentData(experimentId);
         startNewExperimentForObserver(experimentId);
         loadExperiment();
         updateSortablePosition();
         hideIndicators();
-
         //indicates which two pictures are default loaded into panner. (Always number 1 and 2)
-       pictureInPanner("A", "left");
-       pictureInPanner( "B", "right");
+        pictureInPanner("A", "left");
+        pictureInPanner("B", "right");
     }
 
     IESpecific();
@@ -171,11 +183,11 @@ $(document).ready(function() {
  * @returns {undefined}
  */
 function updateSortablePosition() {
-    var ids = $('#rating-images > div').map(function(i) {       //getting all elements id.
+    var ids = $('#rating-images > div').map(function (i) {       //getting all elements id.
         return this.id;
     }).get();
 
-    var pos = $('#rating-images > div').map(function(i) {       //getting all the elements position.
+    var pos = $('#rating-images > div').map(function (i) {       //getting all the elements position.
         return jQuery(this).index();
     }).get();
 
@@ -245,7 +257,7 @@ function loadReproductionsSortable(data) {
         }
 
 
-       initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
+        initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
         console.log(initialPosition);
         letterCounter++;
 
@@ -253,15 +265,9 @@ function loadReproductionsSortable(data) {
         $('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
     }
 
-    //$('a').nextAll('.panner-side-left').hide();
-    //$('a').prevAll('.panner-side-left').hide();
-    //
-    //$('a').nextAll('.panner-side-right').hide();
-    //$('a').prevAll('.panner-side-right').hide();
 
-    //indicates which two pictures are default loaded into panner. (Always number 1 and 2)
-    //pictureInPanner("panner-side1", null, "left");
-    //pictureInPanner("panner-side2", null, "right");
+    retinaSpecific();
+
 
     updateSortablePosition();
 }
@@ -272,19 +278,19 @@ function loadReproductionsSortable(data) {
  */
 function getExperimentIdPost() {
     $.ajax
-            ({
-                url: 'ajax/observer/getPostData.php',
-                async: false,
-                data: {},
-                dataType: 'json',
-                success: function(data) {
-                    experimentId = data;
-                },
-                error: function(request, status, error) {
-                    alert("Whoopsi!\n Something went wrong.\n\nClose this to be returned to front page.");
-                    window.location = 'index.php';
-                }
-            });
+    ({
+        url: 'ajax/observer/getPostData.php',
+        async: false,
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            experimentId = data;
+        },
+        error: function (request, status, error) {
+            alert("Whoopsi!\n Something went wrong.\n\nClose this to be returned to front page.");
+            window.location = 'index.php';
+        }
+    });
 }
 
 var ratingRunned;
@@ -303,6 +309,7 @@ function onlyInstruction() {
  */
 function loadExperiment() {
     var data = getNextInExperimentForObserver();
+    var dimensions;
 
     if (data['type'] == "experimentinstruction") {              //is instruction
         var instruction = data['experimentinstruction'];        //get's the instruction
@@ -319,8 +326,9 @@ function loadExperiment() {
 
         loadReproductionsSortable(data);                        //get's all images in the experiment
         var originalImageUrl = data[1]['originalUrl'].url;      //getting url of original image
-        loadOriginal(originalImageUrl);                         //loading original picture 
 
+        panningCheck(originalImageUrl);
+        loadOriginal(originalImageUrl);                         //loading original picture
         ratingRunned = 1;
 
     }
@@ -345,7 +353,7 @@ function loadExperiment() {
 function pictureInPanner(initPos, side) {
 
 
-   // console.log(initPos);
+    // console.log(initPos);
 
     if (side == "left") {
         $('#picture-in-panner-left').find('span strong').text(initPos);
@@ -408,7 +416,7 @@ function finished() {
         centerPopup3();
         loadPopup3();
 
-        $('#quit3').click(function() {       //If user confirms cancel he is returned to main page
+        $('#quit3').click(function () {       //If user confirms cancel he is returned to main page
             postRating();
             window.location = 'index.php';
         });
@@ -420,7 +428,7 @@ function finished() {
  * @returns {undefined}
  */
 function postRating() {
-    $('.image-position').each(function() {      //loops through all div with matching class
+    $('.image-position').each(function () {      //loops through all div with matching class
         pictureOrderId = $(this).find('img').attr('id');        //get's Id of the image, which is the pictureOrderId
 
         postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
@@ -467,19 +475,20 @@ function loadImageIntoPanner(pictureOrderId, imageUrl, side) {
  */
 function postResultsRating(experimentId, pictureOrderId) {
     $.ajax
-            ({
-                url: 'ajax/observer/insertIntoResultRating.php',
-                async: false,
-                data: {'type': "rating",
-                    'experimentId': experimentId,
-                    'pictureOrderId': pictureOrderId,
-                },
-                type: 'post',
-                success: function(data) {
-                },
-                error: function(request, status, error) {
-                }
-            });
+    ({
+        url: 'ajax/observer/insertIntoResultRating.php',
+        async: false,
+        data: {
+            'type': "rating",
+            'experimentId': experimentId,
+            'pictureOrderId': pictureOrderId,
+        },
+        type: 'post',
+        success: function (data) {
+        },
+        error: function (request, status, error) {
+        }
+    });
 }
 
 /**
@@ -489,23 +498,24 @@ function postResultsRating(experimentId, pictureOrderId) {
  */
 function experimentType(experimentId) {
     $.ajax
-            ({
-                url: 'ajax/observer/getExperimentType.php',
-                async: false,
-                data: {'experimentId': experimentId,
-                },
-                type: 'post',
-                dataType: 'json',
-                success: function(data) {
-                    if (data[0]['type'] == "rating")
-                        updateType();
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
+    ({
+        url: 'ajax/observer/getExperimentType.php',
+        async: false,
+        data: {
+            'experimentId': experimentId,
+        },
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            if (data[0]['type'] == "rating")
+                updateType();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
 //                    console.log("Error");
 //                    console.log(xhr.status);
 //                    console.log(thrownError);
-                }
-            });
+        }
+    });
 }
 
 /**
@@ -514,4 +524,26 @@ function experimentType(experimentId) {
  */
 function updateType() {
     type = 1;
+}
+
+
+function retinaSpecific() {
+    var retina = (window.retina || window.devicePixelRatio > 1);
+    if (retina) {
+        console.log("Retina detected");
+        $('body').addClass('retina'); // for example
+        $(".image-position img").each(function(){
+            console.log(this);
+            $(this).css({ 'height': '100px', 'width': '100px' });
+        });
+    }
+    else    {
+        console.log("Retina NOT detected");
+        //rescales images for fitment
+        $(".image-position img").each(function(){
+            console.log(this);
+            $(this).css({ 'height': '150px', 'width': '150px' });
+        });
+
+    }
 }
