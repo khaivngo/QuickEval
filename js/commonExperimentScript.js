@@ -1,12 +1,11 @@
-
 var experimentId;
 
-$(document).ready(function() {
-    $(".fullscreen").on('click', function() {
+$(document).ready(function () {
+    $(".fullscreen").on('click', function () {
         goFullscreen();
 
     });
-    $(".fullscreenExit").on('click', function() {
+    $(".fullscreenExit").on('click', function () {
         exitFullscreen();
     });
 });
@@ -20,21 +19,22 @@ function experimentComplete(experimentId) {
     var buffer = getDateTime();
 
     $.ajax
-            ({
-                url: 'ajax/observer/updateExperimentResultData.php',
-                async: false,
-                type: 'POST',
-                data: {"endTime": buffer,
-                    "experimentId": experimentId
-                },
-                success: function(data) {
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    console.log("Error");
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
+    ({
+        url: 'ajax/observer/updateExperimentResultData.php',
+        async: false,
+        type: 'POST',
+        data: {
+            "endTime": buffer,
+            "experimentId": experimentId
+        },
+        success: function (data) {
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log("Error");
+            console.log(xhr.status);
+            console.log(thrownError);
+        }
+    });
 }
 
 /**
@@ -46,22 +46,23 @@ function postStartData(experimentId) {
     var dimension = viewport();
 
     $.ajax
-            ({
-                url: 'ajax/observer/insertExperimentResultData.php',
-                async: false,
-                data: {'os': getOs(),
-                    'xDimension': dimension['width'],
-                    'yDimension': dimension['height'],
-                    'startTime': getDateTime(),
-                    'experimentId': experimentId
-                },
-                type: 'post',
-                success: function(data) {
+    ({
+        url: 'ajax/observer/insertExperimentResultData.php',
+        async: false,
+        data: {
+            'os': getOs(),
+            'xDimension': dimension['width'],
+            'yDimension': dimension['height'],
+            'startTime': getDateTime(),
+            'experimentId': experimentId
+        },
+        type: 'post',
+        success: function (data) {
 
-                },
-                error: function(request, status, error) {
-                }
-            });
+        },
+        error: function (request, status, error) {
+        }
+    });
 }
 
 /**
@@ -75,7 +76,7 @@ function viewport() {
         a = 'client';
         e = document.documentElement || document.body;
     }
-    return {width: e[ a + 'Width' ], height: e[ a + 'Height' ]};
+    return {width: e[a + 'Width'], height: e[a + 'Height']};
 }
 
 /**
@@ -99,8 +100,8 @@ function pad(number, length) {
  */
 function formatTime(time) {
     var min = parseInt(time / 6000),
-            sec = parseInt(time / 100) - (min * 60),
-            hundredths = pad(time - (sec * 100) - (min * 6000), 2);
+        sec = parseInt(time / 100) - (min * 60),
+        hundredths = pad(time - (sec * 100) - (min * 6000), 2);
     return (min > 0 ? pad(min, 2) : "00") + ":" + pad(sec, 2) + ":" + hundredths;
 }
 
@@ -161,19 +162,19 @@ function getDateTime() {
  */
 function getExperimentIdPost() {
     $.ajax
-            ({
-                url: 'ajax/observer/getPostData.php',
-                async: false,
-                data: {},
-                dataType: 'json',
-                success: function(data) {
-                    experimentId = data;
-                },
-                error: function(request, status, error) {
-                    alert("Whoopsi!\n Something went wrong.\n\nClose this to be returned to front page.");
-                    window.location = 'index.php';
-                }
-            });
+    ({
+        url: 'ajax/observer/getPostData.php',
+        async: false,
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            experimentId = data;
+        },
+        error: function (request, status, error) {
+            alert("Whoopsi!\n Something went wrong.\n\nClose this to be returned to front page.");
+            window.location = 'index.php';
+        }
+    });
 }
 
 /**
@@ -190,7 +191,7 @@ function IESpecific() {
     var isChrome = !!window.chrome && !isOpera; // Chrome 1+
     var isIE = /*@cc_on!@*/false || !!document.documentMode; // At least IE6
 
-    if(isFirefox)   {
+    if (isFirefox) {
         $('.image-position').switchClass("image-position", "image-position-moz", 0);
         $('.panner-side-right').switchClass("panner-side-right", "panner-side-right-moz", 0);
     }
@@ -204,13 +205,13 @@ function IESpecific() {
         $('#button-finished').removeClass('button-finished');
         $('#button-finished').addClass('button-finished-IE');
 
-        $('.image-position').each(function(i, obj) {
+        $('.image-position').each(function (i, obj) {
             $(this).removeClass('image-position');
             $(this).addClass('image-position-IE');
         });
 
         $('#popupButtons2').addClass('popupButton-important-IE');
-        $('#rating').css("width","65%");
+        $('#rating').css("width", "65%");
         $('.panner-side-left').switchClass("panner-side-left", "panner-side-left-ie", 0);
         $('.panner-side-right').switchClass("panner-side-right", "panner-side-right-ie", 0);
 
@@ -231,42 +232,42 @@ function IESpecific() {
  */
 function getSpecificExperimentData(experimentId) {
     $.ajax
-            ({
-                url: 'ajax/observer/getSpecificExperimentData.php',
-                async: false,
-                data: {'experimentId': experimentId},
-                dataType: 'json',
-                type: 'post',
-                success: function(data) {
+    ({
+        url: 'ajax/observer/getSpecificExperimentData.php',
+        async: false,
+        data: {'experimentId': experimentId},
+        dataType: 'json',
+        type: 'post',
+        success: function (data) {
 
-                    if (data[0]['isPublic'] == '1 = Public') {
-                    }
-                    else {
-                        console.log("Experiment is NOT public");
-                    }
+            if (data[0]['isPublic'] == '1 = Public') {
+            }
+            else {
+                console.log("Experiment is NOT public");
+            }
 
-                    if (data[0].timer == 0) {
-                        $('#time').hide();
-                    }
-                    
-                    if(data[0].showOriginal == 0)   {  
-                        $('#original').remove();
-                        $('#original-tag').remove();
-                        $('#reproduction').css("margin-left","20%");
-                        $('#left-reproduction').css("margin-left","20%");
-                        $('#drop-left').css("margin-left","23.5%");
-                        $('#drop-right').css("margin-left","3%");
-                        $('#button-finished').css("margin-top","30%");
-                    }
+            if (data[0].timer == 0) {
+                $('#time').hide();
+            }
 
-                    if(data[0].backgroundColour != null)
-                        setBackgroundColour(data[0].backgroundColour);
+            if (data[0].showOriginal == 0) {
+                $('#original').remove();
+                $('#original-tag').remove();
+                $('#reproduction').css("margin-left", "20%");
+                $('#left-reproduction').css("margin-left", "20%");
+                $('#drop-left').css("margin-left", "23.5%");
+                $('#drop-right').css("margin-left", "3%");
+                $('#button-finished').css("margin-top", "30%");
+            }
 
-                },
-                error: function(request, status, error) {
-                    
-                }
-            });
+            if (data[0].backgroundColour != null)
+                setBackgroundColour(data[0].backgroundColour);
+
+        },
+        error: function (request, status, error) {
+
+        }
+    });
 }
 
 /*------------------------------- http://code-tricks.com/fullscreen-browser-window-with-jquery/ --------------------------------------*/
@@ -313,19 +314,79 @@ function setBackgroundColour(colour) {
  * Checks if user has taken the experiment earlier.
  * @returns {undefined}
  */
-function checkIfExperimentTaken()  {
+function checkIfExperimentTaken() {
     $.ajax
-            ({
-                url: 'ajax/observer/getShowTimer.php',
-                async: false,
-                data: {'experimentId': experimentId},
-                type: 'post',
-                dataType: 'json',
-                success: function(data) {
+    ({
+        url: 'ajax/observer/getShowTimer.php',
+        async: false,
+        data: {'experimentId': experimentId},
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
 
-                },
-                error: function(request, status, error) {
+        },
+        error: function (request, status, error) {
 
-                }
-            });
+        }
+    });
 }
+
+/**
+ * Disables panning.
+ */
+function disablePanning() {
+    var $elem;
+
+    $elem = $('#pan1, #pan2, #pan3');
+
+    $elem.panzoom("reset");
+    $elem.panzoom("reset", false);
+    $elem.panzoom("reset", {
+        disableZoom: true
+    });
+}
+
+function adjustScaling()    {
+    var $elem;
+
+    $elem = $('#pan1, #pan2, #pan3');
+
+
+    $elem.panzoom("option", {
+        increment: 0.4,
+        minScale: 0.1,
+        maxScale: 6,
+        duration: 500,
+        $reset: $("a.reset-panzoom, button.reset-panzoom")
+    });
+
+    //$elem.panzoom("resetZoom");
+    //$elem.panzoom("resetZoom", false);
+    //$elem.panzoom("resetZoom", {
+    //    animate: false,
+    //    silent: true,
+    //    zoom: 3
+    //});
+
+    console.log("adjusting scaling");
+}
+
+//
+
+/**
+ * Checks dimensions of picture, and if picture is small enough to disable panning
+ * @param originalUrl location/adress of the original picture.
+ */
+function panningCheck(originalUrl) {
+    var img = new Image();
+
+    img.onload = function () {
+        //console.log("Image dimensions: " + this.width + 'x' + this.height);
+        if (this.width < 500 && this.height < 500)
+            disablePanning();
+    }
+    img.src = originalUrl;
+
+
+}
+
