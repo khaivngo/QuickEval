@@ -76,6 +76,7 @@ $(document).ready(function() {
     allowTies();
     getSpecificExperimentData(experimentId);
     //console.log("All functions OK");
+    //console.log("All functions OK");
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
