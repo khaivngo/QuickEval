@@ -162,7 +162,7 @@ if (isset($_GET["invite"])) {
     <div id="drop-left" class="" style="margin-left: 11%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
             <div class="parent">
-                <a href="" id="left-reproduction-link" target="_blank" class="new-tab"></a>
+                <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan1" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
@@ -176,7 +176,7 @@ if (isset($_GET["invite"])) {
     <div id="original" style="margin-left:1%; margin-right:1%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
             <div class="parent">
-                <a href="" id="original-link" target="_blank" class="new-tab"></a>
+                <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
@@ -190,7 +190,7 @@ if (isset($_GET["invite"])) {
     <div id="drop-right" class="" style=" float:left; height:25%; width: 25%;">
         <section id="set2" style="">
             <div class="parent">
-                <a href="" id="right-reproduction-link" target="_blank" class="new-tab"></a>
+                <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>

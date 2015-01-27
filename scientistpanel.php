@@ -122,7 +122,7 @@ if (isset($_SESSION['user'])) {
                             <li id="set-up-experiment" ><a href="#"><i class="icon-new"></i>Set Up Experiment</a></li>
                             <li id="view-experiments" ><a href="#"><i class="icon-folder"></i>View Experiments</a></li>
                             <li id="import-experiment" ><a href="#"><i class="icon-upload"></i>Import Experiment</a></li>
-                            
+
 
                             <li class="title">Other</li>
                             <li id="invite-scientist" ><a href="#"><i class="icon-user"></i>Invite Scientist</a></li>

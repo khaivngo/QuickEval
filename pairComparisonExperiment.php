@@ -125,7 +125,7 @@ if (isset($_GET["invite"])) {
                 <div id="left-reproduction" class="" style="margin-left: 2%; float:left; width:30%;">
                     <section id="set2" style="">
                         <div class="parent">
-                            <a href="" id="left-reproduction-link" target="_blank" class="new-tab"></a >
+                            <a href="" id="left-reproduction-link" target="_blank"  class="new-tab" onclick="return false;"></a >
                             <div id="pan1" class="panzoom">
                                 <img id="pictureLeft" class="picture" src="images/initiatePicture.png"  />
                             </div>
@@ -136,7 +136,7 @@ if (isset($_GET["invite"])) {
                 <div id="original" class="" style="margin-left: 2%; float:left; width:30%; ">
                     <section id="set2" style="">
                         <div class="parent">
-                            <a href="" id="original-link" target="_blank" class="new-tab"></a >
+                            <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a >
                             <div id="pan3" class="panzoom">
                                 <img id="pictureOriginal" class="picture" src="images/initiatePicture.png"  />
                             </div>
@@ -147,7 +147,7 @@ if (isset($_GET["invite"])) {
                 <div id="right-reproduction" class="right pictureContainer" style="margin-left: 2%; float:left; width:30%; ">
                     <section id="set2" style="">
                         <div class="parent">
-                            <a href="" id="right-reproduction-link" target="_blank" class="new-tab"></a >
+                            <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a >
                             <div id="pan2" class="panzoom">
                                 <img id="pictureRight" class="picture" src="images/initiatePicture.png"  />
                             </div>
