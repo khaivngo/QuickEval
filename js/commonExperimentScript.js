@@ -383,6 +383,7 @@ function panningCheck(originalUrl) {
     img.onload = function () {
         //console.log("Image dimensions: " + this.width + 'x' + this.height);
         if (this.width < 500 && this.height < 500)  {
+             disablePanning();
         }
         else if(this.width < 500 || this.height < 450){
             disablePanning();
