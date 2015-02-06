@@ -338,7 +338,7 @@
                             </select>
                         </div>
                         <div id="submit-div" style="margin-top: 20px">
-                            <button id="submit" class="button primary" style="margin:20px 0">Register</submit>
+                            <button id="submit" class="button primary" style="margin:20px 0">Register</submit></button>
                         </div>
                     </fieldset>
                     <p><i class="icon-flag on-left"></i>Scientists needs of now to register as an observer and email admin to be upgraded to scientist.</p>
