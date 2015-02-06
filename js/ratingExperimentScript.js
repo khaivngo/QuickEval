@@ -325,6 +325,7 @@ function loadExperiment() {
         }
 
         loadReproductionsSortable(data);                        //get's all images in the experiment
+        shuffleImageInSortable();
         var originalImageUrl = data[1]['originalUrl'].url;      //getting url of original image
 
         panningCheck(originalImageUrl);
@@ -545,5 +546,17 @@ function retinaSpecific() {
             $(this).css({ 'height': '150px', 'width': '150px' });
         });
 
+    }
+}
+
+/**
+ * Shuffles all the images loaded into sortable.
+ */
+function shuffleImageInSortable()   {
+    var ratingImages = document.querySelector('#rating-images');    //select correct div.
+
+    //gets length and goes through all elements appending them in different position.
+    for (var i = ratingImages.children.length; i >= 0; i--) {
+        ratingImages.appendChild(ratingImages.children[Math.random() * i | 0]);
     }
 }
