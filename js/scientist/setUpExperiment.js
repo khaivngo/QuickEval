@@ -1006,7 +1006,7 @@ function finishExperiment() {
             hidden = (hidden == 1) ? '0 = Hidden' : '1 = Public';
 
             //Sets up parameters for experiment
-            addObserverParametersPair($('#background-color').val(), +!$('#forced-pick').find('input').prop('checked'), +$('#same-pair').find('input').prop('checked'), +$('#display-original').find('input').prop('checked'), +$('#allow-colourblind').find('input').prop('checked'), hidden, +$('#display-clock').find('input').prop('checked'));
+            addObserverParametersPair($("#background-color").val(), +!$('#forced-pick').find('input').prop('checked'), +$('#same-pair').find('input').prop('checked'), +$('#display-original').find('input').prop('checked'), +$('#allow-colourblind').find('input').prop('checked'), hidden, +$('#display-clock').find('input').prop('checked'));
 
             if (method == "Category judgement") {
                 addCategories(experimentId);
