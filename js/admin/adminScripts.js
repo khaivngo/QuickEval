@@ -54,9 +54,34 @@ function userAccessListeners() {
                     console.log("email was found");
                     getCurrentUserAccess($('#change-access-user').val());
                 }
-            }, 300);
+            }, 150);
         }
     });
+
+
+    $('#change-access-user').mouseup(function() {      //Gets current access of user when email is typed
+        loadUsers();
+        $('.notice').remove();
+        if (validEmail($(this).val())) {            //if the email is valid
+
+            delay(function() {                      //delays the check if email exists and notifies user if not
+                if (checkUserEmail($('#change-access-user').val())) {
+                    $('#change-access-user').after('<div id="notify"><div class="span3" style="margin: 20px"></div>' +
+                    '<div class="bg-red notice marker-on-top span4">' +
+                    'Email not associated with any user' +
+                    '</div></div>');
+//                    delay(function() {                      //removes feedback
+//                        $('#notify').fadeOut();
+//                    }, 1500);
+                } else {            //if email exists, get the owners current access level
+                    console.log("email was found");
+                    getCurrentUserAccess($('#change-access-user').val());
+                }
+            }, 150);
+        }
+    });
+
+
 }
 
 /**
@@ -106,6 +131,7 @@ function getCurrentUserAccess($email) {
         dataType: 'json',
         success: function(data) {
             $('#change-access-type').val(data[0][0]);
+            console.log("Fetched usertype = "+data[0][0]);
         },
         error: function(request, status, error) {
             alert(request.responseText);
@@ -297,10 +323,10 @@ function deleteAnonymous() {
     var date;
     if ($('#delete-anonymous-datepicker').val() == "") {
         date = getDate($('#delete-anonymous-select').val());
-        console.log('User selection:' + $('#delete-anonymous-select').val());
+        //console.log('User selection:' + $('#delete-anonymous-select').val());
     } else {
         date = $('#delete-anonymous-datepicker').val();
-        console.log("Picked date " + $('#delete-anonymous-datepicker').val());
+        //console.log("Picked date " + $('#delete-anonymous-datepicker').val());
     }
 
     deleteAnonymousUsers(date);
@@ -338,7 +364,7 @@ function deleteAnonymousUsers(date) {
  */
 function getDate($age) {
     var date;                                           //Format dd.mm.yyyy
-    console.log("inside getData()");
+    //console.log("inside getData()");
     switch ($age) {
         case 'Delete All' :
             date = 0;
@@ -384,7 +410,7 @@ function loadUsers() {
             for (var i = 0; i < data.length; i++) {         //iterates all returned users
                 var buffer = data[i]['email'];              //saves next email to a temporary variable,
                 users.push(buffer);                         // then pushes it on the array.
-                console.log(buffer);
+                //console.log(buffer);
             }
             $("#change-access-user").autocomplete({
                 source: users
