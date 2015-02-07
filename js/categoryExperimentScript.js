@@ -85,9 +85,8 @@ function loadExperiment2(data) {
     if (data['type'] == "pictureQueue") {                   //picture set
         console.log("is pictureQueue this is picture: "+data[1].url);
 
-        panningCheck(originalUrl);
-        
         var originalImageUrl = data[1]['originalUrl'].url; //getting url of original image
+        panningCheck(originalImageUrl);
         loadOriginal(originalImageUrl); // calls function for setting image.
 
         var reproductionPictureOrder = data[1].pictureOrderId;

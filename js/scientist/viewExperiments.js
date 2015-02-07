@@ -312,17 +312,36 @@ function printResults($experimentId) {
 
         //If pairing experiment
         if (experimentType == 2) {
+            var roundCounter = 0;   //used to identify each round and the belonging divs and elements
+
             //Loads table
 
             //Iterates through all imagesets and creates a table for each
             data[1].forEach(function (t, i) {
-                $('#experiment-results').append('<br/><h4>' + t['name'] + '</h4>');
+                //$('#experiment-results').append('<br/><h4>' + t['name'] + '</h4>');
                 var div = $('<div></div>');
-
 
                 //Loads table
                 div.load('ajax/scientist/pairingExperimentTable.html', function () {
                     var element = $(this);
+
+                    $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
+
+
+                    $("#raw-" + roundCounter + "").append('<table class="table bordered hovered">'+
+                    '<thead>'+
+                    '<tr class="header-list' + roundCounter + '">' +
+                    '<th>'+
+                    '<span class="hint-trigger icon-help" data-hint="Images on the y-axis are the images picked. For example if the value of image x and image y is 2,'+
+                    'the image on the y axis is the one picked twice." data-hint-position="right" style="margin: 0 auto"></span>'+
+                    '</th>'+
+                    '</tr>'+
+                    '</thead>'+
+                    '<tbody class="result-list' + roundCounter + '">' +
+                    '</tbody>'+
+                    '</table>');
+
+
                     $('.hint-trigger').hint(); //Sets up hints as DOM is loaded
 
                     //Iterates through all images for the corresponding imageset
@@ -330,7 +349,7 @@ function printResults($experimentId) {
 
 
                         //Adds imagename to table
-                        element.find('.header-list').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
+                        $('.header-list' + roundCounter + '').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
 
                         var tableRow = '<tr imageId=' + y['id'] + '><th>' + y['name'] + '</th>';
 
@@ -341,14 +360,14 @@ function printResults($experimentId) {
                             tableRow += '<td></td>';
                         }
                         //Appends row
-                        element.find('.result-list').append(tableRow + '</tr>');
+                        $('.result-list' + roundCounter + '').append(tableRow + '</tr>');
                     });
 
 
                     //Initializes results array
                     resultsArray = new Array(data[2][i].length);
 
-                    for (it = 0; it < resultsArray.length; it++) {
+                    for (var it = 0; it < resultsArray.length; it++) {
                         resultsArray[it] = new Array(data[2][i].length);
 
                         for (ita = 0; ita < resultsArray[it].length; ita++) {
@@ -405,39 +424,53 @@ function printResults($experimentId) {
                     imageTitleArray = [];   //empties array for next picture set
 
 
-                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
-
                     highLightFirstTable();
                     activeSeriesClickListener();
 
+                    roundCounter++;    //counts up for next round.
                 });
 
                 //prepareEditLabels();
                 $('#experiment-results').append(div);
-
 
             });
 
 
             //If rank order
         } else if (experimentType == 1) {
+            var roundCounter = 0;        //used to identify each round and the belonging divs and elements
+
             //For each imageset
             data[1].forEach(function (t, i) {
 
-
-                $('#experiment-results').append('<h4>' + t['name'] + '</h4>');
-
                 var div = $('<div></div>');
-
-                //Loads table
+                //Loads raw data table
                 div.load('ajax/scientist/ratingExperimentTable.html', function () {
                     var element = $(this);
+
+                    $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
+
+                    //each round/image set it appends a new table
+                    $("#raw-" + roundCounter + "").append('<table class="table bordered hovered">' +
+                    '<thead>' +
+                    '<tr class="header-list' + roundCounter + '">' +
+                    '<th>' +
+                    ' <span class="hint-trigger icon-help" data-hint="The number represents the position the observer ranked the corresponding image on the x-axis."' +
+                    'data-hint-position="right" style="margin: 0 auto"></span>' +
+                    '</th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody class="result-list' + roundCounter + '">' +
+                    '</tbody>' +
+                    '</table>');
+
+                    $("#raw-" + roundCounter + " table").before('</br><h4>' + t['name'] + '</h4>'); //title of image set
+
                     $('.hint-trigger').hint(); //Sets up hints as DOM is loaded
 
                     //Iterates through all images for the corresponding imageset
                     data[2][i].forEach(function (y, j) {
-
-                        element.find('.header-list').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
+                        $('.header-list' + roundCounter + '').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
                         imageTitleArray.push(y['name']);        //saves each picture title into array for later use
                     });
 
@@ -450,7 +483,6 @@ function printResults($experimentId) {
                         var tableRow = '<tr><th>' + currentRow['person'] + '</th>'; //creates new row and adds observer name
 
                         //console.log("Object size = "+(Object.size(currentRow) - 2));
-                        //var dummy = 0;
                         //Iterates through all results and adds them to row. -3 compensates for original?
                         for (var index = 0; index < (Object.size(currentRow) - 3); index++) {
                             tableRow += '<td>' + currentRow[index] + '</td>';
@@ -459,7 +491,8 @@ function printResults($experimentId) {
                         }
 
                         //Ends and appends row
-                        element.find('.result-list').append(tableRow + '</tr>');
+                        //element.find('.result-list'+roundCounter+'').append(tableRow + '</tr>');
+                        $('.result-list' + roundCounter + '').append(tableRow + '</tr>');
 
                     }
                     //console.log(data);
@@ -469,17 +502,16 @@ function printResults($experimentId) {
 
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
-                    $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
+                    $("#zScores-container").append('</br></br><div id=zscore-' + roundCounter + '><h1>Z-Scores</h1><hr></div>');
 
                     //sends all imagestitles, calculated results and the name of picture set
-                    setZScores(imageTitleArray, zScoreArray, t['name'],data['imageUrl'][i]['url']);
+                    setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url']);
                     imageTitleArray = [];   //empties array for next picture set
-
-                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
 
                     highLightFirstTable();
                     activeSeriesClickListener();
 
+                    roundCounter++; //counts up for next round.
                 });
 
                 $('#experiment-results').append(div);
@@ -487,10 +519,11 @@ function printResults($experimentId) {
             //If category experiment
         } else if (experimentType == 3) {
             var imageUrlIterator = 0;              //used to iterate an array containing original for each picture set
+            var roundCounter = 0;     //used to identify each round and the belonging divs and elements
 
             //console.log(data);
             data['experimentOrders'].forEach(function (experimentOrder, l) {
-                $('#experiment-results').append('<h4>' + data[1][l]['name'] + '</h4>');
+                //$('#experiment-results').append('<h4>' + data[1][l]['name'] + '</h4>');
 
                 //Loads table
                 var div = $('<div></div>');
@@ -498,9 +531,23 @@ function printResults($experimentId) {
 
                 div.load('ajax/scientist/categoryExperimentTable.html', function () {
 
+                    $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
+
+                    $("#raw-" + roundCounter + "").append('<table class="table striped bordered hovered">' +
+                    ' <thead>' +
+                    '<tr class="table-coloumns' + roundCounter + '">' +
+                    '<th class="text-left">Image Name</th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody class="result-list' + roundCounter + '">' +
+                    '</tbody>' +
+                    '</table>');
+
+                    $("#raw-" + roundCounter + " table").before('</br><h4>' + data[1][l]['name'] + '</h4>'); //title of image set
+
                     //Fills categories
                     data[3].forEach(function (category) {
-                        div.find('.table-coloumns').append('<th class="text-left" category=' + category['id'] + '>' + category['name'] + '</th>');
+                        $('.table-coloumns' + roundCounter + '').append('<th class="text-left" category=' + category['id'] + '>' + category['name'] + '</th>');
                     });
 
                     //Fills images, and result data
@@ -525,7 +572,7 @@ function printResults($experimentId) {
                         });
 
                         //Adds row to table
-                        div.find('.result-list').append(row);
+                        $('.result-list' + roundCounter + '').append(row);
                         row.children().each(function (index) {
                             if (index != 0) {
                                 tableRow.push($(this).text() == "" ? 0 : parseInt($(this).text()));
@@ -548,11 +595,10 @@ function printResults($experimentId) {
 
                     imageUrlIterator++;
 
-                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
-
                     highLightFirstTable();
                     activeSeriesClickListener();
 
+                    roundCounter++; //counts up for next round.
                 })
                 //prepareEditLabels();
                 $('#experiment-results').append(div);
@@ -560,9 +606,8 @@ function printResults($experimentId) {
         }
     }
     return resultsArray;
-
-
 }
+
 //http://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
 function arrayObjectIndexOf(myArray, searchTerm, property) {
     for (var i = 0, len = myArray.length; i < len; i++) {
@@ -1315,10 +1360,6 @@ function setZScores(imageTitleArray, zScoresArray, pictureSetTitle, imageUrl) {
     //appends title of picture set
     //loops through array and for each picture prints title, low ci limit, mean z-score and high ci limit in that order.
     for (var i = 0; i < imageTitleArray.length; i++) {
-        //console.log("Low CI limit = " + zScoresArray[0][i]);
-        //console.log("Mean z-score = " + zScoresArray[1][i]);
-        //console.log("High CI limit = " + zScoresArray[2][i]);
-        //console.log(" ");
 
         $('#' + tableId + '').append('<tr><td><b>' + imageTitleArray[i] + '</b></td><td class="right">' + zScoresArray[0][i] + '</td><td class="right">' + zScoresArray[1][i] + '</td><td class="right">' + zScoresArray[2][i] + '</td></tr>')
     }
@@ -1335,14 +1376,15 @@ function tableDivHeader(tableId, pictureSetTitle, check, imageUrl) {
 
     //when there is not enough data to properly calculate z-scores it sets a hint to explain it to the user
 
-    console.log("URL = "+imageUrl);
+    console.log("URL = " + imageUrl);
 
     if (check == 1) {
         //appends the table right before the title of the table displaying raw data
         $("#zScores-container").append('<br/><div>' +
         '<h4>Z-Scores: ' + pictureSetTitle + '<span class="hint-trigger" data-hint="Need more observer-data to be calculated properly" data-hint-position="right"><i class="icon-info on-right"></i></h4>' +
         '<img src="' + imageUrl + '" alt="Original picture" height="20%" width="20%"> ' +
-        '<br/><br/>' +
+        '<br/>' +
+        '<br/>' +
         '<table class="table bordered hovered z-scores">' +
         '<thead>' +
         '   <tr>' +
@@ -1362,10 +1404,10 @@ function tableDivHeader(tableId, pictureSetTitle, check, imageUrl) {
         $("#zScores-container").append('<br/><div>' +
         '<h4>Z-Scores: ' + pictureSetTitle + '</h4>' +
         '<img src="' + imageUrl + '" alt="Original picture" height="20%" width="20%"> ' +
-        '<br/><br/>' +
+        '<br/>' +
+        '<br/>' +
         ' <table class="table bordered hovered z-scores">' +
         '<ad>' +
-        '   <>' +
         ' <th class="text-left">Title</th>' +
         '<th class="text-left">Low CI limit</th>' +
         '<th class="text-left">Mean z-score</th>' +
