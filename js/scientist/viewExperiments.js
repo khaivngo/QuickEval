@@ -324,6 +324,8 @@ function printResults($experimentId) {
                 //Loads table
                 div.load('ajax/scientist/pairingExperimentTable.html', function () {
                     var element = $(this);
+					
+					console.log(element);
 
                     $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
 
@@ -340,6 +342,7 @@ function printResults($experimentId) {
                     '<tbody class="result-list' + roundCounter + '">' +
                     '</tbody>'+
                     '</table>');
+					
 
 
                     $('.hint-trigger').hint(); //Sets up hints as DOM is loaded
@@ -383,16 +386,16 @@ function printResults($experimentId) {
 
                         //If there are chosen pictures in results
                         if (y['chooseNone'] == null) {
-                            pairAddPoints(y['won'], y['pictureId'], y['wonAgainst'], element, data[2][i]);
+                            pairAddPoints(y['won'], y['pictureId'], y['wonAgainst'], element, data[2][i], roundCounter);
 
                         } else { //If there is "choose none" as results
 
                             //Means points was not distributed last iteration
                             //if (currentSet != y['orderId']) {
 
-                            pairAddPoints('0.5', y['pictureId'], y['wonAgainst'], element, data[2][i]);
+                            pairAddPoints('0.5', y['pictureId'], y['wonAgainst'], element, data[2][i], roundCounter);
 
-                            pairAddPoints('0.5', y['wonAgainst'], y['pictureId'], element, data[2][i]);
+                            pairAddPoints('0.5', y['wonAgainst'], y['pictureId'], element, data[2][i], roundCounter);
 
                             //currentSet = y['orderId'];
                             //}
@@ -625,11 +628,16 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
  * @param  {JQuery object} $table       jquery object of table where images are
  * @param  {array} $array       array of image ids
  */
-function pairAddPoints($points, $firstImage, $secondImage, $table, $array) {
+function pairAddPoints($points, $firstImage, $secondImage, $table, $array, $roundIterator) {
     var imageIndex = arrayObjectIndexOf($array, $firstImage, 'id');
     var wonAgainstIndex = arrayObjectIndexOf($array, $secondImage, 'id');
 
-    var resultList = $table.find('.result-list');
+	
+	
+	
+    //var resultList = $table.find('.result-list'+$roundIterator+'');
+	
+	var resultList = $('.result-list'+$roundIterator+'');
     var cell = resultList.find('tr:eq(' + imageIndex + ')').children().eq(wonAgainstIndex + 1);
     cell.html((cell.html() == "") ? parseFloat($points) : +cell.html() + parseFloat($points));
 }
