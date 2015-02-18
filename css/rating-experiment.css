@@ -324,6 +324,7 @@ p {color:white;}
     overflow-x:scroll; 
     white-space:nowrap;
     width:55%;
+
 }
 
 .rating-IE {
@@ -335,7 +336,7 @@ p {color:white;}
 .rating-collection	{
     //bottom: -11%;               /*OBS OBS recheck compatibility*/
     margin-top: 35%;
-    height: 240px;
+    height: 200px;
     background:  #707070;
     padding-right: 25px;
 }
@@ -350,7 +351,7 @@ p {color:white;}
 
     .rating-collection	{
         bottom: -11%;               /*OBS OBS recheck compatibility*/
-        height: 220px;
+        height: 180px;
         background:  #707070;
         padding-right: 25px;
     }
