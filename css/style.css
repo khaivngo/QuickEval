@@ -52,3 +52,18 @@ footer div img {
    height: 0.5em;
 
 }
+
+#delete-instruction {
+    margin:auto;
+}
+
+#delete-instruction select  {
+    width: 400px;
+    overflow:scroll;
+    min-height: 400px;
+}
+
+#field-delete-instruction #submit-delete-instruction, #delete-instruction-dialog {
+    float:right;
+    margin:2px;
+}

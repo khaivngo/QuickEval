@@ -54,7 +54,7 @@ if (isset($_SESSION['user'])) {
         <script src="js/scientist/fileUploadScripts.js"></script>
         <script src="js/scientist/viewExperiments.js"></script>
         <script src="js/scientist/experimentResults.js"></script>
-        <script src="js/scripts.js"></script> 
+        <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
 
 
@@ -126,6 +126,7 @@ if (isset($_SESSION['user'])) {
 
                             <li class="title">Other</li>
                             <li id="invite-scientist" ><a href="#"><i class="icon-user"></i>Invite Scientist</a></li>
+                            <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Delete Instructions</a></li>
 
                         </ul>
                     </nav>
