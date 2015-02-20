@@ -433,7 +433,7 @@ function instructionsInUse(option) {
 function deleteInstructions() {
     var instructions = [];
     var stringInstructions;
-    
+
     $("#sel2 option").each(function () {
         instructions.push($(this).val());
     });
