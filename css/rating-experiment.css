@@ -323,14 +323,14 @@ p {color:white;}
 #rating {
     overflow-x:scroll; 
     white-space:nowrap;
-    width:55%;
+    width:75%; /*22/02/15: enlarged the panner */
 
 }
 
 .rating-IE {
     overflow-x:scroll; 
     white-space:nowrap;
-    width:45%;
+    width:75%; /*22/02/15: enlarged the panner */
 }
 
 .rating-collection	{
@@ -398,13 +398,13 @@ p {color:white;}
 .button-finished    {
     float:right;
     margin-top: 22%;
-    margin-right: 7%;
+    margin-right: 2%; /*22/02/15: moved button slightly to the right*/
 }
 
 .button-finished-IE {
     float:right;
     margin-top: 25%;
-    margin-right: 5%;
+    margin-right: 2%; /*22/02/15: moved button slightly to the right*/
 }
 
 /*-----------------------http://yensdesign.com/tutorials/popupjquery/ ------------------------------------------------------------------------------*/
