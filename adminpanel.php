@@ -56,7 +56,8 @@
                             
                             <li class="title">Experiments</li>
                             <li id="delete-experiments" ><a href="#"><i class="icon-remove"></i>Delete Experiments</a></li>
-                            
+                            <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Manage Instructions</a></li>
+
 
                             
 

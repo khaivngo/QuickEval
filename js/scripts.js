@@ -69,6 +69,7 @@ function getUserSession($var) {
     var userData = new Array();
     $.ajax({
         url: 'ajax/observer/getUserData.php',
+        url: 'ajax/observer/getUserData.php',
         async: false,
         dataType: 'json',
         success: function (data) {
@@ -228,9 +229,9 @@ function setUpLogout() {
 /**
  * Click listenernes and preparation of area.
  */
-function setupClickListenerDeleteInstruction() {
+function setupClickListenerDeleteInstruction(mode) {
 
-    getInstructionForDeletion(1);
+    getInstructionForDeletion(1, mode);
     $("#delete-instruction-dialog").hide();
     submitButtonCheck();
 
@@ -362,27 +363,30 @@ function resetOptions() {
  * Retrieves all instructions associated with user.
  * @param option determines how the script is runned.
  */
-function getInstructionForDeletion(option) {
+function getInstructionForDeletion(option, mode) {
     var i = 0;
-
+    console.log("mode: "+mode);
     $.ajax({
         url: 'ajax/admin/getInstructionsFromHistory.php',
         async: false,
         type: 'POST',
         data: {
-            'option': option
+            'option': option,
+            'mode'  : mode
         },
         dataType: 'json',
         success: function (data) {
+            console.log(data);
             data.forEach(function (instruction) {
                 instructionArray.push({text: instruction.text, title: instruction.title, id: instruction.id});
                 $("#sel1").append($('<option></option>').val(instruction.id).html(instruction.text));
                 i++;
             });
-            instructionsInUse(1);
+            console.log(i);
+            instructionsInUse(1, mode);
         },
         error: function (request, status, error) {
-            alert(request.responseText);
+            console.log(request.responseText);
         }
     });
 }
@@ -392,18 +396,19 @@ var arrayInstructionsInUse = [];
  * Fetches all instructions that belongs to current user and is associated with an experiment.
  * @param option whether to fetch new data or update.
  */
-function instructionsInUse(option) {
+function instructionsInUse(option, mode) {
     if (option == 1) {
         $.ajax({
             url: 'ajax/admin/getInstructionsFromHistory.php',
             async: false,
             type: 'POST',
             data: {
-                'option': 3
+                'option': 3,
+                'mode': mode
             },
             dataType: 'json',
             success: function (data) {
-                //console.log(data);
+                console.log(data);
                 data.forEach(function (instruction) {
                     //saves returned data in an array of objects.
                     arrayInstructionsInUse.push({text: instruction.text, title: instruction.title, id: instruction.id});
@@ -413,7 +418,7 @@ function instructionsInUse(option) {
                 });
             },
             error: function (request, status, error) {
-                alert(request.responseText);
+                console.log(request.responseText);
             }
         });
     }

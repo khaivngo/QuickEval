@@ -51,7 +51,7 @@ $(document).ready(function() {
     $("#delete-instruction").click(function() {
         inject("ajax/scientist/deleteInstruction.html");
         setActive($(this));
-        setupClickListenerDeleteInstruction();
+        setupClickListenerDeleteInstruction(1);
     });
 
 

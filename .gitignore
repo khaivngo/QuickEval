@@ -1,3 +1,6 @@
 uploads/
 .idea/scopes/scope_settings.xml
 .idea/QuickEval.iml
+.idea/.name
+.idea/
+*.stackdump
