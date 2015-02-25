@@ -308,6 +308,8 @@ function exitFullscreen() {
  */
 function setBackgroundColour(colour) {
     $('body').css('background-color', '' + colour + '!important');
+    $('#rating').css('background-color', '' + colorLuminance(colour, -0.2) + '!important');
+
 }
 
 /**
@@ -396,3 +398,34 @@ function panningCheck(originalUrl) {
 
 }
 
+
+/**
+ *Returns either a shade darker or lighter than input. Does not work if the color is entirely black
+ * eg. #000, #000000.
+ *
+ * @param hex — a hex color value such as “#abc” or “#123456″ (the hash is optional)
+ * @param lum — the luminosity factor, i.e. -0.1 is 10% darker, 0.2 is 20% lighter, etc.
+ * @returns {string} the color that is either lighter or darker
+ * @constructor
+ *
+ * @author {http://www.sitepoint.com/javascript-generate-lighter-darker-color/}
+ */
+function colorLuminance(hex, lum) {
+
+    // validate hex string
+    hex = String(hex).replace(/[^0-9a-f]/gi, '');
+    if (hex.length < 6) {
+        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    }
+    lum = lum || 0;
+
+    // convert to decimal and change luminosity
+    var rgb = "#", c, i;
+    for (i = 0; i < 3; i++) {
+        c = parseInt(hex.substr(i*2,2), 16);
+        c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+        rgb += ("00"+c).substr(c.length);
+    }
+
+    return rgb;
+}

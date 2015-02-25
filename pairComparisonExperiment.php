@@ -121,7 +121,7 @@ if (isset($_GET["invite"])) {
             </div>
 
             <div id="pair-container">
-                <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
+                <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
                 <div id="left-reproduction" class="" style="margin-left: 2%; float:left; width:30%;">
                     <section id="set2" style="">
                         <div class="parent">

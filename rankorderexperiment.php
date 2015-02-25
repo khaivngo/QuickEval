@@ -157,7 +157,7 @@ if (isset($_GET["invite"])) {
 </div>
 
 <div id="rating-container">
-    <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
+    <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
 
     <div id="drop-left" class="" style="margin-left: 11%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
@@ -206,7 +206,8 @@ if (isset($_GET["invite"])) {
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 <div id="rating" class="footer rating-collection center" style="">
-    <div id="rating-images"></div>
+    <div id="rating-images">
+    </div>
 
 </div>
 

@@ -1,5 +1,4 @@
 var type;
-
 $(document).ready(function () {
 
     var container = $('body');
@@ -13,8 +12,14 @@ $(document).ready(function () {
         stop: function (event, ui) {
             var position = ui.item.index() + 1; //getting new position of element
             var id = ui.item[0].id; //getting id of touched element
-            $("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
 
+            //$("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
+
+            if ($("#rating-images #" + id + " #initial-position").children().length == 0) {               //Checks if element have been touched before.
+                $("#rating-images #" + id + " #initial-position").append(' <i class="icon-eye"></i>');     //Adds icon of eye telling observer thumbnail have been touched.
+            }
+
+            addToTouchArray(id);
             updateSortablePosition();
         }
     });
@@ -75,7 +80,6 @@ $(document).ready(function () {
                 $('#drop-right').find('img').remove();
                 $('#pan2').prepend('<img class="picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
 
-
                 pictureInPanner(fetchedInitialPosition2, "right");
             }
         });
@@ -117,7 +121,7 @@ $(document).ready(function () {
     });
 
     $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
-                                                //postRating();
+        //postRating();
         loadExperiment();
     });
 
@@ -143,22 +147,7 @@ $(document).ready(function () {
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
     getExperimentIdPost();
-    experimentType(experimentId);        //checks epxerime
-
-    //console.log($( window ).width());
-    //
-    //if($( window ).width() <= 1366)    {
-    //    adjustScaling();
-    //}
-    //
-    //$( window ).resize(function() {
-    //
-    //
-    //    if($( window ).width() < 1366)  {
-    //        adjustScaling();
-    //    }
-    //
-    //});
+    experimentType(experimentId);
 
 
     if (type == 1) {
@@ -183,6 +172,8 @@ $(document).ready(function () {
  * @returns {undefined}
  */
 function updateSortablePosition() {
+    var i;
+
     var ids = $('#rating-images > div').map(function (i) {       //getting all elements id.
         return this.id;
     }).get();
@@ -193,7 +184,7 @@ function updateSortablePosition() {
 
     var arrayLength = ids.length;              //get's length of the id array.
 
-    for (var i = 0; i < arrayLength; i++) {             //goes through array and calls function which sets 
+    for (i = 0; i < arrayLength; i++) {             //goes through array and calls function which sets
         // new position indicator for each.
         setPosition(ids[i], pos[i] + 1); //pos+1 because it starts on 0.
     }
@@ -240,11 +231,12 @@ function loadReproductionsSortable(data) {
     var length;
     var initialPosition;
     var letterCounter = 0;
+    var i;
 
     $('#rating-images').empty();                //empties div for the next pictures to be loaded
     length = Object.keys(data).length - 1;
 
-    for (var i = 1; i <= length; i++) {                         //goes through all objects getting their data.
+    for (i = 1; i <= length; i++) {                         //goes through all objects getting their data.
         var reproductionImageUrl = data[i].url;                 //getting url
         var reproductionPictureOrder = data[i].pictureOrderId;  //getting id
 
@@ -258,7 +250,7 @@ function loadReproductionsSortable(data) {
 
 
         initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
-        console.log(initialPosition);
+        //console.log(initialPosition);
         letterCounter++;
 
         //each picture is appended to the sortable
@@ -326,6 +318,8 @@ function loadExperiment() {
 
         loadReproductionsSortable(data);                        //get's all images in the experiment
         shuffleImageInSortable();
+        updateSortablePosition();
+
         var originalImageUrl = data[1]['originalUrl'].url;      //getting url of original image
 
         panningCheck(originalImageUrl);
@@ -352,17 +346,11 @@ function loadExperiment() {
  * @param side which panner to update.
  */
 function pictureInPanner(initPos, side) {
-
-
-    // console.log(initPos);
-
     if (side == "left") {
         $('#picture-in-panner-left').find('span strong').text(initPos);
-
     }
     else if (side == "right") {
         $('#picture-in-panner-right').find('span strong').text(initPos);
-
     }
 }
 
@@ -379,21 +367,16 @@ function hideIndicators() {
 }
 
 /**
- * Loops through all matching divs and checks,
- * whether they have been visited or not.
- * Returns true if all have been visited(touched).
- * @returns {Boolean} Returns false if one is not visited.
+ * Checks if array containing touched element ids matches the number of thumbnails.
+ * Returns true if all have been touched and false if not all have been touched.
+ * @returns {boolean} whether all thumbnails have been touched.
  */
 function isAllVisited() {
     var numItems = $('.image-position').length;     //gets the number of divs with particular class
 
-    for (var i = 1; i <= numItems; i++) {
-        var hasClass = $('image-position, #' + i + '').hasClass('touched');
-        if (!hasClass) {
-            return false;           //one div has not been touched.
-        }
-    }
-    return true;                //all div have been visited.
+    if (numItems == touchedArray.length) return true;
+
+    return false;
 }
 
 /**
@@ -527,23 +510,25 @@ function updateType() {
     type = 1;
 }
 
-
+/**
+ * Rezises thumbnails container if retina.
+ */
 function retinaSpecific() {
     var retina = (window.retina || window.devicePixelRatio > 1);
     if (retina) {
-        console.log("Retina detected");
+        //console.log("Retina detected");
         $('body').addClass('retina'); // for example
-        $(".image-position img").each(function(){
-            console.log(this);
-            $(this).css({ 'height': '100px', 'width': '100px' });
+        $(".image-position img").each(function () {
+            //console.log(this);
+            $(this).css({'height': '100px', 'width': '100px'});
         });
     }
-    else    {
-        console.log("Retina NOT detected");
+    else {
+        //console.log("Retina NOT detected");
         //rescales images for fitment
-        $(".image-position img").each(function(){
-            console.log(this);
-            $(this).css({ 'height': '150px', 'width': '150px' });
+        $(".image-position img").each(function () {
+            //console.log(this);
+            $(this).css({'height': '150px', 'width': '150px'});
         });
 
     }
@@ -552,11 +537,26 @@ function retinaSpecific() {
 /**
  * Shuffles all the images loaded into sortable.
  */
-function shuffleImageInSortable()   {
+function shuffleImageInSortable() {
+    console.log("shuffle");
     var ratingImages = document.querySelector('#rating-images');    //select correct div.
 
     //gets length and goes through all elements appending them in different position.
     for (var i = ratingImages.children.length; i >= 0; i--) {
         ratingImages.appendChild(ratingImages.children[Math.random() * i | 0]);
+    }
+}
+
+/**
+ * Adds ID of elements to array if it does not already exists.
+ * @type {Array}
+ */
+var touchedArray = [];
+function addToTouchArray(touchedId) {
+    var found = touchedArray.some(function (el) {
+        return el == touchedId;
+    });
+    if (!found) {
+        touchedArray.push(touchedId);
     }
 }

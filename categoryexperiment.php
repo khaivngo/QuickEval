@@ -124,7 +124,7 @@ if (isset($_GET["invite"])) {
         </div>
 
         <div id="category-container" class="align" style=" text-align:center;">
-            <span id="original-tag" class="span-original-tag">Original</span>
+            <span id="original-tag" class="span-original-tag"><p>Original</p></span>
             <br>
             <div id="original" style="float:left; width: 40%; height:40%;">
                 <section id="set1" >
