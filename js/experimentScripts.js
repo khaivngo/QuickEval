@@ -17,7 +17,7 @@ $(document).ready(function() {
             $set: $section.find('.parent > div'),
             contain: 'invert',
             minScale: 1,
-            maxScale: 1.3
+            maxScale: 1.30
 
         }).panzoom('zoom');
     })();
