@@ -1,6 +1,22 @@
 
 $(document).ready(function() {
 
+    (function () {
+        var $section = $('#set1, #set2, #set3');
+        $section.find('.panzoom').panzoom({
+            $zoomIn: $section.find(".zoom-in"),
+            $zoomOut: $section.find(".zoom-out"),
+            $zoomRange: $section.find(".zoom-range"),
+            $reset: $section.find(".reset"),
+            $set: $section.find('.parent > div'),
+            contain: 'invert',
+            minScale: 1,
+            maxScale: 1.21
+        }).panzoom('zoom');
+    })();
+
+
+
     $('#reproduction-link').on('click', function() {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#reproduction-link').attr('href');      //fetching url of picture
@@ -26,6 +42,10 @@ $(document).ready(function() {
     startNewExperimentForObserver(experimentId);
     loadExperiment2();
     fillCategories();
+
+
+
+
 
 });
 

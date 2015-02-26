@@ -27,19 +27,8 @@ $(document).ready(function () {
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
-    (function () {
-        var $section = $('#set1, #set2, #set3');
-        $section.find('.panzoom').panzoom({
-            $zoomIn: $section.find(".zoom-in"),
-            $zoomOut: $section.find(".zoom-out"),
-            $zoomRange: $section.find(".zoom-range"),
-            $reset: $section.find(".reset"),
-            $set: $section.find('.parent > div'),
-            contain: 'invert',
-            minScale: 1,
-            maxScale: 1.30
-        }).panzoom('zoom');
-    })();
+
+
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
@@ -121,7 +110,7 @@ $(document).ready(function () {
     });
 
     $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
-        //postRating();
+                                                //postRating();
         loadExperiment();
     });
 
@@ -148,6 +137,25 @@ $(document).ready(function () {
 
     getExperimentIdPost();
     experimentType(experimentId);
+
+
+    if (type == 1) {
+        console.log("scaling for rank order");
+        (function () {
+            var $section = $('#set1, #set2, #set3');
+            $section.find('.panzoom').panzoom({
+                $zoomIn: $section.find(".zoom-in"),
+                $zoomOut: $section.find(".zoom-out"),
+                $zoomRange: $section.find(".zoom-range"),
+                $reset: $section.find(".reset"),
+                $set: $section.find('.parent > div'),
+                contain: 'invert',
+                minScale: 1,
+                maxScale: 1.66
+            }).panzoom('zoom');
+        })();
+
+    }
 
 
     if (type == 1) {
