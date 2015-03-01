@@ -125,7 +125,7 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons4" class="popupButtons">
-        <button id="continue4" class="button size2" style="">Coninue</button>
+        <button id="continue4" class="button size2" style="">Continue</button>
         <button id="button-next-rating" class="button size2">Next</button>
     </div>
 </div>
