@@ -342,7 +342,7 @@ function loadExperiment() {
         $("#button-finished").text("Finish");
         $('#contactArea').empty();                              //changes content of popup
         $('#continue').hide();
-        $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
+        //$('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
         // $('#cancel-experiment').trigger('click');
     }
 }
@@ -387,23 +387,35 @@ function isAllVisited() {
     return false;
 }
 
+var check1 = 0;
+var check2 = 0;
 /**
  * User is has clicked finished.
  * Function post results and returns user to front page.
  * @returns {undefined}
  */
 function finished() {
+
     if (isAllVisited()) {           //all have been visited, if valid user is at this stage considered finished.
         postRating();
         //changes content of popup dependent on whether user has visited all or not.
         $('#contactArea').empty();
         $('#popupButtons3').css({"margin-left": "-3.5"});
-        $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
+
+        if(check1 == 0)  {
+            $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
+            check1 = 1;
+        }
+
         $('#cancel-experiment').trigger('click');
     }
     else {
         $('#popupButtons3').css({"margin-left": "-7.5%"});
-        $('#contactArea3').append("You sure you want to finish?, All pictures haven't been sorted <br><br> Click Quit to return to front page or Continue to keep sorting.");
+
+        if(check2 == 0)  {
+            $('#contactArea3').append("You sure you want to finish? All pictures haven't been sorted. <br><br> Click Quit to return to front page or Continue to keep sorting.");
+            check2 = 1;
+        }
 
         centerPopup3();
         loadPopup3();
