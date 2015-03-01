@@ -28,9 +28,7 @@ $(document).ready(function () {
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
 
-
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------  
+//----------------------------------------------------------------------------------------------------------------------------------------------------
 
     //left drag panner/ drop area
     $(function () {
@@ -110,7 +108,7 @@ $(document).ready(function () {
     });
 
     $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
-                                                //postRating();
+        //postRating();
         loadExperiment();
     });
 
@@ -402,7 +400,7 @@ function finished() {
         $('#contactArea').empty();
         $('#popupButtons3').css({"margin-left": "-3.5"});
 
-        if(check1 == 0)  {
+        if (check1 == 0) {
             $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
             check1 = 1;
         }
@@ -412,7 +410,7 @@ function finished() {
     else {
         $('#popupButtons3').css({"margin-left": "-7.5%"});
 
-        if(check2 == 0)  {
+        if (check2 == 0) {
             $('#contactArea3').append("You sure you want to finish? All pictures haven't been sorted. <br><br> Click Quit to return to front page or Continue to keep sorting.");
             check2 = 1;
         }
@@ -431,12 +429,19 @@ function finished() {
  * Gets the information about pictures in sortable elements in sequence and for later insertion into DB.
  * @returns {undefined}
  */
+var postOnce = 0;
 function postRating() {
-    $('.image-position').each(function () {      //loops through all div with matching class
-        pictureOrderId = $(this).find('img').attr('id');        //get's Id of the image, which is the pictureOrderId
+    if (postOnce == 0) {
+        $('.image-position').each(function () {      //loops through all div with matching class
+            pictureOrderId = $(this).find('img').attr('id');        //get's Id of the image, which is the pictureOrderId
 
-        postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
-    });
+            postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
+        });
+        postOnce = 1;
+
+    }
+
+
 }
 
 /**
