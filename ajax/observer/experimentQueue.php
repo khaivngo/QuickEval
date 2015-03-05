@@ -3,8 +3,8 @@
  * This file controls everything with retrieving pictures and instructions when doing an experiment.
  */
 require_once('../../db.php');
-
 $option = $_GET['option'];
+
 if($option == "startNewObserverExperiment") {
 	$experimentId = $_GET['experimentId'];
 	$_SESSION['user']['activeObserverExperiment'] = $experimentId;
@@ -29,7 +29,7 @@ if($option == "startNewObserverExperiment") {
 
 
 else if($option == "getNextPosition") {
-	//echo "</br>GetNextPosition";
+	//echo "GetNextPosition</br>";
 	if($_SESSION['activeObserverExperiment'] == null) {
 		echo json_encode(array("type" => "finished"));
 		return;	
@@ -146,7 +146,13 @@ function newPictureQueue($db) {
 	$sth->bindParam(1,$_SESSION['activeObserverExperiment']['activeExperimentOrder']['eOrder']);
 	$sth->execute();
 	$result = $sth->fetchAll();
-	$_SESSION['activeObserverExperiment']['pictureOrder'] = $result;
+
+      //  if($_SESSION['activeObserverExperiment']['sortingalgorithm'] == 1) {
+            shuffle($result);
+       // }
+	$_SESSION['activeObserverExperiment']['pictureOrder'] = $result;                
+        
+        
 	if($exType == "pair") {		//Pair comparison will always return two pictures.  "0" and "1" are indexes in the stored array.
 	//	echo "<br/>PairComparisjoN";
 			$_SESSION['activeObserverExperiment']['activePictureOrder'] = array(0 => 0, 1 => 1);
