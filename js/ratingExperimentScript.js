@@ -238,9 +238,12 @@ function loadReproductionsSortable(data) {
     var initialPosition;
     var letterCounter = 0;
     var i;
+    var numberArray;
 
     $('#rating-images').empty();                //empties div for the next pictures to be loaded
     length = Object.keys(data).length - 1;
+
+    numberArray = shuffleArray(Array.apply(null, {length: length}).map(Number.call, Number));   //Gets an shuffle array within the range of amount of pictures.
 
     for (i = 1; i <= length; i++) {                         //goes through all objects getting their data.
         var reproductionImageUrl = data[i].url;                 //getting url
@@ -255,7 +258,8 @@ function loadReproductionsSortable(data) {
         }
 
 
-        initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
+        initialPosition = String.fromCharCode('A'.charCodeAt(0) + numberArray[letterCounter]+1);    //Uses shuffled array to get letter,
+        //initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);                 // images gets therefore assign a random letter within the range.
         //console.log(initialPosition);
         letterCounter++;
 
@@ -263,10 +267,7 @@ function loadReproductionsSortable(data) {
         $('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
     }
 
-
     retinaSpecific();
-
-
     updateSortablePosition();
 }
 
@@ -563,7 +564,6 @@ function retinaSpecific() {
  * Shuffles all the images loaded into sortable.
  */
 function shuffleImageInSortable() {
-    console.log("shuffle");
     var ratingImages = document.querySelector('#rating-images');    //select correct div.
 
     //gets length and goes through all elements appending them in different position.
@@ -584,4 +584,18 @@ function addToTouchArray(touchedId) {
     if (!found) {
         touchedArray.push(touchedId);
     }
+}
+
+/**
+ * Randomize array element order in-place.
+ * Using Fisher-Yates shuffle algorithm.
+ */
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
 }
