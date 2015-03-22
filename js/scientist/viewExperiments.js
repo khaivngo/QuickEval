@@ -585,9 +585,8 @@ function printResults($experimentId) {
                         //console.log(tableRow);
                     });
 
-                    calculatePlots(tableResult, true);
-                    zScoreArray = calculatePlots(tableResult, true);
-
+					// calculate z-scores for categoryjudgement
+                    zScoreArray = calculatePlotsCategory(tableResult, true);
                     addSeries(imageTitleArray, zScoreArray, data[1][l]['name']);        //Add experiments data to graph
 
                     $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
@@ -676,7 +675,6 @@ function getExportResultsURL($experimentId) {
     ($('#parameter-complete').find('input').prop('checked')) ? url += '&complete=1' : '';
     return url;
 }
-
 
 function calculatePlots($frequencyMatrix, $category) {
 
@@ -776,6 +774,267 @@ function calculatePlots($frequencyMatrix, $category) {
 
     return [lowCILimit, meanZScore, highCILimit, feedback];
 }
+
+
+function calculatePlotsCategory($frequencyMatrix, $category) {
+    var observerAmount = 0;
+    var cumulativeFrequencyTable;
+    var cumulativePercentageTable;
+
+    //Calculates number of observers
+    if ($category) { //Category uses non square matrix, counts first row results
+        for (var i = 0; i < $frequencyMatrix[0].length; i++) {
+            observerAmount += parseInt($frequencyMatrix[0][i]);
+        }
+    } else {
+        observerAmount = $frequencyMatrix[0][1] + $frequencyMatrix[1][0];
+    }
+
+    if ($category) {
+        cumulativeFrequencyTable = calculateCumulative($frequencyMatrix, true);
+    }
+
+    //Calculates a percentage matrix of the results
+    var PercentageMatrix = calculatePercentageMatrix($category ? cumulativeFrequencyTable : $frequencyMatrix, observerAmount);
+	
+    //Calculates a LFMatrix of the results, using percentage matrix
+
+    var LFMatrix = calculateLFMatrix($category ? cumulativeFrequencyTable : $frequencyMatrix, observerAmount, $category);
+
+    //Parses the LF Matrix into a single row of results
+    var LFMValues = parseLFMValues(LFMatrix, $category);
+
+
+    //Calculates the Z-score values as a single array
+    var ZScoreValues = calculateZScoreValues(PercentageMatrix, $category);
+
+	//Setting up identity matrix
+	var eyeMatrix = im($frequencyMatrix[0].length-1); 
+	
+	//Setting up X matrix (code is a bit messy, but it works). Done accoring to the "Colour Engineering Toolbox" by Phil Green
+	var X1 = []; 
+	X1 = matrix(cumulativeFrequencyTable.length*($frequencyMatrix[0].length-1),$frequencyMatrix[0].length-1,0); 
+	var roundCounter = 0; 
+	for (var j=0; j<$frequencyMatrix[0].length-1; j++){
+		for (var k=0; k<cumulativeFrequencyTable.length; k++){
+			for( var i=0; i<$frequencyMatrix[0].length-1; i++){
+					X1[roundCounter][i] = eyeMatrix[j][i];				
+			}
+			roundCounter++; 
+		}
+	}
+	
+	
+	var eyeMatrixNegative = imnegative(cumulativeFrequencyTable.length); 
+	var X2 = []; 
+	X2 = matrix(cumulativeFrequencyTable.length*($frequencyMatrix[0].length-1),eyeMatrixNegative.length,0); 
+	
+	var roundCounter = 0; 
+		for (var k=0; k<$frequencyMatrix[0].length-1; k++){
+			for (var j=0; j<eyeMatrixNegative.length; j++){
+				for( var i=0; i<eyeMatrixNegative.length; i++){
+						X2[roundCounter][i] = eyeMatrixNegative[j][i];				
+				}
+				roundCounter++; 
+			}
+		}
+		
+		var X = [];
+		for (var k=0; k<X2.length; k++){
+			X[k] = X1[k].concat(X2[k]); 
+		}
+ 
+		var Xtemp= [];
+			for( var i=0; i<X[0].length; i++){
+				if(i<$frequencyMatrix[0].length-1){
+					Xtemp[i] = 0; 
+				}
+				else
+				{
+					Xtemp[i] = 1; 
+				}
+			}
+		X.push(Xtemp);
+		
+		//initial z-scores values extracted
+		var v = ZScoreValues[0];
+		
+		//reformat V to fit with analysis later
+		var vv = []; 
+		for (var j=0; j< ($frequencyMatrix[0].length-1);  ++j) {
+			for (var k = j; k < v.length; k += (PercentageMatrix[0].length)) {
+			vv.push(v[k]);
+		}
+		}
+		v = vv;  
+		v.push(0);
+
+		var indexes = getAllIndexes(v, 3); //findng "infs"
+		indexes = indexes.concat(getAllIndexes(v, -3)); //findng "infs" (also the negative ones)
+		indexes.sort();
+		
+		for (var i =0; i<indexes.length; i++){
+			v.splice(indexes[i]-i, 1 );
+			X.splice(indexes[i]-i, 1 );
+		}
+		
+		// least-squares solution
+		var Xtransposed = []; 
+		Xtransposed = transpose(X);	
+		var Xtemp2 = [];
+		Xtemp2 = matrix(X[0].length,X[0].length,0); 
+		var OneDirection = [];
+		var TwoDirection = [];
+		for( var i=0; i<X[0].length; i++){
+			for (var j=0; j<X[0].length; j++){	
+					for (var k=0; k<Xtransposed[0].length; k++){
+						OneDirection[k] = X[k][j]; 
+						TwoDirection[k] = Xtransposed[i][k];
+					}
+					Xtemp2[j][i] = dot_product(TwoDirection,OneDirection);	// X'*X					
+				}
+			}			
+	
+			
+		var Xtemp3 = []; 				
+		for (var i=0; i<X[0].length; i++){
+			for (var k=0; k<Xtransposed[0].length; k++){
+				TwoDirection[k] = Xtransposed[i][k]					
+			}
+			Xtemp3[i] = dot_product(TwoDirection,v);	// X'*v	
+		}			
+	
+	//including math.js to to inverse, sum and absolute. 
+	includeJs("/Quickeval-develop/js/scientist/math.js");
+
+	//if we cannot invert Xtemp2, then we cannot calculate z-scores.  Does a check here, and then display an error message
+	breakC = 0; 
+	var meanZScore = []; 
+	var lowCILimit = []; 
+	var highCILimit = [];
+	for (var i=0; i<Xtemp2[0].length; i++){
+		if(math.sum(math.abs(Xtemp2[i]))==0){
+			breakC = 1; 
+			
+			for (var j=0; j<ZScoreValues[0].length; j++){
+				meanZScore[j] = 0; //setting values to 0 if we cannot invert Xtemp2
+				lowCILimit[j] = 0; 
+				highCILimit[j] = 0; 
+			}
+		}
+	}
+	
+	if(breakC == 1){
+		window.alert("Not enough data to calculate Z-scores. In order to calculate z-scores at least one row needs to be complete. All values are set to '0'.");
+	} 
+	else{ //If we can invert it, then do the calculations. 
+	Ytemp = math.inv(Xtemp2); 
+	
+	var Y  = [];
+	var ThreeDirection = []; 	
+		for (var i=0; i<X[0].length; i++){
+			for (var k=0; k<Ytemp[0].length; k++){
+				ThreeDirection[k] = Ytemp[i][k];		
+			}
+			Y[i] = dot_product(ThreeDirection,Xtemp3);	
+		}
+		Y = Y.slice($frequencyMatrix[0].length-1,Y.length); //the two first numbers are category boundaries, so they are not needed here. 
+
+    var feedback = ZScoreValues[1];
+   
+   //Formatting the z-scores to have 3 decimals
+    var meanZScore = Y.map(function (num) {
+       return parseFloat(num.toFixed(3));
+    });
+
+	 //Finding standard deviation 
+    var standardDeviation = 1.96 * (1 / Math.sqrt(2)) / Math.sqrt(observerAmount);  //Must be changed
+
+    var SDArray = calculateSDMatrix($frequencyMatrix);
+
+    //Calculates the high confidence interval limits
+    var highCILimit = meanZScore.map(function (num, i) {
+        return parseFloat((num + SDArray[i]).toFixed(3));
+    });
+
+    //Calculates the low confidence interval limits
+    var lowCILimit = meanZScore.map(function (num, i) {
+        return parseFloat((num - SDArray[i]).toFixed(3));
+    });
+	}
+    return [lowCILimit, meanZScore, highCILimit, feedback];
+	
+}
+
+//Get indexes
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+    }
+    return indexes;
+}
+
+
+//Function to include a JS file (needed for math.js) 
+function includeJs(jsFilePath) {
+    var js = document.createElement("script");
+
+    js.type = "text/javascript";
+    js.src = jsFilePath;
+
+    document.body.appendChild(js);
+}
+
+//Function to calculate dot_product
+function dot_product(ary1, ary2) {
+    if (ary1.length != ary2.length)
+        throw "can't find dot product: arrays have different lengths";
+    var dotprod = 0;
+    for (var i = 0; i < ary1.length; i++)
+        dotprod += ary1[i] * ary2[i];
+    return dotprod;
+}
+ 
+//Function to transpose a matrix
+function transpose(a) {
+    return Object.keys(a[0]).map(
+        function (c) { return a.map(function (r) { return r[c]; }); }
+        );
+    }
+
+function matrix( rows, cols, defaultValue){
+
+  var arr = [];
+
+  // Creates all lines:
+  for(var i=0; i < rows; i++){
+
+      // Creates an empty line
+      arr.push([]);
+
+      // Adds cols to the empty line:
+      arr[i].push( new Array(cols));
+
+      for(var j=0; j < cols; j++){
+        // Initializes:
+        arr[i][j] = defaultValue;
+      }
+  }
+
+return arr;
+}
+
+function im(n) {
+    return Array.apply(null, new Array(n)).map(function(x, i, a) { return a.map(function(y, k) { return i === k ? 1 : 0; }) });
+}
+
+function imnegative(n) {
+    return Array.apply(null, new Array(n)).map(function(x, i, a) { return a.map(function(y, k) { return i === k ? -1 : 0; }) });
+}
+
+//
+
 
 function calculateCumulative($frequencyMatrix, $pop) {
 

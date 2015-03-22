@@ -56,7 +56,8 @@ if (isset($_SESSION['user'])) {
         <script src="js/scientist/experimentResults.js"></script>
         <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
-
+		
+		<script src="js/scientist/math.js" ></script>
 
         <script type="text/javascript">
             hs.graphicsDir = 'images/graphics/';
