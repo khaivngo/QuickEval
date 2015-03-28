@@ -27,7 +27,13 @@ $(document).ready(function() {
     $("#button-next-category").on('click', function() {
         var selected = $('#categories option').filter(':selected').val();
         if (selected == "null") {       //if the option is not a valid category = option is disabled
-
+			$.Notify({
+            content: "Please select a category...",
+			style: {
+                        background: 'darkred',
+                        color: 'white'
+                    },
+        });
         }
         else {              //valid option goes next.
             nextImageCategory(1);
