@@ -159,6 +159,7 @@ $(document).ready(function () {
     if (type == 1) {
         postStartData(experimentId);
         getSpecificExperimentData(experimentId);
+        deleteOldResults(experimentId);
         startNewExperimentForObserver(experimentId);
         loadExperiment();
         updateSortablePosition();

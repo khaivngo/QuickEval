@@ -31,7 +31,7 @@ $(document).ready(function() {
         }
         else {              //valid option goes next.
             nextImageCategory(1);
-            console.log("NextImageCategory");
+            //console.log("NextImageCategory");
             $("#categories").val('null');
         }
     });
@@ -39,13 +39,10 @@ $(document).ready(function() {
     getExperimentIdPost();
     getSpecificExperimentData(experimentId);
     postStartData(experimentId);
+    deleteOldResults(experimentId);
     startNewExperimentForObserver(experimentId);
     loadExperiment2();
     fillCategories();
-
-
-
-
 
 });
 
@@ -88,7 +85,7 @@ var test= 0;
 function loadExperiment2(data) {
     var data;
      
-     console.log("TEST: "+(test++));
+     //console.log("TEST: "+(test++));
 
     if (runned <= 1) {
         data = getNextInExperimentForObserver();
@@ -103,7 +100,7 @@ function loadExperiment2(data) {
     }
 
     if (data['type'] == "pictureQueue") {                   //picture set
-        console.log("is pictureQueue this is picture: "+data[1].url);
+        //console.log("is pictureQueue this is picture: "+data[1].url);
 
         var originalImageUrl = data[1]['originalUrl'].url; //getting url of original image
         panningCheck(originalImageUrl);
@@ -113,14 +110,12 @@ function loadExperiment2(data) {
         var reproductionImageUrl = data[1].url;
         
         loadCategoryReproduction(reproductionPictureOrder, reproductionImageUrl);
-
     }
 
     if (data['type'] == "finished") {           //user is finished
         experimentComplete(experimentId);
         $('#popupButtons3').css({"margin-left": "-3.5%"});
         $('#contactArea3').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
-
         centerPopup3();
         loadPopup3();
     }
@@ -165,7 +160,7 @@ function postResultCategory(experimentId, pictureOrderId, category) {
                 data: {'type': "category",
                     'experimentId': experimentId,
                     'pictureOrderId': pictureOrderId,
-                    'category': category,
+                    'category': category
                 },
                 type: 'post',
                 success: function(data) {

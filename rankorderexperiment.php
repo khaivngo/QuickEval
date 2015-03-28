@@ -49,8 +49,8 @@ if (isset($_GET["invite"])) {
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
     <script src="js/Observer/alterExperimentPosition.js"></script>
-    <script src="js/ratingExperimentScript.js"></script>
     <script src="js/commonExperimentScript.js"></script>
+    <script src="js/ratingExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
 

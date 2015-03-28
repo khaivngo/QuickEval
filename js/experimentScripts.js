@@ -69,14 +69,13 @@ $(document).ready(function() {
     $('#instruction-continue').hide();
     getExperimentIdPost();
     postStartData(experimentId);
+    deleteOldResults(experimentId);
     startNewExperimentForObserver(experimentId);
     nextComparison();
     disableNextButton();
     IESpecific();
     allowTies();
     getSpecificExperimentData(experimentId);
-    //console.log("All functions OK");
-    //console.log("All functions OK");
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 

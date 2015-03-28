@@ -243,7 +243,7 @@ function getSpecificExperimentData(experimentId) {
             if (data[0]['isPublic'] == '1 = Public') {
             }
             else {
-                console.log("Experiment is NOT public");
+                //console.log("Experiment is NOT public");
             }
 
             if (data[0].timer == 0) {
@@ -370,7 +370,7 @@ function adjustScaling() {
     //    zoom: 3
     //});
 
-    console.log("adjusting scaling");
+    //console.log("adjusting scaling");
 }
 
 //
@@ -429,5 +429,28 @@ function colorLuminance(hex, lum) {
 
         return rgb;
     }
+
+}
+
+/**
+ * Deletes all results for a user for a chosen experiment.
+ */
+function deleteOldResults(experimentId) {
+    $.ajax({
+        url: 'ajax/observer/deleteOldResults.php',
+        data: {
+            'experimentId': experimentId
+        },
+        type: 'post',
+        dataType: 'json',
+        async: false,
+        //dataType: 'json',
+        success: function (data) {
+            console.log("Rows deleted = "+data);
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 
 }

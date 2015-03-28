@@ -1,6 +1,5 @@
-﻿
-//Initializes listeners and lists
-$(document).ready(function() {
+﻿//Initializes listeners and lists
+$(document).ready(function () {
 
     setUpModeMenu('.observer-mode');
 
@@ -21,17 +20,17 @@ $(document).ready(function() {
 function getExperimentTypes() {
     var data = loadExperimentTypes();
     $('#select-method').append('<a class="list method all active" href="#">' +
-        '<div class="list-content">' +
-        '<span id="method" class="list-title">' + '&lt Display all &gt' + '</span>' +
-        '</div>' +
-        '</a>');
+    '<div class="list-content">' +
+    '<span id="method" class="list-title">' + '&lt Display all &gt' + '</span>' +
+    '</div>' +
+    '</a>');
 
     for (var i = 0; i < data.length; i++) {
         $('#select-method').append('<a class="list method"  method-id = "' + data[i]['id'] + '" href="#">' +
-            '<div class="list-content">' +
-            '<span class="list-title">' + data[i]['name'] + '</span>' +
-            '</div>' +
-            '</a>');
+        '<div class="list-content">' +
+        '<span class="list-title">' + data[i]['name'] + '</span>' +
+        '</div>' +
+        '</a>');
     }
     $('#method-list').listview();
 }
@@ -45,10 +44,10 @@ function getExperimentTypes() {
 function getInstitutions($institute) {
 
     $('#select-institution').append('<a class="list institute all active" href="#">' +
-        '<div class="list-content">' +
-        '<span id="institute" class="list-title">' + '&lt Display all &gt' + '</span>' +
-        '</div>' +
-        '</a>');
+    '<div class="list-content">' +
+    '<span id="institute" class="list-title">' + '&lt Display all &gt' + '</span>' +
+    '</div>' +
+    '</a>');
     $.ajax({
         url: 'ajax/observer/getInstitutes.php',
         data: {
@@ -59,20 +58,20 @@ function getInstitutions($institute) {
         async: false,
         //contentType: "application/x-www-form-urlencoded;charset=ISO-8859-15",
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#select-institution a:not(:first-child)').remove();
             if (data !== 0) {
                 for (var i = 0; i < data.length; i++) {
                     $('#select-institution').append('<a class="list institute" href="#">' +
-                        '<div class="list-content">' +
-                        '<span id="institute' + i + '" class="list-title">' + data[i]['name'] + '</span>' +
-                        '</div>' +
-                        '</a>');
+                    '<div class="list-content">' +
+                    '<span id="institute' + i + '" class="list-title">' + data[i]['name'] + '</span>' +
+                    '</div>' +
+                    '</a>');
                 }
             }
             $('#institute-list').listview();
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -87,10 +86,10 @@ function getInstitutions($institute) {
 function getOrganizations($organization) {
 
     $('#select-organization').append('<a class="list organization all active" href="#">' +
-        '<div class="list-content">' +
-        '<span id="organization" class="list-title">' + '&lt Display all &gt' + '</span>' +
-        '</div>' +
-        '</a>');
+    '<div class="list-content">' +
+    '<span id="organization" class="list-title">' + '&lt Display all &gt' + '</span>' +
+    '</div>' +
+    '</a>');
     $.ajax({
         url: 'ajax/observer/getInstitutes.php',
         data: {
@@ -100,21 +99,21 @@ function getOrganizations($organization) {
         type: 'post',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#select-organization a:not(:first-child)').remove();
             if (data !== 0) {
 
                 for (var i = 0; i < data.length; i++) {
                     $('#select-organization').append('<a class="list organization" href="#">' +
-                        '<div class="list-content">' +
-                        '<span id="organization' + i + '" class="list-title">' + data[i]['name'] + '</span>' +
-                        '</div>' +
-                        '</a>');
+                    '<div class="list-content">' +
+                    '<span id="organization' + i + '" class="list-title">' + data[i]['name'] + '</span>' +
+                    '</div>' +
+                    '</a>');
                 }
             }
             $('#organization-list').listview();
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -128,10 +127,10 @@ function getOrganizations($organization) {
  */
 function getScientists($scientist) {
     $('#select-scientist').append('<a class="list scientist all active" href="#">' +
-        '<div class="list-content">' +
-        '<span id="scientist" class="list-title">' + '&lt Display all &gt' + '</span>' +
-        '</div>' +
-        '</a>');
+    '<div class="list-content">' +
+    '<span id="scientist" class="list-title">' + '&lt Display all &gt' + '</span>' +
+    '</div>' +
+    '</a>');
     $.ajax({
         url: 'ajax/observer/getScientists.php',
         data: {
@@ -140,22 +139,22 @@ function getScientists($scientist) {
         type: 'post',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#select-scientist a:not(:first-child)').remove();
             if (data !== 0) {
 
                 for (var i = 0; i < data.length; i++) {
                     $('#select-scientist').append('<a class="list scientist" href="#">' +
-                        '<div class="list-content">' +
-                        '<span id="scientist' + i + '" class="list-title">' + data[i]['lastName'] + ', ' +
-                        data[i]['firstName'] + '</span>' +
-                        '</div>' +
-                        '</a>');
+                    '<div class="list-content">' +
+                    '<span id="scientist' + i + '" class="list-title">' + data[i]['lastName'] + ', ' +
+                    data[i]['firstName'] + '</span>' +
+                    '</div>' +
+                    '</a>');
                 }
             }
             $('#scientist-list').listview();
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -183,25 +182,25 @@ function getExperiments($experiment) {
         type: 'post',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#select-experiment a').remove();
             emptyExperimentData();
             if (data !== 0) {
                 for (var i = 0; i < data.length; i++) {
                     $('#select-experiment').append('<a class="list experiment" eid="' + data[i]['id'] +
-                        '" method="' + data[i]['experimentType'] + '" href="#">' +
-                        '<div class="list-content">' +
-                        '<span id="experiment' + i + '" class="list-title">' + data[i]['title'] + '</span>' +
-                        '</div>' +
-                        '</a>');
+                    '" method="' + data[i]['experimentType'] + '" href="#">' +
+                    '<div class="list-content">' +
+                    '<span id="experiment' + i + '" class="list-title">' + data[i]['title'] + '</span>' +
+                    '</div>' +
+                    '</a>');
                 }
             }
         },
-        complete: function() {
+        complete: function () {
             displayByMethod($('#select-method').children('.active'));
             $('#select-experiment').listview().init();
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -223,8 +222,8 @@ function checkInvite() {
             type: 'post',
             async: false,
             dataType: 'json',
-            success: function(data) {
-                
+            success: function (data) {
+
 
                 if (data !== 0) {
 
@@ -233,7 +232,7 @@ function checkInvite() {
                 }
 
             },
-            error: function(request, status, error) {
+            error: function (request, status, error) {
                 alert(request.responseText);
                 check = false;
             }
@@ -246,16 +245,16 @@ function checkInvite() {
  * @returns {undefined}
  */
 function setUpSearchFields() {
-    $('#institution-search').keyup(function() {
+    $('#institution-search').keyup(function () {
         getInstitutions($('#institution-search').val());
     });
-    $('#organization-search').keyup(function() {
+    $('#organization-search').keyup(function () {
         getOrganizations($('#organization-search').val());
     });
-    $('#scientist-search').keyup(function() {
+    $('#scientist-search').keyup(function () {
         getScientists($('#scientist-search').val());
     });
-    $('#experiment-search').keyup(function() {
+    $('#experiment-search').keyup(function () {
         getExperiments($('#experiment-search').val());
     });
 }
@@ -266,33 +265,33 @@ function setUpSearchFields() {
  */
 function setUpEventHandlers() {
 
-    $(document.body).on('click', '#select-method a', function() {
+    $(document.body).on('click', '#select-method a', function () {
         displayByMethod($(this));
     });
 
     //Click function for institute list-items
-    $(document.body).on('click', '.institute', function() {
+    $(document.body).on('click', '.institute', function () {
         $('.institute').removeClass('active');
         $(this).addClass('active');
         getExperiments();
     });
 
     //Click function for organization list-items
-    $(document.body).on('click', '.organization', function() {
+    $(document.body).on('click', '.organization', function () {
         $('.organization').removeClass('active');
         $(this).addClass('active');
         getExperiments();
     });
 
     //Click function for scientist list-items
-    $(document.body).on('click', '.scientist', function() {
+    $(document.body).on('click', '.scientist', function () {
         $('.scientist').removeClass('active');
         $(this).addClass('active');
         getExperiments();
     });
 
     //Click function for experiment list-items
-    $(document.body).on('click', '.experiment', function() {
+    $(document.body).on('click', '.experiment', function () {
         $('.experiment').removeClass('active');
         $(this).addClass('active');
         getExperimentData($('#select-experiment a.active:not(.all)').attr('eid')); //Gets experiment data
@@ -300,27 +299,38 @@ function setUpEventHandlers() {
     });
 
     //Click function on colourblind button
-    $(document.body).on('click', '.colourblind', function() {
+    $(document.body).on('click', '.colourblind', function () {
         startColourblindTest();
     });
 
+
     //Click function on start experiment button
-    $(document.body).on('click', '.start-experiment', function() {
-        if (checkCustomFieldValues() == true) {
-            startExperiment();
+    $(document.body).on('click', '.start-experiment', function () {
+        var data = getExperimentData($('.start-experiment').attr('eid'), 1);    //Retrieves info about experiment.
+
+        if (checkAlreadyExperiment(data[0])) {
+            if (checkCustomFieldValues() == true) {
+                $("#check-button").trigger("click");
+            }
         }
+        else if (checkCustomFieldValues() == true) {
+            startExperiment();
+
+        }
+
+
     });
 
     //Click function on notices (displays when fields are not filled)
-    $(document.body).on('click', '.notice', function() {
-        $(this).fadeOut(function() {
+    $(document.body).on('click', '.notice', function () {
+        $(this).fadeOut(function () {
             $(this).remove();
         })
     });
 
     //Click function on custom fields, removes notices
-    $(document.body).on('click', '.custom-field', function() {
-        $(this).siblings('.notice').fadeOut(function() {
+    $(document.body).on('click', '.custom-field', function () {
+        $(this).siblings('.notice').fadeOut(function () {
             $(this).remove();
         });
     });
@@ -359,7 +369,7 @@ function getExperimentData($eId, $type, $invite) {
         type: 'post',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             if (data[0] !== 0) {
                 if ($type == 1) {
                     result = data[0];
@@ -375,18 +385,33 @@ function getExperimentData($eId, $type, $invite) {
 
                     if (data[0]['allowColourBlind'] == 0 && checkColourBlind() == false) {
                         $('#experiment-buttons').append('<button id="bottom-button" class="button success colourblind" style="margin 20px 0; float:right" ' +
-                            'eid="' + data[0]['id'] + '">Start Colourblind Test</button>')
+                        'eid="' + data[0]['id'] + '">Start Colourblind Test</button>')
                     } else {
                         $('#experiment-buttons').append('<button id="bottom-buttom"' +
-                            'class="button success start-experiment" style="margin 20px 0; float:right"' +
-                            'eid="' + data[0]['id'] + '">Start Experiment</button>');
+                        'class="button success start-experiment" style="margin 20px 0; float:right"' +
+                        'eid="' + data[0]['id'] + '">Start Experiment</button>');
+
+                        $('#experiment-buttons').append('<button id="check-button"></button>');
+
+                        $('#check-button').hide();
+
+                        //Adding click listeners since button is added dynamically:
+                        $('#check-button').confirmOn({
+                            questionText: '<span class="icon-warning"></span><br><br>You have already taken this experiment, if you chose to continue results from this session will <u>overwrite</u> the old results.'+
+                            '<br><br>To avoid having results replaced, either cancel or log in as anonymous',
+                            textYes: 'Yes, continue',
+                            textNo: 'Cancel'
+                        }, 'click', function () {
+                            //$(this).remove();
+                           startExperiment();
+                        });
                     }
                 }
             }
 
         },
-        error: function(request, status, error) {
-            alert(request.responseText);
+        error: function (request, status, error) {
+            console.log(request.responseText);
         }
     });
     return result;
@@ -423,10 +448,10 @@ function setUpCustomFields($fields) {
     for (var i = 0; i < $fields.length; i++) {
         f = $fields[i];
         $('#input-fields').append('<label>' + f['info'] + '</label>' +
-            '<div class="input-control text" data-role="input-control" style="margin:5px 0">' +
-            '<input class="custom-field" style="width:95%" type="text" fid="' + f['infoTypeId'] + '"placeholder="' + f['info'] + '" >' +
-            '<span style="float:right; margin-top: 5px; font-size: 150%; font-weight: bold"> * </span>' +
-            '</div>');
+        '<div class="input-control text" data-role="input-control" style="margin:5px 0">' +
+        '<input class="custom-field" style="width:95%" type="text" fid="' + f['infoTypeId'] + '"placeholder="' + f['info'] + '" >' +
+        '<span style="float:right; margin-top: 5px; font-size: 150%; font-weight: bold"> * </span>' +
+        '</div>');
     }
 }
 
@@ -437,11 +462,11 @@ function setUpCustomFields($fields) {
 function checkCustomFieldValues() {
     var check = true;
     $('.notice').remove();
-    $('.custom-field').each(function() {
+    $('.custom-field').each(function () {
         if ($(this).val() == "") {
             $(this).after('<div class="bg-red notice marker-on-top span1" style="margin:10px 0">' +
-                'Field Is Empty' +
-                '</div>');
+            'Field Is Empty' +
+            '</div>');
 
             check = false;
         }
@@ -457,8 +482,8 @@ function checkCustomFieldValues() {
 function startColourblindTest() {
     var url = 'ishihara.php';
     var form = $('<form action="' + url + '" method="post" target="_blank">' +
-        '<input type="hidden" />' +
-        '</form>');
+    '<input type="hidden" />' +
+    '</form>');
     $('body').append(form);
     $(form).submit();
 }
@@ -491,14 +516,43 @@ function startExperiment() {
             break;
     }
 
-    url+=invite;    //adds invite hash if set
+    url += invite;    //adds invite hash if set
 
     var form = $('<form action="' + url + '" method="post" target="_blank">' +
-        '<input type="hidden" name="experimentId" value="' + $('.start-experiment').attr('eid') + '" />' +
-        '</form>');
+    '<input type="hidden" name="experimentId" value="' + $('.start-experiment').attr('eid') + '" />' +
+    '</form>');
     $('body').append(form);
     $(form).submit();
 }
+
+/**
+ * Checks if user already have taken an experiment
+ * @param experimentId id of chosen experiment.
+ * @returns {Boolean}
+ */
+function checkAlreadyExperiment(experimentId) {
+    var check;
+
+    $.ajax({
+        url: 'ajax/observer/checkAlreadyExperiment.php',
+        data: {
+            'experimentId': experimentId
+        },
+        type: 'post',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            data != 0 ? check = true : check = false;
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+
+    return check;
+
+}
+
 
 /**
  * Saves values from custom fields in database
@@ -510,7 +564,7 @@ function saveFieldValues() {
     var check;
 
     //Add each field and its value to the array
-    $('.custom-field').each(function() {
+    $('.custom-field').each(function () {
         fieldValues.push([$(this).attr('fid'), $(this).val()]);
     });
 
@@ -524,15 +578,15 @@ function saveFieldValues() {
         type: 'post',
         async: true,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             if (data !== 0) {
 
                 check = true;
             }
 
         },
-        error: function(request, status, error) {
-            alert(request.responseText);
+        error: function (request, status, error) {
+            console.log(request.responseText);
             check = false;
         }
     });
