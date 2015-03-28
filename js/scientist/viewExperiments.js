@@ -1412,7 +1412,7 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
         meanValues.push(zScoreArray[1][i]);  //Mean value
         highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart. 
     }
-console.log(meanValues);
+
     chart.addSeries(
         {
             name: imageSetTitle,
