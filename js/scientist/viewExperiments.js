@@ -325,7 +325,7 @@ function printResults($experimentId) {
                 div.load('ajax/scientist/pairingExperimentTable.html', function () {
                     var element = $(this);
 					
-					console.log(element);
+					//console.log(element);
 
                     $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
 
@@ -416,7 +416,7 @@ function printResults($experimentId) {
                     //console.log("IMAGE URL: "+data['imageUrl'][i]['url']);
 
                     zScoreArray = calculatePlots(resultsArray);
-
+					
                     //console.log(data['imageUrl'][i]['url']);
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
@@ -961,6 +961,7 @@ function calculatePlotsCategory($frequencyMatrix, $category) {
     var lowCILimit = meanZScore.map(function (num, i) {
         return parseFloat((num - SDArray[i]).toFixed(3));
     });
+	
 	}
     return [lowCILimit, meanZScore, highCILimit, feedback];
 	
@@ -1367,8 +1368,6 @@ function initiateHighCharts() {
 
     });
 
-    //console.log("finished initiating highchart");
-
     //$('#box-plot-containter').append("Where the box-plot goes");
 
 }
@@ -1396,7 +1395,9 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
     var meanValues = [];
     var highLows = [];
     var chart = $('#box-plot-container').highcharts(); //reference to the plot.
-
+		
+		
+		
     for (var i = 0; i < imageTitleArray.length; i++) {    //makes a global array of image titles
         bufferArray.push(imageTitleArray[i]);
         //imageSets.push([imageSetCount][imageTitleArray[i]]);
@@ -1407,12 +1408,11 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
     chart.setTitle({text: imageSetTitle});   //Sets the title (top of graph)
     chart.xAxis[0].setCategories(imageTitleArray); // Sets the title of the picture-sets at the x-axis
 
-
-    for (var i = 0; i < zScoreArray.length - 1; i++) {
+    for (var i = 0; i < zScoreArray[2].length; i++) {
         meanValues.push(zScoreArray[1][i]);  //Mean value
         highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart. 
     }
-
+console.log(meanValues);
     chart.addSeries(
         {
             name: imageSetTitle,
