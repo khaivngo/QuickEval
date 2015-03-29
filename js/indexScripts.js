@@ -308,9 +308,18 @@ function setUpEventHandlers() {
     $(document.body).on('click', '.start-experiment', function () {
         var data = getExperimentData($('.start-experiment').attr('eid'), 1);    //Retrieves info about experiment.
 
+
         if (checkAlreadyExperiment(data[0])) {
             if (checkCustomFieldValues() == true) {
+
                 $("#check-button").trigger("click");
+                $('.confirmon-box').append('<button id="auto-logout">Log in as anonymous</button>');
+
+                $( "#auto-logout" ).click(function() {
+                    $("button:contains('Cancel')").trigger("click");
+                    $("#logout").trigger("click");
+                    autoLogin(0);
+                });
             }
         }
         else if (checkCustomFieldValues() == true) {
@@ -405,6 +414,7 @@ function getExperimentData($eId, $type, $invite) {
                             //$(this).remove();
                            startExperiment();
                         });
+
                     }
                 }
             }

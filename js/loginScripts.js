@@ -15,6 +15,15 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+
+
+    //Checks whether the user shall be logged in as anonymous automatically.
+    autoLogin(1);
+    if(localStorage.autoLoginCheck1 == "true")    {
+        localStorage.autoLoginCheck1 = false;
+        loginAnonymous();
+    }
+
 });
 
 function loginAnonymous() {
