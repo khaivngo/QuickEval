@@ -25,6 +25,7 @@ function viewExperiment($experimentId) {
     $('#experiment-type').html('Type: ' + data['experimentTypeName']);
     $('#experiment-description').html(data['longDescription']);
 
+
     //Gets URL
     var path = location.href.split('/');
     path.pop();
@@ -33,6 +34,9 @@ function viewExperiment($experimentId) {
     var type = data['experimentType'];
     var url = 'index.php';
 
+	//get overal data
+	getExperimentStatisticsOneExperiment($experimentId);
+	
     //Generated invite url based on hash
     var fullPath = path + url + '?invite=' + data['inviteHash']
 
@@ -1722,3 +1726,35 @@ function convertRankToPair($data) {
     }
     return table;
 }
+
+function getExperimentStatisticsOneExperiment($experimentId) {
+    var totalElements;
+    $.ajax
+            ({
+                url: 'ajax/scientist/getExperimentStatisticsOneExperiment.php',
+                async: false,
+                data: {experimentId: $experimentId},
+                type: 'post',
+                success: function(data) {
+                    //checks how many experiments are returned:
+					data = JSON.parse(data);
+					 
+                    //intermediate saving of data for a more clear view of what is happening.
+                    var title1 = data.title1;
+                    var visitors1 = data.visitors1[0].total;
+                    var completion1 = data.completion1[0].total;
+                    var average1 = data.average1;
+                 
+                    (average1 === undefined) ? average1 = "N/A" : average1;
+               
+                    //adding information to table
+					$('#table3').html('<table><tr><td>'+ 'Visitors' + '</td><td>' + 'Completed' + '</td><td>' + 'Average time' + '</td></tr><tr><td>'  + visitors1 + '</td><td>' + completion1 + '</td><td>' + average1 + '</td></tr></table>');
+                 
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+          
+                }
+				
+			
+            });
+			}
