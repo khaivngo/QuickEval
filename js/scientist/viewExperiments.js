@@ -1343,7 +1343,12 @@ function initiateHighCharts() {
         },
         xAxis: {
             categories: ['A', 'B', 'C'],
-            title: {text: 'Reproductions'}
+            title: {text: 'Reproductions'},
+            labels: {
+                formatter: function() {
+                    return this.value.toString().substring(0, 15);
+                }
+            },
         },
 
         yAxis: {
