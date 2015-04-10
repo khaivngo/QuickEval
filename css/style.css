@@ -38,15 +38,24 @@ footer div img {
     width: 100%;
 }
 
-/*#right-panel #experiment-results .header-list th   {*/
-/*max-width: 10% !important;*/
-/*overflow-x:scroll;*/
 
-/*}*/
 
-/*#selected-experiment    {*/
-/*max-width: 70%;*/
-/*}*/
+#selected-experiment	{
+	width:100%;
+
+}
+
+#selected-experiment #table3	{
+	max-width:100%;
+}
+
+/*---------Table management view experiments-----------*/
+
+#experiment-results #zScores-container th, td	{
+	overflow-y:scroll;
+	max-width:100px;
+}
+
 
 #right-panel #experiment-results hr {
    height: 0.5em;
