@@ -22,7 +22,7 @@ $option = $_GET['option'];
 		 `allowTies`, `showOriginal`, `horizontalFlip`,
 		 `monitorDistance`, `lightType`, `naturalLighting`, `screenLuminance`,
 		 `whitePoint`, `whitePointRoom`, `ambientIllumination`, `person`,
-	     `experimentType`, `inviteHash`)
+	     `experimentType`, `inviteHash`, `viewingDistance`) 
 
         
 		     
@@ -34,7 +34,7 @@ $option = $_GET['option'];
 		      '1', '1', '1',
 		      '1', NULL, NULL,?,
 		      ?, ?, ?, ?,
-              ?, ?);";
+              ?, ?, ?);";
 
 		      //?, ?, ?);";
 //`experimentType`, `inviteHash`, `viewingDistance`) 
@@ -80,7 +80,7 @@ $option = $_GET['option'];
             $sth->bindParam(8, $_SESSION['user']['id']);
             $sth->bindParam(9, $_GET['exType']);
             $sth->bindParam(10, $inviteHash);
-            //$sth->bindParam(11, $viewingDistance);
+            $sth->bindParam(11, $viewingDistance);
             $sth->execute();
             $sql = "SELECT * FROM experiment WHERE person = ? ORDER BY id DESC LIMIT 1;";
             $sth = $db->prepare($sql);

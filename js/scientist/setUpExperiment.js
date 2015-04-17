@@ -1001,9 +1001,9 @@ function finishExperiment() {
             content: "Creating experiment...",
         });
         
-        var expName = $("ex-name").val();
-        var expShortDesc = $("ex-short-description").val(); 
-        var expLongDesc = $("ex-long-description").val();
+        var expName = $("#ex-name").val();
+        var expShortDesc = $("#ex-short-description").val(); 
+        var expLongDesc = $("#ex-long-description").val();
         var expType = $('#experiment-type').children(':selected:not(:disabled)').index();
         var expScreenWhitePoint =  $('#ex-screen-whitepoint').val();
         var expLuminance = $('#ex-luminance-screen').val();
@@ -1013,10 +1013,9 @@ function finishExperiment() {
         //Adding viewing distance as meta data
         var expViewingDistance = $('#ex-viewing-distance').val();
 
-        //var experimentId = startNewExperiment(expName,expShortDesc,expLongDesc,expType,expScreenWhitePoint,expLuminance,expRoomWhitepoint,expAmbientIllumination);
+        var experimentId = startNewExperiment(expName,expShortDesc,expLongDesc,expType,expScreenWhitePoint,expLuminance,expRoomWhitepoint,expAmbientIllumination, expViewingDistance);
 
-
-        var experimentId = startNewExperiment($('#ex-name').val(), $('#ex-short-description').val(), $('#ex-long-description').val(), $('#experiment-type').children(':selected:not(:disabled)').index(), $('#ex-screen-whitepoint').val(), $('#ex-luminance-screen').val(), $('#ex-room-whitepoint').val(), $('#ex-ambient-illumination').val());
+        //var experimentId = startNewExperiment($('#ex-name').val(), $('#ex-short-description').val(), $('#ex-long-description').val(), $('#experiment-type').children(':selected:not(:disabled)').index(), $('#ex-screen-whitepoint').val(), $('#ex-luminance-screen').val(), $('#ex-room-whitepoint').val(), $('#ex-ambient-illumination').val(),expViewingDistance);
         if (experimentId > 0) { //Got an id, successfully created experiment
             var hidden = +$('#hidden-experiment').find('input').prop('checked');
             hidden = (hidden == 1) ? '0 = Hidden' : '1 = Public';
