@@ -347,7 +347,7 @@
             imageSet = data;
         },
         error: function(request, status, error) {
-            alert(request.responseText);
+            console.log(request.responseText);
         }
     });
     return imageSet;
@@ -492,7 +492,7 @@
                     console.log("Deleted all images!= " + data);	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -515,7 +515,7 @@
                     console.log("Deleted imageset! = " + data);	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -577,7 +577,6 @@
             });
         },
         error: function(request, status, error) {
-            alert(request.responseText);
             console.log(request.responseText);
         }
     });
