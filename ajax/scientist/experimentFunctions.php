@@ -10,7 +10,6 @@ if ($_SESSION['user']['userType'] > 2) {
     return;
 }
 
-
 $option = $_GET['option'];
 
 
@@ -23,7 +22,9 @@ $option = $_GET['option'];
 		 `allowTies`, `showOriginal`, `horizontalFlip`,
 		 `monitorDistance`, `lightType`, `naturalLighting`, `screenLuminance`,
 		 `whitePoint`, `whitePointRoom`, `ambientIllumination`, `person`,
-	     `experimentType`, `inviteHash`) 
+	     `experimentType`, `inviteHash`)
+
+        
 		     
 
 
@@ -33,13 +34,17 @@ $option = $_GET['option'];
 		      '1', '1', '1',
 		      '1', NULL, NULL,?,
 		      ?, ?, ?, ?,
-		      ?, ?);";
+              ?, ?);";
+
+		      //?, ?, ?);";
+//`experimentType`, `inviteHash`, `viewingDistance`) 
 
 
             $screenLuminance = null;
             $screenWhitePoint = null;
             $roomIllumination = null;
             $ambientIllumination = null;
+            $viewingDistance = null;
 
             $time = time();
             $md5 = md5($time);
@@ -58,8 +63,9 @@ $option = $_GET['option'];
             if (isset($_GET['ambientIllumination'])) {
                 $ambientIllumination = $_GET['ambientIllumination'];
             }
-
-
+             if (isset($_GET['viewingDistance'])) {
+                $viewingDistance= $_GET['viewingDistance'];
+            }
 
             $sth = $db->prepare($sql);
             $sth->bindParam(1, $_GET['shortDescription']);
@@ -74,6 +80,7 @@ $option = $_GET['option'];
             $sth->bindParam(8, $_SESSION['user']['id']);
             $sth->bindParam(9, $_GET['exType']);
             $sth->bindParam(10, $inviteHash);
+            //$sth->bindParam(11, $viewingDistance);
             $sth->execute();
             $sql = "SELECT * FROM experiment WHERE person = ? ORDER BY id DESC LIMIT 1;";
             $sth = $db->prepare($sql);

@@ -84,7 +84,7 @@ function getInputfields() {
  * @return Id of the newly created experiment.
  */
 function startNewExperiment(name, shortDescription, description, exType,
-                            screenWhitePoint, screenLuminance, roomIllumination, ambientIllumination) {
+                            screenWhitePoint, screenLuminance, roomIllumination, ambientIllumination, viewingDistance) {
     var experimentId;
     $.ajax({
         url: 'ajax/scientist/experimentFunctions.php',
@@ -98,7 +98,8 @@ function startNewExperiment(name, shortDescription, description, exType,
             'screenWhitePoint': screenWhitePoint,
             'screenLuminance': screenLuminance,
             'roomIllumination': roomIllumination,
-            'ambientIllumination': ambientIllumination
+            'ambientIllumination': ambientIllumination,
+            'viewingDistance': viewingDistance
         },
         datatype: 'json',
         success: function (data) {
