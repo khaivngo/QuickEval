@@ -25,6 +25,7 @@ function viewExperiment($experimentId) {
     $('#experiment-type').html('Type: ' + data['experimentTypeName']);
     $('#experiment-description').html(data['longDescription']);
 
+
     //Gets URL
     var path = location.href.split('/');
     path.pop();
@@ -33,6 +34,9 @@ function viewExperiment($experimentId) {
     var type = data['experimentType'];
     var url = 'index.php';
 
+	//get overal data
+	getExperimentStatisticsOneExperiment($experimentId);
+	
     //Generated invite url based on hash
     var fullPath = path + url + '?invite=' + data['inviteHash']
 
@@ -312,17 +316,39 @@ function printResults($experimentId) {
 
         //If pairing experiment
         if (experimentType == 2) {
+            var roundCounter = 0;   //used to identify each round and the belonging divs and elements
+
             //Loads table
 
             //Iterates through all imagesets and creates a table for each
             data[1].forEach(function (t, i) {
-                $('#experiment-results').append('<br/><h4>' + t['name'] + '</h4>');
+                //$('#experiment-results').append('<br/><h4>' + t['name'] + '</h4>');
                 var div = $('<div></div>');
-
 
                 //Loads table
                 div.load('ajax/scientist/pairingExperimentTable.html', function () {
                     var element = $(this);
+					
+					//console.log(element);
+
+                    $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
+
+
+                    $("#raw-" + roundCounter + "").append('<table class="table bordered hovered">'+
+                    '<thead>'+
+                    '<tr class="header-list' + roundCounter + '">' +
+                    '<th>'+
+                    '<span class="hint-trigger icon-help" data-hint="Images on the y-axis are the images picked. For example if the value of image x and image y is 2,'+
+                    'the image on the y axis is the one picked twice." data-hint-position="right" style="margin: 0 auto"></span>'+
+                    '</th>'+
+                    '</tr>'+
+                    '</thead>'+
+                    '<tbody class="result-list' + roundCounter + '">' +
+                    '</tbody>'+
+                    '</table>');
+					
+
+
                     $('.hint-trigger').hint(); //Sets up hints as DOM is loaded
 
                     //Iterates through all images for the corresponding imageset
@@ -330,7 +356,7 @@ function printResults($experimentId) {
 
 
                         //Adds imagename to table
-                        element.find('.header-list').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
+                        $('.header-list' + roundCounter + '').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
 
                         var tableRow = '<tr imageId=' + y['id'] + '><th>' + y['name'] + '</th>';
 
@@ -341,14 +367,14 @@ function printResults($experimentId) {
                             tableRow += '<td></td>';
                         }
                         //Appends row
-                        element.find('.result-list').append(tableRow + '</tr>');
+                        $('.result-list' + roundCounter + '').append(tableRow + '</tr>');
                     });
 
 
                     //Initializes results array
                     resultsArray = new Array(data[2][i].length);
 
-                    for (it = 0; it < resultsArray.length; it++) {
+                    for (var it = 0; it < resultsArray.length; it++) {
                         resultsArray[it] = new Array(data[2][i].length);
 
                         for (ita = 0; ita < resultsArray[it].length; ita++) {
@@ -364,16 +390,16 @@ function printResults($experimentId) {
 
                         //If there are chosen pictures in results
                         if (y['chooseNone'] == null) {
-                            pairAddPoints(y['won'], y['pictureId'], y['wonAgainst'], element, data[2][i]);
+                            pairAddPoints(y['won'], y['pictureId'], y['wonAgainst'], element, data[2][i], roundCounter);
 
                         } else { //If there is "choose none" as results
 
                             //Means points was not distributed last iteration
                             //if (currentSet != y['orderId']) {
 
-                            pairAddPoints('0.5', y['pictureId'], y['wonAgainst'], element, data[2][i]);
+                            pairAddPoints('0.5', y['pictureId'], y['wonAgainst'], element, data[2][i], roundCounter);
 
-                            pairAddPoints('0.5', y['wonAgainst'], y['pictureId'], element, data[2][i]);
+                            pairAddPoints('0.5', y['wonAgainst'], y['pictureId'], element, data[2][i], roundCounter);
 
                             //currentSet = y['orderId'];
                             //}
@@ -394,7 +420,7 @@ function printResults($experimentId) {
                     //console.log("IMAGE URL: "+data['imageUrl'][i]['url']);
 
                     zScoreArray = calculatePlots(resultsArray);
-
+					
                     //console.log(data['imageUrl'][i]['url']);
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
@@ -405,39 +431,53 @@ function printResults($experimentId) {
                     imageTitleArray = [];   //empties array for next picture set
 
 
-                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
-
                     highLightFirstTable();
                     activeSeriesClickListener();
 
+                    roundCounter++;    //counts up for next round.
                 });
 
                 //prepareEditLabels();
                 $('#experiment-results').append(div);
-
 
             });
 
 
             //If rank order
         } else if (experimentType == 1) {
+            var roundCounter = 0;        //used to identify each round and the belonging divs and elements
+
             //For each imageset
             data[1].forEach(function (t, i) {
 
-
-                $('#experiment-results').append('<h4>' + t['name'] + '</h4>');
-
                 var div = $('<div></div>');
-
-                //Loads table
+                //Loads raw data table
                 div.load('ajax/scientist/ratingExperimentTable.html', function () {
                     var element = $(this);
+
+                    $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
+
+                    //each round/image set it appends a new table
+                    $("#raw-" + roundCounter + "").append('<table class="table bordered hovered">' +
+                    '<thead>' +
+                    '<tr class="header-list' + roundCounter + '">' +
+                    '<th>' +
+                    ' <span class="hint-trigger icon-help" data-hint="The number represents the position the observer ranked the corresponding image on the x-axis."' +
+                    'data-hint-position="right" style="margin: 0 auto"></span>' +
+                    '</th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody class="result-list' + roundCounter + '">' +
+                    '</tbody>' +
+                    '</table>');
+
+                    $("#raw-" + roundCounter + " table").before('</br><h4>' + t['name'] + '</h4>'); //title of image set
+
                     $('.hint-trigger').hint(); //Sets up hints as DOM is loaded
 
                     //Iterates through all images for the corresponding imageset
                     data[2][i].forEach(function (y, j) {
-
-                        element.find('.header-list').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
+                        $('.header-list' + roundCounter + '').append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>');
                         imageTitleArray.push(y['name']);        //saves each picture title into array for later use
                     });
 
@@ -450,7 +490,6 @@ function printResults($experimentId) {
                         var tableRow = '<tr><th>' + currentRow['person'] + '</th>'; //creates new row and adds observer name
 
                         //console.log("Object size = "+(Object.size(currentRow) - 2));
-                        //var dummy = 0;
                         //Iterates through all results and adds them to row. -3 compensates for original?
                         for (var index = 0; index < (Object.size(currentRow) - 3); index++) {
                             tableRow += '<td>' + currentRow[index] + '</td>';
@@ -459,7 +498,8 @@ function printResults($experimentId) {
                         }
 
                         //Ends and appends row
-                        element.find('.result-list').append(tableRow + '</tr>');
+                        //element.find('.result-list'+roundCounter+'').append(tableRow + '</tr>');
+                        $('.result-list' + roundCounter + '').append(tableRow + '</tr>');
 
                     }
                     //console.log(data);
@@ -469,17 +509,16 @@ function printResults($experimentId) {
 
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
-                    $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
+                    $("#zScores-container").append('</br></br><div id=zscore-' + roundCounter + '><h1>Z-Scores</h1><hr></div>');
 
                     //sends all imagestitles, calculated results and the name of picture set
-                    setZScores(imageTitleArray, zScoreArray, t['name'],data['imageUrl'][i]['url']);
+                    setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url']);
                     imageTitleArray = [];   //empties array for next picture set
-
-                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
 
                     highLightFirstTable();
                     activeSeriesClickListener();
 
+                    roundCounter++; //counts up for next round.
                 });
 
                 $('#experiment-results').append(div);
@@ -487,10 +526,11 @@ function printResults($experimentId) {
             //If category experiment
         } else if (experimentType == 3) {
             var imageUrlIterator = 0;              //used to iterate an array containing original for each picture set
+            var roundCounter = 0;     //used to identify each round and the belonging divs and elements
 
             //console.log(data);
             data['experimentOrders'].forEach(function (experimentOrder, l) {
-                $('#experiment-results').append('<h4>' + data[1][l]['name'] + '</h4>');
+                //$('#experiment-results').append('<h4>' + data[1][l]['name'] + '</h4>');
 
                 //Loads table
                 var div = $('<div></div>');
@@ -498,9 +538,23 @@ function printResults($experimentId) {
 
                 div.load('ajax/scientist/categoryExperimentTable.html', function () {
 
+                    $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
+
+                    $("#raw-" + roundCounter + "").append('<table class="table striped bordered hovered">' +
+                    ' <thead>' +
+                    '<tr class="table-coloumns' + roundCounter + '">' +
+                    '<th class="text-left">Image Name</th>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody class="result-list' + roundCounter + '">' +
+                    '</tbody>' +
+                    '</table>');
+
+                    $("#raw-" + roundCounter + " table").before('</br><h4>' + data[1][l]['name'] + '</h4>'); //title of image set
+
                     //Fills categories
                     data[3].forEach(function (category) {
-                        div.find('.table-coloumns').append('<th class="text-left" category=' + category['id'] + '>' + category['name'] + '</th>');
+                        $('.table-coloumns' + roundCounter + '').append('<th class="text-left" category=' + category['id'] + '>' + category['name'] + '</th>');
                     });
 
                     //Fills images, and result data
@@ -525,7 +579,7 @@ function printResults($experimentId) {
                         });
 
                         //Adds row to table
-                        div.find('.result-list').append(row);
+                        $('.result-list' + roundCounter + '').append(row);
                         row.children().each(function (index) {
                             if (index != 0) {
                                 tableRow.push($(this).text() == "" ? 0 : parseInt($(this).text()));
@@ -535,9 +589,8 @@ function printResults($experimentId) {
                         //console.log(tableRow);
                     });
 
-                    calculatePlots(tableResult, true);
-                    zScoreArray = calculatePlots(tableResult, true);
-
+					// calculate z-scores for categoryjudgement
+                    zScoreArray = calculatePlotsCategory(tableResult, true);
                     addSeries(imageTitleArray, zScoreArray, data[1][l]['name']);        //Add experiments data to graph
 
                     $("#zScores-container").append('</br></br><h1>Z-Scores</h1><hr>');
@@ -548,11 +601,10 @@ function printResults($experimentId) {
 
                     imageUrlIterator++;
 
-                    $("#zScores-container").append('</br></br><h1>Raw data</h1><hr>');
-
                     highLightFirstTable();
                     activeSeriesClickListener();
 
+                    roundCounter++; //counts up for next round.
                 })
                 //prepareEditLabels();
                 $('#experiment-results').append(div);
@@ -560,9 +612,8 @@ function printResults($experimentId) {
         }
     }
     return resultsArray;
-
-
 }
+
 //http://stackoverflow.com/questions/8668174/indexof-method-in-an-object-array
 function arrayObjectIndexOf(myArray, searchTerm, property) {
     for (var i = 0, len = myArray.length; i < len; i++) {
@@ -580,11 +631,16 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
  * @param  {JQuery object} $table       jquery object of table where images are
  * @param  {array} $array       array of image ids
  */
-function pairAddPoints($points, $firstImage, $secondImage, $table, $array) {
+function pairAddPoints($points, $firstImage, $secondImage, $table, $array, $roundIterator) {
     var imageIndex = arrayObjectIndexOf($array, $firstImage, 'id');
     var wonAgainstIndex = arrayObjectIndexOf($array, $secondImage, 'id');
 
-    var resultList = $table.find('.result-list');
+	
+	
+	
+    //var resultList = $table.find('.result-list'+$roundIterator+'');
+	
+	var resultList = $('.result-list'+$roundIterator+'');
     var cell = resultList.find('tr:eq(' + imageIndex + ')').children().eq(wonAgainstIndex + 1);
     cell.html((cell.html() == "") ? parseFloat($points) : +cell.html() + parseFloat($points));
 }
@@ -623,7 +679,6 @@ function getExportResultsURL($experimentId) {
     ($('#parameter-complete').find('input').prop('checked')) ? url += '&complete=1' : '';
     return url;
 }
-
 
 function calculatePlots($frequencyMatrix, $category) {
 
@@ -723,6 +778,268 @@ function calculatePlots($frequencyMatrix, $category) {
 
     return [lowCILimit, meanZScore, highCILimit, feedback];
 }
+
+
+function calculatePlotsCategory($frequencyMatrix, $category) {
+    var observerAmount = 0;
+    var cumulativeFrequencyTable;
+    var cumulativePercentageTable;
+
+    //Calculates number of observers
+    if ($category) { //Category uses non square matrix, counts first row results
+        for (var i = 0; i < $frequencyMatrix[0].length; i++) {
+            observerAmount += parseInt($frequencyMatrix[0][i]);
+        }
+    } else {
+        observerAmount = $frequencyMatrix[0][1] + $frequencyMatrix[1][0];
+    }
+
+    if ($category) {
+        cumulativeFrequencyTable = calculateCumulative($frequencyMatrix, true);
+    }
+
+    //Calculates a percentage matrix of the results
+    var PercentageMatrix = calculatePercentageMatrix($category ? cumulativeFrequencyTable : $frequencyMatrix, observerAmount);
+	
+    //Calculates a LFMatrix of the results, using percentage matrix
+
+    var LFMatrix = calculateLFMatrix($category ? cumulativeFrequencyTable : $frequencyMatrix, observerAmount, $category);
+
+    //Parses the LF Matrix into a single row of results
+    var LFMValues = parseLFMValues(LFMatrix, $category);
+
+
+    //Calculates the Z-score values as a single array
+    var ZScoreValues = calculateZScoreValues(PercentageMatrix, $category);
+
+	//Setting up identity matrix
+	var eyeMatrix = im($frequencyMatrix[0].length-1); 
+	
+	//Setting up X matrix (code is a bit messy, but it works). Done accoring to the "Colour Engineering Toolbox" by Phil Green
+	var X1 = []; 
+	X1 = matrix(cumulativeFrequencyTable.length*($frequencyMatrix[0].length-1),$frequencyMatrix[0].length-1,0); 
+	var roundCounter = 0; 
+	for (var j=0; j<$frequencyMatrix[0].length-1; j++){
+		for (var k=0; k<cumulativeFrequencyTable.length; k++){
+			for( var i=0; i<$frequencyMatrix[0].length-1; i++){
+					X1[roundCounter][i] = eyeMatrix[j][i];				
+			}
+			roundCounter++; 
+		}
+	}
+	
+	
+	var eyeMatrixNegative = imnegative(cumulativeFrequencyTable.length); 
+	var X2 = []; 
+	X2 = matrix(cumulativeFrequencyTable.length*($frequencyMatrix[0].length-1),eyeMatrixNegative.length,0); 
+	
+	var roundCounter = 0; 
+		for (var k=0; k<$frequencyMatrix[0].length-1; k++){
+			for (var j=0; j<eyeMatrixNegative.length; j++){
+				for( var i=0; i<eyeMatrixNegative.length; i++){
+						X2[roundCounter][i] = eyeMatrixNegative[j][i];				
+				}
+				roundCounter++; 
+			}
+		}
+		
+		var X = [];
+		for (var k=0; k<X2.length; k++){
+			X[k] = X1[k].concat(X2[k]); 
+		}
+ 
+		var Xtemp= [];
+			for( var i=0; i<X[0].length; i++){
+				if(i<$frequencyMatrix[0].length-1){
+					Xtemp[i] = 0; 
+				}
+				else
+				{
+					Xtemp[i] = 1; 
+				}
+			}
+		X.push(Xtemp);
+		
+		//initial z-scores values extracted
+		var v = ZScoreValues[0];
+		
+		//reformat V to fit with analysis later
+		var vv = []; 
+		for (var j=0; j< ($frequencyMatrix[0].length-1);  ++j) {
+			for (var k = j; k < v.length; k += (PercentageMatrix[0].length)) {
+			vv.push(v[k]);
+		}
+		}
+		v = vv;  
+		v.push(0);
+
+		var indexes = getAllIndexes(v, 3); //findng "infs"
+		indexes = indexes.concat(getAllIndexes(v, -3)); //findng "infs" (also the negative ones)
+		indexes.sort();
+		
+		for (var i =0; i<indexes.length; i++){
+			v.splice(indexes[i]-i, 1 );
+			X.splice(indexes[i]-i, 1 );
+		}
+		
+		// least-squares solution
+		var Xtransposed = []; 
+		Xtransposed = transpose(X);	
+		var Xtemp2 = [];
+		Xtemp2 = matrix(X[0].length,X[0].length,0); 
+		var OneDirection = [];
+		var TwoDirection = [];
+		for( var i=0; i<X[0].length; i++){
+			for (var j=0; j<X[0].length; j++){	
+					for (var k=0; k<Xtransposed[0].length; k++){
+						OneDirection[k] = X[k][j]; 
+						TwoDirection[k] = Xtransposed[i][k];
+					}
+					Xtemp2[j][i] = dot_product(TwoDirection,OneDirection);	// X'*X					
+				}
+			}			
+	
+			
+		var Xtemp3 = []; 				
+		for (var i=0; i<X[0].length; i++){
+			for (var k=0; k<Xtransposed[0].length; k++){
+				TwoDirection[k] = Xtransposed[i][k]					
+			}
+			Xtemp3[i] = dot_product(TwoDirection,v);	// X'*v	
+		}			
+	
+	//including math.js to to inverse, sum and absolute. 
+	includeJs("/Quickeval-develop/js/scientist/math.js");
+
+	//if we cannot invert Xtemp2, then we cannot calculate z-scores.  Does a check here, and then display an error message
+	breakC = 0; 
+	var meanZScore = []; 
+	var lowCILimit = []; 
+	var highCILimit = [];
+	for (var i=0; i<Xtemp2[0].length; i++){
+		if(math.sum(math.abs(Xtemp2[i]))==0){
+			breakC = 1; 
+			
+			for (var j=0; j<ZScoreValues[0].length; j++){
+				meanZScore[j] = 0; //setting values to 0 if we cannot invert Xtemp2
+				lowCILimit[j] = 0; 
+				highCILimit[j] = 0; 
+			}
+		}
+	}
+	
+	if(breakC == 1){
+		window.alert("Not enough data to calculate Z-scores. In order to calculate z-scores at least one row needs to be complete. All values are set to '0'.");
+	} 
+	else{ //If we can invert it, then do the calculations. 
+	Ytemp = math.inv(Xtemp2); 
+	
+	var Y  = [];
+	var ThreeDirection = []; 	
+		for (var i=0; i<X[0].length; i++){
+			for (var k=0; k<Ytemp[0].length; k++){
+				ThreeDirection[k] = Ytemp[i][k];		
+			}
+			Y[i] = dot_product(ThreeDirection,Xtemp3);	
+		}
+		Y = Y.slice($frequencyMatrix[0].length-1,Y.length); //the two first numbers are category boundaries, so they are not needed here. 
+
+    var feedback = ZScoreValues[1];
+   
+   //Formatting the z-scores to have 3 decimals
+    var meanZScore = Y.map(function (num) {
+       return parseFloat(num.toFixed(3));
+    });
+
+	 //Finding standard deviation 
+    var standardDeviation = 1.96 * (1 / Math.sqrt(2)) / Math.sqrt(observerAmount);  //Must be changed
+
+    var SDArray = calculateSDMatrix($frequencyMatrix);
+
+    //Calculates the high confidence interval limits
+    var highCILimit = meanZScore.map(function (num, i) {
+        return parseFloat((num + SDArray[i]).toFixed(3));
+    });
+
+    //Calculates the low confidence interval limits
+    var lowCILimit = meanZScore.map(function (num, i) {
+        return parseFloat((num - SDArray[i]).toFixed(3));
+    });
+	
+	}
+    return [lowCILimit, meanZScore, highCILimit, feedback];
+	
+}
+
+//Get indexes
+function getAllIndexes(arr, val) {
+    var indexes = [], i = -1;
+    while ((i = arr.indexOf(val, i+1)) != -1){
+        indexes.push(i);
+    }
+    return indexes;
+}
+
+
+//Function to include a JS file (needed for math.js) 
+function includeJs(jsFilePath) {
+    var js = document.createElement("script");
+
+    js.type = "text/javascript";
+    js.src = jsFilePath;
+
+    document.body.appendChild(js);
+}
+
+//Function to calculate dot_product
+function dot_product(ary1, ary2) {
+    if (ary1.length != ary2.length)
+        throw "can't find dot product: arrays have different lengths";
+    var dotprod = 0;
+    for (var i = 0; i < ary1.length; i++)
+        dotprod += ary1[i] * ary2[i];
+    return dotprod;
+}
+ 
+//Function to transpose a matrix
+function transpose(a) {
+    return Object.keys(a[0]).map(
+        function (c) { return a.map(function (r) { return r[c]; }); }
+        );
+    }
+
+function matrix( rows, cols, defaultValue){
+
+  var arr = [];
+
+  // Creates all lines:
+  for(var i=0; i < rows; i++){
+
+      // Creates an empty line
+      arr.push([]);
+
+      // Adds cols to the empty line:
+      arr[i].push( new Array(cols));
+
+      for(var j=0; j < cols; j++){
+        // Initializes:
+        arr[i][j] = defaultValue;
+      }
+  }
+
+return arr;
+}
+
+function im(n) {
+    return Array.apply(null, new Array(n)).map(function(x, i, a) { return a.map(function(y, k) { return i === k ? 1 : 0; }) });
+}
+
+function imnegative(n) {
+    return Array.apply(null, new Array(n)).map(function(x, i, a) { return a.map(function(y, k) { return i === k ? -1 : 0; }) });
+}
+
+//
+
 
 function calculateCumulative($frequencyMatrix, $pop) {
 
@@ -1026,7 +1343,12 @@ function initiateHighCharts() {
         },
         xAxis: {
             categories: ['A', 'B', 'C'],
-            title: {text: 'Reproductions'}
+            title: {text: 'Reproductions'},
+            labels: {
+                formatter: function() {
+                    return this.value.toString().substring(0, 15);
+                }
+            },
         },
 
         yAxis: {
@@ -1055,8 +1377,6 @@ function initiateHighCharts() {
 
     });
 
-    //console.log("finished initiating highchart");
-
     //$('#box-plot-containter').append("Where the box-plot goes");
 
 }
@@ -1084,7 +1404,9 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
     var meanValues = [];
     var highLows = [];
     var chart = $('#box-plot-container').highcharts(); //reference to the plot.
-
+		
+		
+		
     for (var i = 0; i < imageTitleArray.length; i++) {    //makes a global array of image titles
         bufferArray.push(imageTitleArray[i]);
         //imageSets.push([imageSetCount][imageTitleArray[i]]);
@@ -1095,8 +1417,7 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
     chart.setTitle({text: imageSetTitle});   //Sets the title (top of graph)
     chart.xAxis[0].setCategories(imageTitleArray); // Sets the title of the picture-sets at the x-axis
 
-
-    for (var i = 0; i < zScoreArray.length - 1; i++) {
+    for (var i = 0; i < zScoreArray[2].length; i++) {
         meanValues.push(zScoreArray[1][i]);  //Mean value
         highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart. 
     }
@@ -1315,10 +1636,6 @@ function setZScores(imageTitleArray, zScoresArray, pictureSetTitle, imageUrl) {
     //appends title of picture set
     //loops through array and for each picture prints title, low ci limit, mean z-score and high ci limit in that order.
     for (var i = 0; i < imageTitleArray.length; i++) {
-        //console.log("Low CI limit = " + zScoresArray[0][i]);
-        //console.log("Mean z-score = " + zScoresArray[1][i]);
-        //console.log("High CI limit = " + zScoresArray[2][i]);
-        //console.log(" ");
 
         $('#' + tableId + '').append('<tr><td><b>' + imageTitleArray[i] + '</b></td><td class="right">' + zScoresArray[0][i] + '</td><td class="right">' + zScoresArray[1][i] + '</td><td class="right">' + zScoresArray[2][i] + '</td></tr>')
     }
@@ -1335,14 +1652,15 @@ function tableDivHeader(tableId, pictureSetTitle, check, imageUrl) {
 
     //when there is not enough data to properly calculate z-scores it sets a hint to explain it to the user
 
-    console.log("URL = "+imageUrl);
+    console.log("URL = " + imageUrl);
 
     if (check == 1) {
         //appends the table right before the title of the table displaying raw data
         $("#zScores-container").append('<br/><div>' +
         '<h4>Z-Scores: ' + pictureSetTitle + '<span class="hint-trigger" data-hint="Need more observer-data to be calculated properly" data-hint-position="right"><i class="icon-info on-right"></i></h4>' +
         '<img src="' + imageUrl + '" alt="Original picture" height="20%" width="20%"> ' +
-        '<br/><br/>' +
+        '<br/>' +
+        '<br/>' +
         '<table class="table bordered hovered z-scores">' +
         '<thead>' +
         '   <tr>' +
@@ -1362,10 +1680,10 @@ function tableDivHeader(tableId, pictureSetTitle, check, imageUrl) {
         $("#zScores-container").append('<br/><div>' +
         '<h4>Z-Scores: ' + pictureSetTitle + '</h4>' +
         '<img src="' + imageUrl + '" alt="Original picture" height="20%" width="20%"> ' +
-        '<br/><br/>' +
+        '<br/>' +
+        '<br/>' +
         ' <table class="table bordered hovered z-scores">' +
         '<ad>' +
-        '   <>' +
         ' <th class="text-left">Title</th>' +
         '<th class="text-left">Low CI limit</th>' +
         '<th class="text-left">Mean z-score</th>' +
@@ -1413,3 +1731,35 @@ function convertRankToPair($data) {
     }
     return table;
 }
+
+function getExperimentStatisticsOneExperiment($experimentId) {
+    var totalElements;
+    $.ajax
+            ({
+                url: 'ajax/scientist/getExperimentStatisticsOneExperiment.php',
+                async: false,
+                data: {experimentId: $experimentId},
+                type: 'post',
+                success: function(data) {
+                    //checks how many experiments are returned:
+					data = JSON.parse(data);
+					 
+                    //intermediate saving of data for a more clear view of what is happening.
+                    var title1 = data.title1;
+                    var visitors1 = data.visitors1[0].total;
+                    var completion1 = data.completion1[0].total;
+                    var average1 = data.average1;
+                 
+                    (average1 === undefined) ? average1 = "N/A" : average1;
+               
+                    //adding information to table
+					$('#table3').html('<table><tr><td>'+ 'Visitors' + '</td><td>' + 'Completed' + '</td><td>' + 'Average time' + '</td></tr><tr><td>'  + visitors1 + '</td><td>' + completion1 + '</td><td>' + average1 + '</td></tr></table>');
+                 
+                },
+                error: function(xhr, ajaxOptions, thrownError) {
+          
+                }
+				
+			
+            });
+			}

@@ -240,6 +240,7 @@
 }
 
 /**
+ * TODO redo the appending buttons, should already be there.
  * Adds start select and delete image-set buttons
  * @returns {undefined}
  */
@@ -252,7 +253,7 @@
 
     html = html + '<br/><button id="toggle-select" class="button primary start sets"' +
     'style="width: 150px; margin:10px; clear:both; float:left;">Start Select</button><br/>' +
-    '<button id="delete-image-set" class="image-button danger sets" style="width: 150px; height:26px; margin:10px; clear:both; float:left;">' +
+    '<button id="delete-image-set" class="image-button danger sets" style="width: 150px; margin:10px; clear:both; float:left;">' +
     'Delete Selected<i class="icon-remove bg-red"/></button>';
 
     if ($images) {
@@ -347,7 +348,7 @@
             imageSet = data;
         },
         error: function(request, status, error) {
-            alert(request.responseText);
+            console.log(request.responseText);
         }
     });
     return imageSet;
@@ -492,7 +493,7 @@
                     console.log("Deleted all images!= " + data);	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -515,7 +516,7 @@
                     console.log("Deleted imageset! = " + data);	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -577,7 +578,6 @@
             });
         },
         error: function(request, status, error) {
-            alert(request.responseText);
             console.log(request.responseText);
         }
     });

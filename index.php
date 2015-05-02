@@ -13,6 +13,7 @@
         <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
         <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
+        <link href="css/jquery.confirmon.css" rel="stylesheet">
 
         <!-- JQuery -->
         <script src="js/jquery/jquery.min.js"></script>
@@ -22,12 +23,15 @@
         <script src="min/metro.min.js"></script>
 
         <!-- Other JS -->
+        <script src="js/plugins/jquery.confirmon.js"></script>
+
         <script src="js/scientist/exportExperiment.js"></script>
         <script src="js/indexScripts.js"></script>
         <script src="js/scripts.js"></script>	
         <script src="js/Observer/alterExperimentPosition.js"></script>
 
-         <?php echo (isset($_GET['invite'])) ? '<input type="hidden" id="invite" value="'. $_GET['invite'] .'"/>'  : '' ?>       
+
+        <?php echo (isset($_GET['invite'])) ? '<input type="hidden" id="invite" value="'. $_GET['invite'] .'"/>'  : '' ?>
 
     </head>
     <body class="metro" style="overflow-y:scroll">

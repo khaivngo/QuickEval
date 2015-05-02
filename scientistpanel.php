@@ -54,9 +54,10 @@ if (isset($_SESSION['user'])) {
         <script src="js/scientist/fileUploadScripts.js"></script>
         <script src="js/scientist/viewExperiments.js"></script>
         <script src="js/scientist/experimentResults.js"></script>
-        <script src="js/scripts.js"></script> 
+        <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
-
+		
+		<script src="js/scientist/math.js" ></script>
 
         <script type="text/javascript">
             hs.graphicsDir = 'images/graphics/';
@@ -122,10 +123,11 @@ if (isset($_SESSION['user'])) {
                             <li id="set-up-experiment" ><a href="#"><i class="icon-new"></i>Set Up Experiment</a></li>
                             <li id="view-experiments" ><a href="#"><i class="icon-folder"></i>View Experiments</a></li>
                             <li id="import-experiment" ><a href="#"><i class="icon-upload"></i>Import Experiment</a></li>
-                            
+
 
                             <li class="title">Other</li>
                             <li id="invite-scientist" ><a href="#"><i class="icon-user"></i>Invite Scientist</a></li>
+                            <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Delete Instructions</a></li>
 
                         </ul>
                     </nav>

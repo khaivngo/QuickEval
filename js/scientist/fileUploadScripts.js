@@ -113,7 +113,7 @@ function startUploader(imagesetId, target) {
                 //This happens right before the first picture is uploaded.
                 if (up.state == plupload.STARTED && imagesetId == 0) {
 
-                    console.log("New imageset");
+                    //console.log("New imageset");
                     var name = $("#image-set-name").val();
                     var text = $("#image-set-description").val();
 
@@ -123,15 +123,15 @@ function startUploader(imagesetId, target) {
                 if (up.state == plupload.STOPPED) {	//This is called right after the last picture is uploaded.
                     if (imagesetId == 0) 	//when finishing a new set.
                     {
-                        console.log("Getting active id");
+                        //console.log("Getting active id");
                         var id = getActiveImagesetId();
-                        console.log("Changing amount in set.");
+                        //console.log("Changing amount in set.");
                         changeAmountOfPicturesInSet(id, up.files.length);
                         var imageSet = new Array();
                         imageSet = getAllImagesInSet(id);
-                        console.log("Number of images in set: " + imageSet.length);
+                        //console.log("Number of images in set: " + imageSet.length);
 
-                        console.log("Stop picture set");
+                        //console.log("Stop picture set");
                         stopPictureSet();
 
                         $.Notify({style: {background: 'green', color: 'white'},
@@ -179,7 +179,7 @@ function startUploader(imagesetId, target) {
             },
             FilesAdded: function(up, files) {
                 // Callced when files are added to queue
-                console.log('[FilesAdded]');
+                //console.log('[FilesAdded]');
 
                 /* plupload.each(files, function(file) {
                  console.log('  File:', file);
@@ -196,7 +196,7 @@ function startUploader(imagesetId, target) {
             },
             FileUploaded: function(up, file, info) {
 
-                console.log('[FileUploaded] File:', file, "Info:", info, "Up:", up);
+                //console.log('[FileUploaded] File:', file, "Info:", info, "Up:", up);
                 var string = file.type;
                 var string2 = file.name;
 
@@ -210,22 +210,22 @@ function startUploader(imagesetId, target) {
 
                 if (imagesetId == 0)	//When creating new imagesets.
                 {
-                    console.log("Getting active id");
+                    //console.log("Getting active id");
                     var id = getActiveImagesetId();
-                    console.log("Inserting image to database = " + id);
+                    //console.log("Inserting image to database = " + id);
                     if (uploads == 0) {
                         insertImageToDatabase(completeFileName, id, file.id, 1);
                         uploads++;
                     } else {
                         var originalOrNot = getOriginal('#' + file.id);
-                        console.log(file.id + " har = " + originalOrNot);
+                        //console.log(file.id + " har = " + originalOrNot);
                         insertImageToDatabase(completeFileName, id, file.id, originalOrNot);
                     }
                 }
                 else 				//When uploading to an existing imageset.
                 {
-                    console.log("NOT getting active ID");
-                    console.log("Inserting image to database = " + imagesetId);
+                    //console.log("NOT getting active ID");
+                    //console.log("Inserting image to database = " + imagesetId);
                     insertImageToDatabase(completeFileName, imagesetId, file.id, 0);
                 }
 
@@ -279,7 +279,7 @@ function insertImageToDatabase(originalFileName, pictureSetId, url, isOriginal) 
                     console.log("Inserted into database");
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -294,10 +294,10 @@ function stopPictureSet()
                     'stopImageset': 'stopImageset'
                 },
                 success: function(data) {
-                    console.log("Succesfully stopped imgset")
+                    //console.log("Succesfully stopped imgset")
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -316,10 +316,9 @@ function createNewPictureSet(name, text)
                     'text': text
                 },
                 success: function(data) {
-                    console.log("Successfully created new pictureset");	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -337,10 +336,9 @@ function alterImagesetName(imagesetId, name)
                     'name': name},
                 dataType: 'json',
                 success: function(data) {
-                    console.log("updated name!");	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -358,10 +356,9 @@ function alterImagesetText(imagesetId, text)
                     'text': text},
                 dataType: 'json',
                 success: function(data) {
-                    console.log("updated text!");	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -383,10 +380,9 @@ function changeAmountOfPicturesInSet(imagesetId, amountToAddOrRemove)
                     'amount': amountToAddOrRemove},
                 dataType: 'json',
                 success: function(data) {
-                    console.log("updated amount of pictures!");	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
@@ -406,27 +402,13 @@ function getActiveImagesetId()
                 dataType: 'json',
                 success: function(data) {
                     id = data;
-                    console.log("got active imagesetId = " + data);	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
     return id;
 }
-
-
-/*function showPictureSet(imageSet) {
- var myButtons = new Array();
- 
- for (var i = 0; i < imageSet.length; i++) {
- target.append("<div style='border:2px solid black; width:220px; height:250px; margin:20px;'>" +
- "<br/><img src=" + imageSet[i].url + " alt=some_text style='width:180px; height:180px;'>" +
- "<br/><input type='radio' name='radioButton' id='" + imageSet[i].id + "'>" +
- "</div>");
- }
- target.append("<button onClick='checkRadioButtons();'>Ok</button>");
- }*/
 
 /**
  * Sets the original for a pictureset.
@@ -445,15 +427,14 @@ function alterOriginalInSet(idOfOriginal) {
                 },
                 dataType: 'json',
                 success: function(data) {
-                    console.log("Set original for picture!" + data);	//FJERN
                 },
                 error: function(request, status, error) {
-                    alert(request.responseText);
+                    console.log(request.responseText);
                 }
             });
 }
 function checkRadioButtons() {
-    console.log("Checking radio buttons");
+    //console.log("Checking radio buttons");
     var elements = document.getElementsByTagName("input");
     var checkedElements = 0;
     for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1 
@@ -465,7 +446,7 @@ function checkRadioButtons() {
         for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1 
             if (elements[i].checked == true) {			//Radiobutton is checked.
                 alterOriginalInSet(elements[i].id);
-                console.log("Changed original!");
+                //console.log("Changed original!");
                 target.append("Original set.");
                 break;									//This shouldnt be necessary, but I put it there anyway.
             }

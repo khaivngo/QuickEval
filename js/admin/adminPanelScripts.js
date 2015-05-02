@@ -48,6 +48,16 @@ $(document).ready(function() {
         inject("ajax/admin/deleteExperiments.html");
         setActive($(this));
     });
+
+    //--------------------- INSTRUCTIONS ------------------------------//
+
+    $("#delete-instruction").click(function() {
+        inject("ajax/scientist/deleteInstruction.html");
+        setActive($(this));
+        setupClickListenerDeleteInstruction(0);
+    });
+
+
 });
 
 /**

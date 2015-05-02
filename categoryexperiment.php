@@ -124,12 +124,12 @@ if (isset($_GET["invite"])) {
         </div>
 
         <div id="category-container" class="align" style=" text-align:center;">
-            <span id="original-tag" class="span-original-tag">Original</span>
+            <span id="original-tag" class="span-original-tag"><p>Original</p></span>
             <br>
             <div id="original" style="float:left; width: 40%; height:40%;">
                 <section id="set1" >
                     <div class="parent">
-                        <a href="" id="original-link" target="_blank" class="new-tab"></a >
+                        <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a >
                         <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
                         <div class="panzoom">
                             <img class="picture" src="images/initiatePicture.png"  />
@@ -141,7 +141,7 @@ if (isset($_GET["invite"])) {
             <div id="reproduction" class="reproduction">
                 <section id="set2">
                     <div class="parent">
-                        <a href="" id="reproduction-link" target="_blank" class="new-tab"></a >
+                        <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a >
                         <div class="panzoom">
                             <img class="picture" src="images/initiatePicture.png"  />
                         </div>

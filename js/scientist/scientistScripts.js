@@ -10,10 +10,10 @@ function getImageSets($sort) {
         url: 'ajax/scientist/getImageSets.php',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             imageSets = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -21,7 +21,7 @@ function getImageSets($sort) {
         return imageSets;
     }
 
-    imageSets.sort(function(a, b) { //Sorts the list based on name
+    imageSets.sort(function (a, b) { //Sorts the list based on name
         if (a.name < b.name) {
             return -1;
         }
@@ -45,10 +45,10 @@ function getInstructions() {
             'option': 'getInstructions'
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             instructions = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -68,10 +68,10 @@ function getInputfields() {
             'option': 'getInputfields'
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             inputfields = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -84,7 +84,7 @@ function getInputfields() {
  * @return Id of the newly created experiment.
  */
 function startNewExperiment(name, shortDescription, description, exType,
-    screenWhitePoint, screenLuminance, roomIllumination, ambientIllumination) {
+                            screenWhitePoint, screenLuminance, roomIllumination, ambientIllumination, viewingDistance) {
     var experimentId;
     $.ajax({
         url: 'ajax/scientist/experimentFunctions.php',
@@ -98,13 +98,14 @@ function startNewExperiment(name, shortDescription, description, exType,
             'screenWhitePoint': screenWhitePoint,
             'screenLuminance': screenLuminance,
             'roomIllumination': roomIllumination,
-            'ambientIllumination': ambientIllumination
+            'ambientIllumination': ambientIllumination,
+            'viewingDistance': viewingDistance
         },
         datatype: 'json',
-        success: function(data) {
+        success: function (data) {
             experimentId = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             experimentId = 0; //If error
         }
@@ -124,10 +125,10 @@ function getActiveExperimentInCreation() {
             'option': 'getExperimentId'
         },
         datatype: 'json',
-        success: function(data) {
+        success: function (data) {
             experimentId = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -150,7 +151,7 @@ function addObserverInputFields(defaultFields, customFields, experimentId) {
             'customFields': customFields
         },
 
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -165,7 +166,7 @@ function addObserverInputFields(defaultFields, customFields, experimentId) {
  * in the database if no experimentID is supplied.
  */
 function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, showOriginal, colorblind, hidden, timer, experimentId) {
-    
+
 
     if (experimentId == 0 || experimentId == null) {
         experimentId = getActiveExperimentInCreation();
@@ -173,6 +174,8 @@ function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, 
     if (timer == 0 || timer == null) {
         timer = 0;
     }
+
+    console.log("fetched color = " + backgroundColour);
     $.ajax({
         url: 'ajax/scientist/experimentFunctions.php',
         async: false,
@@ -186,9 +189,13 @@ function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, 
             'colorblind': colorblind,
             'hidden': hidden,
             'timer': timer
+
+        },
+        success: function (data) {
+            //console.log(data);
         },
 
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -213,7 +220,7 @@ function addPictureQueueToExperiment(pictureQueueId, experimentId) {
             'pictureQueueId': pictureQueueId
         },
 
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -238,7 +245,7 @@ function addInstructionToExperiment(instructionId, experimentId) {
             'experimentInstructionId': instructionId
         },
 
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -258,10 +265,10 @@ function getEarlierPictureQueues(pictureSetId) {
             'pictureSetId': pictureSetId
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             pictureQueues = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -284,10 +291,10 @@ function hasOriginal(pictureSetId) {
             'pictureSetId': pictureSetId
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             bool = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             bool = 0;
         }
@@ -310,7 +317,7 @@ function addCategory(categoryText, experimentId) {
             'categoryText': categoryText,
             'experimentId': experimentId
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -331,7 +338,7 @@ function addExistingCategory(categoryNameId, experimentId) {
             'categoryNameId': categoryNameId,
             'experimentId': experimentId
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -348,10 +355,10 @@ function getCategories() {
         url: 'ajax/scientist/getCategory.php',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             categories = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -369,10 +376,10 @@ function getExperiments() {
         url: 'ajax/scientist/getExperiments.php',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             result = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             result = 0;
         }
@@ -397,10 +404,10 @@ function getExperimentById($experimentId) {
             'experimentId': $experimentId,
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             result = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             result = 0;
         }
@@ -421,7 +428,7 @@ function deleteExperiment(experimentId) {
             'experimentId': experimentId
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             if (data == 1) { //that particular experiment was successfully deleted.
                 $.Notify({ //notifies user about successfull experiment deletion change.
                     content: "Experiment successfully deleted",
@@ -431,8 +438,9 @@ function deleteExperiment(experimentId) {
                 });
             }
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
 }
+

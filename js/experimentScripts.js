@@ -17,7 +17,7 @@ $(document).ready(function() {
             $set: $section.find('.parent > div'),
             contain: 'invert',
             minScale: 1,
-            maxScale: 1.3
+            maxScale: 1.39
 
         }).panzoom('zoom');
     })();
@@ -69,13 +69,13 @@ $(document).ready(function() {
     $('#instruction-continue').hide();
     getExperimentIdPost();
     postStartData(experimentId);
+    deleteOldResults(experimentId);
     startNewExperimentForObserver(experimentId);
     nextComparison();
     disableNextButton();
     IESpecific();
     allowTies();
     getSpecificExperimentData(experimentId);
-    //console.log("All functions OK");
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 

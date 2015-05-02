@@ -49,8 +49,8 @@ if (isset($_GET["invite"])) {
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
     <script src="js/Observer/alterExperimentPosition.js"></script>
-    <script src="js/ratingExperimentScript.js"></script>
     <script src="js/commonExperimentScript.js"></script>
+    <script src="js/ratingExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
 
@@ -125,7 +125,7 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons4" class="popupButtons">
-        <button id="continue4" class="button size2" style="">Coninue</button>
+        <button id="continue4" class="button size2" style="">Continue</button>
         <button id="button-next-rating" class="button size2">Next</button>
     </div>
 </div>
@@ -157,12 +157,12 @@ if (isset($_GET["invite"])) {
 </div>
 
 <div id="rating-container">
-    <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
+    <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
 
     <div id="drop-left" class="" style="margin-left: 11%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
             <div class="parent">
-                <a href="" id="left-reproduction-link" target="_blank" class="new-tab"></a>
+                <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan1" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
@@ -170,13 +170,13 @@ if (isset($_GET["invite"])) {
             </div>
 
         </section>
-        <div id="picture-in-panner-left">Picture in panner: <span><strong></strong></span></div>
+        <div id="picture-in-panner-left"><span><strong></strong></span></div>
     </div>
 
     <div id="original" style="margin-left:1%; margin-right:1%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
             <div class="parent">
-                <a href="" id="original-link" target="_blank" class="new-tab"></a>
+                <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
@@ -190,14 +190,14 @@ if (isset($_GET["invite"])) {
     <div id="drop-right" class="" style=" float:left; height:25%; width: 25%;">
         <section id="set2" style="">
             <div class="parent">
-                <a href="" id="right-reproduction-link" target="_blank" class="new-tab"></a>
+                <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
         </section>
-        <div id="picture-in-panner-right">Picture in panner right: <span><strong></strong></span></div>
+        <div id="picture-in-panner-right"><span><strong></strong></span></div>
     </div>
 
 </div>
@@ -206,7 +206,8 @@ if (isset($_GET["invite"])) {
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 <div id="rating" class="footer rating-collection center" style="">
-    <div id="rating-images"></div>
+    <div id="rating-images">
+    </div>
 
 </div>
 

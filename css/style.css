@@ -38,17 +38,45 @@ footer div img {
     width: 100%;
 }
 
-/*#right-panel #experiment-results .header-list th   {*/
-/*max-width: 10% !important;*/
-/*overflow-x:scroll;*/
 
-/*}*/
 
-/*#selected-experiment    {*/
-/*max-width: 70%;*/
-/*}*/
+#selected-experiment	{
+	width:100%;
+
+}
+
+#selected-experiment #table3	{
+	max-width:100%;
+}
+
+/*---------Table management view experiments-----------*/
+
+#experiment-results #zScores-container th, td	{
+	overflow-y:scroll;
+	max-width:100px;
+}
+
 
 #right-panel #experiment-results hr {
    height: 0.5em;
 
+}
+
+#delete-instruction {
+    margin:auto;
+}
+
+#delete-instruction select  {
+    width: 400px;
+    overflow:scroll;
+    min-height: 400px;
+}
+
+#field-delete-instruction #submit-delete-instruction, #delete-instruction-dialog {
+    float:right;
+    margin:2px;
+}
+
+.confirmon-box p {
+    color: white !important;
 }

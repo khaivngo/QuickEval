@@ -1,12 +1,12 @@
 //Scripts used between the main components
 
-(function($) {
+(function ($) {
 
     /**
      * Moves viewport to display selected object
      * @returns {_L3.$.fn}
      */
-    $.fn.goTo = function() {
+    $.fn.goTo = function () {
         $('html, body').animate({
             scrollTop: $(this).offset().top + 'px'
         }, 'fast');
@@ -15,9 +15,9 @@
 })(jQuery);
 
 //Defines a delay
-var delay = (function() {
+var delay = (function () {
     var timer = 0;
-    return function(callback, ms) {
+    return function (callback, ms) {
         clearTimeout(timer);
         timer = setTimeout(callback, ms);
     };
@@ -47,10 +47,10 @@ function loadExperimentTypes() {
         async: false,
         url: 'ajax/scientist/getExperimentTypes.php',
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             result = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             console.log(request.responseText);
             result = 0;
@@ -69,13 +69,14 @@ function getUserSession($var) {
     var userData = new Array();
     $.ajax({
         url: 'ajax/observer/getUserData.php',
+        url: 'ajax/observer/getUserData.php',
         async: false,
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             userData = data;
 
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -128,11 +129,11 @@ function getAllImagesInSet(imagesetId) {
             'imagesetId': imagesetId
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             console.log("Got all images in set! = " + data); //FJERN
             set = data;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -148,45 +149,45 @@ function setUpModeMenu($target) {
     var type = getUserSession('userType');
 
     if (type < 2) { //Admin
-        $('#nav-left-buttons').load("ajax/admin/navLeft.html", function() {
+        $('#nav-left-buttons').load("ajax/admin/navLeft.html", function () {
             $('.dropdown-menu').dropdown();
             $('.modes').removeClass('bg-darkCyan');
             $($target).addClass('bg-darkCyan');
             setUpModeMenuListeners();
         });
-        $('#nav-right-buttons').load("ajax/admin/navRight.html", function() {
+        $('#nav-right-buttons').load("ajax/admin/navRight.html", function () {
             $('#nav-user').append(" " + getUsername());
             setUpLogout();
         });
 
     } else if (type == 3) { //Observer 
-        $('#nav-left-buttons').load("ajax/observer/navLeft.html", function() {
+        $('#nav-left-buttons').load("ajax/observer/navLeft.html", function () {
             $('.dropdown-menu').dropdown();
             setUpModeMenuListeners(type);
         });
-        $('#nav-right-buttons').load("ajax/observer/navRight.html", function() {
+        $('#nav-right-buttons').load("ajax/observer/navRight.html", function () {
             $('#nav-user').append(" " + getUsername());
             setUserIcon();
             setUpLogout();
         });
     } else if (type == 4) { //Anonymous
-        $('#nav-left-buttons').load("ajax/observer/navLeft.html", function() {
+        $('#nav-left-buttons').load("ajax/observer/navLeft.html", function () {
             $('.dropdown-menu').dropdown();
             setUpModeMenuListeners(type);
         });
-        $('#nav-right-buttons').load("ajax/observer/navRightAnon.html", function() {
+        $('#nav-right-buttons').load("ajax/observer/navRightAnon.html", function () {
             $('#nav-user').append(" " + getUsername());
             setUserIcon();
             setUpLogout();
         });
     } else if (type == 2) { //Scientist
-        $('#nav-left-buttons').load("ajax/scientist/navLeft.html", function() {
+        $('#nav-left-buttons').load("ajax/scientist/navLeft.html", function () {
             $('.dropdown-menu').dropdown();
             $('.modes').removeClass('bg-darkCyan');
             $($target).addClass('bg-darkCyan');
             setUpModeMenuListeners();
         });
-        $('#nav-right-buttons').load("ajax/scientist/navRight.html", function() {
+        $('#nav-right-buttons').load("ajax/scientist/navRight.html", function () {
             $('#nav-user').append(" " + getUsername());
             setUpLogout();
         });
@@ -199,17 +200,18 @@ function setUpModeMenu($target) {
  * @returns {undefined}
  */
 function setUpModeMenuListeners($anonymous) {
-    $('.observer-mode').click(function() {
+    $('.observer-mode').click(function () {
         window.location = "index.php";
     });
 
-    $('.scientist-mode').click(function() {
+    $('.scientist-mode').click(function () {
         window.location = "scientistpanel.php";
     });
 
-    $('.admin-mode').click(function() {
+    $('.admin-mode').click(function () {
         window.location = "adminpanel.php";
     });
+
 }
 
 /**
@@ -217,7 +219,282 @@ function setUpModeMenuListeners($anonymous) {
  * @returns {undefined}
  */
 function setUpLogout() {
-    $('#logout').click(function() {
+    $('#logout').click(function () {
         window.location = "logout.php";
     });
+}
+
+//-------DELETE INSTRUCTION--------------------------------------------
+
+/**
+ * Click listenernes and preparation of area.
+ */
+function setupClickListenerDeleteInstruction(mode) {
+
+    getInstructionForDeletion(1, mode);
+    $("#delete-instruction-dialog").hide();
+    submitButtonCheck();
+
+
+    $('#select-right-delete-instruction').click(function () {
+        var selectedArray = $("#sel1").val();
+        addOptionForDeletion(selectedArray);
+    });
+
+    $('#select-left-delete-instruction').click(function () {
+        var selectedArray = $("#sel2").val();
+        removeOptionForDeletion(selectedArray)
+    });
+
+
+    $('#select-all-delete-instruction').click(function () {
+        moveAllOptions();
+    });
+
+    $('#select-reset-delete-instruction').click(function () {
+        resetOptions();
+    });
+
+    $('#submit-delete-instruction').click(function () {
+        $("#delete-instruction-dialog").show();
+
+        $('#confirm-delete-instruction').click(function () {
+            $("#delete-instruction-dialog").hide();
+            deleteInstructions();
+        });
+
+        $('#cancel-delete-instruction').click(function () {
+            $("#delete-instruction-dialog").hide();
+        });
+
+    });
+}
+
+/**
+ * Adds selected options to deletion list.
+ * @param array contains value of each selected element.
+ */
+function addOptionForDeletion(array) {
+
+    array.forEach(function (selected) {
+        var text = $('#sel1 option[value="' + selected + '"]').html();
+        var value = $('#sel1 option[value="' + selected + '"]').val();
+
+
+        //Only instructions that are not in use.
+        if (value != "!") {
+            $("#sel2").append($('<option></option>').val(selected).html(text));
+            $("#sel1 option[value='" + selected + "']").remove();
+        }
+    });
+
+    $('#sel2 option[selected="selected"]').each(
+        function () {
+            $(this).removeAttr('selected');
+        }
+    );
+
+    $("#sel1 option:first").attr('selected', 'selected');
+
+    submitButtonCheck();
+}
+
+/**
+ * Removes selected instruction away from deletion
+ * @param array containing value of selected instructions
+ */
+function removeOptionForDeletion(array) {
+    array.forEach(function (selected) {
+        var text = $('#sel2 option[value="' + selected + '"]').html();
+        $("#sel1").append($('<option></option>').val(selected).html(text));
+
+        $("#sel2 option[value='" + selected + "']").remove();
+    });
+
+    $('#sel1 option[selected="selected"]').each(
+        function () {
+            $(this).removeAttr('selected');
+        }
+    );
+
+    $("#sel2 option:first").attr('selected', 'selected');
+    submitButtonCheck();
+}
+
+/**
+ * Moves all instructions for deletion
+ */
+function moveAllOptions() {
+    var value;
+    var text;
+    $("#sel1 option").each(function (index) {
+        value = $(this).val();
+        text = $(this).text();
+
+        $("#sel2").append($('<option></option>').val(value).html(text));
+
+        $("#sel1 option[value='" + value + "']").remove();
+    });
+
+    submitButtonCheck();
+}
+
+var instructionArray = [];
+/**
+ * Resets all instruction that have been moved to deletion
+ */
+function resetOptions() {
+    var counter = 0;
+    //Empties both list.
+    $("#sel1").find('option').remove().end();
+    $("#sel2").find('option').remove().end();
+
+    //Goes through an two-dimensional array and readds instruction to list.
+    instructionArray.forEach(function (index) {
+        $("#sel1").append($('<option></option>').val(index.value).html(index.text));
+    });
+
+    instructionsInUse(2);
+    submitButtonCheck();
+
+}
+
+/**
+ * Retrieves all instructions associated with user.
+ * @param option determines how the script is runned.
+ */
+function getInstructionForDeletion(option, mode) {
+    var i = 0;
+    console.log("mode: " + mode);
+    $.ajax({
+        url: 'ajax/admin/getInstructionsFromHistory.php',
+        async: false,
+        type: 'POST',
+        data: {
+            'option': option,
+            'mode': mode
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+            data.forEach(function (instruction) {
+                instructionArray.push({text: instruction.text, title: instruction.title, id: instruction.id});
+                $("#sel1").append($('<option></option>').val(instruction.id).html(instruction.text));
+                i++;
+            });
+            console.log(i);
+            instructionsInUse(1, mode);
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+}
+
+var arrayInstructionsInUse = [];
+/**
+ * Fetches all instructions that belongs to current user and is associated with an experiment.
+ * @param option whether to fetch new data or update.
+ */
+function instructionsInUse(option, mode) {
+    if (option == 1) {
+        $.ajax({
+            url: 'ajax/admin/getInstructionsFromHistory.php',
+            async: false,
+            type: 'POST',
+            data: {
+                'option': 3,
+                'mode': mode
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                data.forEach(function (instruction) {
+                    //saves returned data in an array of objects.
+                    arrayInstructionsInUse.push({text: instruction.text, title: instruction.title, id: instruction.id});
+                    $('#sel1 option').filter(function () {
+                        return $(this).html() == instruction.text;
+                    }).html(instruction.text + ' [ ' + instruction.title + ' ]').val("!"); //uses ! to mark option not deletable.
+                });
+            },
+            error: function (request, status, error) {
+                console.log(request.responseText);
+            }
+        });
+    }
+    else if (option == 2) {
+        arrayInstructionsInUse.forEach(function (instruction) {
+            $('#sel1 option').filter(function () {
+                return $(this).html() == instruction.text;
+            }).html(instruction.text + ' [ ' + instruction.title + ' ]').val("!"); //uses ! to mark option not deletable.
+        });
+    }
+}
+
+/**
+ * Goes through all selected options and saves in an array
+ * which is sent to PHP for deletion.
+ */
+function deleteInstructions() {
+    var instructions = [];
+    var stringInstructions;
+
+    $("#sel2 option").each(function () {
+        instructions.push($(this).val());
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/admin/updateInstructions.php',
+        data: {'selection': JSON.stringify(instructions)},
+        success: function (data) {
+            $.Notify({//notifies user about successfull deletion of instructions
+                content: "Instruction(s) deleted",
+                style: {background: 'lime'}
+            });
+        },
+        error: function (request, status, error) {
+        }
+    });
+
+    $("#sel2").find('option').remove().end();   //clear list.
+}
+
+/**
+ * Checks whether the submit buttonn is to be disabled or not.
+ */
+function submitButtonCheck() {
+    if ($('#sel2 option').length == 0) {
+        $("#submit-delete-instruction").prop("disabled", true);
+    }
+    else {
+        $("#submit-delete-instruction").prop("disabled", false);
+
+    }
+}
+
+
+/**
+ * Updates the localStorage.autoLoginCheck for use in whether to automatically login user as ano.
+ * @param check used for controlling action of function.
+ */
+function autoLogin(check) {
+    console.log("autoLogin activated");
+    if(typeof(Storage) !== "undefined") {
+        console.log("Web Storage is supported");
+
+        //Updates local storage so that next time the login window appears
+        // it automatically login user as anonymous
+        if(check == 0 && localStorage.autoLoginCheck2 == "false"  )  {
+            localStorage.autoLoginCheck1 = true;
+            localStorage.autoLoginCheck2 = true;
+        }
+        else if(check == 1 && localStorage.autoLoginCheck2 == "true")    {
+            //localStorage.autoLoginCheck1 = false;
+            localStorage.autoLoginCheck2 = false;
+        }
+
+    } else {
+        console.log("Sorry! No Web Storage support")
+    }
 }

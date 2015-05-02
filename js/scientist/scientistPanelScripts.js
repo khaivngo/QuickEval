@@ -46,7 +46,19 @@ $(document).ready(function() {
         setActive($(this));
     });
 
-    //------------------------- OTHER --------------------------------//
+
+
+    $("#delete-instruction").click(function() {
+        inject("ajax/scientist/deleteInstruction.html");
+        setActive($(this));
+        setupClickListenerDeleteInstruction(1);
+    });
+
+
+    //---------------------------------------------------------------//
+
+
+
 
 });
 

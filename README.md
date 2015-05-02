@@ -5,6 +5,7 @@
 
 
 <h2>License</h2>
+
 QuickEval is a free open-source software and is licensed under the GPLv2 license.
 
 (See wiki for more)

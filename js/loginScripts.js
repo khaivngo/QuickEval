@@ -15,12 +15,21 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
+
+
+    //Checks whether the user shall be logged in as anonymous automatically.
+    autoLogin(1);
+    if(localStorage.autoLoginCheck1 == "true")    {
+        localStorage.autoLoginCheck1 = false;
+        loginAnonymous();
+    }
+
 });
 
 function loginAnonymous() {
     $('#anonymous, #submit').prop('disabled', true);
-                console.log('beforewindow');
-                console.log('beforewindow');
+                //console.log('beforewindow');
+                //console.log('beforewindow');
 
     $.ajax({
         url: 'ajax/observer/loginAnonymous.php',
@@ -36,8 +45,7 @@ function loginAnonymous() {
             }
         },
         error: function(request, status, error) {
-            alert(request.responseText);
-                console.log('brewindow');
+            console.log(request.responseText);
 
             $('#anonymous,#submit').prop('disabled', false);
         }
@@ -74,7 +82,8 @@ function loginUser() {
             $('#anonymous,#submit').prop('disabled', false);
         },
         error: function(request, status, error) {
-            alert(request.responseText);
+            console.log(request.responseText);
+            alert("Something went wront, please try again.");
             $('#anonymous,#submit').prop('disabled', false);
         }
     });

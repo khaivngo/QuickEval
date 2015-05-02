@@ -9,7 +9,7 @@ if($_SESSION['user']['userType'] > 1) {
 	return;
 }
 try {                                   //updates user's access level for the owner of email		
-    $stmt = $db->prepare("UPDATE person, userType SET person.userType = userType.id WHERE person.email = :email AND userType.title  = :type");
+    $stmt = $db->prepare("UPDATE person, userType SET person.userType = usertype.id WHERE person.email = :email AND usertype.title  = :type");
 
     $stmt->execute(array(':email' => $_POST['email'],
         ':type' => $_POST['type']));

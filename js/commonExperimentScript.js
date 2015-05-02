@@ -243,7 +243,7 @@ function getSpecificExperimentData(experimentId) {
             if (data[0]['isPublic'] == '1 = Public') {
             }
             else {
-                console.log("Experiment is NOT public");
+                //console.log("Experiment is NOT public");
             }
 
             if (data[0].timer == 0) {
@@ -308,6 +308,8 @@ function exitFullscreen() {
  */
 function setBackgroundColour(colour) {
     $('body').css('background-color', '' + colour + '!important');
+    $('#rating').css('background-color', '' + colorLuminance(colour, -0.2) + '!important');
+
 }
 
 /**
@@ -346,7 +348,7 @@ function disablePanning() {
     });
 }
 
-function adjustScaling()    {
+function adjustScaling() {
     var $elem;
 
     $elem = $('#pan1, #pan2, #pan3');
@@ -368,7 +370,7 @@ function adjustScaling()    {
     //    zoom: 3
     //});
 
-    console.log("adjusting scaling");
+    //console.log("adjusting scaling");
 }
 
 //
@@ -382,11 +384,73 @@ function panningCheck(originalUrl) {
 
     img.onload = function () {
         //console.log("Image dimensions: " + this.width + 'x' + this.height);
-        if (this.width < 500 && this.height < 500)
+        if (this.width < 500 && this.height < 500) {
             disablePanning();
+        }
+        else if (this.width < 500 || this.height < 450) {
+            disablePanning();
+        }
+
+
     }
     img.src = originalUrl;
 
 
 }
 
+
+/**
+ *Returns either a shade darker or lighter than input. Does not work if the color is entirely black
+ * eg. #000, #000000.
+ *
+ * @param hex — a hex color value such as “#abc” or “#123456″ (the hash is optional)
+ * @param lum — the luminosity factor, i.e. -0.1 is 10% darker, 0.2 is 20% lighter, etc.
+ * @returns {string} the color that is either lighter or darker
+ * @constructor
+ *
+ * @author {http://www.sitepoint.com/javascript-generate-lighter-darker-color/}
+ */
+function colorLuminance(hex, lum) {
+    if (hex != '') {
+        // validate hex string
+        hex = String(hex).replace(/[^0-9a-f]/gi, '');
+        if (hex.length < 6) {
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+        }
+        lum = lum || 0;
+
+        // convert to decimal and change luminosity
+        var rgb = "#", c, i;
+        for (i = 0; i < 3; i++) {
+            c = parseInt(hex.substr(i * 2, 2), 16);
+            c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+            rgb += ("00" + c).substr(c.length);
+        }
+
+        return rgb;
+    }
+
+}
+
+/**
+ * Deletes all results for a user for a chosen experiment.
+ */
+function deleteOldResults(experimentId) {
+    $.ajax({
+        url: 'ajax/observer/deleteOldResults.php',
+        data: {
+            'experimentId': experimentId
+        },
+        type: 'post',
+        dataType: 'json',
+        async: false,
+        //dataType: 'json',
+        success: function (data) {
+            console.log("Rows deleted = "+data);
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+
+}
