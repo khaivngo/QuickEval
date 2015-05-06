@@ -51,7 +51,7 @@ footer div img {
 
 /*---------Table management view experiments-----------*/
 
-#experiment-results #zScores-container th, td	{
+#experiment-results #zScores-container th, #zScores-container td	{
 	overflow-y:scroll;
 	max-width:100px;
 }
