@@ -147,9 +147,9 @@ function newPictureQueue($db) {
 	$sth->execute();
 	$result = $sth->fetchAll();
 
-      //  if($_SESSION['activeObserverExperiment']['sortingalgorithm'] == 1) {
-            shuffle($result);
-       // }
+        //if($_SESSION['activeObserverExperiment']['sortingalgorithm'] == 1) {
+        shuffle($result);
+         //}
 	$_SESSION['activeObserverExperiment']['pictureOrder'] = $result;                
         
         
