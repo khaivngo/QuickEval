@@ -16,7 +16,6 @@ $(document).ready(function() {
     });
 
 
-
     //Checks whether the user shall be logged in as anonymous automatically.
     autoLogin(1);
     if(localStorage.autoLoginCheck1 == "true")    {
@@ -28,8 +27,6 @@ $(document).ready(function() {
 
 function loginAnonymous() {
     $('#anonymous, #submit').prop('disabled', true);
-                //console.log('beforewindow');
-                //console.log('beforewindow');
 
     $.ajax({
         url: 'ajax/observer/loginAnonymous.php',
@@ -70,6 +67,8 @@ function loginUser() {
                 $('#password-div').after('<div id="notify" class="bg-red notice marker-on-top span1">' +
                     'Invalid email or password' +
                     '</div>');
+                $('#submit').after('<br><br><button class="button info" id="forgot-password">Reset password</button>');
+                resetPasswordListener();
 
             } else {
                 if ($('#redirect').val() != undefined) {
@@ -87,4 +86,70 @@ function loginUser() {
             $('#anonymous,#submit').prop('disabled', false);
         }
     });
+}
+
+/**
+ * Sets a listener to the appended button for resetting password.
+ */
+function resetPasswordListener()   {
+    $('#forgot-password').click(function() {
+        console.log('reset password');
+        sendNewPassword();
+    });
+}
+
+/**
+ * Goes to the procedure of giving the user a new password.
+ */
+function sendNewPassword()  {
+    var string = Math.random().toString(36).slice(-8);
+    var email = prompt("Enter your email registered with QuickEval", "Email");
+
+    updatePassword(string, email);
+
+    $.ajax({
+        url: 'ajax/observer/sendNewPassword.php',
+        data: {
+            'data': CryptoJS.SHA3(string).toString(),
+            'string': string,
+            'email': email,
+        },
+        type: 'POST',
+        async: false,
+        dataType: 'JSON',
+        success: function(data) {
+            console.log("success")
+        },
+        error: function(request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+}
+
+/**
+ * Updates password.
+ * @param string word.
+ * @param email users mail.
+ */
+function updatePassword(string, email)   {
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/observer/updatePassword.php',
+            data: {
+                'password': CryptoJS.SHA3(string).toString(),
+                'check': "newPassword",
+                'email': email
+            }, //crypts new password
+            success: function (data) {
+                $.Notify({//notifies user about successfull password change
+                    content: "New password sent to mail",
+                    style: {background: 'lime'},
+                });
+                location.reload();
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+                console.log(request.responseText);
+            }
+        });
 }

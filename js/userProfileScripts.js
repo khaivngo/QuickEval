@@ -1,30 +1,30 @@
-$(document).ready(function() {
-    
+$(document).ready(function () {
+
     inject("ajax/observer/editUserInfo.html"); 			//Starts on dashboard-page on refresh
 
     setUpModeMenu('.observer-mode');
 
     $("#register-date").datepicker({
         effect: "slide",
-        selected: function(d, d0) {
+        selected: function (d, d0) {
             $('#calendar').val(d);  //Adds the selected value to the input field
         }
     });
 
-    $("#edit-info").click(function() {        
+    $("#edit-info").click(function () {
         inject("ajax/observer/editUserInfo.html");
         setActive($(this));
-        
+
         fillUserInfo();
 
         $("#register-date").datepicker({
             effect: "slide",
-            selected: function(d, d0) {
+            selected: function (d, d0) {
                 $('#calendar').val(d);  //Adds the selected value to the input field
             }
         });
 
-        $('#user-info-submit').click(function() {	//when user submits user info
+        $('#user-info-submit').click(function () {	//when user submits user info
             if (checkValuesUserInfo()) {           // checks if it's valid
                 updateUserInfo();                  // if so, updates user's info
             }
@@ -33,19 +33,19 @@ $(document).ready(function() {
 
     });
 
-    $("#change-password").click(function() {
+    $("#change-password").click(function () {
         inject("ajax/observer/changePassword.html");
 
         setActive($(this));
 
-        $('#password-submit').click(function() {	//when user submits new password
+        $('#password-submit').click(function () {	//when user submits new password
             if (checkValuesPassword()) {           // checks if it's valid
                 updatePassword();                  // if so, updates user's password
             }
         });
     });
 
-    $("#change-email").click(function() {
+    $("#change-email").click(function () {
         inject("ajax/observer/changeEmail.html");
 
         var email = getUserSession('email');	//fetches user email from session
@@ -53,18 +53,18 @@ $(document).ready(function() {
 
         setActive($(this));
 
-        $('#email-submit').click(function() {	//when user submits new email
+        $('#email-submit').click(function () {	//when user submits new email
             if (checkValuesEmail()) {				//	checks if it's valid
                 updateEmail();					//	if so, updates user's email address
             }
         });
     });
 
-    $("#style-settings").click(function() {
+    $("#style-settings").click(function () {
         inject("ajax/observer/styleSetting.html");
         setActive($(this));
 
-        $('#style-submit').click(function() {                   //when user submits new background colour
+        $('#style-submit').click(function () {                   //when user submits new background colour
             updateBackgroundColour();					//	if so, updates user's email address
         });
     });
@@ -72,20 +72,20 @@ $(document).ready(function() {
 
 
 function fillUserInfo() {
-        var firstName = getUserSession('firstName');	//fetches user info from session
-        $("#first-name").val(firstName);				//fills the field
+    var firstName = getUserSession('firstName');	//fetches user info from session
+    $("#first-name").val(firstName);				//fills the field
 
-        var lastName = getUserSession('lastName');
-        $("#last-name").val(lastName);
+    var lastName = getUserSession('lastName');
+    $("#last-name").val(lastName);
 
-        var nationality = getUserSession('nationality');
-        $("#nationality").val(nationality);
+    var nationality = getUserSession('nationality');
+    $("#nationality").val(nationality);
 
-        var title = getUserSession('title');
-        $("#title").val(title);
+    var title = getUserSession('title');
+    $("#title").val(title);
 
-        var phone = getUserSession('phoneNumber');
-        $("#phone-number").val(phone);
+    var phone = getUserSession('phoneNumber');
+    $("#phone-number").val(phone);
 
 }
 
@@ -98,7 +98,7 @@ function inject($data) {
     $.ajax({
         async: false,
         url: $data,
-        success: function(data) {
+        success: function (data) {
             $($('#right-panel')).html(data);
         }
     });
@@ -180,19 +180,19 @@ function checkValuesEmail() {            //checks wether the old and new email i
 function checkUserEmail() {
     var check;
     $.ajax
-            ({
-                url: 'ajax/observer/checkUserEmail.php',
-                async: false,
-                data: {'email': $('#email3').val()},
-                type: 'post',
-                dataType: 'json',
-                success: function(data) {
-                    (data > 0) ? check = false : check = true;
-                },
-                error: function(request, status, error) {
+    ({
+        url: 'ajax/observer/checkUserEmail.php',
+        async: false,
+        data: {'email': $('#email3').val()},
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            (data > 0) ? check = false : check = true;
+        },
+        error: function (request, status, error) {
 
-                }
-            });
+        }
+    });
     return check;
 }
 
@@ -203,16 +203,18 @@ function updateEmail() {
     $.ajax({
         type: 'POST',
         url: 'ajax/observer/updateEmail.php',
-        data: {'email': $('email').val(),
+        data: {
+            'email': $('email').val(),
             'email2': $('#email2').val(),
-            'email3': $('#email3').val()},
-        success: function(data) {
+            'email3': $('#email3').val()
+        },
+        success: function (data) {
             $.Notify({//notifies user about successfull email change
                 content: "Email updated",
                 style: {background: 'lime'},
             });
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             console.log(request.responseText);
         }
@@ -237,25 +239,25 @@ function checkValuesPassword() {
 
     if (!(sessionPassword == oldPassword)) {     //assumed old password actually matches old passwor
         $('#password').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                '<div class="bg-red notice marker-on-top span1">' +
-                'Password does not match current password' +
-                '</div></div>');
+        '<div class="bg-red notice marker-on-top span1">' +
+        'Password does not match current password' +
+        '</div></div>');
         return false;
     }
 
     if (newPassword.length <= 4) {                  //checks if length of new password is valid
         $('#password2').after('<div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                '<div class="bg-red notice marker-on-top span1">' +
-                'Password needs to be longer than 4 characters' +
-                '</div></div>');
+        '<div class="bg-red notice marker-on-top span1">' +
+        'Password needs to be longer than 4 characters' +
+        '</div></div>');
         return false;
     }
 
     if (!(newPassword == confirmNewPassword)) {         //if new password and confirm new password matches.
         $('#password3').after('<div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                '<div class="bg-red notice marker-on-top span1">' +
-                'Passwords do not match' +
-                '</div></div>');
+        '<div class="bg-red notice marker-on-top span1">' +
+        'Passwords do not match' +
+        '</div></div>');
         console.log("Both passwords do not match");
         return false;
     }
@@ -267,21 +269,21 @@ function checkValuesPassword() {
  * Sends data to updatePassword.php for updating data in database
  */
 function updatePassword() {
-    $.ajax({
-        type: 'POST',
-        url: 'ajax/observer/updatePassword.php',
-        data: {'password': CryptoJS.SHA3($('#password2').val()).toString()}, //crypts new password
-        success: function(data) {
-            $.Notify({//notifies user about successfull password change
-                content: "Password changed",
-                style: {background: 'lime'},
-            });
-        },
-        error: function(request, status, error) {
-            alert(request.responseText);
-            console.log(request.responseText);
-        }
-    });
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/observer/updatePassword.php',
+            data: {'password': CryptoJS.SHA3($('#password2').val()).toString()}, //crypts new password
+            success: function (data) {
+                $.Notify({//notifies user about successfull password change
+                    content: "Password changed",
+                    style: {background: 'lime'},
+                });
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+                console.log(request.responseText);
+            }
+        });
 }
 
 
@@ -313,9 +315,9 @@ function checkValuesUserInfo() {
     if (firstName != sessionFirstName) {
         if (firstName.length <= 1) {
             $('#first-name').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                    '<div class="bg-red notice marker-on-top span1">' +
-                    'Too short' +
-                    '</div></div>');
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Too short' +
+            '</div></div>');
             return false;
         }
     }
@@ -323,9 +325,9 @@ function checkValuesUserInfo() {
     if (lastName != sessionLastName) {
         if (lastName.length <= 1) {
             $('#last-name').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                    '<div class="bg-red notice marker-on-top span1">' +
-                    'Too short' +
-                    '</div></div>');
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Too short' +
+            '</div></div>');
             return false;
         }
     }
@@ -333,9 +335,9 @@ function checkValuesUserInfo() {
     if (nationality != sessionNationality) {
         if (nationality.length <= 3) {
             $('#nationality').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                    '<div class="bg-red notice marker-on-top span1">' +
-                    'Too short' +
-                    '</div></div>');
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Too short' +
+            '</div></div>');
             return false;
         }
 
@@ -344,9 +346,9 @@ function checkValuesUserInfo() {
     if (title != sessionTitle) {
         if (firstName.length <= 1) {
             $('#title').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                    '<div class="bg-red notice marker-on-top span1">' +
-                    'Too short' +
-                    '</div></div>');
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Too short' +
+            '</div></div>');
             return false;
         }
     }
@@ -354,9 +356,9 @@ function checkValuesUserInfo() {
     if (phoneNumber != sessionPhoneNumber) {
         if (firstName.length <= 3) {
             $('#phone-number').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-                    '<div class="bg-red notice marker-on-top span1">' +
-                    'Too short' +
-                    '</div></div>');
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Too short' +
+            '</div></div>');
             return false;
         }
     }
@@ -381,18 +383,20 @@ function updateUserInfo() {
     $.ajax({
         type: 'POST',
         url: 'ajax/observer/updateUserInfo.php',
-        data: {'firstName': $('#first-name').val(),
+        data: {
+            'firstName': $('#first-name').val(),
             'lastName': $('#last-name').val(),
             'nationality': $('#nationality').val(),
             'title': $('#title').val(),
-            'phoneNumber': $('#phone-number').val()},
-        success: function(data) {
+            'phoneNumber': $('#phone-number').val()
+        },
+        success: function (data) {
             $.Notify({//notifies user about successfull email change
                 content: "User info updated",
                 style: {background: 'lime'},
             });
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             console.log(request.responseText);
         }

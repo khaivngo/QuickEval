@@ -17,9 +17,9 @@
     <script src="min/metro.min.js"></script>
 
     <!-- Other JS -->
-    <script src="js/sha3.js"></script> 
-    <script src="js/scripts.js"></script> 
-    <script src="js/loginScripts.js"></script> 
+    <script src="js/sha3.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/loginScripts.js"></script>
     <?php echo (isset($_GET['redirect'])) ? '<input type="hidden" id="redirect" value="'. $_GET['redirect'] .'"/>'  : '' ?>
 
     <?php
