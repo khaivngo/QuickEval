@@ -17,9 +17,8 @@ try {
         ':pictureOrderId' => $_POST['pictureOrderId'],
         ':personId' => $userId,
     ));
-    
-  echo ($_POST['category']);  
+
 } catch (Exception $ex) {
-    ChromePhp::log($ex->getMessage());
+    //ChromePhp::log($ex->getMessage());
 }
 ?>

@@ -431,17 +431,16 @@ function finished() {
  * Gets the information about pictures in sortable elements in sequence and for later insertion into DB.
  * @returns {undefined}
  */
-var postOnce = 0;
+//var postOnce = 0;
 function postRating() {
-    if (postOnce == 0) {
+    //console.log("postRating()");
+    //if (postOnce == 0) {
         $('.image-position').each(function () {      //loops through all div with matching class
-            pictureOrderId = $(this).find('img').attr('id');        //get's Id of the image, which is the pictureOrderId
+            pictureOrderId = $(this).find('img').attr('id');        //gets ID of the image, which is the pictureOrderId
 
             postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
         });
-        postOnce = 1;
-
-    }
+    //    postOnce = 1;
 
 
 }
@@ -485,6 +484,7 @@ function loadImageIntoPanner(pictureOrderId, imageUrl, side) {
  * @returns {undefined}
  */
 function postResultsRating(experimentId, pictureOrderId) {
+    console.log("postResultsRating");
     $.ajax
     ({
         url: 'ajax/observer/insertIntoResultRating.php',
