@@ -1,13 +1,12 @@
-
 //global variables
 var originalDivClone;
 var leftDivClone;
 var rightDivClone;
 var firstInstruction = 0;
 
-$(document).ready(function() {
+$(document).ready(function () {
 
-    (function() {
+    (function () {
         var $section = $('#set2, #set1');
         $section.find('.panzoom').panzoom({
             $zoomIn: $section.find(".zoom-in"),
@@ -28,36 +27,39 @@ $(document).ready(function() {
 
 //------------------------Based on http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/ ---------------------
 
-    $('#toggle-button').click(function() {
+    $('#toggle-button').click(function () {
         toggleSlide();
     });
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
     //shows which reproduction is selected
-    $('#left-reproduction, #right-reproduction').click(function() {
+    $('#left-reproduction, #right-reproduction').click(function () {
+        console.log("left or right");
         $('#left-reproduction,#right-reproduction').not(this).removeClass('main');
         $(this).toggleClass('main');
 
         reproductionSelected();
     });
+
+
 //---------------------------------------------------------------------------------------------------------------------------------------
 
-    $('#left-reproduction-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    $('#left-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#left-reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#original-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    $('#original-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#original-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#right-reproduction-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    $('#right-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#right-reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
@@ -79,13 +81,13 @@ $(document).ready(function() {
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
-    $('#button-next').click(function() {
+    $('#button-next').click(function () {
         nextComparison();
         resetSelected();
     });
 
 
-    $('#continue2').click(function() {
+    $('#continue2').click(function () {
         if (firstInstruction == 0) {
             nextComparison();
             firstInstruction = 1;
@@ -93,14 +95,14 @@ $(document).ready(function() {
 
     });
 
-    $('#button-none').click(function() {
+    $('#button-none').click(function () {
         nextComparison();
     });
-    $('#quit').click(function() {       //If user confirms cancel he is returned to main page
+    $('#quit').click(function () {       //If user confirms cancel he is returned to main page
         window.location = 'index.php';
     });
 
-    $('#instruction-continue').click(function() {
+    $('#instruction-continue').click(function () {
         nextComparison();
         $('#toggle-button').trigger('click');
         $('#instruction-continue').hide();
@@ -108,8 +110,6 @@ $(document).ready(function() {
 
 });
 //----------------------------------------------------------------------------------------------------------------------------------------
-
-
 
 
 /**
@@ -151,24 +151,24 @@ function resetSelected() {
  */
 function allowTies() {
     $.ajax
-            ({
-                url: 'ajax/observer/getIfAllowTies.php',
-                async: false,
-                data: {'experimentId': experimentId},
-                type: 'post',
-                dataType: 'json',
-                success: function(data) {
-                    if (data[0].allowTies == 0) {       //ties not allowed, therefore hides none button.
-                        $('#button-none').hide();
-                    }
-                }
-                ,
-                error: function(xhr, ajaxOptions, thrownError) {
-                    console.log("Error");
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
+    ({
+        url: 'ajax/observer/getIfAllowTies.php',
+        async: false,
+        data: {'experimentId': experimentId},
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            if (data[0].allowTies == 0) {       //ties not allowed, therefore hides none button.
+                $('#button-none').hide();
+            }
+        }
+        ,
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log("Error");
+            console.log(xhr.status);
+            console.log(thrownError);
+        }
+    });
 }
 
 /**
@@ -265,24 +265,25 @@ function nextComparison() {
  */
 function postResults(type, pictureOrderId, choose) {
     $.ajax
-            ({
-                url: 'ajax/observer/insertChosenIntoResult.php',
-                async: false,
-                data: {'type': "pair",
-                    'experimentId': experimentId,
-                    'pictureOrderId': pictureOrderId,
-                    'chooseNone': choose,
-                },
-                type: 'post',
-                success: function(data) {
+    ({
+        url: 'ajax/observer/insertChosenIntoResult.php',
+        async: false,
+        data: {
+            'type': "pair",
+            'experimentId': experimentId,
+            'pictureOrderId': pictureOrderId,
+            'chooseNone': choose,
+        },
+        type: 'post',
+        success: function (data) {
 
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    console.log("Error");
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log("Error");
+            console.log(xhr.status);
+            console.log(thrownError);
+        }
+    });
 }
 
 /**
@@ -292,24 +293,24 @@ function postResults(type, pictureOrderId, choose) {
  */
 function setOriginal(originalImageUrl) {               //mangler hent original
     $.ajax
-            ({
-                url: 'ajax/observer/getShowOriginal.php',
-                async: false,
-                data: {'experimentId': experimentId},
-                type: 'post',
-                dataType: 'json',
-                success: function(data) {
-                    if (data[0].showOriginal == 0) {
-                        removeOriginal();
-                    }
+    ({
+        url: 'ajax/observer/getShowOriginal.php',
+        async: false,
+        data: {'experimentId': experimentId},
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            if (data[0].showOriginal == 0) {
+                removeOriginal();
+            }
 
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    console.log("Error");
-                    console.log(xhr.status);
-                    console.log(thrownError);
-                }
-            });
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console.log("Error");
+            console.log(xhr.status);
+            console.log(thrownError);
+        }
+    });
     $('#original').find('img').attr('src', originalImageUrl);
     $('#original-link').attr('href', originalImageUrl); //Adding right top corner link
 }
@@ -328,9 +329,9 @@ function removeOriginal() {
 
 /**
  * Receives object with data about experiment of reproductions and instructions.
- * Dependent of what object contains it either display reproduction, loads instruction 
+ * Dependent of what object contains it either display reproduction, loads instruction
  * or if finished sends user back to front page.
- * @param {type} $imageUrl1 first/left reproduction picture 
+ * @param {type} $imageUrl1 first/left reproduction picture
  * @param {type} $imageUrl2 second/right reproducation picture
  * @returns {undefined}
  */
@@ -368,8 +369,8 @@ function nextStep(receivedObject) {
         $('#popupButtons').css("margin-left", "46%");
         $('#cancel-experiment').trigger('click');
     }
-	
-	console.log("Next step ok");
+
+    console.log("Next step ok");
 }
 
 /**

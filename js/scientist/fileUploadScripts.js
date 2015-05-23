@@ -7,6 +7,7 @@ $(document).ready(function () {
         enterName($('#right-panel'));
         addOriginalButtonListener();
 
+
     });
 });
 
@@ -233,10 +234,10 @@ function startUploader(imagesetId, target) {
                     // if that is the case it sends a parameter with '1' to indicate that this picture is to be set as original.
                     var originalCheck = $('.image-data .input-control .radio').is(':checked');
 
-                    if(originalCheck)    {
+                    if (originalCheck) {
                         insertImageToDatabase(completeFileName, imagesetId, file.id, 1);
                     }
-                    else    {
+                    else {
                         insertImageToDatabase(completeFileName, imagesetId, file.id, 0);    //Picture not to be set as original.
                     }
                 }
@@ -481,6 +482,19 @@ function addOriginalButtonListener() {
         $('.radio.original').prop('checked', false);
         $(this).children().children('input').prop('checked', true);
     });
+
+    //Clears input field when X is clicked:
+    $(document.body).on('click', '.image-set-title .btn-clear', function () {
+        $('#image-set-name').val("");
+    });
+
+    //Clears input field when X is clicked:
+    $(document.body).on('click', '.image-set-desc .btn-clear', function () {
+        $('#image-set-description').val("");
+    });
+
+
+
 }
 
 /**
