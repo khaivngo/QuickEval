@@ -35,13 +35,33 @@ $(document).ready(function () {
 
     //shows which reproduction is selected
     $('#left-reproduction, #right-reproduction').click(function () {
-        console.log("left or right");
         $('#left-reproduction,#right-reproduction').not(this).removeClass('main');
         $(this).toggleClass('main');
 
         reproductionSelected();
     });
 
+    //Listeners for arrow-keys and enter for finishing:
+    $(document).keydown(function (e) {
+        console.log(e.keyCode)
+        if (e.keyCode == 38) {                      //Selects none of the reproductions.
+            $('#button-none').trigger('click');
+        }
+        else if (e.keyCode == 37) {                     //Selects the left reproduction.
+            $('#left-reproduction').trigger('click');
+            $('#button-next').trigger('click');
+        }
+        else if (e.keyCode == 39) {                     //Select the right reproduction.
+            $('#right-reproduction').trigger('click');
+            $('#button-next').trigger('click');
+        }
+        else if(e.keyCode == 13)    {
+            var check = $('#popupButtons #quit').is(":visible");
+            if(check)   {                                   //Checks if buttons is activated and visible to user.
+                $('#popupButtons #quit').trigger('click');  //Quits finished experiment.
+            }
+        }
+    });
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
