@@ -130,7 +130,7 @@ function getAllImagesInSet(imagesetId) {
         },
         dataType: 'json',
         success: function (data) {
-            console.log("Got all images in set! = " + data); //FJERN
+            //console.log("Got all images in set! = " + data); //FJERN
             set = data;
         },
         error: function (request, status, error) {

@@ -1,21 +1,21 @@
-$(document).ready(function() {
-    
-    $("#upload-image").click(function() {
+$(document).ready(function () {
+
+    $("#upload-image").click(function () {
         $('#right-menu').empty();   //Empties right menu if user came from function using menu
 
         setActive($(this));
         enterName($('#right-panel'));
         addOriginalButtonListener();
-        
+
     });
 });
 
 function enterName(target) {
     target.empty();
     var container = $('<div>');
-    container.load('ajax/scientist/uploadImages.html', function() {
+    container.load('ajax/scientist/uploadImages.html', function () {
         target.prepend(container)
-        $('#start-upload-button').click(function() {
+        $('#start-upload-button').click(function () {
             $('.notice').remove();
             if ($("#image-set-name").val().length > 2) {
                 $("#image-set-description").prop('disabled', true);
@@ -25,16 +25,14 @@ function enterName(target) {
             } else {
                 $('.notice').remove();
                 $("#image-set-name").after('<div id="notify"><div class="span1" style="margin: 20px"></div>' +
-                        '<div class="bg-red notice marker-on-top span1">' +
-                        'Name needs to be 3 characters or longer' +
-                        '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Name needs to be 3 characters or longer' +
+                '</div></div>');
             }
 
         });
     });
 }
-
-
 
 
 /**
@@ -45,8 +43,8 @@ function enterName(target) {
 function startUploader(imagesetId, target) {
     var uploads = 0;	//Used for checking how many pictures are uploaded.
     target.append("<div id='uploader' style='width:100%;margin:10px; float:left;>" +
-            "<p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>" +
-            "</div>");
+    "<p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>" +
+    "</div>");
 
     $("#uploader").plupload({
         // General settings
@@ -81,17 +79,17 @@ function startUploader(imagesetId, target) {
         silverlight_xap_url: 'plupload/js/Moxie.xap',
         // PreInit events, bound before any internal events
         preinit: {
-            Init: function(up, info) {
+            Init: function (up, info) {
                 // console.log('[Init]', 'Info:', info, 'Features:', up.features);
             },
-            UploadFile: function(up, file) {
+            UploadFile: function (up, file) {
 
                 // You can override settings before the file is uploaded
                 // up.settings.url = 'upload.php?id=' + file.id;
                 // up.settings.multipart_params = {param1 : 'value1', param2 : 'value2'};
 
                 /**
-                 * Denne funksjonen kj�res hver gang et bilde STARTER uploadingen.  F.eks. ved to bilder i bildek�en s� vil 
+                 * Denne funksjonen kj�res hver gang et bilde STARTER uploadingen.  F.eks. ved to bilder i bildek�en s� vil
                  * denne kj�res to ganger.  Da en gang for hver fil.
                  */
 
@@ -100,12 +98,12 @@ function startUploader(imagesetId, target) {
         },
         // Post init events, bound after the internal events
         init: {
-            Refresh: function(up) {
+            Refresh: function (up) {
                 // Called when upload shim is moved
                 //  console.log('[Refresh]');
 
             },
-            StateChanged: function(up) {
+            StateChanged: function (up) {
                 // Called when the state of the queue is changed
                 //   console.log('[StateChanged]', up.state == plupload.STARTED ? "STARTED" : "STOPPED");
                 var pictureSet;
@@ -134,11 +132,12 @@ function startUploader(imagesetId, target) {
                         //console.log("Stop picture set");
                         stopPictureSet();
 
-                        $.Notify({style: {background: 'green', color: 'white'},
+                        $.Notify({
+                            style: {background: 'green', color: 'white'},
                             content: "Upload complete!"
                         });
-                        setTimeout(function(){
-                            $('#right-menu').empty();   
+                        setTimeout(function () {
+                            $('#right-menu').empty();
                             setActive($(this));
                             enterName($('#right-panel'));
                             addOriginalButtonListener();
@@ -149,14 +148,15 @@ function startUploader(imagesetId, target) {
                     {
                         changeAmountOfPicturesInSet(imagesetId, up.files.length);
 
-                        setTimeout(function() {
+                        setTimeout(function () {
                             displayImageSet(imagesetId);
                         }, 4000);
 
                         /*var imageSet = new Array();			
                          imageSet = getAllImagesInSet(imagesetId);
                          showPictureSet(imageSet);*/
-                        $.Notify({style: {background: 'green', color: 'white'},
+                        $.Notify({
+                            style: {background: 'green', color: 'white'},
                             content: "Successfully added more images!"
                         });
                     }
@@ -167,17 +167,17 @@ function startUploader(imagesetId, target) {
                 //Ta s� bruker videre til en skjerm der han f�r sett alle bilder opplastet samt muligheten til � velge en original. 
                 //Bilde nr 1 blir standard original om ikke noe annet blir valgt.  bruk radiobuttons
             },
-            QueueChanged: function(up) {
+            QueueChanged: function (up) {
                 // Called when the files in queue are changed by adding/removing files
                 //  console. log('[QueueChanged]');
             },
-            UploadProgress: function(up, file) {
+            UploadProgress: function (up, file) {
                 // Called while a file is being uploaded
                 //
                 // console.log('[UploadProgress]', 'File:', file, "Total:", up.total);
 
             },
-            FilesAdded: function(up, files) {
+            FilesAdded: function (up, files) {
                 // Callced when files are added to queue
                 //console.log('[FilesAdded]');
 
@@ -185,16 +185,16 @@ function startUploader(imagesetId, target) {
                  console.log('  File:', file);
                  });*/
             },
-            FilesRemoved: function(up, files) {
+            FilesRemoved: function (up, files) {
 
                 // Called when files where removed from queue
                 /*console.log('[FilesRemoved]');
-                 
+
                  plupload.each(files, function(file) {
                  console.log('  File:', file);
                  });*/
             },
-            FileUploaded: function(up, file, info) {
+            FileUploaded: function (up, file, info) {
 
                 //console.log('[FileUploaded] File:', file, "Info:", info, "Up:", up);
                 var string = file.type;
@@ -214,10 +214,12 @@ function startUploader(imagesetId, target) {
                     var id = getActiveImagesetId();
                     //console.log("Inserting image to database = " + id);
                     if (uploads == 0) {
+                        console.log("hei")
                         insertImageToDatabase(completeFileName, id, file.id, 1);
                         uploads++;
                     } else {
                         var originalOrNot = getOriginal('#' + file.id);
+                        console.log(originalOrNot);
                         //console.log(file.id + " har = " + originalOrNot);
                         insertImageToDatabase(completeFileName, id, file.id, originalOrNot);
                     }
@@ -226,15 +228,25 @@ function startUploader(imagesetId, target) {
                 {
                     //console.log("NOT getting active ID");
                     //console.log("Inserting image to database = " + imagesetId);
-                    insertImageToDatabase(completeFileName, imagesetId, file.id, 0);
+
+                    //If uploading an image to exisiting album it checks whether the "set as original" button is checked.
+                    // if that is the case it sends a parameter with '1' to indicate that this picture is to be set as original.
+                    var originalCheck = $('.image-data .input-control .radio').is(':checked');
+
+                    if(originalCheck)    {
+                        insertImageToDatabase(completeFileName, imagesetId, file.id, 1);
+                    }
+                    else    {
+                        insertImageToDatabase(completeFileName, imagesetId, file.id, 0);    //Picture not to be set as original.
+                    }
                 }
 
             },
-            ChunkUploaded: function(up, file, info) {
+            ChunkUploaded: function (up, file, info) {
                 // Called when a file chunk has finished uploading
                 //  console.log('[ChunkUploaded] File:', file, "Info:", info);
             },
-            Error: function(up, args) {
+            Error: function (up, args) {
                 // Called when a error has occured
                 // console.log('[error] ', args);
             }
@@ -244,12 +256,12 @@ function startUploader(imagesetId, target) {
 
 
     // Handle the case when form was submitted before uploading has finished
-    $('#form').submit(function(e) {
+    $('#form').submit(function (e) {
         // Files in queue upload them first
         if ($('#uploader').plupload('getFiles').length > 0) {
 
             // When all files are uploaded submit form
-            $('#uploader').on('complete', function() {
+            $('#uploader').on('complete', function () {
                 $('#form')[0].submit();
             });
 
@@ -266,147 +278,144 @@ function startUploader(imagesetId, target) {
  */
 function insertImageToDatabase(originalFileName, pictureSetId, url, isOriginal) {
     $.ajax
-            ({
-                url: 'ajax/scientist/insertPictureToDatabase.php',
-                async: false,
-                data: {
-                    'fileName': originalFileName,
-                    'pictureSetId': pictureSetId,
-                    'url': url,
-                    'isOriginal': isOriginal
-                },
-                success: function() {
-                    console.log("Inserted into database");
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/insertPictureToDatabase.php',
+        async: false,
+        data: {
+            'fileName': originalFileName,
+            'pictureSetId': pictureSetId,
+            'url': url,
+            'isOriginal': isOriginal
+        },
+        success: function () {
+            console.log("Inserted into database");
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 
-function stopPictureSet()
-{
+function stopPictureSet() {
     $.ajax
-            ({
-                url: 'ajax/scientist/createNewImageSet.php',
-                async: false,
-                data: {
-                    'stopImageset': 'stopImageset'
-                },
-                success: function(data) {
-                    //console.log("Succesfully stopped imgset")
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/createNewImageSet.php',
+        async: false,
+        data: {
+            'stopImageset': 'stopImageset'
+        },
+        success: function (data) {
+            //console.log("Succesfully stopped imgset")
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 /**
  * Creates a new imageset, and stores the new imageset Id in the session var.
  */
-function createNewPictureSet(name, text)
-{
+function createNewPictureSet(name, text) {
     $.ajax
-            ({
-                url: 'ajax/scientist/createNewImageSet.php',
-                async: false,
-                dataType: 'json',
-                data: {
-                    'name': name,
-                    'text': text
-                },
-                success: function(data) {
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/createNewImageSet.php',
+        async: false,
+        dataType: 'json',
+        data: {
+            'name': name,
+            'text': text
+        },
+        success: function (data) {
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 
-function alterImagesetName(imagesetId, name)
-{
+function alterImagesetName(imagesetId, name) {
     $.ajax
-            ({
-                url: 'ajax/scientist/alterImageSet.php',
-                async: false,
-                type: 'POST',
-                data: {
-                    'option': 'updateName',
-                    'imagesetId': imagesetId,
-                    'name': name},
-                dataType: 'json',
-                success: function(data) {
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/alterImageSet.php',
+        async: false,
+        type: 'POST',
+        data: {
+            'option': 'updateName',
+            'imagesetId': imagesetId,
+            'name': name
+        },
+        dataType: 'json',
+        success: function (data) {
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 
-function alterImagesetText(imagesetId, text)
-{
+function alterImagesetText(imagesetId, text) {
     $.ajax
-            ({
-                url: 'ajax/scientist/alterImageSet.php',
-                async: false,
-                type: 'POST',
-                data: {
-                    'option': 'updateText',
-                    'imagesetId': imagesetId,
-                    'text': text},
-                dataType: 'json',
-                success: function(data) {
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/alterImageSet.php',
+        async: false,
+        type: 'POST',
+        data: {
+            'option': 'updateText',
+            'imagesetId': imagesetId,
+            'text': text
+        },
+        dataType: 'json',
+        success: function (data) {
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 
 /**
- * This function will increment a imageset with amountToAdd. 
+ * This function will increment a imageset with amountToAdd.
  *  This could be both a negative and positive int.
  */
-function changeAmountOfPicturesInSet(imagesetId, amountToAddOrRemove)
-{
+function changeAmountOfPicturesInSet(imagesetId, amountToAddOrRemove) {
     $.ajax
-            ({
-                url: 'ajax/scientist/alterImageSet.php',
-                async: false,
-                type: 'POST',
-                data: {
-                    'option': 'updateAmountOfPictures',
-                    'imagesetId': imagesetId,
-                    'amount': amountToAddOrRemove},
-                dataType: 'json',
-                success: function(data) {
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/alterImageSet.php',
+        async: false,
+        type: 'POST',
+        data: {
+            'option': 'updateAmountOfPictures',
+            'imagesetId': imagesetId,
+            'amount': amountToAddOrRemove
+        },
+        dataType: 'json',
+        success: function (data) {
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 
-function getActiveImagesetId()
-{
+function getActiveImagesetId() {
     var id;
 
     $.ajax
-            ({
-                url: 'ajax/scientist/alterImageSet.php',
-                async: false,
-                type: 'POST',
-                data: {
-                    'option': "getActiveImagesetId"
-                },
-                dataType: 'json',
-                success: function(data) {
-                    id = data;
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/alterImageSet.php',
+        async: false,
+        type: 'POST',
+        data: {
+            'option': "getActiveImagesetId"
+        },
+        dataType: 'json',
+        success: function (data) {
+            id = data;
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
     return id;
 }
 
@@ -417,21 +426,21 @@ function getActiveImagesetId()
  */
 function alterOriginalInSet(idOfOriginal) {
     $.ajax
-            ({
-                url: 'ajax/scientist/alterImageSet.php',
-                async: false,
-                type: 'POST',
-                data: {
-                    'option': 'updateOriginal',
-                    'idOfOriginal': idOfOriginal
-                },
-                dataType: 'json',
-                success: function(data) {
-                },
-                error: function(request, status, error) {
-                    console.log(request.responseText);
-                }
-            });
+    ({
+        url: 'ajax/scientist/alterImageSet.php',
+        async: false,
+        type: 'POST',
+        data: {
+            'option': 'updateOriginal',
+            'idOfOriginal': idOfOriginal
+        },
+        dataType: 'json',
+        success: function (data) {
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
 }
 function checkRadioButtons() {
     //console.log("Checking radio buttons");
@@ -455,7 +464,7 @@ function checkRadioButtons() {
         alert("You have to pick atleast one!");
     } else {
         alert("Something went wrong. Resetting radiobuttons now" +
-                "<br/>Try again!");
+        "<br/>Try again!");
         for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1 
             elements[i].checked = false;			//Radiobutton is checked.
         }
@@ -468,7 +477,7 @@ function checkRadioButtons() {
  */
 function addOriginalButtonListener() {
     $(document.body).off('click', '.input-control.radio');
-    $(document.body).on('click', '.input-control.radio', function() {
+    $(document.body).on('click', '.input-control.radio', function () {
         $('.radio.original').prop('checked', false);
         $(this).children().children('input').prop('checked', true);
     });
@@ -480,9 +489,13 @@ function addOriginalButtonListener() {
  * @returns {unresolved} True if element is marked as original
  */
 function getOriginal($hash) {
+    console.log("getOriginal()");
     if ($($hash).children('div').children('div').children('label').children('input').prop('checked')) {
         return 1;
+        console.log("original checked");
     } else {
+        console.log("not original checked");
+
         return 0;
     }
 }
