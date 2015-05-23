@@ -55,7 +55,7 @@ $(document).ready(function () {
             $('#right-reproduction').trigger('click');
             $('#button-next').trigger('click');
         }
-        else if(e.keyCode == 13)    {
+        else if(e.keyCode == 13)    {               //Allows user to exit the experiment with enter-key when experiment is performed.
             var check = $('#popupButtons #quit').is(":visible");
             if(check)   {                                   //Checks if buttons is activated and visible to user.
                 $('#popupButtons #quit').trigger('click');  //Quits finished experiment.
