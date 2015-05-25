@@ -49,6 +49,7 @@ function loginAnonymous() {
     });
 }
 
+var resetCheck = false;
 function loginUser() {
     $('#anonymous, #submit').prop('disabled', true);
 
@@ -67,8 +68,13 @@ function loginUser() {
                 $('#password-div').after('<div id="notify" class="bg-red notice marker-on-top span1">' +
                     'Invalid email or password' +
                     '</div>');
-                $('#submit').after('<br><br><button class="button info" id="forgot-password">Reset password</button>');
-                resetPasswordListener();
+
+                if(resetCheck == false) {
+                    $('#submit').after('<br><br><button class="button info" id="forgot-password">Reset password</button>');
+                    resetPasswordListener();
+                    resetCheck = true;
+                }
+
 
             } else {
                 if ($('#redirect').val() != undefined) {
