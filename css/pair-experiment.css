@@ -38,6 +38,7 @@ body {
     margin-top: 10%;
 }
 
+
 #text-container {
     margin-left: 10px;
     margin-right: 10px;
@@ -125,9 +126,9 @@ body {
     overflow:hidden;            /*keep this intact*/
     border:1px solid #808080 ;
     z-index:1;
-    width:31%; 
-    height:55%; 
-    float:left; 
+    width:31%;
+    height:55%;
+    float:left;
 }
 
 .main{

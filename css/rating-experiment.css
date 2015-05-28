@@ -1,14 +1,24 @@
 html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 #header-div {
-/ / height : 40 px;
+/*/ / height : 40 px;*/
     padding: 0.3%;
     background: #282828;
     width: 100%;
     height: 50px;
 }
+
+#category-container {
+    /*width:100%;*/
+    margin-top: 2%;
+    /*height:100%;*/
+    text-align:center;
+}
+
 
 .inner-header {
     margin-top: 8px;
@@ -40,10 +50,10 @@ html, body {
     position: absolute;
     left: 50%;
     /*Dynamically centers div*/
-    -webkit-transform: translate(-50%, -50%); /*Chrome*/
-    -ms-transform: translate(-50%, -50%); /*IE*/
-    -moz-transform: translate(-50%, -50%); /*Firefox*/
-    -o-transform: translate(-50%, -50%); /*Opera*/
+    -webkit-transform: translate(-50%); /*Chrome*/
+    -ms-transform: translate(-50%);     /*IE*/
+    -moz-transform: translate(-50%);    /*Firefox*/
+    -o-transform: translate(-50%);      /*Opera*/
 }
 
 #rating-container {
@@ -148,7 +158,7 @@ html, body {
 }
 
 .align {
-    margin-left: 14%;
+    /*margin-left: 2%;*/
     margin-top: 3%;
 }
 
@@ -163,7 +173,7 @@ html, body {
     1px 1px 0 #000;
 }
 
-.span-original-tag p    {
+.span-original-tag p {
     color: #C8C8C8 !important;
     font-weight: 900;
     font-size: 1.9em;
@@ -176,18 +186,17 @@ html, body {
     1px 1px 0 #000;
 }
 
-#original-tag p    {
+#original-tag p {
     color: #C8C8C8 !important;
     font-weight: 900;
     font-size: 1.9em;
 }
 
-
 .reproduction {
-    float: left;
-    margin-left: 2%;
-    width: 40%;
-    height: 40%;
+    /*float: left;*/
+    /*margin-left: 2%;*/
+    /*width: 40%;*/
+    /*height: 40%;*/
 }
 
 .reproduction-without-original {
@@ -386,11 +395,15 @@ p {
 }
 
 .rating-collection {
-/ / bottom : - 11 %; /*OBS OBS recheck compatibility*/
-    margin-top: 35%;
+    /*/ / bottom : 0; *//*OBS OBS recheck compatibility*/
+    /*margin-top: 15%;*/
     height: 250px;
     background: #707070;
     padding-right: 25px;
+
+    position: fixed;
+    bottom: 0;
+    /*width: 100%;*/
 }
 
 #rating-images {

@@ -159,9 +159,9 @@ if (isset($_GET["invite"])) {
 <div id="rating-container">
     <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
 
-    <div id="drop-left" class="" style="margin-left: 11%; float:left; height:25%; width: 25%;">
+    <div id="drop-left" class="" style="margin-left: 0; display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan1" class="panzoom">
@@ -173,11 +173,10 @@ if (isset($_GET["invite"])) {
         <div id="picture-in-panner-left"><span><strong></strong></span></div>
     </div>
 
-    <div id="original" style="margin-left:1%; margin-right:1%; float:left; height:25%; width: 25%;">
+    <div id="original" style="margin-left:1%; margin-right:1%; display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
-
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
@@ -187,9 +186,9 @@ if (isset($_GET["invite"])) {
 
     </div>
 
-    <div id="drop-right" class="" style=" float:left; height:25%; width: 25%;">
+    <div id="drop-right" class="" style=" display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">

@@ -43,20 +43,16 @@ if (isset($_GET["invite"])) {
         <!-- JQuery -->
         <script src="js/jquery/test/jquery.min.js"></script>
         <script src="js/jquery/jquery-ui.custom.min.js"></script>
-        <!--<script src="js/scientist/jquery.min.1.4.2.js"></script>-->
 
         <!-- Other JS & plugins -->
-
-        <!--<script src="js/imagepanner.js"></script>-->
-
         <script src="js/plugins/jquery.panzoom.min.js"></script>
 
         <script src="js/popup.js"></script>
         <script src="js/commonExperimentScript.js"></script>
         <script src="js/scientist/scientistScripts.js"></script> 
-        <script src="js/Observer/alterExperimentPosition.js"></script> 
+        <script src="js/Observer/alterExperimentPosition.js"></script>
         <script src="js/experimentScripts.js"></script> 
-        <script src="js/stopwatch.js"></script> 
+        <script src="js/stopwatch.js"></script>
     </head>
 
     <body class="metro" style="background-color:#808080;" onload="show();
@@ -122,20 +118,20 @@ if (isset($_GET["invite"])) {
 
             <div id="pair-container">
                 <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
-                <div id="left-reproduction" class="" style="margin-left: 2%; float:left; width:30%;">
+                <div id="left-reproduction" class="" style=" display:inline-block; margin-left: 0; width:30%; height: 60%;">
                     <section id="set2" style="">
-                        <div class="parent">
+                        <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                             <a href="" id="left-reproduction-link" target="_blank"  class="new-tab" onclick="return false;"></a >
                             <div id="pan1" class="panzoom">
-                                <img id="pictureLeft" class="picture" src="images/initiatePicture.png"  />
+                                <img id="pictureLeft" class="picture" src="flower.jpeg"  />
                             </div>
                         </div>
                     </section>
                 </div>
 
-                <div id="original" class="" style="margin-left: 2%; float:left; width:30%; ">
+                <div id="original" class="" style="margin-left: 2%; width:30%; height:60%; display:inline-block; ">
                     <section id="set2" style="">
-                        <div class="parent">
+                        <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                             <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a >
                             <div id="pan3" class="panzoom">
                                 <img id="pictureOriginal" class="picture" src="images/initiatePicture.png"  />
@@ -144,9 +140,9 @@ if (isset($_GET["invite"])) {
                     </section>
                 </div>
 
-                <div id="right-reproduction" class="right pictureContainer" style="margin-left: 2%; float:left; width:30%; ">
+                <div id="right-reproduction" class="right pictureContainer" style="display:inline-block; margin-left: 2%; width:30%; height: 60%">
                     <section id="set2" style="">
-                        <div class="parent">
+                        <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                             <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a >
                             <div id="pan2" class="panzoom">
                                 <img id="pictureRight" class="picture" src="images/initiatePicture.png"  />

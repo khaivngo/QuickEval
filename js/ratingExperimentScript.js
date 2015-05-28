@@ -147,11 +147,33 @@ $(document).ready(function () {
                 $zoomRange: $section.find(".zoom-range"),
                 $reset: $section.find(".reset"),
                 $set: $section.find('.parent > div'),
-                contain: 'invert',
                 minScale: 1,
-                maxScale: 1.66
+                maxScale: 1
             }).panzoom('zoom');
         })();
+
+        $('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
+            //console.log('Mousedown');
+            $('body').mouseup(function () {
+                //console.log('Mouseup');
+                $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+            });
+
+            $('body').mouseleave(function () {
+
+                // Create a new mouse up object with 'which' specified to be 1.
+                var e = $.Event("mouseup", {which: 1});
+                // Triggers it on the body.
+                $("body").trigger(e);
+                //console.log("leave")
+            });
+
+        });
+
+        $('#panzoom-reset').click(function()    {
+            $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+
+        })
 
     }
 

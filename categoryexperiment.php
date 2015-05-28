@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-
 <?php
 require_once('db.php');
 require_once('functions.php');
@@ -37,10 +35,11 @@ if (isset($_GET["invite"])) {
     <!-- CSS -->
     <link href="css/metro-bootstrap.css" rel="stylesheet">
     <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
@@ -49,12 +48,11 @@ if (isset($_GET["invite"])) {
 
     <!-- Other JS -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
+
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
-
     <script src="js/popup.js"></script>
     <script src="js/Observer/alterExperimentPosition.js"></script>
-
     <script src="js/ratingExperimentScript.js"></script>
     <script src="js/categoryExperimentScript.js"></script>
 
@@ -133,13 +131,14 @@ if (isset($_GET["invite"])) {
     </div>
 </div>
 
-<div id="category-container" class="align" style=" text-align:center;">
+<div id="category-container" style="">
     <span id="original-tag" class="span-original-tag"><p>Original</p></span>
     <br>
 
-    <div id="original" style="float:left; width: 40%; height:40%;">
+
+    <div id="original" style="display:inline-block; margin-left:0%; width:35%; height:70%;">
         <section id="set1">
-            <div class="parent">
+            <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
                 <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
                 <div class="panzoom">
@@ -147,11 +146,14 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
         </section>
+        <br>
+        <br>
     </div>
 
-    <div id="reproduction" class="reproduction">
-        <section id="set2">
-            <div class="parent">
+
+    <div id="reproduction" class="reproduction" style="display:inline-block; margin-left:2%; width:35%; height:70%;">
+        <section id="set2" style="">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div class="panzoom">
@@ -170,6 +172,8 @@ if (isset($_GET["invite"])) {
             <button class="size2" id="button-next-category" style="float:right; ">Next</button>
         </div>
     </div>
+
+
 </div>
 
 

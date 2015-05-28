@@ -1,38 +1,57 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     (function () {
-        var $section = $('#set1, #set2, #set3');
+        var $section = $('#set1, #set2');
         $section.find('.panzoom').panzoom({
             $zoomIn: $section.find(".zoom-in"),
             $zoomOut: $section.find(".zoom-out"),
             $zoomRange: $section.find(".zoom-range"),
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
-            contain: 'invert',
             minScale: 1,
-            maxScale: 1.21
+            maxScale: 1
         }).panzoom('zoom');
     })();
 
+    $('#reproduction .panzoom, #original .panzoom').mousedown(function () {
+        console.log('Mousedown');
+        $('body').mouseup(function () {
+            console.log('Mouseup');
+            $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+        });
 
+        $('body').mouseleave(function () {
+            // Create a new mouse up object with 'which' specified to be 1.
+            var e = $.Event("mouseup", {which: 1});
+            // Triggers it on the body.
+            $("body").trigger(e);
+            console.log("leave")
+        });
 
-    $('#reproduction-link').on('click', function() {        //sends user to new tab where picture may be seen in full
+    });
+
+    $('#panzoom-reset').click(function () {
+        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+
+    });
+
+    $('#reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
         var newWindow = window.open("pictureViewer.php");        //opening new document
         var url = $('#reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $("#button-next-category").on('click', function() {
+    $("#button-next-category").on('click', function () {
         var selected = $('#categories option').filter(':selected').val();
         if (selected == "null") {       //if the option is not a valid category = option is disabled
-			$.Notify({
-            content: "Please select a category...",
-			style: {
-                        background: 'darkred',
-                        color: 'white'
-                    },
-        });
+            $.Notify({
+                content: "Please select a category...",
+                style: {
+                    background: 'darkred',
+                    color: 'white'
+                },
+            });
         }
         else {              //valid option goes next.
             nextImageCategory(1);
@@ -60,7 +79,7 @@ function fillCategories() {
     var i = 0;
     var options = $("#categories");
 
-    categoryArray.forEach(function() {
+    categoryArray.forEach(function () {
         options.append($("<option />").val(categoryArray[i]['id']).text(categoryArray[i]['name']));
         i++;
     });
@@ -82,15 +101,15 @@ function removeOriginal2() {
 }
 
 var runned = 0;
-var test= 0;
+var test = 0;
 /**
  * Goes to next step in current experiment
  * @returns {undefined}
  */
 function loadExperiment2(data) {
     var data;
-     
-     //console.log("TEST: "+(test++));
+
+    //console.log("TEST: "+(test++));
 
     if (runned <= 1) {
         data = getNextInExperimentForObserver();
@@ -113,7 +132,7 @@ function loadExperiment2(data) {
 
         var reproductionPictureOrder = data[1].pictureOrderId;
         var reproductionImageUrl = data[1].url;
-        
+
         loadCategoryReproduction(reproductionPictureOrder, reproductionImageUrl);
     }
 
@@ -159,21 +178,22 @@ function loadCategoryReproduction(pictureOrderId, reproductionImageUrl) {
  */
 function postResultCategory(experimentId, pictureOrderId, category) {
     $.ajax
-            ({
-                url: 'ajax/observer/insertIntoResultCategory.php',
-                async: false,
-                data: {'type': "category",
-                    'experimentId': experimentId,
-                    'pictureOrderId': pictureOrderId,
-                    'category': category
-                },
-                type: 'post',
-                success: function(data) {
+    ({
+        url: 'ajax/observer/insertIntoResultCategory.php',
+        async: false,
+        data: {
+            'type': "category",
+            'experimentId': experimentId,
+            'pictureOrderId': pictureOrderId,
+            'category': category
+        },
+        type: 'post',
+        success: function (data) {
 
-                },
-                error: function(request, status, error) {
-                }
-            });
+        },
+        error: function (request, status, error) {
+        }
+    });
 }
 
 /**
@@ -187,8 +207,8 @@ function nextImageCategory(ifPost) {
 
     var categoryId = $("#categories option:selected").val();
 
-    if(ifPost == 1)
-    postResultCategory(experimentId, pictureOrderId, categoryId);
+    if (ifPost == 1)
+        postResultCategory(experimentId, pictureOrderId, categoryId);
 
     //var data = getNextInExperimentForObserver();
     loadExperiment2();

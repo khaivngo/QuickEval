@@ -362,15 +362,6 @@ function adjustScaling() {
         $reset: $("a.reset-panzoom, button.reset-panzoom")
     });
 
-    //$elem.panzoom("resetZoom");
-    //$elem.panzoom("resetZoom", false);
-    //$elem.panzoom("resetZoom", {
-    //    animate: false,
-    //    silent: true,
-    //    zoom: 3
-    //});
-
-    //console.log("adjusting scaling");
 }
 
 //
@@ -392,7 +383,7 @@ function panningCheck(originalUrl) {
         }
 
 
-    }
+    };
     img.src = originalUrl;
 
 
