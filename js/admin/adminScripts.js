@@ -527,8 +527,6 @@ function manageOrgListeners() {
             refreshTable();
         }
     });
-
-
 }
 
 /**
@@ -581,31 +579,27 @@ function addNewOrg(name, country, description, type, action) {
 }
 
 var check = false;
+/**
+ * Retrieves all inst/org and appends to table
+ */
 function getAllOrg() {
     var orgType;
     $.ajax({
         url: 'ajax/admin/getOrg.php',
         async: false,
         type: 'POST',
-        data: {
-            //'option': option,
-            //'mode': mode
-        },
+        data: {},
         dataType: 'json',
         success: function (data) {
             console.log(data);
             data.forEach(function (org) {
-                //instructionArray.push({text: instruction.text, title: instruction.title, id: instruction.id});
-                //$(".manage-remove .org-select").append($('<option></option>').val(org.id).html(org.name));
-
-
+                //Checks which type to give correct title,
+                // future work is to join on row
                 if (org.type == 1) {
                     orgType = "Organization";
-
                 }
                 else {
                     orgType = "Institution";
-
                 }
 
                 $(".manage-remove .table tbody").append('' +
@@ -622,10 +616,11 @@ function getAllOrg() {
                 '</tr>');
             });
 
+            //Hides cancel and confirmation buttons
             $('#right-panel .manage-remove .table .btn-confirm, #right-panel .manage-remove .table .btn-cancel').hide();
 
+            //Sets various listeners for newly added buttons:
             $('#right-panel .manage-remove .table .btn-delete').click(function () {
-                console.log("delete");
                 $(this).hide();
                 $(this).siblings('.btn-confirm').show();
                 $(this).siblings('.btn-cancel').show();
@@ -633,27 +628,22 @@ function getAllOrg() {
 
             $('#right-panel .manage-remove .table .btn-confirm').click(function () {
                 check = false;                  //Measure
-
                 var orgValue = $(this).parents('.org-parent').attr("id");
 
                 check = true;
-
                 deleteChosenOrg(orgValue);
-                check = false;
 
+                check = false;
                 $(this).hide();
                 $(this).siblings('.btn-cancel').hide();
                 $(this).siblings('.btn-delete').show();
-
             });
 
             $('#right-panel .manage-remove .table .btn-cancel').click(function () {
-                console.log("cancel");
+                $(this).hide();
                 $(this).siblings('.btn-delete').show();
                 $(this).siblings('.btn-confirm').hide();
-                $(this).hide();
             });
-
         },
         error: function (request, status, error) {
             console.log(request.responseText);
@@ -661,6 +651,10 @@ function getAllOrg() {
     });
 }
 
+/**
+ * Deletes org/inst based on it's value.
+ * @param orgValue
+ */
 function deleteChosenOrg(orgValue) {
     if (check == true) {
 
@@ -673,32 +667,30 @@ function deleteChosenOrg(orgValue) {
             dataType: 'json',
             async: false,
             success: function (data) {
-                if(data >= 1)   {
+                if (data >= 1) {
                     $.Notify({
                         content: "Deletion successful",
                         style: {background: 'lime'}
                     });
-
                     refreshTable();
                 }
-                else    {
+                else {
                     $.Notify({
                         content: "Deletion unsuccessful, please try again",
                         style: {background: 'Red'}
                     });
                 }
-
-
-                console.log("Rows deleted = " + data);
             },
             error: function (request, status, error) {
                 console.log(request.responseText);
             }
         });
-
     }
 }
 
+/**
+ * Reloads only the table when there is new data added to DB.
+ */
 function refreshTable() {
     $('#right-panel table > tbody').empty();
     getAllOrg();
