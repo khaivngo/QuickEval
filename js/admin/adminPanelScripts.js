@@ -57,6 +57,26 @@ $(document).ready(function() {
         setupClickListenerDeleteInstruction(0);
     });
 
+    //--------------------- ORGANIZATIONS ------------------------------//
+
+    $("#manage-org").click(function() {
+        inject("ajax/admin/manageOrg.html");
+        setActive($(this));
+        manageOrgListeners();
+        getAllOrg();
+    });
+
+    $("#edit-org").click(function() {
+        $.Notify({
+            content: "Coming soon",
+            style: {
+                background: 'blue',
+                color: 'white'
+
+            }
+        });
+    });
+
 
 });
 

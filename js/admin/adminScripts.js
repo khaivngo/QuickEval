@@ -1,4 +1,3 @@
-
 //--------------------------------CHANGE ACCESS-----------------------------------------//
 
 
@@ -8,20 +7,20 @@
  */
 function userAccessListeners() {
 
-    $('#submit-change-access').click(function() {
-        $(document.body).on('click', '#submit-change-access', function() {
+    $('#submit-change-access').click(function () {
+        $(document.body).on('click', '#submit-change-access', function () {
         });
 
         var email = $('#change-access-user').val();
         if (validEmail(email) && !checkUserEmail(email)) {  //If email is valid, and exists
             updateUserAccess($('#change-access-user').val(), $('#change-access-type').val());
         } else {
-            delay(function() {            //if email is not valid
+            delay(function () {            //if email is not valid
                 $('.notice').remove();
                 $('#change-access-user').after('<div id="notify"><div class="span1" style="margin: 20px"></div>' +
-                        '<div class="bg-red notice marker-on-top span1">' +
-                        'Not valid email' +
-                        '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Not valid email' +
+                '</div></div>');
 //                delay(function() {                      //removes feedback
 //                    $('#notify').fadeOut();
 //                }, 1500);
@@ -29,24 +28,24 @@ function userAccessListeners() {
         }
     });
     //declaring delay, delay in milliseconds
-    var delay = (function() {
+    var delay = (function () {
         var timer = 0;
-        return function(callback, ms) {
+        return function (callback, ms) {
             clearTimeout(timer);
             timer = setTimeout(callback, ms);
         };
     })();
-    $('#change-access-user').keyup(function() {      //Gets current access of user when email is typed
+    $('#change-access-user').keyup(function () {      //Gets current access of user when email is typed
         loadUsers();
         $('.notice').remove();
         if (validEmail($(this).val())) {            //if the email is valid
 
-            delay(function() {                      //delays the check if email exists and notifies user if not
+            delay(function () {                      //delays the check if email exists and notifies user if not
                 if (checkUserEmail($('#change-access-user').val())) {
                     $('#change-access-user').after('<div id="notify"><div class="span3" style="margin: 20px"></div>' +
-                            '<div class="bg-red notice marker-on-top span4">' +
-                            'Email not associated with any user' +
-                            '</div></div>');
+                    '<div class="bg-red notice marker-on-top span4">' +
+                    'Email not associated with any user' +
+                    '</div></div>');
 //                    delay(function() {                      //removes feedback
 //                        $('#notify').fadeOut();
 //                    }, 1500);
@@ -59,12 +58,12 @@ function userAccessListeners() {
     });
 
 
-    $('#change-access-user').mouseup(function() {      //Gets current access of user when email is typed
+    $('#change-access-user').mouseup(function () {      //Gets current access of user when email is typed
         loadUsers();
         $('.notice').remove();
         if (validEmail($(this).val())) {            //if the email is valid
 
-            delay(function() {                      //delays the check if email exists and notifies user if not
+            delay(function () {                      //delays the check if email exists and notifies user if not
                 if (checkUserEmail($('#change-access-user').val())) {
                     $('#change-access-user').after('<div id="notify"><div class="span3" style="margin: 20px"></div>' +
                     '<div class="bg-red notice marker-on-top span4">' +
@@ -94,13 +93,13 @@ function getAccessNames() {
         url: 'ajax/admin/getAccessLevels.php',
         data: {},
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#change-access-type').append('<option value="" disabled selected>Select access level</option>');
             for (var i = 0; i < data.length; i++) {
                 $('#change-access-type').append('<option>' + data[i]['title'] + '</option>');
             }
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             // alert(request.responseText);
             console.log(request.responseText);
         }
@@ -129,11 +128,11 @@ function getCurrentUserAccess($email) {
         url: 'ajax/admin/getUserAccessLevel.php',
         data: {'email': $email},
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $('#change-access-type').val(data[0][0]);
-            console.log("Fetched usertype = "+data[0][0]);
+            console.log("Fetched usertype = " + data[0][0]);
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
         }
     });
@@ -164,15 +163,17 @@ function updateAccessLevel($email, $type) {
     $.ajax({
         type: 'POST',
         url: 'ajax/admin/updateUserAccessLevel.php',
-        data: {'email': $email,
-            'type': $type},
-        success: function(data) {       //notifies which user was updated with what level
+        data: {
+            'email': $email,
+            'type': $type
+        },
+        success: function (data) {       //notifies which user was updated with what level
             $.Notify({//notifies user about successfull email change
                 content: "User: " + $email + " updated to access level '" + $type + "'",
                 style: {background: 'lime'},
             });
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             console.log("Error ajax");
         }
@@ -192,10 +193,10 @@ function checkUserEmail($email) {
         data: {'email': $email},
         type: 'post',
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             (data > 0) ? check = false : check = true;
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
         }
     });
     return check;
@@ -213,14 +214,14 @@ function userAccessUnpublishExperiments($email) {
         data: {'email': $email},
         type: 'post',
         datatype: 'json',
-        success: function(data) {
+        success: function (data) {
             $.Notify({//notifies user about successfull email change
                 content: "User: " + $email + " updated to access level, and " + data + " belonging experiments unpublished",
                 style: {background: 'lime'},
             });
             updateAccessLevel($email, $('#change-access-type').val()); //updates access level of chosen user
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
 
         }
     });
@@ -233,25 +234,25 @@ function userAccessUnpublishExperiments($email) {
  * @returns {undefined}
  */
 function deleteImagesListeners() {
-    $('#submit-delete-images').click(function() {       //Deletes images on first submit button
+    $('#submit-delete-images').click(function () {       //Deletes images on first submit button
         deleteImages();
     });
-    $('#submit-delete-images-user').click(function() {  //Deletes images based on users on seconds submit button
+    $('#submit-delete-images-user').click(function () {  //Deletes images based on users on seconds submit button
         deleteImagesUser();
     });
-    $('#delete-images-user').click(function() {          //Removes notice on click on input-field
-        $('.notice').fadeOut(300, function() {
+    $('#delete-images-user').click(function () {          //Removes notice on click on input-field
+        $('.notice').fadeOut(300, function () {
             $(this).remove();
         });
     });
-    $(document.body).on('click', '.notice', function() { //Removes notice on notice-click
-        $(this).fadeOut(300, function() {
+    $(document.body).on('click', '.notice', function () { //Removes notice on notice-click
+        $(this).fadeOut(300, function () {
             $(this).remove();
         });
     });
     $("#delete-images-date").datepicker({//Initializes datepicker
         effect: "slide",
-        selected: function(d, d0) {
+        selected: function (d, d0) {
             $('#delete-images-datepicker').val(d); //Adds the selected value to the input field
         }
     });
@@ -273,7 +274,7 @@ function deleteImages() {
 }
 
 /**
- * Performs the query to delete image-sets not used in experiments 
+ * Performs the query to delete image-sets not used in experiments
  * based on $date
  */
 function deleteImageSets($date) {
@@ -291,9 +292,9 @@ function deleteImagesUser() {
 
     } else {
         $('#delete-images-user').after('<div id="notify" class="bg-red notice marker-on-top span1"' +
-                'style="z-index:10; margin:10px">' +
-                'Invalid Email' +
-                '</div>');
+        'style="z-index:10; margin:10px">' +
+        'Invalid Email' +
+        '</div>');
     }
 }
 
@@ -306,11 +307,11 @@ function deleteImagesUser() {
 function deleteAnonymousListeners() {                   //Initializes datepicker
     $("#delete-anonymous-date").datepicker({
         effect: "slide",
-        selected: function(d, d0) {
+        selected: function (d, d0) {
             $('#delete-anonymous-datepicker').val(d); //Adds the selected value to the input field
         }
     });
-    $('#delete-anonymous-submit').click(function() {    //Deletes anonymous on submit
+    $('#delete-anonymous-submit').click(function () {    //Deletes anonymous on submit
         deleteAnonymous();
     })
 }
@@ -341,16 +342,18 @@ function deleteAnonymousUsers(date) {
     $.ajax({
         type: 'POST',
         url: 'ajax/admin/updateAnonymousUsers.php',
-        data: {'selection': date,
-            'current': getCurrentDate()},
+        data: {
+            'selection': date,
+            'current': getCurrentDate()
+        },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             $.Notify({//notifies user about successfull email change
                 content: data + " anonymous users deleted",
                 style: {background: 'lime'},
             });
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             alert(request.responseText);
             console.log(request.responseText);
         }
@@ -405,7 +408,7 @@ function loadUsers() {
         url: 'ajax/admin/getUsers.php',
         data: {},
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             var users = [];
             for (var i = 0; i < data.length; i++) {         //iterates all returned users
                 var buffer = data[i]['email'];              //saves next email to a temporary variable,
@@ -416,7 +419,7 @@ function loadUsers() {
                 source: users
             });
         },
-        error: function(xhr, ajaxOptions, thrownError) {
+        error: function (xhr, ajaxOptions, thrownError) {
             console.log("Error");
             console.log(xhr.status);
             console.log(thrownError);
@@ -438,7 +441,7 @@ function deleteExperiment(experimentId) {
         url: 'ajax/admin/deleteExperiment.php',
         data: {'experimentId': experimentId},
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             if (data == 1) {        //that particular experiment was successfully deleted.
                 $.Notify({//notifies user about successfull experiment deletion change.
                     content: "Experiment successfully deleted",
@@ -447,7 +450,7 @@ function deleteExperiment(experimentId) {
                 console.log("Deleting one experiment: " + data);
             }
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             console.log("inside error");
             alert(request.responseText);
         }
@@ -465,31 +468,238 @@ function deleteExperimentOnDate(experimentId, date, userCheck) {
     $.ajax({
         type: 'POST',
         url: 'ajax/admin/updateExperiments.php',
-        data: {'experimentId': experimentId,
+        data: {
+            'experimentId': experimentId,
             'userCheck': userCheck,
             'selection': date,
             'current': getCurrentDate(),
         },
         dataType: 'json',
-        success: function(data) {
+        success: function (data) {
             if (data == 1) {        //that particular experiment was successfully deleted.
                 $.Notify({//notifies user about successfull experiment deletion change.
                     content: "Experiments successfully deleted",
-                    style: {background: 'lime'},
+                    style: {background: 'lime'}
                 });
                 console.log("Deleting experiment on interval or date: " + data);
             }
             else {
                 $.Notify({//notifies user about successfull experiment deletion change.
                     content: "Something went wrong or missing required permission",
-                    style: {background: 'red'},
+                    style: {background: 'red'}
                 });
             }
         },
-        error: function(request, status, error) {
+        error: function (request, status, error) {
             console.log("inside error");
             alert(request.responseText);
         }
 
     });
+}
+
+/*----------------------MANAGE ORGANIZATION/INSTITUTION-----------------------------------*/
+
+/**
+ * Sets up listeners for institute or organization management
+ */
+function manageOrgListeners() {
+    var titleLength = 3;
+
+    $('.manage-add .submit-org').attr("disabled", "disabled");
+
+    $('.manage-add .org-title').keyup(function () {
+        if ($('.manage-add .org-title').val().length >= titleLength) {
+            $('.manage-add .submit-org').removeAttr("disabled");
+        }
+    });
+
+    $('.manage-add .submit-org').click(function () {
+        var title = $('.manage-add .org-title').val();
+        var country = $('.manage-add .country-select').val();
+        var description = $('.manage-add .desc').val();
+        var type = $('.manage-add .type-select').val();
+
+        if (title.length >= titleLength && type != "") {
+            console.log("Submit new org");
+
+            addNewOrg(title, country, description, type, 0)
+            refreshTable();
+        }
+    });
+
+
+}
+
+/**
+ * Calls for insertions of new org/inst
+ * @param name title
+ * @param country origin/locaiton
+ * @param description short text about org/inst
+ * @param type whether it is a institute or organization
+ * @param action which funtionality to perform on backend
+ */
+function addNewOrg(name, country, description, type, action) {
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/admin/manageOrg.php',
+        data: {
+            'name': name,
+            'country': country,
+            'description': description,
+            'type': type,
+            'action': action
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (data) {
+                if (type == 0) {
+                    $.Notify({
+                        content: "New institute added",
+                        style: {background: 'lime'}
+                    });
+                }
+                else {
+                    $.Notify({
+                        content: "New organization added",
+                        style: {background: 'lime'}
+                    });
+                }
+            }
+            else {
+                $.Notify({
+                    content: "Something went wrong or missing required permission",
+                    style: {background: 'red'}
+                });
+            }
+        },
+        error: function (request, status, error) {
+            console.log("Failed to insert new org/inst.");
+            console.log(request.responseText);
+        }
+    });
+}
+
+var check = false;
+function getAllOrg() {
+    var orgType;
+    $.ajax({
+        url: 'ajax/admin/getOrg.php',
+        async: false,
+        type: 'POST',
+        data: {
+            //'option': option,
+            //'mode': mode
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+            data.forEach(function (org) {
+                //instructionArray.push({text: instruction.text, title: instruction.title, id: instruction.id});
+                //$(".manage-remove .org-select").append($('<option></option>').val(org.id).html(org.name));
+
+
+                if (org.type == 1) {
+                    orgType = "Organization";
+
+                }
+                else {
+                    orgType = "Institution";
+
+                }
+
+                $(".manage-remove .table tbody").append('' +
+                '<tr class="org-parent" id="' + org.id + '">' +
+                '<td>' + org.name + '</td>' +
+                '<td>' + org.country + '</td>' +
+                '<td>' + org.description + '</td>' +
+                '<td>' + orgType + '</td>' +
+                '<td><button class="btn-delete"><i class="icon-remove">&nbsp;</i>Delete</button>' +
+                '<button class="btn-confirm danger"><i class="icon-remove">&nbsp;</i>Confirm</button><br><br>' +
+                '<button class="btn-cancel success"><i class="icon-remove">&nbsp;</i>Cancel</button>' +
+                '</td>' +
+                    //'<td><i class="icon-locked"></i></td>' +
+                '</tr>');
+            });
+
+            $('#right-panel .manage-remove .table .btn-confirm, #right-panel .manage-remove .table .btn-cancel').hide();
+
+            $('#right-panel .manage-remove .table .btn-delete').click(function () {
+                console.log("delete");
+                $(this).hide();
+                $(this).siblings('.btn-confirm').show();
+                $(this).siblings('.btn-cancel').show();
+            });
+
+            $('#right-panel .manage-remove .table .btn-confirm').click(function () {
+                check = false;                  //Measure
+
+                var orgValue = $(this).parents('.org-parent').attr("id");
+
+                check = true;
+
+                deleteChosenOrg(orgValue);
+                check = false;
+
+                $(this).hide();
+                $(this).siblings('.btn-cancel').hide();
+                $(this).siblings('.btn-delete').show();
+
+            });
+
+            $('#right-panel .manage-remove .table .btn-cancel').click(function () {
+                console.log("cancel");
+                $(this).siblings('.btn-delete').show();
+                $(this).siblings('.btn-confirm').hide();
+                $(this).hide();
+            });
+
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+}
+
+function deleteChosenOrg(orgValue) {
+    if (check == true) {
+
+        $.ajax({
+            url: 'ajax/admin/updateOrg.php',
+            data: {
+                'orgValue': orgValue
+            },
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            success: function (data) {
+                if(data >= 1)   {
+                    $.Notify({
+                        content: "Deletion successful",
+                        style: {background: 'lime'}
+                    });
+
+                    refreshTable();
+                }
+                else    {
+                    $.Notify({
+                        content: "Deletion unsuccessful, please try again",
+                        style: {background: 'Red'}
+                    });
+                }
+
+
+                console.log("Rows deleted = " + data);
+            },
+            error: function (request, status, error) {
+                console.log(request.responseText);
+            }
+        });
+
+    }
+}
+
+function refreshTable() {
+    $('#right-panel table > tbody').empty();
+    getAllOrg();
 }

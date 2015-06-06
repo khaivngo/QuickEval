@@ -259,9 +259,9 @@ function getSpecificExperimentData(experimentId) {
             if (data[0].showOriginal == 0) {
                 $('#original').remove();
                 $('#original-tag').remove();
-                $('#reproduction').css("margin-left", "20%");
-                $('#left-reproduction').css("margin-left", "20%");
-                $('#drop-left').css("margin-left", "23.5%");
+                //$('#reproduction').css("margin-left", "20%");
+                //$('#left-reproduction').css("margin-left", "20%");
+                //$('#drop-left').css("margin-left", "23.5%");
                 $('#drop-right').css("margin-left", "3%");
                 $('#button-finished').css("margin-top", "30%");
             }
@@ -449,9 +449,8 @@ function deleteOldResults(experimentId) {
         type: 'post',
         dataType: 'json',
         async: false,
-        //dataType: 'json',
         success: function (data) {
-            console.log("Rows deleted = "+data);
+            //console.log("Rows deleted = "+data);
         },
         error: function (request, status, error) {
             console.log(request.responseText);

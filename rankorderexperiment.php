@@ -173,7 +173,6 @@ if (isset($_GET["invite"])) {
             </div>
         </section>
         <div id="picture-in-panner-left"><span><strong></strong></span></div>
-        <br>
     </div>
 
     <div id="original" style="margin-left:1%; margin-right:1%; display:inline-block; height: 50%; width: 30%;">
@@ -186,7 +185,6 @@ if (isset($_GET["invite"])) {
             </div>
             <br>
         </section>
-        <button class="size2 panning-reset">Reset panning</button>
     </div>
 
     <div id="drop-right" class="" style=" display:inline-block; height: 50%; width: 30%;">
@@ -200,9 +198,12 @@ if (isset($_GET["invite"])) {
             </div>
         </section>
         <div id="picture-in-panner-right"><span><strong></strong></span></div>
-        <br>
     </div>
 
+    <div style="width:100%;">
+        <button class="size2 panning-reset">Reset panning</button>
+
+    </div>
 </div>
 
 

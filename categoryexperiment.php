@@ -139,7 +139,7 @@ if (isset($_GET["invite"])) {
 <div id="category-container" style="">
 <!--    <span id="original-tag" class="span-original-tag"><p>Original</p></span>-->
 <!--    <br>-->
-    <div id="original" class="panning-container" style="display:inline-block; margin-left:0%; width:40%; height:70%;">
+    <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">
         <span id="original-tag" class="span-original-tag"><p>Original</p></span>
 
         <section id="set1">
@@ -152,12 +152,11 @@ if (isset($_GET["invite"])) {
             </div>
         </section>
         <br>
-        <button class="size2 panning-reset">Reset panning</button>
         <br>
     </div>
 
 
-    <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left:2%; width:40%; height:70%;">
+    <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left: 2%; width:40%; height:70%;">
         <section id="set2" style="">
             <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
@@ -170,6 +169,8 @@ if (isset($_GET["invite"])) {
         <br>
 
         <div class="category-button-container">
+            <button style="float:left;" class="size2 panning-reset">Reset panning</button>
+
             <div class="input-control select size3" style="text-align:center;">
                 <select id="categories" style="background-color:#C8C8C8;">
                     <option value="null" disabled>Select category</option>
@@ -179,6 +180,8 @@ if (isset($_GET["invite"])) {
         </div>
     </div>
 
+    <div style="width:100%;">
+    </div>
 
 </div>
 

@@ -25,6 +25,10 @@ footer div img {
     margin: 0 15px;
 }
 
+textarea    {
+    font-size: 14px;
+}
+
 #table1 {
 
 }
@@ -36,6 +40,11 @@ footer div img {
 
 #admin-dashboard-wrapper .pane {
     width: 100%;
+}
+
+#right-panel .manage-remove .icon-remove:hover   {
+    cursor:pointer;
+
 }
 
 

@@ -61,13 +61,17 @@
                             <li id="delete-experiments" ><a href="#"><i class="icon-remove"></i>Delete Experiments</a></li>
                             <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Manage Instructions</a></li>
 
+                            <li class="title">Organization/Institute</li>
+                            <li id="manage-org" ><a href="#"><i class="icon-paragraph-justify"></i>Add/Remove</a></li>
+                            <li id="edit-org" ><a href="#"><i class="icon-pencil"></i>Edit</a></li>
 
-                            
+                            <li class="title">Settings</li>
+                            <li id="adm-settings" ><a href="#"><i class="icon-wrench"></i>Settings</a></li>
 
                         </ul>
                     </nav>
                 </div>
-                <div id="right-panel" style="float: left; margin:20px; width: 500px">
+                <div id="right-panel" style="float: left; margin:20px; width: 60%">
                 </div>
 
             </div>

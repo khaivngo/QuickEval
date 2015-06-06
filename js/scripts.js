@@ -365,7 +365,7 @@ function resetOptions() {
  */
 function getInstructionForDeletion(option, mode) {
     var i = 0;
-    console.log("mode: " + mode);
+    //console.log("mode: " + mode);
     $.ajax({
         url: 'ajax/admin/getInstructionsFromHistory.php',
         async: false,
