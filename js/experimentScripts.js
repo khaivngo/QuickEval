@@ -21,23 +21,24 @@ $(document).ready(function () {
     })();
 
 
-    $('#left-reproduction .panzoom, #right-reproduction .panzoom, #original .panzoom').mousedown(function () {
-        //console.log('Mousedown');
-        $('body').mouseup(function () {
-            //console.log('Mouseup');
-            $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-        });
-
-        $('body').mouseleave(function () {
-
-            // Create a new mouse up object with 'which' specified to be 1.
-            var e = $.Event("mouseup", {which: 1});
-            // Triggers it on the body.
-            $("body").trigger(e);
-            //console.log("leave")
-        });
-
-    });
+    //Automatic panning reset
+    //$('#left-reproduction .panzoom, #right-reproduction .panzoom, #original .panzoom').mousedown(function () {
+    //    //console.log('Mousedown');
+    //    $('body').mouseup(function () {
+    //        //console.log('Mouseup');
+    //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+    //    });
+    //
+    //    $('body').mouseleave(function () {
+    //
+    //        // Create a new mouse up object with 'which' specified to be 1.
+    //        var e = $.Event("mouseup", {which: 1});
+    //        // Triggers it on the body.
+    //        $("body").trigger(e);
+    //        //console.log("leave")
+    //    });
+    //
+    //});
 
     $('#panzoom-reset').click(function()    {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");

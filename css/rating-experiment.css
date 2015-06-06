@@ -65,7 +65,7 @@ html, body {
 #pair-container {
     width: 100%;
     text-align: center;
-    margin-top: 5%;
+    margin-top: 2%;
 }
 
 .indication_right {
@@ -163,8 +163,8 @@ html, body {
 }
 
 .span-original-tag {
-    float: left;
-    margin-left: 17%;
+    /*float: left;*/
+    /*margin-left: 17%;*/
     margin-top: -25px;
 
     text-shadow: -1px -1px 0 #000,

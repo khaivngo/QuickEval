@@ -108,7 +108,7 @@ $(document).ready(function () {
     });
 
     $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
-        //postRating();
+                                                //postRating();
         loadExperiment();
     });
 
@@ -152,25 +152,27 @@ $(document).ready(function () {
             }).panzoom('zoom');
         })();
 
-        $('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
-            //console.log('Mousedown');
-            $('body').mouseup(function () {
-                //console.log('Mouseup');
-                $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-            });
 
-            $('body').mouseleave(function () {
+        ////Automatic panning reset
+        //$('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
+        //    //console.log('Mousedown');
+        //    $('body').mouseup(function () {
+        //        //console.log('Mouseup');
+        //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+        //    });
+        //
+        //    $('body').mouseleave(function () {
+        //
+        //        // Create a new mouse up object with 'which' specified to be 1.
+        //        var e = $.Event("mouseup", {which: 1});
+        //        // Triggers it on the body.
+        //        $("body").trigger(e);
+        //        //console.log("leave")
+        //    });
+        //
+        //});
 
-                // Create a new mouse up object with 'which' specified to be 1.
-                var e = $.Event("mouseup", {which: 1});
-                // Triggers it on the body.
-                $("body").trigger(e);
-                //console.log("leave")
-            });
-
-        });
-
-        $('#panzoom-reset').click(function()    {
+        $('#panzoom-reset').click(function () {
             $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
 
         })
@@ -281,7 +283,7 @@ function loadReproductionsSortable(data) {
         }
 
 
-        initialPosition = String.fromCharCode('A'.charCodeAt(0) + numberArray[letterCounter]+1);    //Uses shuffled array to get letter,
+        initialPosition = String.fromCharCode('A'.charCodeAt(0) + numberArray[letterCounter] + 1);    //Uses shuffled array to get letter,
         //initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);                 // images gets therefore assign a random letter within the range.
         //console.log(initialPosition);
         letterCounter++;
@@ -457,11 +459,11 @@ function finished() {
 function postRating() {
     //console.log("postRating()");
     //if (postOnce == 0) {
-        $('.image-position').each(function () {      //loops through all div with matching class
-            pictureOrderId = $(this).find('img').attr('id');        //gets ID of the image, which is the pictureOrderId
+    $('.image-position').each(function () {      //loops through all div with matching class
+        pictureOrderId = $(this).find('img').attr('id');        //gets ID of the image, which is the pictureOrderId
 
-            postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
-        });
+        postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
+    });
     //    postOnce = 1;
 
 

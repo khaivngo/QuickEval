@@ -8,6 +8,12 @@ $(document).ready(function () {
     $(".fullscreenExit").on('click', function () {
         exitFullscreen();
     });
+
+    $('.panning-reset').click(function () {
+        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+
+    });
+
 });
 
 /**
@@ -337,15 +343,23 @@ function checkIfExperimentTaken() {
  * Disables panning.
  */
 function disablePanning() {
-    var $elem;
+    console.log("Disable panning");
+    var elem;
 
-    $elem = $('#pan1, #pan2, #pan3');
+    elem = $('#pan1, #pan2, #pan3');
 
-    $elem.panzoom("reset");
-    $elem.panzoom("reset", false);
-    $elem.panzoom("reset", {
-        disableZoom: true
-    });
+    //elem.panzoom("reset");
+    //elem.panzoom("reset", false);
+    //elem.panzoom("reset", {
+    //    disableZoom: true,
+    //    disablePan: true
+    //});
+
+    elem.panzoom("disable");
+
+    //Testing dynamic panning area
+    elem.closest('.panning-container').height("50%");
+    $('.panning-reset').remove();
 }
 
 function adjustScaling() {
