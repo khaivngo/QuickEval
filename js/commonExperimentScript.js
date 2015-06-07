@@ -258,11 +258,11 @@ function getSpecificExperimentData(experimentId) {
             if (data[0].showOriginal == 0) {
                 $('#original').remove();
                 $('#original-tag').remove();
-                $('#reproduction').css("margin-left", "20%");
-                $('#left-reproduction').css("margin-left", "20%");
-                $('#drop-left').css("margin-left", "23.5%");
+                //$('#reproduction').css("margin-left", "20%");
+                //$('#left-reproduction').css("margin-left", "20%");
+                //$('#drop-left').css("margin-left", "23.5%");
                 $('#drop-right').css("margin-left", "3%");
-                $('#button-finished').css("margin-top", "30%");
+                //$('#button-finished').css("margin-top", "30%");
             }
 
             if (data[0].backgroundColour != null)
@@ -347,18 +347,18 @@ function disablePanning() {
 
     elem = $('#pan1, #pan2, #pan3');
 
-    //elem.panzoom("reset");
-    //elem.panzoom("reset", false);
-    //elem.panzoom("reset", {
-    //    disableZoom: true,
-    //    disablePan: true
-    //});
 
     elem.panzoom("disable");
 
     //Testing dynamic panning area
     elem.closest('.panning-container').height("50%");
     $('.panning-reset').remove();
+
+    $('#drop-left').css("height", "45%");
+    //$('#drop-right').css("margin-top", "30%");
+
+
+
 }
 
 function adjustScaling() {
