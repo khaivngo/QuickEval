@@ -11,7 +11,6 @@ $(document).ready(function () {
 
     $('.panning-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-
     });
 
 });
@@ -259,9 +258,9 @@ function getSpecificExperimentData(experimentId) {
             if (data[0].showOriginal == 0) {
                 $('#original').remove();
                 $('#original-tag').remove();
-                //$('#reproduction').css("margin-left", "20%");
-                //$('#left-reproduction').css("margin-left", "20%");
-                //$('#drop-left').css("margin-left", "23.5%");
+                $('#reproduction').css("margin-left", "20%");
+                $('#left-reproduction').css("margin-left", "20%");
+                $('#drop-left').css("margin-left", "23.5%");
                 $('#drop-right').css("margin-left", "3%");
                 $('#button-finished').css("margin-top", "30%");
             }
@@ -367,7 +366,6 @@ function adjustScaling() {
 
     $elem = $('#pan1, #pan2, #pan3');
 
-
     $elem.panzoom("option", {
         increment: 0.4,
         minScale: 0.1,
@@ -395,12 +393,8 @@ function panningCheck(originalUrl) {
         else if (this.width < 500 || this.height < 450) {
             disablePanning();
         }
-
-
     };
     img.src = originalUrl;
-
-
 }
 
 
@@ -434,7 +428,6 @@ function colorLuminance(hex, lum) {
 
         return rgb;
     }
-
 }
 
 /**

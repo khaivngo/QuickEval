@@ -462,9 +462,9 @@ p {
     font-size: 15px;
 }
 
-.button-finished {
+#button-finished {
     float: right;
-    margin-top: 40%;
+    margin-top: 10%;
     margin-right: 2%; /*22/02/15: moved button slightly to the right*/
 }
 

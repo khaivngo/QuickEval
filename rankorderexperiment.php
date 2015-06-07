@@ -207,13 +207,13 @@ if (isset($_GET["invite"])) {
 </div>
 
 
-<button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
-
 <div id="rating" class="footer rating-collection center" style="">
     <div id="rating-images">
     </div>
 
 </div>
+
+<button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 </body>
 </html>
