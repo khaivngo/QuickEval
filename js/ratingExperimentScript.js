@@ -153,6 +153,7 @@ $(document).ready(function () {
         })();
 
 
+        //
         ////Automatic panning reset
         //$('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
         //    //console.log('Mousedown');
@@ -176,7 +177,6 @@ $(document).ready(function () {
             $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
 
         })
-
     }
 
 
@@ -354,8 +354,10 @@ function loadExperiment() {
 
         var originalImageUrl = data[1]['originalUrl'].url;      //getting url of original image
 
-        panningCheck(originalImageUrl);
         loadOriginal(originalImageUrl);                         //loading original picture
+
+        panningCheck(originalImageUrl);
+
         ratingRunned = 1;
 
     }

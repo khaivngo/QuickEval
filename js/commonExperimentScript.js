@@ -13,6 +13,11 @@ $(document).ready(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
     });
 
+
+    $('#panzoom-reset').click(function () {
+        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+
+    })
 });
 
 /**
@@ -338,27 +343,52 @@ function checkIfExperimentTaken() {
     });
 }
 
+
 /**
  * Disables panning.
  */
 function disablePanning() {
+    automaticPanningReset();
     console.log("Disable panning");
     var elem;
 
-    elem = $('#pan1, #pan2, #pan3');
-
-
-    elem.panzoom("disable");
-
-    //Testing dynamic panning area
-    elem.closest('.panning-container').height("50%");
+    //elem = $('#pan1, #pan2, #pan3');
+    //elem.panzoom("disable");
+    
     $('.panning-reset').remove();
+    $('#drop-left').css("height", "40%");
+    $('#drop-left').css("width", "30%");
 
-    $('#drop-left').css("height", "45%");
-    //$('#drop-right').css("margin-top", "30%");
+    $('#drop-right').css("height", "40%");
+    $('#drop-right').css("width", "30%");
 
+    $('#rating-container').css("margin-top", "5%");
+}
 
+var panningControl = false;
+function automaticPanningReset() {
 
+    if (panningControl == true) {
+        //Automatic panning reset
+        $('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
+            //console.log('Mousedown');
+            $('body').mouseup(function () {
+                //console.log('Mouseup');
+                $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+            });
+
+            $('body').mouseleave(function () {
+
+                // Create a new mouse up object with 'which' specified to be 1.
+                var e = $.Event("mouseup", {which: 1});
+                // Triggers it on the body.
+                $("body").trigger(e);
+                //console.log("leave")
+            });
+
+        });
+        //
+    }
 }
 
 function adjustScaling() {
@@ -388,11 +418,23 @@ function panningCheck(originalUrl) {
     img.onload = function () {
         //console.log("Image dimensions: " + this.width + 'x' + this.height);
         if (this.width < 500 && this.height < 500) {
+            panningControl = true;
+
             disablePanning();
+            return;
+
         }
         else if (this.width < 500 || this.height < 450) {
+            panningControl = true;
+
             disablePanning();
+            return;
         }
+
+        console.log("false")
+        panningControl = false;
+
+
     };
     img.src = originalUrl;
 }
