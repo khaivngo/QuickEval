@@ -11,7 +11,7 @@ $(document).ready(function() {
                     'Already exists' +
                     '</div>');
         }
-    })
+    });
 
     $('#submit').click(function() {
         var passwordEncrypted = CryptoJS.SHA3($('#password').val()).toString();
@@ -163,7 +163,7 @@ function registerUser($password) {
             ({
                 url: 'ajax/observer/registerUser.php',
                 async: false,
-                data: {'email': $('#email').val(),
+                data: {'email': $('#email').val().toLowerCase(),
                     'password': $password,
                     'firstName': $('#first-name').val(),
                     'lastName': $('#last-name').val(),
@@ -201,12 +201,11 @@ function registerUser($password) {
 function checkUserEmail() {
 
     var check;
-
     $.ajax
             ({
                 url: 'ajax/observer/checkUserEmail.php',
                 async: false,
-                data: {'email': $('#email').val()},
+                data: {'email': $('#email').val().toLowerCase()},
                 type: 'post',
                 dataType: 'json',
                 success: function(data) {

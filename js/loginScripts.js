@@ -57,7 +57,7 @@ function loginUser() {
         url: 'ajax/observer/userSession.php',
         async: false,
         data: {
-            'email': $('#email').val(),
+            'email': $('#email').val().toLowerCase(),
             'password': CryptoJS.SHA3($('#password').val()).toString(),
         },
         type: 'post',
