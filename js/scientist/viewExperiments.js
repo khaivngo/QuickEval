@@ -34,9 +34,9 @@ function viewExperiment($experimentId) {
     var type = data['experimentType'];
     var url = 'index.php';
 
-	//get overal data
-	getExperimentStatisticsOneExperiment($experimentId);
-	
+    //get overal data
+    getExperimentStatisticsOneExperiment($experimentId);
+
     //Generated invite url based on hash
     var fullPath = path + url + '?invite=' + data['inviteHash']
 
@@ -135,6 +135,29 @@ function setUpListeners() {
         }
     });
 
+
+    $(document.body).on('click', '#clear-results', function () {
+        if ($('#clear-results-div').length == 0) {
+            clearResultsConfirm();
+        } else {
+            $('#confirm-clear-results').remove();
+        }
+    });
+
+    $(document.body).off('click', '#cancel-clear-results');
+    $(document.body).on('click', '#cancel-clear-results', function () {
+        $('#clear-results-div').remove().slideUp("fast");
+    });
+
+    $(document.body).off('click', '#confirm-clear-results');
+    $(document.body).on('click', '#confirm-clear-results', function () {
+        var experimentId = $('#experiment-name').attr('experimentid');
+        clearResultsForExperiment(experimentId);
+        console.log("clear results");
+        $('#clear-results-div').remove().slideUp("fast");
+    });
+
+
     $(document.body).off('click', '#export-experiment');
     $(document.body).on('click', '#export-experiment', function () {
         var experimentId = $('#experiment-name').attr('experimentid');
@@ -172,6 +195,53 @@ function deleteExperimentConfirm() {
         '</div>');
     $('#add-image').goTo();
 }
+
+/**
+ * Adds a confirm and cancel buttons beneath clear experiment data
+ */
+function clearResultsConfirm() {
+    $('#clear-results').after(
+        '<div id="clear-results-div"><div id="" style="clear:both; float: left;">' +
+        '<br/><span style="margin:10px 0" >Are you sure you want to ALL results for experiment?</span>' +
+        '<br/><span class="text-alert" style="margin:10px 0" ><strong>This is NOT reversible!</strong></span>' +
+            //'<br/><strong class="text-alert" style="margin:10px 0">NB: R</strong>' +
+        '<br/><button id="confirm-clear-results" class="button danger sets" style="margin:10px 0; width: 140px">Confirm Delete</button>' +
+        '&nbsp;<button id="cancel-clear-results" class="button success sets" style="margin:10px 0; width: 140px">CANCEL</button>' +
+        '</div><br/><br/><br/><br/><br/></div>');
+    //$('#add-image').goTo();
+}
+
+/**
+ * Calls for deletion of ALL results connected to an experiment.
+ * Data such as experiment setup, belonging instructions, images are preserved.
+ * USE WITH CAUTION!
+ * @param experimentId
+ */
+function clearResultsForExperiment(experimentId) {
+    console.log(experimentId);
+    $.ajax({
+        url: 'ajax/observer/deleteOldResults.php',
+        data: {
+            'experimentId': experimentId,
+            'check': 1
+        },
+        type: 'post',
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            $.Notify({ //notifies user about successfull experiment deletion change.
+                content: "All experiment data cleared",
+                style: {
+                    background: 'lime'
+                }
+            });
+        },
+        error: function (request, status, error) {
+            console.log(request.responseText);
+        }
+    });
+}
+
 
 //1 = hidden, 0 = public
 /**
@@ -328,25 +398,24 @@ function printResults($experimentId) {
                 //Loads table
                 div.load('ajax/scientist/pairingExperimentTable.html', function () {
                     var element = $(this);
-					
-					//console.log(element);
+
+                    //console.log(element);
 
                     $("#zScores-container").append('</br></br><div id=raw-' + roundCounter + '><h1>Raw data</h1><hr></div>');
 
 
-                    $("#raw-" + roundCounter + "").append('<table class="table bordered hovered">'+
-                    '<thead>'+
+                    $("#raw-" + roundCounter + "").append('<table class="table bordered hovered">' +
+                    '<thead>' +
                     '<tr class="header-list' + roundCounter + '">' +
-                    '<th>'+
-                    '<span class="hint-trigger icon-help" data-hint="Images on the y-axis are the images picked. For example if the value of image x and image y is 2,'+
-                    'the image on the y axis is the one picked twice." data-hint-position="right" style="margin: 0 auto"></span>'+
-                    '</th>'+
-                    '</tr>'+
-                    '</thead>'+
+                    '<th>' +
+                    '<span class="hint-trigger icon-help" data-hint="Images on the y-axis are the images picked. For example if the value of image x and image y is 2,' +
+                    'the image on the y axis is the one picked twice." data-hint-position="right" style="margin: 0 auto"></span>' +
+                    '</th>' +
+                    '</tr>' +
+                    '</thead>' +
                     '<tbody class="result-list' + roundCounter + '">' +
-                    '</tbody>'+
+                    '</tbody>' +
                     '</table>');
-					
 
 
                     $('.hint-trigger').hint(); //Sets up hints as DOM is loaded
@@ -420,7 +489,7 @@ function printResults($experimentId) {
                     //console.log("IMAGE URL: "+data['imageUrl'][i]['url']);
 
                     zScoreArray = calculatePlots(resultsArray);
-					
+
                     //console.log(data['imageUrl'][i]['url']);
                     addSeries(imageTitleArray, zScoreArray, t['name']);        //Add experiments data to graph
 
@@ -589,7 +658,7 @@ function printResults($experimentId) {
                         //console.log(tableRow);
                     });
 
-					// calculate z-scores for categoryjudgement
+                    // calculate z-scores for categoryjudgement
                     zScoreArray = calculatePlotsCategory(tableResult, true);
                     addSeries(imageTitleArray, zScoreArray, data[1][l]['name']);        //Add experiments data to graph
 
@@ -635,12 +704,10 @@ function pairAddPoints($points, $firstImage, $secondImage, $table, $array, $roun
     var imageIndex = arrayObjectIndexOf($array, $firstImage, 'id');
     var wonAgainstIndex = arrayObjectIndexOf($array, $secondImage, 'id');
 
-	
-	
-	
+
     //var resultList = $table.find('.result-list'+$roundIterator+'');
-	
-	var resultList = $('.result-list'+$roundIterator+'');
+
+    var resultList = $('.result-list' + $roundIterator + '');
     var cell = resultList.find('tr:eq(' + imageIndex + ')').children().eq(wonAgainstIndex + 1);
     cell.html((cell.html() == "") ? parseFloat($points) : +cell.html() + parseFloat($points));
 }
@@ -800,7 +867,7 @@ function calculatePlotsCategory($frequencyMatrix, $category) {
 
     //Calculates a percentage matrix of the results
     var PercentageMatrix = calculatePercentageMatrix($category ? cumulativeFrequencyTable : $frequencyMatrix, observerAmount);
-	
+
     //Calculates a LFMatrix of the results, using percentage matrix
 
     var LFMatrix = calculateLFMatrix($category ? cumulativeFrequencyTable : $frequencyMatrix, observerAmount, $category);
@@ -812,169 +879,168 @@ function calculatePlotsCategory($frequencyMatrix, $category) {
     //Calculates the Z-score values as a single array
     var ZScoreValues = calculateZScoreValues(PercentageMatrix, $category);
 
-	//Setting up identity matrix
-	var eyeMatrix = im($frequencyMatrix[0].length-1); 
-	
-	//Setting up X matrix (code is a bit messy, but it works). Done accoring to the "Colour Engineering Toolbox" by Phil Green
-	var X1 = []; 
-	X1 = matrix(cumulativeFrequencyTable.length*($frequencyMatrix[0].length-1),$frequencyMatrix[0].length-1,0); 
-	var roundCounter = 0; 
-	for (var j=0; j<$frequencyMatrix[0].length-1; j++){
-		for (var k=0; k<cumulativeFrequencyTable.length; k++){
-			for( var i=0; i<$frequencyMatrix[0].length-1; i++){
-					X1[roundCounter][i] = eyeMatrix[j][i];				
-			}
-			roundCounter++; 
-		}
-	}
-	
-	
-	var eyeMatrixNegative = imnegative(cumulativeFrequencyTable.length); 
-	var X2 = []; 
-	X2 = matrix(cumulativeFrequencyTable.length*($frequencyMatrix[0].length-1),eyeMatrixNegative.length,0); 
-	
-	var roundCounter = 0; 
-		for (var k=0; k<$frequencyMatrix[0].length-1; k++){
-			for (var j=0; j<eyeMatrixNegative.length; j++){
-				for( var i=0; i<eyeMatrixNegative.length; i++){
-						X2[roundCounter][i] = eyeMatrixNegative[j][i];				
-				}
-				roundCounter++; 
-			}
-		}
-		
-		var X = [];
-		for (var k=0; k<X2.length; k++){
-			X[k] = X1[k].concat(X2[k]); 
-		}
- 
-		var Xtemp= [];
-			for( var i=0; i<X[0].length; i++){
-				if(i<$frequencyMatrix[0].length-1){
-					Xtemp[i] = 0; 
-				}
-				else
-				{
-					Xtemp[i] = 1; 
-				}
-			}
-		X.push(Xtemp);
-		
-		//initial z-scores values extracted
-		var v = ZScoreValues[0];
-		
-		//reformat V to fit with analysis later
-		var vv = []; 
-		for (var j=0; j< ($frequencyMatrix[0].length-1);  ++j) {
-			for (var k = j; k < v.length; k += (PercentageMatrix[0].length)) {
-			vv.push(v[k]);
-		}
-		}
-		v = vv;  
-		v.push(0);
+    //Setting up identity matrix
+    var eyeMatrix = im($frequencyMatrix[0].length - 1);
 
-		var indexes = getAllIndexes(v, 3); //findng "infs"
-		indexes = indexes.concat(getAllIndexes(v, -3)); //findng "infs" (also the negative ones)
-		indexes.sort();
-		
-		for (var i =0; i<indexes.length; i++){
-			v.splice(indexes[i]-i, 1 );
-			X.splice(indexes[i]-i, 1 );
-		}
-		
-		// least-squares solution
-		var Xtransposed = []; 
-		Xtransposed = transpose(X);	
-		var Xtemp2 = [];
-		Xtemp2 = matrix(X[0].length,X[0].length,0); 
-		var OneDirection = [];
-		var TwoDirection = [];
-		for( var i=0; i<X[0].length; i++){
-			for (var j=0; j<X[0].length; j++){	
-					for (var k=0; k<Xtransposed[0].length; k++){
-						OneDirection[k] = X[k][j]; 
-						TwoDirection[k] = Xtransposed[i][k];
-					}
-					Xtemp2[j][i] = dot_product(TwoDirection,OneDirection);	// X'*X					
-				}
-			}			
-	
-			
-		var Xtemp3 = []; 				
-		for (var i=0; i<X[0].length; i++){
-			for (var k=0; k<Xtransposed[0].length; k++){
-				TwoDirection[k] = Xtransposed[i][k]					
-			}
-			Xtemp3[i] = dot_product(TwoDirection,v);	// X'*v	
-		}			
-	
-	//including math.js to to inverse, sum and absolute. 
-	includeJs("/Quickeval-develop/js/scientist/math.js");
+    //Setting up X matrix (code is a bit messy, but it works). Done accoring to the "Colour Engineering Toolbox" by Phil Green
+    var X1 = [];
+    X1 = matrix(cumulativeFrequencyTable.length * ($frequencyMatrix[0].length - 1), $frequencyMatrix[0].length - 1, 0);
+    var roundCounter = 0;
+    for (var j = 0; j < $frequencyMatrix[0].length - 1; j++) {
+        for (var k = 0; k < cumulativeFrequencyTable.length; k++) {
+            for (var i = 0; i < $frequencyMatrix[0].length - 1; i++) {
+                X1[roundCounter][i] = eyeMatrix[j][i];
+            }
+            roundCounter++;
+        }
+    }
 
-	//if we cannot invert Xtemp2, then we cannot calculate z-scores.  Does a check here, and then display an error message
-	breakC = 0; 
-	var meanZScore = []; 
-	var lowCILimit = []; 
-	var highCILimit = [];
-	for (var i=0; i<Xtemp2[0].length; i++){
-		if(math.sum(math.abs(Xtemp2[i]))==0){
-			breakC = 1; 
-			
-			for (var j=0; j<ZScoreValues[0].length; j++){
-				meanZScore[j] = 0; //setting values to 0 if we cannot invert Xtemp2
-				lowCILimit[j] = 0; 
-				highCILimit[j] = 0; 
-			}
-		}
-	}
-	
-	if(breakC == 1){
-		window.alert("Not enough data to calculate Z-scores. In order to calculate z-scores at least one row needs to be complete. All values are set to '0'.");
-	} 
-	else{ //If we can invert it, then do the calculations. 
-	Ytemp = math.inv(Xtemp2); 
-	
-	var Y  = [];
-	var ThreeDirection = []; 	
-		for (var i=0; i<X[0].length; i++){
-			for (var k=0; k<Ytemp[0].length; k++){
-				ThreeDirection[k] = Ytemp[i][k];		
-			}
-			Y[i] = dot_product(ThreeDirection,Xtemp3);	
-		}
-		Y = Y.slice($frequencyMatrix[0].length-1,Y.length); //the two first numbers are category boundaries, so they are not needed here. 
 
-    var feedback = ZScoreValues[1];
-   
-   //Formatting the z-scores to have 3 decimals
-    var meanZScore = Y.map(function (num) {
-       return parseFloat(num.toFixed(3));
-    });
+    var eyeMatrixNegative = imnegative(cumulativeFrequencyTable.length);
+    var X2 = [];
+    X2 = matrix(cumulativeFrequencyTable.length * ($frequencyMatrix[0].length - 1), eyeMatrixNegative.length, 0);
 
-	 //Finding standard deviation 
-    var standardDeviation = 1.96 * (1 / Math.sqrt(2)) / Math.sqrt(observerAmount);  //Must be changed
+    var roundCounter = 0;
+    for (var k = 0; k < $frequencyMatrix[0].length - 1; k++) {
+        for (var j = 0; j < eyeMatrixNegative.length; j++) {
+            for (var i = 0; i < eyeMatrixNegative.length; i++) {
+                X2[roundCounter][i] = eyeMatrixNegative[j][i];
+            }
+            roundCounter++;
+        }
+    }
 
-    var SDArray = calculateSDMatrix($frequencyMatrix);
+    var X = [];
+    for (var k = 0; k < X2.length; k++) {
+        X[k] = X1[k].concat(X2[k]);
+    }
 
-    //Calculates the high confidence interval limits
-    var highCILimit = meanZScore.map(function (num, i) {
-        return parseFloat((num + SDArray[i]).toFixed(3));
-    });
+    var Xtemp = [];
+    for (var i = 0; i < X[0].length; i++) {
+        if (i < $frequencyMatrix[0].length - 1) {
+            Xtemp[i] = 0;
+        }
+        else {
+            Xtemp[i] = 1;
+        }
+    }
+    X.push(Xtemp);
 
-    //Calculates the low confidence interval limits
-    var lowCILimit = meanZScore.map(function (num, i) {
-        return parseFloat((num - SDArray[i]).toFixed(3));
-    });
-	
-	}
+    //initial z-scores values extracted
+    var v = ZScoreValues[0];
+
+    //reformat V to fit with analysis later
+    var vv = [];
+    for (var j = 0; j < ($frequencyMatrix[0].length - 1); ++j) {
+        for (var k = j; k < v.length; k += (PercentageMatrix[0].length)) {
+            vv.push(v[k]);
+        }
+    }
+    v = vv;
+    v.push(0);
+
+    var indexes = getAllIndexes(v, 3); //findng "infs"
+    indexes = indexes.concat(getAllIndexes(v, -3)); //findng "infs" (also the negative ones)
+    indexes.sort();
+
+    for (var i = 0; i < indexes.length; i++) {
+        v.splice(indexes[i] - i, 1);
+        X.splice(indexes[i] - i, 1);
+    }
+
+    // least-squares solution
+    var Xtransposed = [];
+    Xtransposed = transpose(X);
+    var Xtemp2 = [];
+    Xtemp2 = matrix(X[0].length, X[0].length, 0);
+    var OneDirection = [];
+    var TwoDirection = [];
+    for (var i = 0; i < X[0].length; i++) {
+        for (var j = 0; j < X[0].length; j++) {
+            for (var k = 0; k < Xtransposed[0].length; k++) {
+                OneDirection[k] = X[k][j];
+                TwoDirection[k] = Xtransposed[i][k];
+            }
+            Xtemp2[j][i] = dot_product(TwoDirection, OneDirection);	// X'*X
+        }
+    }
+
+
+    var Xtemp3 = [];
+    for (var i = 0; i < X[0].length; i++) {
+        for (var k = 0; k < Xtransposed[0].length; k++) {
+            TwoDirection[k] = Xtransposed[i][k]
+        }
+        Xtemp3[i] = dot_product(TwoDirection, v);	// X'*v
+    }
+
+    //including math.js to to inverse, sum and absolute.
+    includeJs("/Quickeval-develop/js/scientist/math.js");
+
+    //if we cannot invert Xtemp2, then we cannot calculate z-scores.  Does a check here, and then display an error message
+    breakC = 0;
+    var meanZScore = [];
+    var lowCILimit = [];
+    var highCILimit = [];
+    for (var i = 0; i < Xtemp2[0].length; i++) {
+        if (math.sum(math.abs(Xtemp2[i])) == 0) {
+            breakC = 1;
+
+            for (var j = 0; j < ZScoreValues[0].length; j++) {
+                meanZScore[j] = 0; //setting values to 0 if we cannot invert Xtemp2
+                lowCILimit[j] = 0;
+                highCILimit[j] = 0;
+            }
+        }
+    }
+
+    if (breakC == 1) {
+        window.alert("Not enough data to calculate Z-scores. In order to calculate z-scores at least one row needs to be complete. All values are set to '0'.");
+    }
+    else { //If we can invert it, then do the calculations.
+        Ytemp = math.inv(Xtemp2);
+
+        var Y = [];
+        var ThreeDirection = [];
+        for (var i = 0; i < X[0].length; i++) {
+            for (var k = 0; k < Ytemp[0].length; k++) {
+                ThreeDirection[k] = Ytemp[i][k];
+            }
+            Y[i] = dot_product(ThreeDirection, Xtemp3);
+        }
+        Y = Y.slice($frequencyMatrix[0].length - 1, Y.length); //the two first numbers are category boundaries, so they are not needed here.
+
+        var feedback = ZScoreValues[1];
+
+        //Formatting the z-scores to have 3 decimals
+        var meanZScore = Y.map(function (num) {
+            return parseFloat(num.toFixed(3));
+        });
+
+        //Finding standard deviation
+        var standardDeviation = 1.96 * (1 / Math.sqrt(2)) / Math.sqrt(observerAmount);  //Must be changed
+
+        var SDArray = calculateSDMatrix($frequencyMatrix);
+
+        //Calculates the high confidence interval limits
+        var highCILimit = meanZScore.map(function (num, i) {
+            return parseFloat((num + SDArray[i]).toFixed(3));
+        });
+
+        //Calculates the low confidence interval limits
+        var lowCILimit = meanZScore.map(function (num, i) {
+            return parseFloat((num - SDArray[i]).toFixed(3));
+        });
+
+    }
     return [lowCILimit, meanZScore, highCILimit, feedback];
-	
+
 }
 
 //Get indexes
 function getAllIndexes(arr, val) {
     var indexes = [], i = -1;
-    while ((i = arr.indexOf(val, i+1)) != -1){
+    while ((i = arr.indexOf(val, i + 1)) != -1) {
         indexes.push(i);
     }
     return indexes;
@@ -1000,42 +1066,54 @@ function dot_product(ary1, ary2) {
         dotprod += ary1[i] * ary2[i];
     return dotprod;
 }
- 
+
 //Function to transpose a matrix
 function transpose(a) {
     return Object.keys(a[0]).map(
-        function (c) { return a.map(function (r) { return r[c]; }); }
-        );
+        function (c) {
+            return a.map(function (r) {
+                return r[c];
+            });
+        }
+    );
+}
+
+function matrix(rows, cols, defaultValue) {
+
+    var arr = [];
+
+    // Creates all lines:
+    for (var i = 0; i < rows; i++) {
+
+        // Creates an empty line
+        arr.push([]);
+
+        // Adds cols to the empty line:
+        arr[i].push(new Array(cols));
+
+        for (var j = 0; j < cols; j++) {
+            // Initializes:
+            arr[i][j] = defaultValue;
+        }
     }
 
-function matrix( rows, cols, defaultValue){
-
-  var arr = [];
-
-  // Creates all lines:
-  for(var i=0; i < rows; i++){
-
-      // Creates an empty line
-      arr.push([]);
-
-      // Adds cols to the empty line:
-      arr[i].push( new Array(cols));
-
-      for(var j=0; j < cols; j++){
-        // Initializes:
-        arr[i][j] = defaultValue;
-      }
-  }
-
-return arr;
+    return arr;
 }
 
 function im(n) {
-    return Array.apply(null, new Array(n)).map(function(x, i, a) { return a.map(function(y, k) { return i === k ? 1 : 0; }) });
+    return Array.apply(null, new Array(n)).map(function (x, i, a) {
+        return a.map(function (y, k) {
+            return i === k ? 1 : 0;
+        })
+    });
 }
 
 function imnegative(n) {
-    return Array.apply(null, new Array(n)).map(function(x, i, a) { return a.map(function(y, k) { return i === k ? -1 : 0; }) });
+    return Array.apply(null, new Array(n)).map(function (x, i, a) {
+        return a.map(function (y, k) {
+            return i === k ? -1 : 0;
+        })
+    });
 }
 
 //
@@ -1345,7 +1423,7 @@ function initiateHighCharts() {
             categories: ['A', 'B', 'C'],
             title: {text: 'Reproductions'},
             labels: {
-                formatter: function() {
+                formatter: function () {
                     return this.value.toString().substring(0, 15);
                 }
             },
@@ -1404,9 +1482,8 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
     var meanValues = [];
     var highLows = [];
     var chart = $('#box-plot-container').highcharts(); //reference to the plot.
-		
-		
-		
+
+
     for (var i = 0; i < imageTitleArray.length; i++) {    //makes a global array of image titles
         bufferArray.push(imageTitleArray[i]);
         //imageSets.push([imageSetCount][imageTitleArray[i]]);
@@ -1735,31 +1812,31 @@ function convertRankToPair($data) {
 function getExperimentStatisticsOneExperiment($experimentId) {
     var totalElements;
     $.ajax
-            ({
-                url: 'ajax/scientist/getExperimentStatisticsOneExperiment.php',
-                async: false,
-                data: {experimentId: $experimentId},
-                type: 'post',
-                success: function(data) {
-                    //checks how many experiments are returned:
-					data = JSON.parse(data);
-					 
-                    //intermediate saving of data for a more clear view of what is happening.
-                    var title1 = data.title1;
-                    var visitors1 = data.visitors1[0].total;
-                    var completion1 = data.completion1[0].total;
-                    var average1 = data.average1;
-                 
-                    (average1 === undefined) ? average1 = "N/A" : average1;
-               
-                    //adding information to table
-					$('#table3').html('<table><tr><td>'+ 'Visitors' + '</td><td>' + 'Completed' + '</td><td>' + 'Average time' + '</td></tr><tr><td>'  + visitors1 + '</td><td>' + completion1 + '</td><td>' + average1 + '</td></tr></table>');
-                 
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-          
-                }
-				
-			
-            });
-			}
+    ({
+        url: 'ajax/scientist/getExperimentStatisticsOneExperiment.php',
+        async: false,
+        data: {experimentId: $experimentId},
+        type: 'post',
+        success: function (data) {
+            //checks how many experiments are returned:
+            data = JSON.parse(data);
+
+            //intermediate saving of data for a more clear view of what is happening.
+            var title1 = data.title1;
+            var visitors1 = data.visitors1[0].total;
+            var completion1 = data.completion1[0].total;
+            var average1 = data.average1;
+
+            (average1 === undefined) ? average1 = "N/A" : average1;
+
+            //adding information to table
+            $('#table3').html('<table><tr><td>' + 'Visitors' + '</td><td>' + 'Completed' + '</td><td>' + 'Average time' + '</td></tr><tr><td>' + visitors1 + '</td><td>' + completion1 + '</td><td>' + average1 + '</td></tr></table>');
+
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+
+        }
+
+
+    });
+}

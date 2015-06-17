@@ -479,7 +479,8 @@ function deleteOldResults(experimentId) {
     $.ajax({
         url: 'ajax/observer/deleteOldResults.php',
         data: {
-            'experimentId': experimentId
+            'experimentId': experimentId,
+            'check': 0
         },
         type: 'post',
         dataType: 'json',
