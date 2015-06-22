@@ -348,7 +348,7 @@ function checkIfExperimentTaken() {
  * Disables panning.
  */
 function disablePanning() {
-    automaticPanningReset();
+   // automaticPanningReset();
     //console.log("Disable panning");
     var elem;
 
