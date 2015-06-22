@@ -349,13 +349,13 @@ function checkIfExperimentTaken() {
  */
 function disablePanning() {
     automaticPanningReset();
-    console.log("Disable panning");
+    //console.log("Disable panning");
     var elem;
 
     //elem = $('#pan1, #pan2, #pan3');
     //elem.panzoom("disable");
 
-    $('.panning-reset').remove();
+    //$('.panning-reset').remove();
     $('#drop-left').css("height", "40%");
     $('#drop-left').css("width", "30%");
 
