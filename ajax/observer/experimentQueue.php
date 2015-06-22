@@ -42,7 +42,7 @@ else if($option == "getNextPosition") {
 		$index = $_SESSION['activeObserverExperiment']['activePictureOrder'][count($_SESSION['activeObserverExperiment']['activePictureOrder'])-1];
 		//echo "</br> Index = {$index}";
 		if($index < count($_SESSION['activeObserverExperiment']['pictureOrder'])-1) {
-			//echo "</br>Forsøker å hente ut fra bildekø";
+			//echo "</br>ForsÃ¸ker Ã¥ hente ut fra bildekÃ¸";
 			if($exType == "pair") {
 				$_SESSION['activeObserverExperiment']['activePictureOrder'][0]+=2;				//This is for pair comparison only.
 				$_SESSION['activeObserverExperiment']['activePictureOrder'][1]+=2;
@@ -50,7 +50,7 @@ else if($option == "getNextPosition") {
 			}
 			else if($exType == "category") {
 				$_SESSION['activeObserverExperiment']['activePictureOrder'][0]+=1;				//This is for pair comparison only.
-				//echo "</br>Prover å hente ut pictureOrder = " . $_SESSION['activeObserverExperiment']['activePictureOrder'][0];
+				//echo "</br>Prover Ã¥ hente ut pictureOrder = " . $_SESSION['activeObserverExperiment']['activePictureOrder'][0];
 				writeOutPictureForCategory();
 				
 			}
@@ -127,17 +127,63 @@ function writeExperimentInstruction($db) {
 		echo json_encode(array("type" => "experimentinstruction", "experimentinstruction" => $result['text']));
 }
 
+function shuffleTheCards($cards) {
+   // echo "Shuffling the cards";
+    //0,1
+    //2,3
+    //5,6
+    $sorted;
+    for($i = 0; $i < count($cards); $i += 2) {
+       // echo "</br>Shuffling $i = "  ;//var_dump($cards[$i]);
+       // echo $cards[$i]['picture'] . "-";
+        //echo $cards[$i+1]['picture'];
+        $sorted[] = array($cards[$i], $cards[$i+1]);
+    }
+    
+    shuffle($sorted);    
+    $c = count($sorted)-1;
+    for($i = 0; $i <= $c; $i++) {
+        //echo "</br>dumping $i";
+        while(tradeCard($sorted[$i], $sorted[rand(0,$c)]));
+    }
+    $final;
+    foreach($sorted as $pictures) {
+        foreach($pictures as $picture) {
+            $final[] = $picture;
+        }
+    }
+    return $final;
+}
+
+function tradeCard(&$card1, &$card2) {
+    if(
+            $card1[0] == $card2[0]
+            && $card1[1] == $card2[1]
+            )
+    {
+       // echo "</br>Kortene er like, droppes!";
+        return true;
+    }
+    else
+    {
+        $temp = $card1;
+        $card1 = $card2;
+        $card2 = $temp;
+   //     echo "</br>Ã˜nsket resultat</br>";
+        return false;
+    }
+}
 /**
  * This function is run every time you start a new pictureQueue for an experiment
  * Will set up correct order for pictures, and store it in session.
  * @param $db = PDO connection to the database.
  */
 function newPictureQueue($db) {
-				//Ny oppstart av bildekø.
-				//Henter ut alle bilder for en bildekø.
+				//Ny oppstart av bildekÃ¸.
+				//Henter ut alle bilder for en bildekÃ¸.
 	$exType = getExperimentType($db);
 	//echo "<br/>New pictureQueue";
-	//Må muligens adde ORDER BY pOrder her ? 
+	//MÃ¥ muligens adde ORDER BY pOrder her ? 
 	//This SQL gets ALL the pictures for a given pictureQueue.
 	$sql = "SELECT * FROM experimentorder
 						JOIN pictureorder ON pictureorder.pictureQueue=experimentorder.pictureQueue
@@ -147,18 +193,21 @@ function newPictureQueue($db) {
 	$sth->execute();
 	$result = $sth->fetchAll();
 
-        //if($_SESSION['activeObserverExperiment']['sortingalgorithm'] == 1) {
-        shuffle($result);
-         //}
+        if($exType == "pair") {
+            $result = shuffleTheCards($result);
+        } else {
+            shuffle($result);
+        }
 	$_SESSION['activeObserverExperiment']['pictureOrder'] = $result;                
-        
         
 	if($exType == "pair") {		//Pair comparison will always return two pictures.  "0" and "1" are indexes in the stored array.
 	//	echo "<br/>PairComparisjoN";
+                    
 			$_SESSION['activeObserverExperiment']['activePictureOrder'] = array(0 => 0, 1 => 1);
 	}
 	else if($exType == "category") {	//Category will always return ALL pictures, or just one.
 			//echo "<br/>Category";
+            shuffle($result);
 			$_SESSION['activeObserverExperiment']['activePictureOrder'] = array(0 => 0);
 	}
 }
