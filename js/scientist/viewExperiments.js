@@ -749,6 +749,7 @@ function getExportResultsURL($experimentId) {
 
 function calculatePlots($frequencyMatrix, $category) {
 
+	$frequencyMatrix = transpose($frequencyMatrix); //transposing in order to get correct z-score calculation
 
     var observerAmount = 0;
     var cumulativeFrequencyTable;
