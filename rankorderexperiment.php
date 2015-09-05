@@ -53,6 +53,7 @@ if (isset($_GET["invite"])) {
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
+    <script src="js/plugins/rubaxa.sortable/Sortable.js"></script>
 
 
     <?php
@@ -66,7 +67,7 @@ if (isset($_GET["invite"])) {
 <!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 <!--Starts timer-->
-<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show();
+<body class="metro no-select" style="background-color:#808080; overflow:hidden;" onload="show();
             start();">
 
 <div id="popupContact" style="">
@@ -205,10 +206,27 @@ if (isset($_GET["invite"])) {
 
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
+<!--<div id="rating" class="footer rating-collection center" style="">-->
+<!--    <div id="rating-images"></div>-->
+<!---->
+<!--</div>-->
+
+<!--<div class="rating-container" style="margin-top: 500px;">-->
+<!--    <div id="items">-->
+<!---->
+<!--            <div class="tile" data-force="30">item 1</div>-->
+<!--            <div class="tile" data-force="30">item 2</div>-->
+<!--            <div class="tile" data-force="30">item 3</div>-->
+<!---->
+<!--    </div>-->
+<!--</div>-->
+
 <div id="rating" class="footer rating-collection center" style="">
     <div id="rating-images"></div>
 
 </div>
+
+
 
 </body>
 </html>

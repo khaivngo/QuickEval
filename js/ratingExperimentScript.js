@@ -2,23 +2,42 @@ var type;
 
 $(document).ready(function () {
 
-    var container = $('body');
-    $('#rating-images').sortable({
-        containment: container,
-        helper: 'clone', //clones draggable and appends to body so that it appears to be infront even with overflow:scroll
-        appendTo: 'body',
-        zIndex: 105, //or greater than any other relative/absolute/fixed elements and droppables
-        scroll: true,
-        handle: $('#rating-images'),
-        stop: function (event, ui) {
-            var position = ui.item.index() + 1; //getting new position of element
-            var id = ui.item[0].id; //getting id of touched element
-            $("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
+    //var container = $('body');
+    //$('#rating-images').sortable({
+    //    containment: container,
+    //    helper: 'clone', //clones draggable and appends to body so that it appears to be infront even with overflow:scroll
+    //    appendTo: 'body',
+    //    zIndex: 105, //or greater than any other relative/absolute/fixed elements and droppables
+    //    scroll: true,
+    //    handle: $('#rating-images'),
+    //    stop: function (event, ui) {
+    //        var position = ui.item.index() + 1; //getting new position of element
+    //        var id = ui.item[0].id; //getting id of touched element
+    //        $("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
+    //
+    //        updateSortablePosition();
+    //    }
+    //});
+    $('#rating-images').disableSelection();
+
+
+    // handle + event
+    var container = document.getElementById("rating-images");
+    new Sortable(container, {
+        animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
+
+        handle: ".tile-sortable", // css-selector, which can be used to drag
+        draggable: ".tile-sortable", // css-selector of elements, which can be sorted
+        onUpdate: function (/**Event*/evt) {
+            var item = evt.item; // a link to an element that was moved
+
+            console.log(item.id)
+            $("#rating-images #" + item.id + "").addClass('touched'); //passing id of element to be marked as visited.
 
             updateSortablePosition();
         }
     });
-    $('#rating-images').disableSelection();
+
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
@@ -117,7 +136,7 @@ $(document).ready(function () {
     });
 
     $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
-                                                //postRating();
+        //postRating();
         loadExperiment();
     });
 
@@ -143,7 +162,7 @@ $(document).ready(function () {
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
     getExperimentIdPost();
-    experimentType(experimentId);        //checks epxerime
+    experimentType(experimentId);        //checks experiment
 
     //console.log($( window ).width());
     //
@@ -206,7 +225,7 @@ function updateSortablePosition() {
  * @returns {undefined}
  */
 function setPosition(id, position) {
-    $("#rating-images #" + id + " p ").text(position);
+    $("#rating-images #" + id + " .style-p ").text(position);
 }
 
 /**
@@ -262,13 +281,12 @@ function loadReproductionsSortable(data) {
         letterCounter++;
 
         //each picture is appended to the sortable
-        $('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
+        //$('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
+        $('#rating-images').append('<div class="image-position tile-sortable" id=' + i + '><span class="style-p">1</span><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
     }
 
 
     retinaSpecific();
-
-
     updateSortablePosition();
 }
 
@@ -532,17 +550,17 @@ function retinaSpecific() {
     if (retina) {
         console.log("Retina detected");
         $('body').addClass('retina'); // for example
-        $(".image-position img").each(function(){
+        $(".image-position img").each(function () {
             console.log(this);
-            $(this).css({ 'height': '100px', 'width': '100px' });
+            $(this).css({'height': '100px', 'width': '100px'});
         });
     }
-    else    {
+    else {
         console.log("Retina NOT detected");
         //rescales images for fitment
-        $(".image-position img").each(function(){
+        $(".image-position img").each(function () {
             console.log(this);
-            $(this).css({ 'height': '150px', 'width': '150px' });
+            $(this).css({'height': '150px', 'width': '150px'});
         });
 
     }

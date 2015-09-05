@@ -2,406 +2,425 @@ html, body {
     height: 100%;
 }
 
-#header-div {
-    // height: 40px; 
-    padding:0.3%; 
-    background:#282828; 
-    width:100%; 
-    height:50px;
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
-.inner-header{
+#header-div {
+/ / height : 40 px;
+    padding: 0.3%;
+    background: #282828;
+    width: 100%;
+    height: 50px;
+}
+
+.inner-header {
     margin-top: 8px;
 }
 
-#info   {               /*progress and timer*/
-    margin-top:-15px;
-    margin-left:auto;
-    margin-right:auto;
-    text-align:center;
-    width:50%;
+#info {
+    /*progress and timer*/
+    margin-top: -15px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 50%;
 }
 
-#time   {
+#time {
     font-size: 170%;
 }
 
-.cancel-experiment  {
-    position:absolute;
-    overflow:hidden;
+.cancel-experiment {
+    position: absolute;
+    overflow: hidden;
 
-    height:25px;
-    right:2%;
-    color:white;
+    height: 25px;
+    right: 2%;
+    color: white;
 }
 
 .center {
-    position:absolute;
+    position: absolute;
     left: 50%;
     /*Dynamically centers div*/
-    -webkit-transform:  translate(-50%, -50%);         /*Chrome*/
-    -ms-transform:      translate(-50%, -50%);         /*IE*/
-    -moz-transform:     translate(-50%, -50%);        /*Firefox*/
-    -o-transform:       translate(-50%, -50%);        /*Opera*/
+    -webkit-transform: translate(-50%, -50%); /*Chrome*/
+    -ms-transform: translate(-50%, -50%); /*IE*/
+    -moz-transform: translate(-50%, -50%); /*Firefox*/
+    -o-transform: translate(-50%, -50%); /*Opera*/
 }
 
 #rating-container {
-    width:100%;
-    text-align:center; 
+    width: 100%;
+    text-align: center;
     margin-top: 2%;
 }
 
 #pair-container {
-    width:100%;
-    text-align:center; 
+    width: 100%;
+    text-align: center;
     margin-top: 5%;
 }
 
 .indication_right {
-    position:absolute;
-    width:100%;
+    position: absolute;
+    width: 100%;
     top: 10%;
-    right:0px;
-    height:30%;
-    left:15%;
-    z-index:2;
-    text-align:center;
+    right: 0px;
+    height: 30%;
+    left: 15%;
+    z-index: 2;
+    text-align: center;
     background: url(../images/arrow_right.png) no-repeat;
-    background-size:25px 25px;
+    background-size: 25px 25px;
     transition: opacity 0.3s;
     opacity: 1;
 }
 
 /*Overlays icon in top right corner of pictures*/
 .new-tab {
-    position:absolute;
-    width:100%;
+    position: absolute;
+    width: 100%;
     top: 3%;
-    right:0px;
-    height:30%;
-    left:92%;
-    z-index:2;
-    text-align:center;
+    right: 0px;
+    height: 30%;
+    left: 92%;
+    z-index: 2;
+    text-align: center;
     background: url(../images/expand.png) no-repeat;
-    background-size:25px 25px;
+    background-size: 25px 25px;
     transition: opacity 0.3s;
     opacity: 0;
 }
 
 /*--------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-.page-bottom	{       /*Controls the bottom two buttons*/
+.page-bottom {
+    /*Controls the bottom two buttons*/
     position: relative;
-    bottom:0;
-    right:6%;
-    width:9%;
-    float:right;
-    margin-bottom:2%;
+    bottom: 0;
+    right: 6%;
+    width: 9%;
+    float: right;
+    margin-bottom: 2%;
 }
 
-.main{
+.main {
     outline: solid 5px #282828;
 }
 
-.greyout{           /*indicates sortable item has been rated*/
+.greyout {
+    /*indicates sortable item has been rated*/
     opacity: 0.2;
 }
 
 /*----------------------------------------------------------------------------------------------------------------------------------*/
 
-.parent:hover .new-tab{       /*Icon in right corner is visible on hover in panners*/
-    opacity: 1;   
+.parent:hover .new-tab {
+    /*Icon in right corner is visible on hover in panners*/
+    opacity: 1;
 }
 
 /*-----------------------------GIVEN RATING INDICATOR-----------------------------------------------------------------------------------------------*/
 
-#grading    {
+#grading {
     bottom: 15%;
-    overflow:hidden;
+    overflow: hidden;
     width: 100%;
-    display:inline-block;
-    position:fixed;
+    display: inline-block;
+    position: fixed;
 }
 
-.touched   {
+.touched {
     opacity: 0.3;
 }
 
-.remove-original    {       /*Repositions #experiment-container when original is removed*/
-    margin-top:3% !important;
-    margin-left:13% !important;
+.remove-original {
+    /*Repositions #experiment-container when original is removed*/
+    margin-top: 3% !important;
+    margin-left: 13% !important;
 }
 
-.remove-original #drop-right{
+.remove-original #drop-right {
     margin-left: 2%;
 }
 
-.only-original  {
-    margin-left: 30%; ;
-    margin-top: 2% ;
-    text-align:center;
+.only-original {
+    margin-left: 30%;;
+    margin-top: 2%;
+    text-align: center;
 }
 
-.align  {
-    margin-left:14%;
-    margin-top:3%;
+.align {
+    margin-left: 14%;
+    margin-top: 3%;
 }
 
-.span-original-tag     {
-    font-size:150%; 
-    float:left; 
-    margin-left:17%;
-    margin-top:-25px;
+.span-original-tag {
+    font-size: 150%;
+    float: left;
+    margin-left: 17%;
+    margin-top: -25px;
 }
 
-.reproduction{
-    float:left;
-    margin-left:2%;
-    width:40%;
-    height:40%;
+.reproduction {
+    float: left;
+    margin-left: 2%;
+    width: 40%;
+    height: 40%;
 }
 
-.reproduction-without-original   {
-    width:55%;
+.reproduction-without-original {
+    width: 55%;
 }
 
 /*----------------------------SORTABLE/RATING CONTAINER---------------------------------------------------------------------------------------------*/
 
-p {color:white;}
-
-.image-position{
-    min-height:30px; 
-    min-width:30px;
-    display:inline-block;
-    margin-top: 3%;                 /*REMOVE IF USED SPAN SCALE*/
-    margin-left:1%;
-    //margin-right:1%;
+p {
+    color: white;
 }
 
-.image-position p {
+.image-position {
+    min-height: 30px;
+    min-width: 30px;
+    display: inline-block;
+    margin-top: 3%; /*REMOVE IF USED SPAN SCALE*/
+    margin-left: 1%;
+    /*margin-right:1%;*/
+    cursor: move;
+
+}
+
+.image-position .style-p {
     font-size: 500%;
-    position:absolute;
-    margin-left:6%;
-    //margin-left: 3%;          /*TWEAK*/
-    margin-top: 6%;           /*TWEAK*/
+    position: fixed;
+    /*margin-left: 6%;*/
+margin-left : 60px; /*TWEAK*/
+    /*margin-top: 6%; /!*TWEAK*!/*/
     color: #C8C8C8 !important;
     text-shadow: -2px 0 black, 0 5px black, 5px 0 black, 0 -3px black;
 }
 
-.image-position img	{
-    min-height:30px; 
-    min-width:30px;
+.image-position img {
+    min-height: 30px;
+    min-width: 30px;
     max-height: 60%;
-    overflow:auto;
+    overflow: auto;
 }
 
-.panner-side-left    {
-    position:absolute;
+.panner-side-left {
+    position: absolute;
     top: 2%;
-    width:5%;
-    margin-left:0.2%;
-    height:15%;
+    width: 5%;
+    margin-left: 0.2%;
+    height: 15%;
     margin-top: 2.5%;
     background: url(../images/arrow_upper_left.png) no-repeat;
-    background-size:25px 25px;
-    // transition: opacity 0.3s;
+    background-size: 25px 25px;
+/ / transition : opacity 0.3 s;
 }
 
-.panner-side-right    {
-    position:absolute;
-    width:5%;
+.panner-side-right {
+    position: absolute;
+    width: 5%;
     top: 3%;
-    // right:0px;
-    height:15%;
+/ / right : 0 px;
+    height: 15%;
     margin-top: 2.4%;
-    margin-left:11.7%;
+    margin-left: 11.7%;
     background: url(../images/arrow_upper_right.png) no-repeat;
-    background-size:25px 25px;
-    // transition: opacity 0.3s;
+    background-size: 25px 25px;
+/ / transition : opacity 0.3 s;
 }
 
 /*----------------------INTERNET EXPLORER-------------------------------------------------------------*/
 
-
-.image-position-IE  {
-    min-height:30px; 
-    min-width:30px;
-    max-height:200px;
+.image-position-IE {
+    min-height: 30px;
+    min-width: 30px;
+    max-height: 200px;
     max-width: 200px;
-    display:inline-block;
-    margin-top: 2%;                 /*REMOVE IF USED SPAN SCALE*/
-    margin-left:1%;
-    margin-right:1%;
+    display: inline-block;
+    margin-top: 2%; /*REMOVE IF USED SPAN SCALE*/
+    margin-left: 1%;
+    margin-right: 1%;
 }
 
 .image-position-IE p {
     font-size: 500%;
-    position:absolute;
-    margin-left:6%;
-    //margin-left: 3%;          /*TWEAK*/
-    margin-top: 6%;           /*TWEAK*/
+    position: absolute;
+    margin-left: 6%;
+/ / margin-left : 3 %; /*TWEAK*/
+    margin-top: 6%; /*TWEAK*/
     color: #C8C8C8 !important;
     text-shadow: -2px 0 black, 0 5px black, 5px 0 black, 0 -3px black;
 }
 
-.panner-side-left-ie    {
-    position:absolute;
+.panner-side-left-ie {
+    position: absolute;
     top: 2%;
-    width:5%;
-    margin-left:0.2%;
-    height:15%;
+    width: 5%;
+    margin-left: 0.2%;
+    height: 15%;
     margin-top: 1.5%;
     background: url(../images/arrow_upper_left.png) no-repeat;
-    background-size:25px 25px;
-    // transition: opacity 0.3s;
+    background-size: 25px 25px;
+/ / transition : opacity 0.3 s;
 }
 
-.panner-side-right-ie    {
-    position:absolute;
-    width:5%;
+.panner-side-right-ie {
+    position: absolute;
+    width: 5%;
     top: 3%;
-    // right:0px;
-    height:15%;
+/ / right : 0 px;
+    height: 15%;
     margin-top: 1.3%;
-    margin-left:13.7%;
+    margin-left: 13.7%;
     background: url(../images/arrow_upper_right.png) no-repeat;
-    background-size:25px 25px;
-    // transition: opacity 0.3s;
+    background-size: 25px 25px;
+/ / transition : opacity 0.3 s;
 }
 
 /*-------------------------MOZILLA FIREFOX----------------------------------------------------------*/
 
-.image-position-moz{
-    min-height:30px; 
-    min-width:30px;
+.image-position-moz {
+    min-height: 30px;
+    min-width: 30px;
     height: 50%;
     width: 20%;
-    display:inline-block;
-    margin-top: 3%;                 /*REMOVE IF USED SPAN SCALE*/
-    margin-left:1%;
-    //margin-right:1%;
+    display: inline-block;
+    margin-top: 3%; /*REMOVE IF USED SPAN SCALE*/
+    margin-left: 1%;
+/ / margin-right : 1 %;
 }
 
 .image-position-moz p {
     font-size: 500%;
-    position:absolute;
-    margin-left:6%;
-    //margin-left: 3%;          /*TWEAK*/
-    margin-top: 6%;           /*TWEAK*/
+    position: absolute;
+    margin-left: 6%;
+/ / margin-left : 3 %; /*TWEAK*/
+    margin-top: 6%; /*TWEAK*/
     color: #C8C8C8 !important;
     text-shadow: -2px 0 black, 0 5px black, 5px 0 black, 0 -3px black;
 }
 
-.image-position-moz img	{
-    min-height:30px; 
-    min-width:30px;
+.image-position-moz img {
+    min-height: 30px;
+    min-width: 30px;
     max-height: 200%;
-    //margin-top: -30px;
+/ / margin-top : - 30 px;
 }
 
-
-.panner-side-right-moz    {
-    position:absolute;
-    width:5%;
+.panner-side-right-moz {
+    position: absolute;
+    width: 5%;
     top: 3%;
-    // right:0px;
-    height:15%;
+/ / right : 0 px;
+    height: 15%;
     margin-top: 2.3%;
-    margin-left:14.8%;
+    margin-left: 14.8%;
     background: url(../images/arrow_upper_right.png) no-repeat;
-    background-size:25px 25px;
-    // transition: opacity 0.3s;
+    background-size: 25px 25px;
+/ / transition : opacity 0.3 s;
 }
 
 /*-----------------------------------------------------------------------------------*/
 
-#initial-position    {      /*Position of image when step/experiment is loaded*/
-    white-space:nowrap;
-    display:inline-block;
+#initial-position {
+    /*Position of image when step/experiment is loaded*/
+    white-space: nowrap;
+    display: inline-block;
 }
 
 #rating {
-    overflow-x:scroll; 
-    white-space:nowrap;
-    width:55%;
+    overflow-x: scroll;
+    white-space: nowrap;
+    width: 55%;
 }
 
 .rating-IE {
-    overflow-x:scroll; 
-    white-space:nowrap;
-    width:45%;
+    overflow-x: scroll;
+    white-space: nowrap;
+    width: 45%;
 }
 
-.rating-collection	{
-    //bottom: -11%;               /*OBS OBS recheck compatibility*/
+.rating-collection {
+/ / bottom : - 11 %; /*OBS OBS recheck compatibility*/
     margin-top: 35%;
-    height: 240px;
-    background:  #707070;
+    height: 27%;
+    background: #707070;
     padding-right: 25px;
 }
 
-#rating-images  {
+#rating-images {
     text-align: center;
     margin-left: 6.5%;
     margin-right: 4%;
 }
 
-@media(max-width:1366px){
+@media (max-width: 1366px) {
 
-    .rating-collection	{
-        bottom: -11%;               /*OBS OBS recheck compatibility*/
+    .rating-collection {
+        bottom: -11%; /*OBS OBS recheck compatibility*/
         height: 220px;
-        background:  #707070;
+        background: #707070;
         padding-right: 25px;
     }
 
-    .panner-side-right    {
-        position:absolute;
-        width:5%;
+    .panner-side-right {
+        position: absolute;
+        width: 5%;
         top: 3%;
-        // right:0px;
-        height:15%;
+    / / right : 0 px;
+        height: 15%;
         margin-top: 2.4%;
-        margin-left:8.5%;
+        margin-left: 8.5%;
         background: url(../images/arrow_upper_right.png) no-repeat;
-        background-size:25px 25px;
-        // transition: opacity 0.3s;
+        background-size: 25px 25px;
+    / / transition : opacity 0.3 s;
     }
 }
 
-.sortable { 
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
-    width: 100%; 
-    float: left; 
-}
-.sortable li { 
-    margin: 3px 3px 3px 0;
-    padding: 1px; 
+.sortable {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
     float: left;
-    width: 100px; 
-    height: 90px; 
-    font-size: 4em; 
-    text-align: center; 
+}
+
+.sortable li {
+    margin: 3px 3px 3px 0;
+    padding: 1px;
+    float: left;
+    width: 100px;
+    height: 90px;
+    font-size: 4em;
+    text-align: center;
 }
 
 /*--------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-#ie-info-fullscreen {   /*For when using internet explorer, removes buttons*/
+#ie-info-fullscreen {
+    /*For when using internet explorer, removes buttons*/
     /*Color set inline*/
-    margin-left:3%;
-    font-size:15px;
+    margin-left: 3%;
+    font-size: 15px;
 }
 
-.button-finished    {
-    float:right;
+.button-finished {
+    float: right;
     margin-top: 22%;
     margin-right: 7%;
 }
 
 .button-finished-IE {
-    float:right;
+    float: right;
     margin-top: 25%;
     margin-right: 5%;
 }
@@ -409,170 +428,172 @@ p {color:white;}
 /*-----------------------http://yensdesign.com/tutorials/popupjquery/ ------------------------------------------------------------------------------*/
 
 table {
-    border-collapse:separate;
-    border-spacing:0pt;
+    border-collapse: separate;
+    border-spacing: 0pt;
 }
 
 caption, th, td {
-    font-weight:normal;
-    text-align:left;
+    font-weight: normal;
+    text-align: left;
 }
 
 blockquote:before, blockquote:after, q:before, q:after {
-    content:"";
+    content: "";
 }
 
-blockquote, q {quotes:"" "";}
+blockquote, q {
+    quotes: "" "";
+}
 
-a{
+a {
     cursor: pointer;
-    text-decoration:none;
+    text-decoration: none;
 }
 
-br.both{
-    clear:both;
+br.both {
+    clear: both;
 }
 
-#popupContact{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:30%;
-    width:100%;
-    background:#808080;
+#popupContact {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 30%;
+    width: 100%;
+    background: #808080;
     color: white;
-    z-index:101;
-    padding:15px;
-    font-size:13px;
+    z-index: 101;
+    padding: 15px;
+    font-size: 13px;
     text-align: center;
 }
 
-#popupContact2{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:30%;
-    width:100%;
-    background:#808080;
+#popupContact2 {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 30%;
+    width: 100%;
+    background: #808080;
     color: white;
-    z-index:101;
-    font-size:13px;
+    z-index: 101;
+    font-size: 13px;
     text-align: center;
 }
 
-#popupContact3{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:30%;
-    width:100%;
-    background:#808080;
+#popupContact3 {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 30%;
+    width: 100%;
+    background: #808080;
     color: white;
-    z-index:101;
-    font-size:13px;
+    z-index: 101;
+    font-size: 13px;
     text-align: center;
 }
 
-#popupContact4{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:30%;
-    width:100%;
-    background:#808080;
+#popupContact4 {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 30%;
+    width: 100%;
+    background: #808080;
     color: white;
-    z-index:101;
-    font-size:13px;
+    z-index: 101;
+    font-size: 13px;
     text-align: center;
 }
 
-#popupButtons{
+#popupButtons {
     margin-left: 41%;
-    height:25px; 
-    position:absolute;    
-    bottom:25px;         
+    height: 25px;
+    position: absolute;
+    bottom: 25px;
 }
 
-#popupButtons2{
-    display:inline-block; 
-    height:25px; 
-    position:absolute;    
-    bottom:25px;
+#popupButtons2 {
+    display: inline-block;
+    height: 25px;
+    position: absolute;
+    bottom: 25px;
     margin-left: -2%;
 }
 
-#popupButtons3{
-    display:inline-block; 
-    height:25px; 
-    position:absolute;    
-    bottom:25px;
+#popupButtons3 {
+    display: inline-block;
+    height: 25px;
+    position: absolute;
+    bottom: 25px;
     margin-left: -2%;
 }
 
-#popupButtons4{
-    display:inline-block; 
-    height:25px; 
-    position:absolute;    
-    bottom:25px;
+#popupButtons4 {
+    display: inline-block;
+    height: 25px;
+    position: absolute;
+    bottom: 25px;
     margin-left: -2%;
 }
 
-.popupButton-important-IE{
+.popupButton-important-IE {
     margin-left: 48.5% !important;
 }
 
-#backgroundPopup{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:100%;
-    width:100%;
-    top:0;
-    left:0 !important;
-    background:#000000;
-    border:1px solid #cecece;
-    z-index:100;
+#backgroundPopup {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0 !important;
+    background: #000000;
+    border: 1px solid #cecece;
+    z-index: 100;
 }
 
-#backgroundPopup2{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:100%;
-    width:100%;
-    top:0;
-    left:0 !important;
-    background:#000000;
-    border:1px solid #cecece;
-    z-index:100;
+#backgroundPopup2 {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0 !important;
+    background: #000000;
+    border: 1px solid #cecece;
+    z-index: 100;
 }
 
-#backgroundPopup3{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:100%;
-    width:100%;
-    top:0;
-    left:0 !important;
-    background:#000000;
-    border:1px solid #cecece;
-    z-index:100;
+#backgroundPopup3 {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0 !important;
+    background: #000000;
+    border: 1px solid #cecece;
+    z-index: 100;
 }
 
-#backgroundPopup4{
-    display:none;
-    position:fixed;
-    _position:absolute;  /*hack for internet explorer 6*/
-    height:100%;
-    width:100%;
-    top:0;
-    left:0 !important;
-    background:#000000;
-    border:1px solid #cecece;
-    z-index:100;
+#backgroundPopup4 {
+    display: none;
+    position: fixed;
+    _position: absolute; /*hack for internet explorer 6*/
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0 !important;
+    background: #000000;
+    border: 1px solid #cecece;
+    z-index: 100;
 }
 
-.contactArea-center   {
-    text-align:center;
+.contactArea-center {
+    text-align: center;
 }
