@@ -1,0 +1,25 @@
+body {
+    background-color: #777;
+    width: 900px;
+    margin: 20px auto;
+    position: relative;
+    font-family: Helvetica;
+}
+
+button {
+    padding: 10px 20px;
+    font-variant: small-caps;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.canvas-area {
+    visibility: hidden;
+    width: 400px;
+    height: 100px;
+    background: green;
+}
+
+.canvas-container {
+    margin-top: 20px;
+}
