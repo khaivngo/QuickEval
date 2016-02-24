@@ -6,20 +6,92 @@ body {
     font-family: Helvetica;
 }
 
-button {
+::-webkit-input-placeholder { font-style: italic; font-size: 14px; }
+::-moz-placeholder { font-style: italic; font-size: 14px; }
+:-ms-input-placeholder { font-style: italic; font-size: 14px; }
+:-moz-placeholder { font-style: italic; font-size: 14px; }
+textarea:placeholder-shown { font-style: italic; font-size: 14px; }
+
+#undo, #reset {
     padding: 10px 20px;
-    font-variant: small-caps;
-    font-size: 20px;
-    font-weight: bold;
+    background-color: #ccc;
+    border: 0;
+    font-size: 25px;
 }
 
-.canvas-area {
-    visibility: hidden;
-    width: 400px;
-    height: 100px;
-    background: green;
+#annotationButtons {
+    display: block;
+    background-color: #ddd;
+    padding: 2px;
+    text-align: right;
 }
+
+#saveAnnotation, #closeAnnotation  {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 20px;
+    margin: 0;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    color: #fff;
+}
+
+#saveAnnotation { color: #579640; }
+#closeAnnotation { color: #FF2323; }
 
 .canvas-container {
     margin-top: 20px;
+    /* make sure our absolute positioned annotations
+     * are placed relative to the canvas */
+    position: relative;
+}
+
+/*----------------------
+    annotation box
+-----------------------*/
+
+.annotation {
+    display: none;
+    position: absolute;
+    width: 250px;
+    cursor: move;
+    padding: 0;
+    margin: 0;
+	background: #fff;
+}
+
+.annotation:after, .annotation:before {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.annotation:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-top-color: #fff;
+	border-width: 8px;
+	margin-left: -8px;
+}
+.annotation:before {
+	border-color: rgba(221, 221, 221, 0);
+	border-top-color: #888;
+	border-width: 10px;
+	margin-left: -10px;
+}
+
+#annotationText {
+    display: block;
+    padding: 6px 12px;
+    width: 225px;
+    height: 80px;
+    overflow: auto; /* remove that pesky ass scrollbar in IE yo */
+    border: 0;
+    outline: 0;
+    font-size: 16px;
+    font-family: Helvetica;
 }
