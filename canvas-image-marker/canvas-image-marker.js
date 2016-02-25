@@ -8,6 +8,8 @@
         var image;
         var points = [];
         var savedShapes = [];
+		
+		var tempImage = [];
 
         $(document).ready( function() {
             setCanvasImage();
@@ -19,6 +21,7 @@
 
             $('#undo').on('click', undo);
             $('#reset').on('click', reset);
+            $('#fillAlg').on('click', calcPolygonPoints);
             $('#saveAnnotation').on('click', saveAnnotation);
             $('#closeAnnotation').on('click', closeAnnotation);
 
@@ -32,7 +35,7 @@
             resize = function() {
                 canvas.attr('height', image.height).attr('width', image.width);
             };
-
+			
             $(image).load(resize);
             image.src = canvasContainer.attr('data-image-url');
 
@@ -219,7 +222,174 @@
 
             draw();
         };
+/*---------------------------------------------------------------------------	
+							Fill Algorithm for Polygon
+-----------------------------------------------------------------------------*/
+		
+		
+		// Temporary function for testing.
+		function testData()
+		{
+			savedShapes = []; 	//reset.
+			var a = [];
+			for (var i = 0; i < 500; i ++)
+			{
+				a.push({x: i+50, y: i+20 }) 
+			}
+			
+			savedShapes.push({ points: a, annotation: "" });
+			
+		}
+		
+		/**
+		 * Fill Algorithm | Ray-casting
+		 * @param	{Array}		Takes a single point(x,y) to 
+		 *						check if it intersects with the polygon.
+		 * @param	{Array}		To check if the point intersects within the 
+		 * 						boundaries of the polygon or not.	
+		 * @return 	{Boolean} 	Whether the point intersects or not.
+		 */
+		function pointInsidePolygon(point, vertices)
+		{
+			// ray-casting algorithm based on
+			// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 
+			var px = point[0], py = point[1];
+
+			var inside = false;
+			var j = vertices.length - 1;
+			
+			var xi, yi, xj, yj; 
+			
+			for (var i = 0; i < vertices.length; i++) 
+			{
+				var xi = vertices[i][0], yi = vertices[i][1];
+				var xj = vertices[j][0], yj = vertices[j][1];
+
+				var intersect = ((yi > py) != (yj > py))
+					&& (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+					
+				if (intersect) 
+					inside = !inside;
+				
+				j = i;
+			}
+
+			return inside;
+		}
+		
+		/** 
+		 * Calculate the vertices of the polygons rectangle.
+		 * Optimizing purposes to avoid iterating the whole image matrix for each polygon.
+		 * @param  { Object } Polygon object to be calculated into vertices.
+		 * @return { Array }  The vertices of the polygons rectangle.
+		 */
+		function getRectVerticesPolygon(polygon)
+		{
+			// Return lowest value in array:
+			Array.min = function( array ){ return Math.min.apply( Math, array ); };
+			
+			// Return highest value in array:
+			Array.max = function( array ){ return Math.max.apply( Math, array ); };
+			
+			var x = [], y = [];
+			
+			for(var i = 0; i < polygon.length; i ++)
+			{
+				x.push(polygon[i][0]);
+				y.push(polygon[i][1]);
+			}	
+			
+			var rectVertices = [ Array.min(x), Array.min(y), Array.max(x), Array.max(y) ];
+			
+			return rectVertices;
+		}
+		/**
+		 * Convert the polygon object vertices to array.
+		 * @param  {Object} polygon object.
+		 * @return {Array}  polygon's vertices (x,y).
+		 */
+		function convertPolygonCoordToArray(polygon)
+		{
+			var array = [];
+			var tempArr = [];
+			for(var i = 0; i < polygon.points.length; i++)
+			{
+				tempArr = [polygon.points[i].x, polygon.points[i].y];
+				array.push(tempArr);
+			}
+			return array;
+		}
+
+		/**
+		 * Calculate total pixel points for all polygons. 
+		 * Estimates from the current savedShapes.
+		 * @return { Array } Array of every marked pixel.
+		 */
+		var calcPolygonPoints = function()
+		{
+			var test = confirm("Ok: Computed test (this will clear your polygons) \nCancel: Your polygons ");
+			
+			if(test)
+				testData();
+			
+			if(savedShapes.length > 0)
+			{
+			
+				var lol = confirm("Do you want to optimize the data?");
+				var t0 = performance.now();
+				
+				var allMarkedPoints = [];
+				var tempPolygonArr = [];
+				
+				for (var i = 0; i < savedShapes.length; i++)
+				{
+					tempPolygonArr = convertPolygonCoordToArray(savedShapes[i]); // Convert to array.
+					
+					if(lol)
+					{
+						var rectVertices = getRectVerticesPolygon(tempPolygonArr);	// return array of vertices.
+						//console.log(rectVertices);
+						
+						var xmin = rectVertices[0], ymin = rectVertices[1],
+							xmax = rectVertices[2], ymax = rectVertices[3];
+						
+						for(var j = xmin; j < xmax; j ++ )
+						{
+							for(var k = ymin; k < ymax; k++)
+							{
+								var point = [j,k];
+								if( pointInsidePolygon(point, tempPolygonArr) )
+									allMarkedPoints.push(point);
+							}
+						} 
+					}
+					else
+					{
+						for(var j = 0; j < 800; j ++ )
+						{
+							for(var k = 0; k < 533; k++)
+							{
+								var point = [j,k];
+								if( pointInsidePolygon(point, tempPolygonArr) )
+									allMarkedPoints.push(point);
+							}
+						}
+					}
+					console.log('Vertices: ' + allMarkedPoints.length);
+					if( allMarkedPoints.length > 1000000 )
+						alert('1 000 000 PUNKTER?!?!?!? \n VI HAR ET KJEMPEPROBLEM!!!');
+				}
+				
+				var t1 = performance.now();
+				console.log("Fill polygon took " + (t1 - t0) + " milliseconds.")
+			}
+			else
+				alert('create a polygon or run a computed test');
+		}
+/*---------------------------------------------------------------------------	
+							END: Fill Algorithm for Polygon
+-----------------------------------------------------------------------------*/			
         /**
          * Make any element draggable.
          *

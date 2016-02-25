@@ -12,7 +12,8 @@ body {
 :-moz-placeholder { font-style: italic; font-size: 14px; }
 textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
-#undo, #reset {
+#undo, #reset, #fillAlg 
+{
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;
