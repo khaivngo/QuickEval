@@ -279,10 +279,10 @@
 		}
 		
 		/** 
-		 * Calculate the vertices of the polygons rectangle.
+		 * Calculate the vertices of the polygon's rectangle.
 		 * Optimizing purposes to avoid iterating the whole image matrix for each polygon.
 		 * @param  { Object } Polygon object to be calculated into vertices.
-		 * @return { Array }  The vertices of the polygons rectangle.
+		 * @return { Array }  The vertices of the polygon's rectangle.
 		 */
 		function getRectVerticesPolygon(polygon)
 		{
@@ -383,6 +383,8 @@
 				
 				var t1 = performance.now();
 				console.log("Fill polygon took " + (t1 - t0) + " milliseconds.")
+				
+				return allMarkedPoints;
 			}
 			else
 				alert('create a polygon or run a computed test');
