@@ -9,7 +9,9 @@
         var points = [];
         var savedShapes = [];
 		
-		var tempImage = [];
+		var matrixCanvas = document.getElementById('matrix');
+		var matrixCtx = matrixCanvas.getContext('2d');
+		
 
         $(document).ready( function() {
             setCanvasImage();
@@ -238,7 +240,26 @@
 			}
 			
 			savedShapes.push({ points: a, annotation: "" });
+			console.log(savedShapes);
+		}
+		
+		function drawMatrix(matrixData)
+		{
+			//console.log(matrixData);
 			
+			matrixCtx.fillStyle = "#fff";
+			
+			for(var i = 0; i < matrixData.length; i++)
+			{
+			
+				matrixCtx.fillRect( matrixData[i][0], matrixData[i][1], 1, 1 );
+				
+			}
+			
+			
+	
+				
+		
 		}
 		
 		/**
@@ -320,7 +341,7 @@
 			}
 			return array;
 		}
-
+		
 		/**
 		 * Calculate total pixel points for all polygons. 
 		 * Estimates from the current savedShapes.
@@ -328,10 +349,10 @@
 		 */
 		var calcPolygonPoints = function()
 		{
-			var test = confirm("Ok: Computed test (this will clear your polygons) \nCancel: Your polygons ");
+			/* var test = confirm("Ok: Computed test (this will clear your polygons) \nCancel: Your polygons ");
 			
 			if(test)
-				testData();
+				testData(); */
 			
 			if(savedShapes.length > 0)
 			{
@@ -374,21 +395,30 @@
 								if( pointInsidePolygon(point, tempPolygonArr) )
 									allMarkedPoints.push(point);
 							}
-						}
+						} 
 					}
-					console.log('Vertices: ' + allMarkedPoints.length);
-					if( allMarkedPoints.length > 1000000 )
-						alert('1 000 000 PUNKTER?!?!?!? \n VI HAR ET KJEMPEPROBLEM!!!');
+					
 				}
 				
-				var t1 = performance.now();
-				console.log("Fill polygon took " + (t1 - t0) + " milliseconds.")
 				
-				return allMarkedPoints;
+				
+				var t1 = performance.now();
+				console.log("Fill polygon took " + (t1 - t0) + " milliseconds.");
+				
+				console.log('Vertices: ' + allMarkedPoints.length);
+				
+				if( allMarkedPoints.length > 500000 )
+					alert(' OVER 500 000 PUNKTER!? :O \n VI HAR ET KJEMPEPROBLEM!!!');
+				
+				//return allMarkedPoints;
+				
+				drawMatrix(allMarkedPoints);
 			}
 			else
 				alert('create a polygon or run a computed test');
 		}
+		
+		
 /*---------------------------------------------------------------------------	
 							END: Fill Algorithm for Polygon
 -----------------------------------------------------------------------------*/			
