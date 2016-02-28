@@ -3,7 +3,7 @@
 session_start();
 $db = new PDO(
         'mysql:host=127.0.0.1;' .
-        'dbname=rv-mt(db_quickeval_12_01)', 'root', 'passing');
+        'dbname=db_quickeval;', 'root', '');
 
 $db->setAttribute(PDO::ATTR_ERRMODE, 
         PDO::ERRMODE_EXCEPTION);
