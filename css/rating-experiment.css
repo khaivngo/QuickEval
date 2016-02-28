@@ -1,24 +1,23 @@
 html, body {
     height: 100%;
-    margin: 0;
-    padding: 0;
+}
+
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #header-div {
-/*/ / height : 40 px;*/
+/ / height : 40 px;
     padding: 0.3%;
     background: #282828;
     width: 100%;
     height: 50px;
 }
-
-#category-container {
-    /*width:100%;*/
-    margin-top: 2%;
-    /*height:100%;*/
-    text-align:center;
-}
-
 
 .inner-header {
     margin-top: 8px;
@@ -50,10 +49,10 @@ html, body {
     position: absolute;
     left: 50%;
     /*Dynamically centers div*/
-    -webkit-transform: translate(-50%); /*Chrome*/
-    -ms-transform: translate(-50%);     /*IE*/
-    -moz-transform: translate(-50%);    /*Firefox*/
-    -o-transform: translate(-50%);      /*Opera*/
+    -webkit-transform: translate(-50%, -50%); /*Chrome*/
+    -ms-transform: translate(-50%, -50%); /*IE*/
+    -moz-transform: translate(-50%, -50%); /*Firefox*/
+    -o-transform: translate(-50%, -50%); /*Opera*/
 }
 
 #rating-container {
@@ -65,7 +64,7 @@ html, body {
 #pair-container {
     width: 100%;
     text-align: center;
-    margin-top: 2%;
+    margin-top: 5%;
 }
 
 .indication_right {
@@ -158,45 +157,22 @@ html, body {
 }
 
 .align {
-    /*margin-left: 2%;*/
+    margin-left: 14%;
     margin-top: 3%;
 }
 
 .span-original-tag {
-    /*float: left;*/
-    /*margin-left: 17%;*/
+    font-size: 150%;
+    float: left;
+    margin-left: 17%;
     margin-top: -25px;
-
-    text-shadow: -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-}
-
-.span-original-tag p {
-    color: #C8C8C8 !important;
-    font-weight: 900;
-    font-size: 1.9em;
-}
-
-#original-tag {
-    text-shadow: -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-}
-
-#original-tag p {
-    color: #C8C8C8 !important;
-    font-weight: 900;
-    font-size: 1.9em;
 }
 
 .reproduction {
-    /*float: left;*/
-    /*margin-left: 2%;*/
-    /*width: 40%;*/
-    /*height: 40%;*/
+    float: left;
+    margin-left: 2%;
+    width: 40%;
+    height: 40%;
 }
 
 .reproduction-without-original {
@@ -213,16 +189,21 @@ p {
     min-height: 30px;
     min-width: 30px;
     display: inline-block;
-    margin-top: 1%; /*REMOVE IF USED SPAN SCALE*/
+    margin-top: 3%; /*REMOVE IF USED SPAN SCALE*/
     margin-left: 1%;
-/ / margin-right : 1 %;
+    /*margin-right:1%;*/
+    cursor: move;
+
 }
 
-.image-position p {
-    font-size: 200%;
-
+.image-position .style-p {
+    font-size: 500%;
+    position: fixed;
+    /*margin-left: 6%;*/
+margin-left : 60px; /*TWEAK*/
+    /*margin-top: 6%; /!*TWEAK*!/*/
     color: #C8C8C8 !important;
-    text-shadow: 1px 0 black, 0 2px black, 2px 0 black, 0 1px black;
+    text-shadow: -2px 0 black, 0 5px black, 5px 0 black, 0 -3px black;
 }
 
 .image-position img {
@@ -255,24 +236,6 @@ p {
     background: url(../images/arrow_upper_right.png) no-repeat;
     background-size: 25px 25px;
 / / transition : opacity 0.3 s;
-}
-
-#picture-in-panner-left {
-    color: #C8C8C8 !important;
-    text-shadow: -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-
-}
-
-#picture-in-panner-right {
-    color: #C8C8C8 !important;
-    text-shadow: -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-
 }
 
 /*----------------------INTERNET EXPLORER-------------------------------------------------------------*/
@@ -372,38 +335,26 @@ p {
     /*Position of image when step/experiment is loaded*/
     white-space: nowrap;
     display: inline-block;
-
-    color: #C8C8C8 !important;
-    text-shadow: -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1px 1px 0 #000,
-    1px 1px 0 #000;
-
 }
 
 #rating {
     overflow-x: scroll;
     white-space: nowrap;
-    width: 75%; /*22/02/15: enlarged the panner */
-
+    width: 55%;
 }
 
 .rating-IE {
     overflow-x: scroll;
     white-space: nowrap;
-    width: 75%; /*22/02/15: enlarged the panner */
+    width: 45%;
 }
 
 .rating-collection {
-    /*/ / bottom : 0; *//*OBS OBS recheck compatibility*/
-    /*margin-top: 15%;*/
-    height: 250px;
+/ / bottom : - 11 %; /*OBS OBS recheck compatibility*/
+    margin-top: 39%;
+    height: 20%;
     background: #707070;
     padding-right: 25px;
-
-    position: fixed;
-    bottom: 0;
-    /*width: 100%;*/
 }
 
 #rating-images {
@@ -416,7 +367,7 @@ p {
 
     .rating-collection {
         bottom: -11%; /*OBS OBS recheck compatibility*/
-        height: 180px;
+        height: 220px;
         background: #707070;
         padding-right: 25px;
     }
@@ -462,16 +413,16 @@ p {
     font-size: 15px;
 }
 
-#button-finished {
+.button-finished {
     float: right;
-    margin-top: 10%;
-    margin-right: 2%; /*22/02/15: moved button slightly to the right*/
+    margin-top: 22%;
+    margin-right: 7%;
 }
 
 .button-finished-IE {
     float: right;
     margin-top: 25%;
-    margin-right: 2%; /*22/02/15: moved button slightly to the right*/
+    margin-right: 5%;
 }
 
 /*-----------------------http://yensdesign.com/tutorials/popupjquery/ ------------------------------------------------------------------------------*/

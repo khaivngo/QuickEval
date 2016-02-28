@@ -47,6 +47,7 @@
                     <div class="accordion" data-role="accordion" style="width:49%; float:left; display: inline;">
                         <div id="method" class="accordion-frame">
                             <a href="#" class="active heading">Method</a>
+                            <a href="#" class="heading">Method</a>
                             <div class="content">
                                 <div class="listview-outlook" data-role="listview" style="max-height: 250px; overflow:auto">
                                     <div id="method-list" class="list-group ">
@@ -93,7 +94,7 @@
                             </div>
                         </div>
                         <div id="scientist" class="accordion-frame">
-                            <a href="#" class="heading">Scientist</a>
+                            <a href="#" class=" heading">Scientist</a>
                             <div class="content">
                                 <div class="input-control text" data-role="input-control">
                                     <input id="scientist-search" type="text">

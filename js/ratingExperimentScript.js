@@ -1,34 +1,61 @@
 var type;
+
 $(document).ready(function () {
 
-    var container = $('body');
-    $('#rating-images').sortable({
-        containment: container,
-        helper: 'clone', //clones draggable and appends to body so that it appears to be infront even with overflow:scroll
-        appendTo: 'body',
-        zIndex: 105, //or greater than any other relative/absolute/fixed elements and droppables
-        scroll: true,
-        handle: $('#rating-images'),
-        stop: function (event, ui) {
-            var position = ui.item.index() + 1; //getting new position of element
-            var id = ui.item[0].id; //getting id of touched element
+    //var container = $('body');
+    //$('#rating-images').sortable({
+    //    containment: container,
+    //    helper: 'clone', //clones draggable and appends to body so that it appears to be infront even with overflow:scroll
+    //    appendTo: 'body',
+    //    zIndex: 105, //or greater than any other relative/absolute/fixed elements and droppables
+    //    scroll: true,
+    //    handle: $('#rating-images'),
+    //    stop: function (event, ui) {
+    //        var position = ui.item.index() + 1; //getting new position of element
+    //        var id = ui.item[0].id; //getting id of touched element
+    //        $("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
+    //
+    //        updateSortablePosition();
+    //    }
+    //});
+    $('#rating-images').disableSelection();
 
-            //$("#rating-images #" + id + "").addClass('touched'); //passing id of element to be marked as visited.
 
-            if ($("#rating-images #" + id + " #initial-position").children().length == 0) {               //Checks if element have been touched before.
-                $("#rating-images #" + id + " #initial-position").append(' <i class="icon-eye"></i>');     //Adds icon of eye telling observer thumbnail have been touched.
-            }
+    // handle + event
+    var container = document.getElementById("rating-images");
+    new Sortable(container, {
+        animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
 
-            addToTouchArray(id);
+        handle: ".tile-sortable", // css-selector, which can be used to drag
+        draggable: ".tile-sortable", // css-selector of elements, which can be sorted
+        onUpdate: function (/**Event*/evt) {
+            var item = evt.item; // a link to an element that was moved
+
+            console.log(item.id)
+            $("#rating-images #" + item.id + "").addClass('touched'); //passing id of element to be marked as visited.
+
             updateSortablePosition();
         }
     });
-    $('#rating-images').disableSelection();
+
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
+    (function () {
+        var $section = $('#set1, #set2, #set3');
+        $section.find('.panzoom').panzoom({
+            $zoomIn: $section.find(".zoom-in"),
+            $zoomOut: $section.find(".zoom-out"),
+            $zoomRange: $section.find(".zoom-range"),
+            $reset: $section.find(".reset"),
+            $set: $section.find('.parent > div'),
+            contain: 'invert',
+            minScale: 1,
+            maxScale: 1.30
+        }).panzoom('zoom');
+    })();
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------------------------  
 
     //left drag panner/ drop area
     $(function () {
@@ -66,6 +93,7 @@ $(document).ready(function () {
                 $('#drop-right').find('img').attr('src', draggableUrl);
                 $('#drop-right').find('img').remove();
                 $('#pan2').prepend('<img class="picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
+
 
                 pictureInPanner(fetchedInitialPosition2, "right");
             }
@@ -108,7 +136,7 @@ $(document).ready(function () {
     });
 
     $('#button-next').click(function () {       //If user confirms cancel he is returned to main page
-                                                //postRating();
+        //postRating();
         loadExperiment();
     });
 
@@ -134,56 +162,27 @@ $(document).ready(function () {
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
     getExperimentIdPost();
-    experimentType(experimentId);
+    experimentType(experimentId);        //checks experiment
 
-
-    if (type == 1) {
-        console.log("scaling for rank order");
-        (function () {
-            var $section = $('#set1, #set2, #set3');
-            $section.find('.panzoom').panzoom({
-                $zoomIn: $section.find(".zoom-in"),
-                $zoomOut: $section.find(".zoom-out"),
-                $zoomRange: $section.find(".zoom-range"),
-                $reset: $section.find(".reset"),
-                $set: $section.find('.parent > div'),
-                minScale: 1,
-                maxScale: 1
-            }).panzoom('zoom');
-        })();
-
-
-        //
-        ////Automatic panning reset
-        //$('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
-        //    //console.log('Mousedown');
-        //    $('body').mouseup(function () {
-        //        //console.log('Mouseup');
-        //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-        //    });
-        //
-        //    $('body').mouseleave(function () {
-        //
-        //        // Create a new mouse up object with 'which' specified to be 1.
-        //        var e = $.Event("mouseup", {which: 1});
-        //        // Triggers it on the body.
-        //        $("body").trigger(e);
-        //        //console.log("leave")
-        //    });
-        //
-        //});
-
-        $('#panzoom-reset').click(function () {
-            $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-
-        })
-    }
+    //console.log($( window ).width());
+    //
+    //if($( window ).width() <= 1366)    {
+    //    adjustScaling();
+    //}
+    //
+    //$( window ).resize(function() {
+    //
+    //
+    //    if($( window ).width() < 1366)  {
+    //        adjustScaling();
+    //    }
+    //
+    //});
 
 
     if (type == 1) {
         postStartData(experimentId);
         getSpecificExperimentData(experimentId);
-        deleteOldResults(experimentId);
         startNewExperimentForObserver(experimentId);
         loadExperiment();
         updateSortablePosition();
@@ -203,8 +202,6 @@ $(document).ready(function () {
  * @returns {undefined}
  */
 function updateSortablePosition() {
-    var i;
-
     var ids = $('#rating-images > div').map(function (i) {       //getting all elements id.
         return this.id;
     }).get();
@@ -215,7 +212,7 @@ function updateSortablePosition() {
 
     var arrayLength = ids.length;              //get's length of the id array.
 
-    for (i = 0; i < arrayLength; i++) {             //goes through array and calls function which sets
+    for (var i = 0; i < arrayLength; i++) {             //goes through array and calls function which sets 
         // new position indicator for each.
         setPosition(ids[i], pos[i] + 1); //pos+1 because it starts on 0.
     }
@@ -228,7 +225,7 @@ function updateSortablePosition() {
  * @returns {undefined}
  */
 function setPosition(id, position) {
-    $("#rating-images #" + id + " p ").text(position);
+    $("#rating-images #" + id + " .style-p ").text(position);
 }
 
 /**
@@ -262,15 +259,11 @@ function loadReproductionsSortable(data) {
     var length;
     var initialPosition;
     var letterCounter = 0;
-    var i;
-    var numberArray;
 
     $('#rating-images').empty();                //empties div for the next pictures to be loaded
     length = Object.keys(data).length - 1;
 
-    numberArray = shuffleArray(Array.apply(null, {length: length}).map(Number.call, Number));   //Gets an shuffle array within the range of amount of pictures.
-
-    for (i = 1; i <= length; i++) {                         //goes through all objects getting their data.
+    for (var i = 1; i <= length; i++) {                         //goes through all objects getting their data.
         var reproductionImageUrl = data[i].url;                 //getting url
         var reproductionPictureOrder = data[i].pictureOrderId;  //getting id
 
@@ -283,14 +276,15 @@ function loadReproductionsSortable(data) {
         }
 
 
-        initialPosition = String.fromCharCode('A'.charCodeAt(0) + numberArray[letterCounter] + 1);    //Uses shuffled array to get letter,
-        //initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);                 // images gets therefore assign a random letter within the range.
-        //console.log(initialPosition);
+        initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
+        console.log(initialPosition);
         letterCounter++;
 
         //each picture is appended to the sortable
-        $('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
+        //$('#rating-images').append('<div class="image-position" id=' + i + '><p class="style-p" >1</p><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
+        $('#rating-images').append('<div class="image-position tile-sortable" id=' + i + '><span class="style-p">1</span><img src=' + reproductionImageUrl + ' id=' + reproductionPictureOrder + ' ><br><span id="initial-position">' + initialPosition + '</span></div>');
     }
+
 
     retinaSpecific();
     updateSortablePosition();
@@ -349,15 +343,10 @@ function loadExperiment() {
         }
 
         loadReproductionsSortable(data);                        //get's all images in the experiment
-        shuffleImageInSortable();
-        updateSortablePosition();
-
         var originalImageUrl = data[1]['originalUrl'].url;      //getting url of original image
 
-        loadOriginal(originalImageUrl);                         //loading original picture
-
         panningCheck(originalImageUrl);
-
+        loadOriginal(originalImageUrl);                         //loading original picture
         ratingRunned = 1;
 
     }
@@ -368,7 +357,7 @@ function loadExperiment() {
         $("#button-finished").text("Finish");
         $('#contactArea').empty();                              //changes content of popup
         $('#continue').hide();
-        //$('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
+        $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
         // $('#cancel-experiment').trigger('click');
     }
 }
@@ -380,11 +369,17 @@ function loadExperiment() {
  * @param side which panner to update.
  */
 function pictureInPanner(initPos, side) {
+
+
+    // console.log(initPos);
+
     if (side == "left") {
         $('#picture-in-panner-left').find('span strong').text(initPos);
+
     }
     else if (side == "right") {
         $('#picture-in-panner-right').find('span strong').text(initPos);
+
     }
 }
 
@@ -401,47 +396,40 @@ function hideIndicators() {
 }
 
 /**
- * Checks if array containing touched element ids matches the number of thumbnails.
- * Returns true if all have been touched and false if not all have been touched.
- * @returns {boolean} whether all thumbnails have been touched.
+ * Loops through all matching divs and checks,
+ * whether they have been visited or not.
+ * Returns true if all have been visited(touched).
+ * @returns {Boolean} Returns false if one is not visited.
  */
 function isAllVisited() {
     var numItems = $('.image-position').length;     //gets the number of divs with particular class
 
-    if (numItems == touchedArray.length) return true;
-
-    return false;
+    for (var i = 1; i <= numItems; i++) {
+        var hasClass = $('image-position, #' + i + '').hasClass('touched');
+        if (!hasClass) {
+            return false;           //one div has not been touched.
+        }
+    }
+    return true;                //all div have been visited.
 }
 
-var check1 = 0;
-var check2 = 0;
 /**
  * User is has clicked finished.
  * Function post results and returns user to front page.
  * @returns {undefined}
  */
 function finished() {
-
     if (isAllVisited()) {           //all have been visited, if valid user is at this stage considered finished.
         postRating();
         //changes content of popup dependent on whether user has visited all or not.
         $('#contactArea').empty();
         $('#popupButtons3').css({"margin-left": "-3.5"});
-
-        if (check1 == 0) {
-            $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
-            check1 = 1;
-        }
-
+        $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
         $('#cancel-experiment').trigger('click');
     }
     else {
         $('#popupButtons3').css({"margin-left": "-7.5%"});
-
-        if (check2 == 0) {
-            $('#contactArea3').append("You sure you want to finish? All pictures haven't been sorted. <br><br> Click Quit to return to front page or Continue to keep sorting.");
-            check2 = 1;
-        }
+        $('#contactArea3').append("You sure you want to finish?, All pictures haven't been sorted <br><br> Click Quit to return to front page or Continue to keep sorting.");
 
         centerPopup3();
         loadPopup3();
@@ -457,18 +445,12 @@ function finished() {
  * Gets the information about pictures in sortable elements in sequence and for later insertion into DB.
  * @returns {undefined}
  */
-//var postOnce = 0;
 function postRating() {
-    //console.log("postRating()");
-    //if (postOnce == 0) {
     $('.image-position').each(function () {      //loops through all div with matching class
-        pictureOrderId = $(this).find('img').attr('id');        //gets ID of the image, which is the pictureOrderId
+        pictureOrderId = $(this).find('img').attr('id');        //get's Id of the image, which is the pictureOrderId
 
         postResultsRating(experimentId, pictureOrderId);      //for each there is posted data to DB.
     });
-    //    postOnce = 1;
-
-
 }
 
 /**
@@ -510,7 +492,6 @@ function loadImageIntoPanner(pictureOrderId, imageUrl, side) {
  * @returns {undefined}
  */
 function postResultsRating(experimentId, pictureOrderId) {
-    console.log("postResultsRating");
     $.ajax
     ({
         url: 'ajax/observer/insertIntoResultRating.php',
@@ -563,66 +544,24 @@ function updateType() {
     type = 1;
 }
 
-/**
- * Rezises thumbnails container if retina.
- */
+
 function retinaSpecific() {
     var retina = (window.retina || window.devicePixelRatio > 1);
     if (retina) {
-        //console.log("Retina detected");
+        console.log("Retina detected");
         $('body').addClass('retina'); // for example
         $(".image-position img").each(function () {
-            //console.log(this);
+            console.log(this);
             $(this).css({'height': '100px', 'width': '100px'});
         });
     }
     else {
-        //console.log("Retina NOT detected");
+        console.log("Retina NOT detected");
         //rescales images for fitment
         $(".image-position img").each(function () {
-            //console.log(this);
+            console.log(this);
             $(this).css({'height': '150px', 'width': '150px'});
         });
 
     }
-}
-
-/**
- * Shuffles all the images loaded into sortable.
- */
-function shuffleImageInSortable() {
-    var ratingImages = document.querySelector('#rating-images');    //select correct div.
-
-    //gets length and goes through all elements appending them in different position.
-    for (var i = ratingImages.children.length; i >= 0; i--) {
-        ratingImages.appendChild(ratingImages.children[Math.random() * i | 0]);
-    }
-}
-
-/**
- * Adds ID of elements to array if it does not already exists.
- * @type {Array}
- */
-var touchedArray = [];
-function addToTouchArray(touchedId) {
-    var found = touchedArray.some(function (el) {
-        return el == touchedId;
-    });
-    if (!found) {
-        touchedArray.push(touchedId);
-    }
-}
-
-/**
- * Randomize array element order in-place.
- * Using Fisher-Yates shuffle algorithm.
- */
-function shuffleArray(array) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
-    }
-    return array;
 }

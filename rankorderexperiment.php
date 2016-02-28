@@ -32,9 +32,6 @@ if (isset($_GET["invite"])) {
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
     <!-- CSS -->
     <link href="css/metro-bootstrap.css" rel="stylesheet">
     <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
@@ -52,10 +49,11 @@ if (isset($_GET["invite"])) {
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
     <script src="js/Observer/alterExperimentPosition.js"></script>
-    <script src="js/commonExperimentScript.js"></script>
     <script src="js/ratingExperimentScript.js"></script>
+    <script src="js/commonExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
+    <script src="js/plugins/rubaxa.sortable/Sortable.js"></script>
 
 
     <?php
@@ -69,7 +67,7 @@ if (isset($_GET["invite"])) {
 <!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 <!--Starts timer-->
-<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show();
+<body class="metro no-select" style="background-color:#808080; overflow:hidden;" onload="show();
             start();">
 
 <div id="popupContact" style="">
@@ -128,7 +126,7 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons4" class="popupButtons">
-        <button id="continue4" class="button size2" style="">Continue</button>
+        <button id="continue4" class="button size2" style="">Coninue</button>
         <button id="button-next-rating" class="button size2">Next</button>
     </div>
 </div>
@@ -160,60 +158,75 @@ if (isset($_GET["invite"])) {
 </div>
 
 <div id="rating-container">
-    <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
+    <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
 
-    <div id="drop-left" class="" style="margin-left: 0; display:inline-block; height: 50%; width: 30%;">
+    <div id="drop-left" class="" style="margin-left: 11%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
-                <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
+            <div class="parent">
+                <a href="" id="left-reproduction-link" target="_blank" class="new-tab"></a>
 
                 <div id="pan1" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
+
         </section>
-        <div id="picture-in-panner-left"><span><strong></strong></span></div>
+        <div id="picture-in-panner-left">Picture in panner: <span><strong></strong></span></div>
     </div>
 
-    <div id="original" style="margin-left:1%; margin-right:1%; display:inline-block; height: 50%; width: 30%;">
+    <div id="original" style="margin-left:1%; margin-right:1%; float:left; height:25%; width: 25%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
-                <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
+            <div class="parent">
+                <a href="" id="original-link" target="_blank" class="new-tab"></a>
+
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
             <br>
         </section>
+
     </div>
 
-    <div id="drop-right" class="" style=" display:inline-block; height: 50%; width: 30%;">
+    <div id="drop-right" class="" style=" float:left; height:25%; width: 25%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
-                <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
+            <div class="parent">
+                <a href="" id="right-reproduction-link" target="_blank" class="new-tab"></a>
 
                 <div id="pan2" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
         </section>
-        <div id="picture-in-panner-right"><span><strong></strong></span></div>
-    </div>
-
-    <div style="width:100%;">
-        <button class="size2 panning-reset">Reset panning</button>
-
-    </div>
-</div>
-
-
-<div id="rating" class="footer rating-collection center" style="">
-    <div id="rating-images">
+        <div id="picture-in-panner-right">Picture in panner right: <span><strong></strong></span></div>
     </div>
 
 </div>
+
 
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
+
+<!--<div id="rating" class="footer rating-collection center" style="">-->
+<!--    <div id="rating-images"></div>-->
+<!---->
+<!--</div>-->
+
+<!--<div class="rating-container" style="margin-top: 500px;">-->
+<!--    <div id="items">-->
+<!---->
+<!--            <div class="tile" data-force="30">item 1</div>-->
+<!--            <div class="tile" data-force="30">item 2</div>-->
+<!--            <div class="tile" data-force="30">item 3</div>-->
+<!---->
+<!--    </div>-->
+<!--</div>-->
+
+<div id="rating" class="footer rating-collection center" style="">
+    <div id="rating-images"></div>
+
+</div>
+
+
 
 </body>
 </html>
