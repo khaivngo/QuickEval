@@ -228,6 +228,22 @@
 							Fill Algorithm for Polygon
 -----------------------------------------------------------------------------*/
 		
+		function writeToFile(arr)
+		{
+			var array = JSON.stringify(arr);
+			
+			$.ajax
+			({
+				url: "writeDataToFile.php",
+				data: { array: array },
+				type: "POST"
+			})
+			.done(function(data)
+			{
+				alert(data);
+			});
+		}
+		
 		
 		// Temporary function for testing.
 		function testData()
@@ -243,7 +259,8 @@
 			console.log(savedShapes);
 		}
 		
-		function drawMatrix(matrixData)
+		// Draw matrix in canvas.
+		function drawMatrixCanvas(matrixData)
 		{
 			//console.log(matrixData);
 			
@@ -251,24 +268,65 @@
 			
 			for(var i = 0; i < matrixData.length; i++)
 			{
-			
 				matrixCtx.fillRect( matrixData[i][0], matrixData[i][1], 1, 1 );
-				
 			}
-			
-			
-	
-				
+		}
 		
+		// Render matrix in html table, 
+		// (!) not finished.
+		function drawMatrixTable(matrixData)
+		{
+			$('body').append('<table id = "matrixTable"></table>');
+			
+			var table = $('#matrixTable');
+
+			for(var i = 0; i < 800; i ++ )
+			{
+				table.append("<tr>");
+				
+				for(var j = 0; j < 533; j ++)
+				{
+					
+					//table.find("tr").eq(i).append("<td>0</td>");
+					
+				}
+				table.append("</tr>");
+			}  
+			
+			console.log('finished');
+		}
+		
+		/**
+		 *  Remove duplicates from the matrix array.
+		 *	Used for multidimensional arrays.
+		 *	@param  {Array}	  The current matrix.
+		 *	@return {Boolean} Returns an unique matrix.		
+		 */
+		function removeDupeVerts(dataArray)
+		{
+			// This method is more effective rather than using For or For-each loops
+			// URL: http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
+			// Answear by: georg | paragraph "Unique by..."
+			// Fetched: 02.03.2016, 00:30.
+			
+			function uniqBy(a, key) 
+			{
+				var seen = {};
+				return a.filter(function(item)
+				{
+					var k = key(item);
+					return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+				});
+			}
+
+			return uniqBy(dataArray, JSON.stringify);
 		}
 		
 		/**
 		 * Fill Algorithm | Ray-casting
-		 * @param	{Array}		Takes a single point(x,y) to 
-		 *						check if it intersects with the polygon.
-		 * @param	{Array}		To check if the point intersects within the 
-		 * 						boundaries of the polygon or not.	
-		 * @return 	{Boolean} 	Whether the point intersects or not.
+		 * @param	{Array}		Point(x,y) to check if it intersects with the polygon.
+		 * @param	{Array}		The rectangle area container for the polygon.	
+		 * @return 	{Boolean} 	Returns true if the point is inside the polygon. 
 		 */
 		function pointInsidePolygon(point, vertices)
 		{
@@ -300,12 +358,12 @@
 		}
 		
 		/** 
-		 * Calculate the vertices of the polygon's rectangle.
+		 * Calculate a rectangle of the polygon.
 		 * Optimizing purposes to avoid iterating the whole image matrix for each polygon.
-		 * @param  { Object } Polygon object to be calculated into vertices.
-		 * @return { Array }  The vertices of the polygon's rectangle.
+		 * @param  { Object }	Polygon object to calculate its rectangle.
+		 * @return { Array }  	The vertices of the calculated rectangle.
 		 */
-		function getRectVerticesPolygon(polygon)
+		function polygonToRectangle(polygon)
 		{
 			// Return lowest value in array:
 			Array.min = function( array ){ return Math.min.apply( Math, array ); };
@@ -327,8 +385,8 @@
 		}
 		/**
 		 * Convert the polygon object vertices to array.
-		 * @param  {Object} polygon object.
-		 * @return {Array}  polygon's vertices (x,y).
+		 * @param  {Object} 	polygon object.
+		 * @return {Array}  	polygon's vertices (x,y).
 		 */
 		function convertPolygonCoordToArray(polygon)
 		{
@@ -349,42 +407,50 @@
 		 */
 		var calcPolygonPoints = function()
 		{
+			/* NOTICE: 
+				Ikke bry dere om variabler som har TEMP foran seg */
+			
+			
+			/* TEMP: */
 			/* var test = confirm("Ok: Computed test (this will clear your polygons) \nCancel: Your polygons ");
+				if(test)
+					testData(); 
+			*/
 			
-			if(test)
-				testData(); */
-			
-			if(savedShapes.length > 0)
+			if(savedShapes.length > 0) 												// Atleast one polygon exists:
 			{
-			
-				var lol = confirm("Do you want to optimize the data?");
-				var t0 = performance.now();
+				/* TEMP */ var optimizeData = confirm("Do you want to optimize the data?");	
+				/* TEMP */ var t0 = performance.now();
 				
-				var allMarkedPoints = [];
-				var tempPolygonArr = [];
+				var allMarkedPoints = [];											// Store all marked pixels.
+				var tempPolygonArr  = [];											// Keeps a polygon's coordinates in a 2D array.
+				var polygonRect = [];												// Keeps the polygon rectangle vertices.
 				
 				for (var i = 0; i < savedShapes.length; i++)
 				{
-					tempPolygonArr = convertPolygonCoordToArray(savedShapes[i]); // Convert to array.
+					tempPolygonArr = convertPolygonCoordToArray(savedShapes[i]); 	// Convert to array.
 					
-					if(lol)
+					if(optimizeData) 												// Bare for testing, Fokuser på denne if løkka, drit i else løkka.					
 					{
-						var rectVertices = getRectVerticesPolygon(tempPolygonArr);	// return array of vertices.
-						//console.log(rectVertices);
-						
-						var xmin = rectVertices[0], ymin = rectVertices[1],
-							xmax = rectVertices[2], ymax = rectVertices[3];
-						
-						for(var j = xmin; j < xmax; j ++ )
+						polygonRect = polygonToRectangle(tempPolygonArr);			// Return array of vertices from the polygon's rectangle.
+																					
+																					// All 4 vertices of the rectangle: 
+						var rect_p1 = polygonRect[0], rect_p2 = polygonRect[1],
+							rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
+									
+																					// Find all the points that are inside the polygon:
+						for(var j = rect_p1; j < rect_p3; j ++ )
 						{
-							for(var k = ymin; k < ymax; k++)
+							for(var k = rect_p2; k < rect_p4; k++)
 							{
-								var point = [j,k];
-								if( pointInsidePolygon(point, tempPolygonArr) )
+								var point = [j,k]; 									// Check this point.
+								
+								if( pointInsidePolygon(point, tempPolygonArr) ) 	// The point is inside the polygon:
 									allMarkedPoints.push(point);
 							}
 						} 
 					}
+					// Skal fjernes:
 					else
 					{
 						for(var j = 0; j < 800; j ++ )
@@ -399,20 +465,25 @@
 					}
 					
 				}
+				console.log('Before removing dupes: ' + allMarkedPoints.length);
 				
+				allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
 				
-				
-				var t1 = performance.now();
-				console.log("Fill polygon took " + (t1 - t0) + " milliseconds.");
-				
-				console.log('Vertices: ' + allMarkedPoints.length);
+				console.log('After removing dupes: ' + allMarkedPoints.length);
 				
 				if( allMarkedPoints.length > 500000 )
 					alert(' OVER 500 000 PUNKTER!? :O \n VI HAR ET KJEMPEPROBLEM!!!');
 				
-				//return allMarkedPoints;
+				drawMatrixCanvas(allMarkedPoints);
+				//drawMatrixTable(allMarkedPoints);
 				
-				drawMatrix(allMarkedPoints);
+				
+				/* TEMP */ //writeToFile(allMarkedPoints);
+				
+				/* TEMP */var t1 = performance.now();
+				/* TEMP */console.log("Fill polygon took " + (t1 - t0) + " milliseconds.");
+				
+				//return allMarkedPoints;
 			}
 			else
 				alert('create a polygon or run a computed test');
