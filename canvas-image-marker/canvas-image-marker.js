@@ -318,7 +318,6 @@
 					return seen.hasOwnProperty(k) ? false : (seen[k] = true);
 				});
 			}
-
 			return uniqBy(dataArray, JSON.stringify);
 		}
 		
@@ -353,7 +352,6 @@
 				
 				j = i;
 			}
-
 			return inside;
 		}
 		
@@ -383,6 +381,7 @@
 			
 			return rectVertices;
 		}
+		
 		/**
 		 * Convert the polygon object vertices to array.
 		 * @param  {Object} 	polygon object.
@@ -448,7 +447,7 @@
 								if( pointInsidePolygon(point, tempPolygonArr) ) 	// The point is inside the polygon:
 									allMarkedPoints.push(point);
 							}
-						} 
+						}
 					}
 					// Skal fjernes:
 					else
@@ -461,18 +460,15 @@
 								if( pointInsidePolygon(point, tempPolygonArr) )
 									allMarkedPoints.push(point);
 							}
-						} 
+						}
 					}
-					
 				}
+				
 				console.log('Before removing dupes: ' + allMarkedPoints.length);
 				
 				allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
 				
 				console.log('After removing dupes: ' + allMarkedPoints.length);
-				
-				if( allMarkedPoints.length > 500000 )
-					alert(' OVER 500 000 PUNKTER!? :O \n VI HAR ET KJEMPEPROBLEM!!!');
 				
 				drawMatrixCanvas(allMarkedPoints);
 				//drawMatrixTable(allMarkedPoints);
