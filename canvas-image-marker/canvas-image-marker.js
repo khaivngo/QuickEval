@@ -62,6 +62,18 @@
 
             closeAnnotation(e);
         };
+		
+		var Shape = function(points, annotation)
+        {
+            this.points = points;
+            this.annotation = annotation;
+            this.fill;
+
+            this.setFill = function()
+            {
+                this.fill = calcFill(this);
+            }
+        };
 
         var closeAnnotation = function(e) {
             e.preventDefault();
@@ -145,7 +157,7 @@
             /* clear the canvas each time */
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-            drawSavedShapes();
+            drawSavedShapesEnd();
 
             if (points.length > 0) {
                 ctx.fillStyle = 'rgba(0, 0, 100, 0.3)';
@@ -168,8 +180,8 @@
 
         var drawSavedShapes = function() {
             if (savedShapes.length > 0) {
-                ctx.fillStyle = 'rgba(0, 100, 0, 0.3)';
-                ctx.strokeStyle = 'rgb(116, 175, 91)';
+                ctx.fillStyle = 'rgba(0, 100, 0, 0.7)';
+                ctx.strokeStyle = 'rgba(0, 100, 0, 0.7)';
                 ctx.lineWidth = 2;
 
                 for (var k = 0; k < savedShapes.length; k++) {
@@ -181,7 +193,27 @@
                     }
                     ctx.closePath();
                     ctx.fill();
-                    ctx.stroke();
+                    // ctx.stroke();
+                }
+            }
+        };
+		
+		var drawSavedShapesEnd = function() {
+            if (savedShapes.length > 0) {
+                ctx.fillStyle = 'rgba(0, 100, 0, 0.7)';
+                ctx.strokeStyle = 'rgba(0, 100, 0, 0.7)';
+                ctx.lineWidth = 2;
+
+                for (var k = 0; k < savedShapes.length; k++) {
+                    // ctx.beginPath();
+                    // ctx.moveTo(savedShapes[k].fill.x, savedShapes[k].fill.y);
+
+                    for (var d = 0; d < savedShapes[k].fill.length; d++) {
+                        ctx.fillRect(savedShapes[k].fill[d].x, savedShapes[k].fill[d].y, 1, 1);
+                    }
+                    // ctx.closePath();
+                    // ctx.fill();
+                    // ctx.stroke();
                 }
             }
         };
@@ -196,12 +228,16 @@
             // only save the shape if we have atleast 3 points
             if (points.length > 2) {
                 // save all the x and y coordinates as well as any comment
-                savedShapes.push({ points: points, annotation: "" });
+                savedShapes.push( new Shape(points, "") );
+
+                savedShapes[savedShapes.length-1].setFill();
             }
 
             points = []; /* remove the current shape now that it's saved */
 
             draw();
+            drawSavedShapesEnd();
+
         };
 
         /**
@@ -247,18 +283,9 @@
 		function createMatrix(data)
 		{
 			var t0 = performance.now();
-			
 			var matrix = [];
 
 			// Init matrix: Very good performance:
-			/* for(var i = 0; i < 800; i++)
-			{
-				for(var j = 0; j < 533; j++)
-				{	
-					matrix.push( { x: j, y: i, val: 0} );
-				}
-			} */
-			
 			for (var i = 0; i < 800; i++) 
 			{
 				matrix[i] = [];
@@ -278,15 +305,8 @@
 			{
 				matrix[ data[i][0] ][ data[i][1] ].val++;
 				
-			} 
-			
-		/* 	for(var j = 0; j < matrix.length;j++)
-				{
-					if( matrix[j].x == data[i][0] && matrix[j].y == data[i][1] )
-						matrix[j].val++;
-				} */
-			
-			
+			}
+	
 			var t3 = performance.now();
 			console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
 		
@@ -325,7 +345,6 @@
 							maxVal = data[i][j].val;
 					}
 				}
-				
 			}
 			
 			for(var i = 0; i < data.length; i++)
@@ -374,10 +393,7 @@
 					tableData += '<td>0</td>';
 				
 				if ( i != flag && i % 800 == 0 )
-					tableData += "</tr>";
-				
-				
-						
+					tableData += "</tr>";		
 			}  
 			
 			table.html(tableData);
@@ -495,86 +511,63 @@
 		 */
 		var calcPolygonPoints = function()
 		{
-			/* NOTICE: 
-				Ikke bry dere om variabler som har TEMP foran seg */
-			
-			
-			/* TEMP: */
-			/* var test = confirm("Ok: Computed test (this will clear your polygons) \nCancel: Your polygons ");
-				if(test)
-					testData(); 
-			*/
-			
 			if(savedShapes.length > 0) 												// Atleast one polygon exists:
 			{
-				/* TEMP */ var optimizeData = confirm("Do you want to optimize the data?");	
-				/* TEMP */ var t0 = performance.now();
+				var t0 = performance.now();
 				
 				var allMarkedPoints = [];											// Store all marked pixels.
-				var tempPolygonArr  = [];											// Keeps a polygon's coordinates in a 2D array.
-				var polygonRect = [];												// Keeps the polygon rectangle vertices.
-				
+			
 				for (var i = 0; i < savedShapes.length; i++)
 				{
-					tempPolygonArr = convertPolygonCoordToArray(savedShapes[i]); 	// Convert to array.
-					
-					if(optimizeData) 												// Bare for testing, Fokuser på denne if løkka, drit i else løkka.					
+					for(var j = 0; j < savedShapes[i].fill.length; j ++)
 					{
-						polygonRect = polygonToRectangle(tempPolygonArr);			// Return array of vertices from the polygon's rectangle.
-																					
-																					// All 4 vertices of the rectangle: 
-						var rect_p1 = polygonRect[0], rect_p2 = polygonRect[1],
-							rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
-									
-																					// Find all the points that are inside the polygon:
-						for(var j = rect_p1; j < rect_p3; j ++ )
-						{
-							for(var k = rect_p2; k < rect_p4; k++)
-							{
-								var point = [j,k]; 									// Check this point.
-								
-								if( pointInsidePolygon(point, tempPolygonArr) ) 	// The point is inside the polygon:
-									allMarkedPoints.push(point);
-							}
-						}
+						allMarkedPoints.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
 					}
-					// Skal fjernes:
-					else
-					{
-						for(var j = 0; j < 800; j ++ )
-						{
-							for(var k = 0; k < 533; k++)
-							{
-								var point = [j,k];
-								if( pointInsidePolygon(point, tempPolygonArr) )
-									allMarkedPoints.push(point);
-							}
-						}
-					}
-				}
+				} 
 				
-				//console.log('Before removing dupes: ' + allMarkedPoints.length);
+				console.log('Before removing dupes: ' + allMarkedPoints.length);
+				allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
+				console.log('After removing dupes: ' + allMarkedPoints.length);
 				
-				//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
-				
-				//console.log('After removing dupes: ' + allMarkedPoints.length);
-				
-				console.log('vertices: ' + allMarkedPoints.length );
-				
-				var matrix = createMatrix(allMarkedPoints);	// Array with all matrixes and intersect value.
-				
+				var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
 				drawMatrixCanvas(matrix);
-				
-				/* TEMP */ //writeToFile(allMarkedPoints);
-				
-				/* TEMP */var t1 = performance.now();
-				/* TEMP */console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds.");
+			
+				var t1 = performance.now();
+				console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds.");
 				
 				//return allMarkedPoints;
 			}
 			else
-				alert('create a polygon or run a computed test');
+				alert('Please create a polygon');
 		}
+		
+		function calcFill(shape)
+        {
+			var polygonRect = [];									// Keeps the polygon rectangle vertices.
+			var tempPolygonArr  = [];								// Keeps a polygon's coordinates in a 2D array.
+            
+			fillArray = [];
+            tempPolygonArr = convertPolygonCoordToArray(shape); 	// Convert to array.
+            polygonRect = polygonToRectangle(tempPolygonArr);		// Return array of vertices from the polygon's rectangle.
+                                                                    // All 4 vertices of the rectangle:
+            var rect_p1 = polygonRect[0], rect_p2 = polygonRect[1],
+                rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
+
+                                                                        // Find all the points that are inside the polygon:
+            for(var i = rect_p1; i < rect_p3; i ++ )
+            {
+                for(var j = rect_p2; j < rect_p4; j++)
+                {
+                    var point = [i,j];          						// Check this point.
+
+                    if( pointInsidePolygon(point, tempPolygonArr) ) {	// The point is inside the polygon:
+                        fillArray.push( {x:i, y:j} );
+                    }
+                }
+            }
+			
+            return fillArray;
+        }
 		
 		
 /*---------------------------------------------------------------------------	
