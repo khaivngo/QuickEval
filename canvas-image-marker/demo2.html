@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Banana</title>
+        <link rel="stylesheet" href="master.css" media="screen" title="core styles" charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    </head>
+
+    <body>
+        <div id="main" class="container">
+            <div id="marking-tool-panel">
+                <button id="undo"><i class="fa fa-undo"></i></button>
+                <button id="reset"><i class="fa fa-trash-o"></i></button>
+                <button id="fillAlg"><i class="fa fa-coffee"></i></button>
+            </div>
+            <div class="canvas-container" data-image-url="ohdear.jpg" oncontextmenu="return false;">
+                <!-- canvas goes here -->
+                <div class="annotation">
+                    <div id="annotationButtons">
+                        <button id="saveAnnotation"><i class="fa fa-check"></i></button>
+                        <button id="closeAnnotation"><i class="fa fa-times"></i></button>
+                    </div>
+                    <textarea id="annotationText" placeholder="What do you see?"></textarea>
+                </div>
+            </div>
+
+			<canvas id = "matrix" width = "800" height = "533" style = " background:#333;">
+
+			</canvas>
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+       <!--  <script src="simplify.js"></script> -->
+        <script src="canvas-image-marker2.js"></script>
+    </body>
+</html>

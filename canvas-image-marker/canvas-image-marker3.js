@@ -19,7 +19,7 @@
             $(canvasContainer).append(canvas); /* append the resized canvas to the DOM */
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);
-            canvas.on('mousedown', click);
+            canvas.on('dblclick', click);
 
             $('#undo').on('click', undo);
             $('#reset').on('click', reset);
@@ -30,6 +30,52 @@
             // params: element which will be moved, element which is dragable
             makeDraggable( ".annotation", "#annotationButtons" );
         });
+
+        var drawHeatmap = function() {
+            var width = 1000;
+            var height = 600;
+            var table = "";
+            var counter = [];
+
+            for (var i = 1; i <= height; i++) {
+                for (var j = 1; j <= width; j++) {
+                    counter.push({ x: j, y: i });
+                }
+            }
+
+            // for (var k = 0; k < savedShapes.length; k++) {
+            //     console.log(k);
+            //     for (var d = 0; d < savedShapes[k].fill.length; d++) {
+            //         console.log(k);
+            //         for (var h = 0; h < counter; h++) {
+            //
+            //             console.log(counter[h].x);
+            //
+            //             // if (savedShapes[k].fill[d].x == counter[h].x) {
+            //             //     if (savedShapes[k].fill[d].y == counter[h].y) {
+            //             //
+            //             //     }
+            //             // }
+
+            //         }
+            //
+            //     }
+            // }
+
+            // table += "<table>";
+            //     for (var i = 1; i <= height; i++) {
+            //         table += "<tr>";
+            //             for (var j = 1; j <= width; j++) {
+            //                 table += "<td>" + j + "-" + i + "</td>";
+            //                 counter.push({ x: j, y: i });
+            //             }
+            //         table += "</tr>";
+            //     }
+            // table += "</table>";
+
+            // document.getElementById("heatmap").insertAdjacentHTML('beforeend', table);
+            // console.log(counter);
+        };
 
         var setCanvasImage = function() {
             image = new Image();
@@ -45,6 +91,18 @@
                 resize();
 
             canvas.css({ background: 'url(' + image.src + ')' });
+        };
+
+        var Shape = function(points, annotation)
+        {
+            this.points = points;
+            this.annotation = annotation;
+            this.fill;
+
+            this.setFill = function()
+            {
+                this.fill = calcFill(this);
+            }
         };
 
         /**
@@ -69,33 +127,57 @@
         };
 
         var click = function(e) {
-            var mouseX  = e.offsetX;
-            var mouseY  = e.offsetY;
+            // var mouseX  = e.offsetX;
+            // var mouseY  = e.offsetY;
+            //
+            // ctx.lineWidth = 2;
+            //
+            // for (var k = 0; k < savedShapes.length; k++) {
+            //     ctx.beginPath();
+            //     ctx.moveTo(savedShapes[k].points.x, savedShapes[k].points.y);
+            //
+            //     for (var d = 0; d < savedShapes[k].points.length; d++) {
+            //         ctx.lineTo(savedShapes[k].points[d].x, savedShapes[k].points[d].y);
+            //     }
+            //
+            //     if (ctx.isPointInPath(mouseX, mouseY)) {
+            //         annotation.css({
+            //             'display': 'block',
+            //             'top': (mouseY - 140) + "px",
+            //             'left': (mouseX - 125) + "px"
+            //         });
+            //         annotation.attr('data-id', k);
+            //         annotationText.val(savedShapes[k].annotation);
+            //
+            //         break; /* we found the clicked polygon, no need to loop through the rest */
+            //     }
+            //     ctx.closePath();
+            // }
 
-            ctx.lineWidth = 2;
 
-            for (var k = 0; k < savedShapes.length; k++) {
-                ctx.beginPath();
-                ctx.moveTo(savedShapes[k].points.x, savedShapes[k].points.y);
+            // console.log(savedShapes[0].fill);
+            // console.log(savedShapes[1].fill);
 
-                for (var d = 0; d < savedShapes[k].points.length; d++) {
-                    ctx.lineTo(savedShapes[k].points[d].x, savedShapes[k].points[d].y);
+            for (var k = 0; k < savedShapes[0].fill.length; k++) {
+
+                for (var m = 0; m < savedShapes[1].fill.length; m++) {
+
+                    if ( savedShapes[0].fill[k].x == savedShapes[1].fill[m].x ) {
+                        if ( savedShapes[0].fill[k].y == savedShapes[1].fill[m].y ) {
+
+                            console.log(savedShapes[0].fill[k].x);
+                            console.log(savedShapes[0].fill[k].y);
+
+                            savedShapes[0].fill.splice(k, 1);
+                        }
+
+                    }
+
                 }
 
-                if (ctx.isPointInPath(mouseX, mouseY)) {
-                    annotation.css({
-                        'display': 'block',
-                        'top': (mouseY - 140) + "px",
-                        'left': (mouseX - 125) + "px"
-                    });
-                    annotation.attr('data-id', k);
-                    annotationText.val(savedShapes[k].annotation);
-
-                    // THIS SHOULD BE BREAK INSTEAD?
-                    return; /* we found the clicked polygon, no need to loop through the rest */
-                }
-                ctx.closePath();
             }
+
+            savedShapes.splice(1, 1);
         };
 
         var stopdrag = function(e) {
@@ -146,7 +228,7 @@
             /* clear the canvas each time */
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-            drawSavedShapes();
+            drawSavedShapesEnd();
 
             if (points.length > 0) {
                 ctx.fillStyle = 'rgba(0, 0, 100, 0.3)';
@@ -169,8 +251,8 @@
 
         var drawSavedShapes = function() {
             if (savedShapes.length > 0) {
-                ctx.fillStyle = 'rgba(0, 100, 0, 0.3)';
-                ctx.strokeStyle = 'rgb(116, 175, 91)';
+                ctx.fillStyle = 'rgba(0, 100, 0, 0.7)';
+                ctx.strokeStyle = 'rgba(0, 100, 0, 0.7)';
                 ctx.lineWidth = 2;
 
                 for (var k = 0; k < savedShapes.length; k++) {
@@ -182,7 +264,27 @@
                     }
                     ctx.closePath();
                     ctx.fill();
-                    ctx.stroke();
+                    // ctx.stroke();
+                }
+            }
+        };
+
+        var drawSavedShapesEnd = function() {
+            if (savedShapes.length > 0) {
+                ctx.fillStyle = 'rgba(0, 100, 0, 0.7)';
+                ctx.strokeStyle = 'rgba(0, 100, 0, 0.7)';
+                ctx.lineWidth = 2;
+
+                for (var k = 0; k < savedShapes.length; k++) {
+                    // ctx.beginPath();
+                    // ctx.moveTo(savedShapes[k].fill.x, savedShapes[k].fill.y);
+
+                    for (var d = 0; d < savedShapes[k].fill.length; d++) {
+                        ctx.fillRect(savedShapes[k].fill[d].x, savedShapes[k].fill[d].y, 1, 1);
+                    }
+                    // ctx.closePath();
+                    // ctx.fill();
+                    // ctx.stroke();
                 }
             }
         };
@@ -197,12 +299,17 @@
             // only save the shape if we have atleast 3 points
             if (points.length > 2) {
                 // save all the x and y coordinates as well as any comment
-                savedShapes.push({ points: points, annotation: "" });
+                savedShapes.push( new Shape(points, "") );
+
+                savedShapes[savedShapes.length-1].setFill();
             }
 
             points = []; /* remove the current shape now that it's saved */
 
             draw();
+            drawSavedShapesEnd();
+            // drawHeatmap();
+
         };
 
         /**
@@ -261,15 +368,16 @@
 		}
 
 		// Draw matrix in canvas.
-		function drawMatrixCanvas(matrixData)
+		function drawMatrixCanvas()
 		{
 			//console.log(matrixData);
 
 			matrixCtx.fillStyle = "#fff";
 
-			for(var i = 0; i < matrixData.length; i++)
+			for(var i = 0; i < savedShapes.length; i++)
 			{
-				matrixCtx.fillRect( matrixData[i][0], matrixData[i][1], 1, 1 );
+                for(var j = 0; j < savedShapes.length; j ++)
+				matrixCtx.fillRect( savedShapes[i].fill[j].x, savedShapes[i].fill[j].y, 1, 1 );
 			}
 		}
 
@@ -490,6 +598,33 @@
 				alert('create a polygon or run a computed test');
 		}
 
+        /*----------------------*/
+
+        function calcFill(shape)
+        {
+            fillArray = [];
+            tempPolygonArr = convertPolygonCoordToArray(shape); 	// Convert to array.
+            polygonRect = polygonToRectangle(tempPolygonArr);		// Return array of vertices from the polygon's rectangle.
+                                                                    // All 4 vertices of the rectangle:
+            var rect_p1 = polygonRect[0], rect_p2 = polygonRect[1],
+                rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
+
+                                                                        // Find all the points that are inside the polygon:
+            for(var i = rect_p1; i < rect_p3; i ++ )
+            {
+                for(var j = rect_p2; j < rect_p4; j++)
+                {
+                    var point = [i,j];          						// Check this point.
+
+                    if( pointInsidePolygon(point, tempPolygonArr) ) {	// The point is inside the polygon:
+                        fillArray.push( {x:i, y:j} );
+                    }
+                }
+            }
+
+            return fillArray;
+
+        }
 
 /*---------------------------------------------------------------------------
 							END: Fill Algorithm for Polygon
