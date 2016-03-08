@@ -244,56 +244,145 @@
 			});
 		}
 		
-		
-		// Temporary function for testing.
-		function testData()
+		function createMatrix(data)
 		{
-			savedShapes = []; 	//reset.
-			var a = [];
-			for (var i = 0; i < 500; i ++)
+			var t0 = performance.now();
+			
+			var matrix = [];
+
+			// Init matrix: Very good performance:
+			/* for(var i = 0; i < 800; i++)
 			{
-				a.push({x: i+50, y: i+20 }) 
+				for(var j = 0; j < 533; j++)
+				{	
+					matrix.push( { x: j, y: i, val: 0} );
+				}
+			} */
+			
+			for (var i = 0; i < 800; i++) 
+			{
+				matrix[i] = [];
+				for (var j = 0; j < 533; j++) 
+				{
+					matrix[i][j] = {val: 0};
+				}
 			}
 			
-			savedShapes.push({ points: a, annotation: "" });
-			console.log(savedShapes);
+			var t1 = performance.now();
+			console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+			
+			var t2 = performance.now();
+			
+			// Calc matrix: Very good Performance:
+			for(var i = 0; i < data.length; i++)
+			{
+				matrix[ data[i][0] ][ data[i][1] ].val++;
+				
+			} 
+			
+		/* 	for(var j = 0; j < matrix.length;j++)
+				{
+					if( matrix[j].x == data[i][0] && matrix[j].y == data[i][1] )
+						matrix[j].val++;
+				} */
+			
+			
+			var t3 = performance.now();
+			console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
+		
+			return matrix;
+		} 
+		
+		function heatmapColor(cur, max)
+		{
+			var hue = 0;
+			
+			if (cur != max)
+			{
+				hue = (500 / max) / cur*.75
+			}	
+			
+			var color = 'hsl('+hue+',50%,50%)';
+			return color;
 		}
 		
 		// Draw matrix in canvas.
-		function drawMatrixCanvas(matrixData)
-		{
-			//console.log(matrixData);
+		function drawMatrixCanvas(data)
+		{	
+			var t0 = performance.now();
 			
-			matrixCtx.fillStyle = "#fff";
+			var maxVal = 0;
 			
-			for(var i = 0; i < matrixData.length; i++)
+			for(var i = 0; i < data.length; i ++)
 			{
-				matrixCtx.fillRect( matrixData[i][0], matrixData[i][1], 1, 1 );
+				for(var j= 0; j < data[i].length; j ++)
+				{
+					if(i == 0)
+						maxVal = data[i][j].val;
+					else
+					{
+						if(data[i][j].val > maxVal)
+							maxVal = data[i][j].val;
+					}
+				}
+				
 			}
+			
+			for(var i = 0; i < data.length; i++)
+			{	
+				for(var j= 0; j < data[i].length; j ++)
+				{
+					if(data[i][j].val > 0)
+					{		
+						var point = [i,j];
+						matrixCtx.fillStyle = heatmapColor(data[i][j].val, maxVal);
+						matrixCtx.fillRect( point[0], point[1], 1, 1 );
+					} 
+				}
+			}
+			
+			var t1 = performance.now();
+			console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+			
+			
 		}
 		
 		// Render matrix in html table, 
 		// (!) not finished.
 		function drawMatrixTable(matrixData)
 		{
-			$('body').append('<table id = "matrixTable"></table>');
+			$('body').remove('#matrixTable');
+			$('body').append('<table id = "matrixTable" style = "font-size: 25%;"></table>');
 			
 			var table = $('#matrixTable');
-
-			for(var i = 0; i < 800; i ++ )
+			
+			var tableData = "";
+			
+			var flag;
+			
+			for(var i = 0; i < matrixData.length-1; i++ )
 			{
-				table.append("<tr>");
-				
-				for(var j = 0; j < 533; j ++)
+				if( i % 800 == 0 )
 				{
-					
-					//table.find("tr").eq(i).append("<td>0</td>");
-					
+					flag = i;
+					tableData += "<tr>";
 				}
-				table.append("</tr>");
+				
+				if(matrixData[i].val > 0)
+					tableData += '<td style = "color: #fff;">'+matrixData[i].val+'</td>';
+				else
+					tableData += '<td>0</td>';
+				
+				if ( i != flag && i % 800 == 0 )
+					tableData += "</tr>";
+				
+				
+						
 			}  
 			
-			console.log('finished');
+			table.html(tableData);
+			
+
 		}
 		
 		/**
@@ -464,20 +553,22 @@
 					}
 				}
 				
-				console.log('Before removing dupes: ' + allMarkedPoints.length);
+				//console.log('Before removing dupes: ' + allMarkedPoints.length);
 				
-				allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
+				//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
 				
-				console.log('After removing dupes: ' + allMarkedPoints.length);
+				//console.log('After removing dupes: ' + allMarkedPoints.length);
 				
-				drawMatrixCanvas(allMarkedPoints);
-				//drawMatrixTable(allMarkedPoints);
+				console.log('vertices: ' + allMarkedPoints.length );
 				
+				var matrix = createMatrix(allMarkedPoints);	// Array with all matrixes and intersect value.
+				
+				drawMatrixCanvas(matrix);
 				
 				/* TEMP */ //writeToFile(allMarkedPoints);
 				
 				/* TEMP */var t1 = performance.now();
-				/* TEMP */console.log("Fill polygon took " + (t1 - t0) + " milliseconds.");
+				/* TEMP */console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds.");
 				
 				//return allMarkedPoints;
 			}
