@@ -280,6 +280,11 @@
 			});
 		}
 		
+		/**
+		 *  Create a matrix of the experiment image with marked points as data. 
+		 *	@param  {array}  The array with marked points.
+		 *	@return {array}	 The matrix.
+		 */
 		function createMatrix(data)
 		{
 			var t0 = performance.now();
@@ -303,37 +308,47 @@
 			// Calc matrix: Very good Performance:
 			for(var i = 0; i < data.length; i++)
 			{
-				matrix[ data[i][0] ][ data[i][1] ].val++;
-				
+				matrix[ data[i][0] ][ data[i][1] ].val++;	
 			}
-	
+			
 			var t3 = performance.now();
 			console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
 		
 			return matrix;
 		} 
 		
+		/**
+		 *  Get color for the heatmap.
+		 *	@param  {Int}	  The current intersection value for the pixel.
+		 *	@param  {Int}	  The highest value of intersections.
+		 *	@return {String}  color in hsl format.	
+		 */
 		function heatmapColor(cur, max)
 		{
 			var hue;
-			var hueMax = 0;
-			var hueLow = 125;
+			var hueMax = 0;			// Red value in hue scale
+			var hueLow = 125;		// Green value in hue scale
 			
 			var valPerc = (cur / max);
 			
-			var hue = hueLow - (hueLow * valPerc);
+			hue = hueLow - (hueLow * valPerc);
 			
 			var color = 'hsl('+hue+',50%,50%)';
+			
 			return color;
 		}
 		
-		// Draw matrix in canvas.
+		/**
+		 *  Draw the matrix in canvas as heatmap.
+		 *	@param  {array}	  The matrix data to draw.
+		 *	@return {Void}.
+		 */
 		function drawMatrixCanvas(data)
 		{	
 			var t0 = performance.now();
-			
 			var maxVal = 0;
 			
+			// Get max intersection value:
 			for(var i = 0; i < data.length; i ++)
 			{
 				for(var j= 0; j < data[i].length; j ++)
@@ -348,6 +363,7 @@
 				}
 			}
 			
+			// Draw matrix with heatmap:
 			for(var i = 0; i < data.length; i++)
 			{	
 				for(var j= 0; j < data[i].length; j ++)
@@ -431,9 +447,9 @@
 		
 		/**
 		 * Fill Algorithm | Ray-casting
-		 * @param	{Array}		Point(x,y) to check if it intersects with the polygon.
-		 * @param	{Array}		The rectangle area container for the polygon.	
-		 * @return 	{Boolean} 	Returns true if the point is inside the polygon. 
+		 * @param	{Array}	   Point(x,y) to check if it intersects with the polygon.
+		 * @param	{Array}	   The rectangle area container for the polygon.	
+		 * @return 	{Boolean}  Returns true if the point is inside the polygon. 
 		 */
 		function pointInsidePolygon(point, vertices)
 		{
@@ -466,8 +482,8 @@
 		/** 
 		 * Calculate a rectangle of the polygon.
 		 * Optimizing purposes to avoid iterating the whole image matrix for each polygon.
-		 * @param  { Object }	Polygon object to calculate its rectangle.
-		 * @return { Array }  	The vertices of the calculated rectangle.
+		 * @param  { Object }  Polygon object to calculate its rectangle.
+		 * @return { Array }   The vertices of the calculated rectangle.
 		 */
 		function polygonToRectangle(polygon)
 		{
@@ -492,8 +508,8 @@
 		
 		/**
 		 * Convert the polygon object vertices to array.
-		 * @param  {Object} 	polygon object.
-		 * @return {Array}  	polygon's vertices (x,y).
+		 * @param  {Object}  polygon object.
+		 * @return {Array}   polygon's vertices (x,y).
 		 */
 		function convertPolygonCoordToArray(polygon)
 		{
@@ -510,7 +526,7 @@
 		/**
 		 * Calculate total pixel points for all polygons. 
 		 * Estimates from the current savedShapes.
-		 * @return { Array } Array of every marked pixel.
+		 * @return {Array} Array of every marked pixel.
 		 */
 		var calcPolygonPoints = function()
 		{
@@ -540,12 +556,17 @@
 				var t1 = performance.now();
 				console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds.");
 				
-				//return allMarkedPoints;
+				return allMarkedPoints;
 			}
 			else
 				alert('Please create a polygon');
 		}
 		
+		/**
+		 * Calculate all points inside a shape.
+		 * @param  {Object}  A shape to find all marked pixels.
+		 * @return {Array}   Array of every marked pixel for this shape.
+		 */
 		function calcFill(shape)
         {
 			var polygonRect = [];									// Keeps the polygon rectangle vertices.
