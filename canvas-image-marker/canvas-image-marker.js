@@ -315,12 +315,13 @@
 		
 		function heatmapColor(cur, max)
 		{
-			var hue = 0;
+			var hue;
+			var hueMax = 0;
+			var hueLow = 125;
 			
-			if (cur != max)
-			{
-				hue = (500 / max) / cur*.75
-			}	
+			var valPerc = (cur / max);
+			
+			var hue = hueLow - (hueLow * valPerc);
 			
 			var color = 'hsl('+hue+',50%,50%)';
 			return color;
@@ -359,6 +360,8 @@
 					} 
 				}
 			}
+			
+			console.log(maxVal);
 			
 			var t1 = performance.now();
 			console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
@@ -523,14 +526,16 @@
 					{
 						allMarkedPoints.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
 					}
-				} 
+				}
 				
 				console.log('Before removing dupes: ' + allMarkedPoints.length);
-				allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
+				//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
 				console.log('After removing dupes: ' + allMarkedPoints.length);
 				
 				var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
 				drawMatrixCanvas(matrix);
+			
+				//drawMatrixTable(matrix);
 			
 				var t1 = performance.now();
 				console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds.");
