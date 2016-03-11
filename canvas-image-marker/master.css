@@ -5,15 +5,13 @@ body {
     position: relative;
     font-family: Helvetica;
 }
-
-::-webkit-input-placeholder { font-style: italic; font-size: 14px; }
-::-moz-placeholder { font-style: italic; font-size: 14px; }
-:-ms-input-placeholder { font-style: italic; font-size: 14px; }
-:-moz-placeholder { font-style: italic; font-size: 14px; }
+::-webkit-input-placeholder{ font-style: italic; font-size: 14px; }
+        ::-moz-placeholder { font-style: italic; font-size: 14px; }
+    :-ms-input-placeholder { font-style: italic; font-size: 14px; }
+         :-moz-placeholder { font-style: italic; font-size: 14px; }
 textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
-#undo, #reset, #fillAlg 
-{
+#undo, #delete-tool, #fillAlg {
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;
