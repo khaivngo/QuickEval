@@ -27,7 +27,7 @@
 
             $('#undo').on('click', undo);
             $('#delete-tool').on('click', setTool);
-            $('#fillAlg').on('click', calcPolygonPoints);
+            $('.fillAlg').on('click', calcPolygonPoints);
             $('#saveAnnotation').on('click', saveAnnotation);
             $('#closeAnnotation').on('click', closeAnnotation);
 
@@ -341,7 +341,10 @@
 /*---------------------------------------------------------------------------
 							Fill Algorithm for Polygon
 -----------------------------------------------------------------------------*/
-
+		
+		$('#hueLevel').change(function() { $(this).next().text( $(this).val() ); });
+		$('#satLevel').change(function() { $(this).next().text( $(this).val() ); });
+		
 		function writeToFile(arr)
 		{
 			var array = JSON.stringify(arr);
@@ -396,24 +399,40 @@
 		}
 
 		/**
-		 *  Get color for the heatmap.
+		 *  Generate color for the heatmap.
 		 *	@param  {Int}	  The current intersection value for the pixel.
 		 *	@param  {Int}	  The highest value of intersections.
 		 *	@return {String}  color in hsl format.
 		 */
-		function heatmapColor(cur, max)
+		function heatmapColor(cur, max, scaleType, huePassed, satPassed)
 		{
-			var hue;
-			var hueMax = 0;			// Red value in hue scale
-			var hueLow = 125;		// Green value in hue scale
-
 			var valPerc = (cur / max);
-
-			hue = hueLow - (hueLow * valPerc);
-
-			var color = 'hsl('+hue+',50%,50%)';
-
-			return color;
+			var color;
+			
+			function hueScale()
+			{
+				var hueLow = 125;						// Green value in hue scale
+				var hue = hueLow - (hueLow * valPerc);
+				color = 'hsl(' + hue + ',50%,50%)';
+				return color;
+			}
+			
+			function grayScale(hue, sat)
+			{
+				var shade = valPerc * 100;
+				var hueStd = 0;
+					
+				var color = 'hsl(' + hue + ',' + sat + '%,' + shade + '%)';
+	
+				return color;
+			}
+			
+			switch(scaleType)
+			{
+				case 0: return grayScale(huePassed, satPassed);
+				case 1: return hueScale();
+			}
+			
 		}
 
 		/**
@@ -421,7 +440,7 @@
 		 *	@param  {array}	  The matrix data to draw.
 		 *	@return {Void}.
 		 */
-		function drawMatrixCanvas(data)
+		function drawMatrixCanvas(data, hue, sat, scaleType)
 		{
 			var t0 = performance.now();
 			var maxVal = 0;
@@ -449,13 +468,11 @@
 					if(data[i][j].val > 0)
 					{
 						var point = [i,j];
-						matrixCtx.fillStyle = heatmapColor(data[i][j].val, maxVal);
+						matrixCtx.fillStyle = heatmapColor(data[i][j].val, maxVal, scaleType, hue, sat);
 						matrixCtx.fillRect( point[0], point[1], 1, 1 );
 					}
 				}
 			}
-
-			console.log(maxVal);
 
 			var t1 = performance.now();
 			console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
@@ -610,8 +627,11 @@
 		{
 			if(savedShapes.length > 0) 												// Atleast one polygon exists:
 			{
+				var hue = $('#hueLevel').val();
+				var sat = $('#satLevel').val();
+				var scale = 0;
+				
 				var t0 = performance.now();
-
 				var allMarkedPoints = [];											// Store all marked pixels.
 
 				for (var i = 0; i < savedShapes.length; i++)
@@ -622,17 +642,21 @@
 					}
 				}
 
-				console.log('Before removing dupes: ' + allMarkedPoints.length);
+				//console.log('Before removing dupes: ' + allMarkedPoints.length);
 				//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
-				console.log('After removing dupes: ' + allMarkedPoints.length);
-
+				//console.log('After removing dupes: ' + allMarkedPoints.length);
+				
+				if( $('#hueScale[type=checkbox]').is(':checked') )
+					scale = 1;
+					
+				
 				var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
-				drawMatrixCanvas(matrix);
+				drawMatrixCanvas(matrix, hue, sat, scale);
 
 				//drawMatrixTable(matrix);
 
 				var t1 = performance.now();
-				console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds.");
+				console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
 
 				return allMarkedPoints;
 			}
