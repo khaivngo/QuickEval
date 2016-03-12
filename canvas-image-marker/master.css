@@ -5,13 +5,15 @@ body {
     position: relative;
     font-family: Helvetica;
 }
+
+#heatmapPanel{list-style: none;}
 ::-webkit-input-placeholder{ font-style: italic; font-size: 14px; }
         ::-moz-placeholder { font-style: italic; font-size: 14px; }
     :-ms-input-placeholder { font-style: italic; font-size: 14px; }
          :-moz-placeholder { font-style: italic; font-size: 14px; }
 textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
-#undo, #delete-tool, #fillAlg {
+#undo, #delete-tool, .fillAlg {
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;
@@ -93,4 +95,15 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     outline: 0;
     font-size: 16px;
     font-family: Helvetica;
+}
+
+/*----------------------
+    Heatmap panel
+-----------------------*/
+
+#heatmapPanel{list-style: none;}
+
+#heatmapPanel li
+{
+	padding: 2% 0;
 }
