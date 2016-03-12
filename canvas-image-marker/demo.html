@@ -5,17 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Banana</title>
         <link rel="stylesheet" href="master.css" media="screen" title="core styles" charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
     </head>
     <body>
         <div id="main" class="container">
+
             <div id="marking-tool-panel">
                 <button id="undo"><i class="fa fa-undo"></i></button>
                 <button id="delete-tool"><i class="fa fa-eraser"></i></button>
                 <button id="fillAlg"><i class="fa fa-coffee"></i></button>
             </div>
-            <div class="canvas-container" data-image-url="what.bmp" oncontextmenu="return false;">
-                <!-- canvas goes here -->
+
+            <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
+                <!-- image canvas goes here -->
                 <div class="annotation">
                     <div id="annotationButtons">
                         <button id="saveAnnotation"><i class="fa fa-check"></i></button>
@@ -23,13 +25,35 @@
                     </div>
                     <textarea id="annotationText" placeholder="What do you see?"></textarea>
                 </div>
+                <!-- heatmap canvas goes here -->
             </div>
 
-			<canvas id="matrix" width="800" height="533" style=" background:#333;"></canvas>
+            <div class="canvas-container" data-image-url="what.bmp" data-id="2"  oncontextmenu="return false;">
+                <!-- image canvas goes here -->
+                <div class="annotation">
+                    <div id="annotationButtons">
+                        <button id="saveAnnotation"><i class="fa fa-check"></i></button>
+                        <button id="closeAnnotation"><i class="fa fa-times"></i></button>
+                    </div>
+                    <textarea id="annotationText" placeholder="What do you see?"></textarea>
+                </div>
+                <!-- heatmap canvas goes here -->
+            </div>
         </div>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+
+
+
+        <script src="jquery.js"></script>
         <script src="Annotation.js"></script>
         <script src="canvas-image-marker.js"></script>
+        <script>
+            $(document).ready(function() {
+
+                $('.canvas-container').canvasMarkingTool();
+
+            });
+        </script>
+
     </body>
 </html>

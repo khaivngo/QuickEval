@@ -1,29 +1,45 @@
 (function($) {
     'use strict';
 
-    var initCanvasMarkerTool = function() {
+    $.fn.canvasMarkingTool = function(options) {
+        this.each(function(index, element) {
+            // first argument sets the context of "this" in the initCanvasMarkingTool function
+            initCanvasMarkingTool.apply(element, [element, options]);
+        });
+    };
+
+    var initCanvasMarkingTool = function(element, options) {
+        // establish our default settings, override (merge) if any provided
+        var settings = $.extend({
+            imageUrl: $(this).attr('data-image-url'),
+            imageId: $(this).attr('data-id')
+        }, options);
+
         var canvas = $('<canvas>');
         var ctx = canvas[0].getContext('2d');
         var annotation = $('.annotation');
         var annotationText = $('#annotationText');
-        var canvasContainer = $('.canvas-container');
+        var canvasContainer = element;
         var image;
+
         var points = [];
         var savedShapes = [];
         var deleteArea = [];
 
-        var TOOL = "MARKER";
+        var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
 
-		var matrixCanvas = document.getElementById('matrix');
-		var matrixCtx = matrixCanvas.getContext('2d');
+        var matrixCanvas = $('<canvas>');
+		var matrixCtx = matrixCanvas[0].getContext('2d');
 
 
-        $(document).ready( function() {
+        $(document).ready(function() {
             setCanvasImage();
             $(canvasContainer).append(canvas); /* append the resized canvas to the DOM */
+            $(canvasContainer).append(matrixCanvas);
+
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);
-            canvas.on('mousedown', click);
+            // canvas.on('dblclick', click);
 
             $('#undo').on('click', undo);
             $('#delete-tool').on('click', setTool);
@@ -35,20 +51,25 @@
             makeDraggable( ".annotation", "#annotationButtons" );
         });
 
+        /**
+         * Figure out the size of the image, so we can set the canvas to the same size.
+         */
         var setCanvasImage = function() {
             image = new Image();
 
             var resize = function() {
                 canvas.attr('height', image.height).attr('width', image.width);
+                matrixCanvas.attr('height', image.height).attr('width', image.width);
             };
 
             $(image).load(resize);
-            image.src = canvasContainer.attr('data-image-url');
+            image.src = settings.imageUrl;
 
             if (image.loaded)
                 resize();
 
             canvas.css({ background: 'url(' + image.src + ')' });
+            matrixCanvas.css({ background: '#333' });
         };
 
 		var Shape = function(points, annotation)
@@ -64,25 +85,25 @@
         };
 
         var click = function(e) {
-            // var mouseX  = e.offsetX;
-            // var mouseY  = e.offsetY;
-            //
-            // ctx.lineWidth = 2;
-            //
-            // for (var k = 0; k < savedShapes.length; k++) {
-            //     ctx.beginPath();
-            //     ctx.moveTo(savedShapes[k].points.x, savedShapes[k].points.y);
-            //
-            //     for (var d = 0; d < savedShapes[k].points.length; d++) {
-            //         ctx.lineTo(savedShapes[k].points[d].x, savedShapes[k].points[d].y);
-            //     }
-            //
-            //     if (ctx.isPointInPath(mouseX, mouseY)) {
-            //         openAnnotation(mouseY, mouseX, k);
-            //         break; /* we found the clicked polygon, no need to loop through the rest */
-            //     }
-            //     ctx.closePath();
-            // }
+            var mouseX  = e.offsetX;
+            var mouseY  = e.offsetY;
+
+            ctx.lineWidth = 2;
+
+            for (var k = 0; k < savedShapes.length; k++) {
+                ctx.beginPath();
+                ctx.moveTo(savedShapes[k].points.x, savedShapes[k].points.y);
+
+                for (var d = 0; d < savedShapes[k].points.length; d++) {
+                    ctx.lineTo(savedShapes[k].points[d].x, savedShapes[k].points[d].y);
+                }
+
+                if (ctx.isPointInPath(mouseX, mouseY)) {
+                    openAnnotation(mouseY, mouseX, k);
+                    break; /* we found the clicked polygon, no need to loop through the rest */
+                }
+                ctx.closePath();
+            }
         };
 
         var stopdrag = function(e) {
@@ -93,6 +114,8 @@
 
         var startdrag = function() {
             $(this).on('mousemove', mousedrag);
+            console.log(image.width);
+            console.log(image.height);
         };
 
         /**
@@ -135,64 +158,22 @@
 
             drawSavedShapesEnd();
 
-            // if (points.length > 0) {
-            //     ctx.fillStyle = 'rgba(0, 0, 100, 0.3)';
-            //     ctx.strokeStyle = 'rgb(0, 0, 100)';
-            //     ctx.lineWidth = 2;
-            //
-            //     ctx.beginPath();
-            //     ctx.moveTo(points[0].x, points[0].y);
-            //
-            //     for (var i = 0; i < points.length; i++) {
-            //         if (points.length > 1) {
-            //             ctx.lineTo(points[i].x, points[i].y);
-            //         }
-            //     }
-            //
-            //     ctx.fill();
-            //     ctx.stroke();
-            // }
+            if (points.length > 0) {
+                ctx.fillStyle = 'rgba(0, 0, 100, 0.3)';
+                ctx.strokeStyle = 'rgb(0, 0, 100)';
+                ctx.lineWidth = 2;
 
-            if (TOOL == "MARKER") {
-                if (points.length > 0) {
-                    ctx.fillStyle = 'rgba(0, 0, 100, 0.3)';
-                    ctx.strokeStyle = 'rgb(0, 0, 100)';
-                    ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
 
-                    ctx.beginPath();
-                    ctx.moveTo(points[0].x, points[0].y);
-
-                    for (var i = 0; i < points.length; i++) {
-                        if (points.length > 1) {
-                            ctx.lineTo(points[i].x, points[i].y);
-                        }
-                    }
-
-                    ctx.fill();
-                    ctx.stroke();
-                }
-            } else if (TOOL == "DELETE") {
-                deleteArea.push( new Shape(points, "") );
-                deleteArea[deleteArea.length-1].setFill();
-
-                // for each point in the delete shape look for a match in existing shapes
-                for (var i = 0; i < deleteArea[0].fill.length; i++) {
-                    for (var j = 0; j < savedShapes.length; j++) {
-                        for (var k = 0; k < savedShapes[j].fill.length; k++) {
-
-                            if ( savedShapes[j].fill[k].x == deleteArea[0].fill[i].x &&
-                                 savedShapes[j].fill[k].y == deleteArea[0].fill[i].y ) {
-
-                                savedShapes[j].fill.splice(k, 1);
-
-                                break; /* we found a match */
-                            }
-
-                        }
+                for (var i = 0; i < points.length; i++) {
+                    if (points.length > 1) {
+                        ctx.lineTo(points[i].x, points[i].y);
                     }
                 }
 
-                deleteArea = [];
+                ctx.fill();
+                ctx.stroke();
             }
 
         };
@@ -369,10 +350,10 @@
 			var matrix = [];
 
 			// Init matrix: Very good performance:
-			for (var i = 0; i < 800; i++)
+			for (var i = 0; i < image.width; i++)
 			{
 				matrix[i] = [];
-				for (var j = 0; j < 533; j++)
+				for (var j = 0; j < image.height; j++)
 				{
 					matrix[i][j] = {val: 0};
 				}
@@ -459,8 +440,6 @@
 
 			var t1 = performance.now();
 			console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
-
-
 		}
 
 		// Render matrix in html table,
@@ -494,8 +473,6 @@
 			}
 
 			table.html(tableData);
-
-
 		}
 
 		/**
@@ -705,12 +682,6 @@
              });
          };
 
-    }; // end of init()
-
-
-    /* Let's go. */
-    $(document).ready(function() {
-        initCanvasMarkerTool();
-    });
+    }; // end of initCanvasMarkingTool()
 
 })(jQuery);
