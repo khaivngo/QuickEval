@@ -359,7 +359,7 @@
 		 */
 		function heatmapColor(cur, max, scaleType, huePassed, satPassed)
 		{
-			var valPerc = (cur / max);
+			var valPerc = ( (cur-1) / (max-1) );
 			var color;
 
 			function hueScale()
@@ -367,16 +367,17 @@
 				var hueLow = 125;						// Green value in hue scale
 				var hue = hueLow - (hueLow * valPerc);
 				color = 'hsl(' + hue + ',50%,50%)';
+			
 				return color;
 			}
 
 			function grayScale(hue, sat)
 			{
-				var shade = valPerc * 100;
+				var light = valPerc * 100;
 				var hueStd = 0;
 
-				var color = 'hsl(' + hue + ',' + sat + '%,' + shade + '%)';
-
+				var color = 'hsl(' + hue + ',' + sat + '%,' + light + '%)';
+				
 				return color;
 			}
 
@@ -387,10 +388,62 @@
 			}
 
 		}
+		/**
+		 * Render the legend scale for the heatmap.
+		 *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl. 
+		 *	@param  {Int}	  The hue value.
+		 *	@param  {Int}	  The saturation value.
+		 *  @return {Void}
+		 */
+		function renderHeatmapLegend(scaleType, hue, sat)
+		{
+			var colorStep = 0;
+			var RANGE = 10;
+			
+			var htmlScale = "";
+			
+			$('#heatmapLegend').remove();
+			
+			switch (scaleType)
+			{
+				case 0:
+					colorStep = 100 / RANGE;
+					
+					htmlScale += '<div id = "heatmapLegend">';
+					
+					for(var i = 0; i < RANGE; i++)
+					{
+						var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
+						htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';	
+					}
+					
+					htmlScale += '</div>'
+					$('body').append(htmlScale);
+					break;
+					
+				case 1:
+					colorStep = 125 / RANGE;
+					
+					htmlScale += '<div id = "heatmapLegend">';
+					
+					for(var i = RANGE-1; i >= 0; i--)
+					{
+						var color = 'hsl(' + colorStep * i + ',50%, 50%)';
+						htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';	
+					}
+					
+					htmlScale += '</div>'
+					$('body').append(htmlScale);
+					break;
+			}
+		}
 
 		/**
 		 *  Draw the matrix in canvas as heatmap.
 		 *	@param  {array}	  The matrix data to draw.
+		 *	@param  {Int}	  The hue value for the heatmap.
+		 *	@param  {Int}	  The saturation value for the heatmap.
+		 *	@param  {Int}	  The scale type, 0: grayscale, 1: hsl. 
 		 *	@return {Void}.
 		 */
 		function drawMatrixCanvas(data, hue, sat, scaleType)
@@ -426,6 +479,8 @@
 					}
 				}
 			}
+
+			renderHeatmapLegend(scaleType, hue, sat);
 
 			var t1 = performance.now();
 			console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
