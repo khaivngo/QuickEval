@@ -2,23 +2,23 @@
     'use strict';
 
     $.fn.canvasMarkingTool = function(options) {
-        this.each(function(index, element) {
+        this.each(function(canvasIndex, element) {
             // first argument sets the context of "this" in the initCanvasMarkingTool function
-            initCanvasMarkingTool.apply(element, [element, options]);
+            initCanvasMarkingTool.apply(element, [canvasIndex, element, options]);
         });
     };
 
-    var initCanvasMarkingTool = function(element, options) {
+    var initCanvasMarkingTool = function(canvasIndex, element, options) {
         // establish our default settings, override (merge) if any provided
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url'),
-            imageId: $(this).attr('data-id')
+            imageId: $(this).attr('data-id'),
+            annotation: false
         }, options);
 
         var canvas = $('<canvas>');
         var ctx = canvas[0].getContext('2d');
-        var annotation = $('.annotation');
-        var annotationText = $('#annotationText');
+
         var canvasContainer = element;
         var image;
 
@@ -31,6 +31,13 @@
         var matrixCanvas = $('<canvas>');
 		var matrixCtx = matrixCanvas[0].getContext('2d');
 
+        if (settings.annotation) {
+            // var Remark = new Annotation(canvasIndex);
+            // // append a annotationBox to the canvasContainer element
+            // Remark.createAnnotation(canvasContainer);
+            // var annotationBox = $('.annotation').attr('canvas-id', canvasIndex);
+            // annotationBox.css('display', 'block');
+        }
 
         $(document).ready(function() {
             setCanvasImage();
@@ -39,16 +46,14 @@
 
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);
-            // canvas.on('dblclick', click);
+            canvas.on('dblclick', doubleClick);
 
             $('#undo').on('click', undo);
-            $('#delete-tool').on('click', setTool);
+            $('#marking-tool').on('click', setTool);
             $('.fillAlg').on('click', calcPolygonPoints);
-            $('#saveAnnotation').on('click', saveAnnotation);
-            $('#closeAnnotation').on('click', closeAnnotation);
 
             // params: element which will be moved, element which is dragable
-            makeDraggable( ".annotation", "#annotationButtons" );
+            // makeDraggable( ".annotation", ".annotationButtons" );
         });
 
         /**
@@ -69,7 +74,7 @@
                 resize();
 
             canvas.css({ background: 'url(' + image.src + ')' });
-            matrixCanvas.css({ background: '#333' });
+            matrixCanvas.css({ background: '#333', display: 'block' });
         };
 
 		var Shape = function(points, annotation)
@@ -84,7 +89,7 @@
             }
         };
 
-        var click = function(e) {
+        var doubleClick = function(e) {
             var mouseX  = e.offsetX;
             var mouseY  = e.offsetY;
 
@@ -99,7 +104,7 @@
                 }
 
                 if (ctx.isPointInPath(mouseX, mouseY)) {
-                    openAnnotation(mouseY, mouseX, k);
+                    Remark.openAnnotation(mouseY, mouseX, k, canvasIndex, savedShapes[k].annotation);
                     break; /* we found the clicked polygon, no need to loop through the rest */
                 }
                 ctx.closePath();
@@ -114,13 +119,11 @@
 
         var startdrag = function() {
             $(this).on('mousemove', mousedrag);
-            console.log(image.width);
-            console.log(image.height);
         };
 
         /**
-         * Calls the drawing function each time the mouse
-         * has been dragged a certain distance.
+         * Calls the drawing function if the current mouse point
+         * is atleast 6 pixels away from the last point.
          *
          * @return {boolean} false
          */
@@ -147,8 +150,9 @@
         };
 
         /**
-         * Takes the values from the points and savedShapes array,
-         * and draws it on the canvas.
+         * Takes the values from the points array,
+         * and draws a line between each point.
+         * This function is called from the mousedrag function.
          *
          * @return void
          */
@@ -158,14 +162,17 @@
 
             drawSavedShapesEnd();
 
-            if (points.length > 0) {
-                ctx.fillStyle = 'rgba(0, 0, 100, 0.3)';
-                ctx.strokeStyle = 'rgb(0, 0, 100)';
+            /* do not draw before we have atleast two points */
+            if (points.length > 1) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.strokeStyle = 'rgb(255, 255, 255)';
                 ctx.lineWidth = 2;
 
                 ctx.beginPath();
+                /* start the shape at the first coordinate in the array */
                 ctx.moveTo(points[0].x, points[0].y);
 
+                /* go through the array in in sequential order, drawing a line between each point */
                 for (var i = 0; i < points.length; i++) {
                     if (points.length > 1) {
                         ctx.lineTo(points[i].x, points[i].y);
@@ -241,13 +248,13 @@
                     for (var i = 0; i < deleteArea[0].fill.length; i++) {
                         for (var j = 0; j < savedShapes.length; j++) {
                             for (var k = 0; k < savedShapes[j].fill.length; k++) {
-
+                                /* if both X and Y matches in the savedShape and deleteArea array */
                                 if ( savedShapes[j].fill[k].x == deleteArea[0].fill[i].x &&
                                      savedShapes[j].fill[k].y == deleteArea[0].fill[i].y ) {
 
                                     savedShapes[j].fill.splice(k, 1);
 
-                                    break; /* we found a match */
+                                    break; /* we found a match, no need for more looping */
                                 }
 
                             }
@@ -283,49 +290,14 @@
             draw();
         };
 
-        /**
-         * Get the value from the data-id attribute of the annotation container,
-         * and update the savedShape at the corresponding array index.
-         */
-        var saveAnnotation = function(e) {
-            e.preventDefault();
-
-            var shapeID = annotation.attr('data-id');
-            var annoText = $.trim(annotationText.val());
-
-            /* get the annotation text and update the saved shape with that id */
-            savedShapes[shapeID].annotation = annoText;
-
-            closeAnnotation(e);
-        };
-
-        /**
-         * Open and display the annotation box at the user's mouse position.
-         * As well as displaying any previous set annotation text.
-         */
-        var openAnnotation = function(mouseY, mouseX, shapeIndex) {
-            annotation.css({
-                'display': 'block',
-                'top': ( mouseY - (annotation.outerHeight() + 9) ) + "px",
-                'left': ( mouseX - (annotation.outerWidth() / 2) ) + "px"
-            });
-            annotation.attr('data-id', shapeIndex);
-            annotationText.val(savedShapes[shapeIndex].annotation);
-        };
-
-        var closeAnnotation = function(e) {
-            e.preventDefault();
-            annotation.css('display', 'none');
-        };
-
 
 /*---------------------------------------------------------------------------
 							Fill Algorithm for Polygon
 -----------------------------------------------------------------------------*/
-		
+
 		$('#hueLevel').change(function() { $(this).next().text( $(this).val() ); });
 		$('#satLevel').change(function() { $(this).next().text( $(this).val() ); });
-		
+
 		function writeToFile(arr)
 		{
 			var array = JSON.stringify(arr);
@@ -389,7 +361,7 @@
 		{
 			var valPerc = (cur / max);
 			var color;
-			
+
 			function hueScale()
 			{
 				var hueLow = 125;						// Green value in hue scale
@@ -397,23 +369,23 @@
 				color = 'hsl(' + hue + ',50%,50%)';
 				return color;
 			}
-			
+
 			function grayScale(hue, sat)
 			{
 				var shade = valPerc * 100;
 				var hueStd = 0;
-					
+
 				var color = 'hsl(' + hue + ',' + sat + '%,' + shade + '%)';
-	
+
 				return color;
 			}
-			
+
 			switch(scaleType)
 			{
 				case 0: return grayScale(huePassed, satPassed);
 				case 1: return hueScale();
 			}
-			
+
 		}
 
 		/**
@@ -607,7 +579,7 @@
 				var hue = $('#hueLevel').val();
 				var sat = $('#satLevel').val();
 				var scale = 0;
-				
+
 				var t0 = performance.now();
 				var allMarkedPoints = [];											// Store all marked pixels.
 
@@ -622,11 +594,11 @@
 				//console.log('Before removing dupes: ' + allMarkedPoints.length);
 				//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
 				//console.log('After removing dupes: ' + allMarkedPoints.length);
-				
+
 				if( $('#hueScale[type=checkbox]').is(':checked') )
 					scale = 1;
-					
-				
+
+
 				var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
 				drawMatrixCanvas(matrix, hue, sat, scale);
 
@@ -678,33 +650,7 @@
 /*---------------------------------------------------------------------------
 							END: Fill Algorithm for Polygon
 -----------------------------------------------------------------------------*/
-        /**
-         * Make any element draggable.
-         *
-         * @param {string} id or class name of html element which is grabable
-         * @param {string} id or class name of html element to be moved
-         */
-         var makeDraggable = function(grabable, moveable) {
-             var grabable = $(grabable);
 
-             grabable.on('mousedown', moveable, function() {
-                 grabable.addClass('draggable').parents().on('mousemove', function(e) {
-                     e.preventDefault();
-
-                     var draggable = $('.draggable');
-                     var y = e.pageY - draggable.outerHeight() / 2;
-                     var x = e.pageX - draggable.outerWidth() / 2;
-
-                     /* put the mouse at the center of the moveable object and keep
-                      * it there as we move the mouse, until we release the mouse button */
-                     draggable.offset({ top: y, left: x }).on('mouseup', function() {
-                         $(grabable).removeClass('draggable');
-                     });
-                 });
-             }).on('mouseup', function() {
-                 $('.draggable').removeClass('draggable');
-             });
-         };
 
     }; // end of initCanvasMarkingTool()
 

@@ -8,53 +8,48 @@
         <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
     </head>
     <body>
-        <div id="main" class="container">
+        <div id="main-content-wrapper" class="container">
 
             <div id="marking-tool-panel">
                 <button id="undo"><i class="fa fa-undo"></i></button>
-                <button id="delete-tool"><i class="fa fa-eraser"></i></button>
+                <button id="marking-tool">
+                    <i class="fa fa-pencil-square-o"></i>
+                    <i class="fa fa-eraser"></i>
+                </button>
             </div>
 
             <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
                 <!-- image canvas goes here -->
-                <div class="annotation">
-                    <div id="annotationButtons">
-                        <button id="saveAnnotation"><i class="fa fa-check"></i></button>
-                        <button id="closeAnnotation"><i class="fa fa-times"></i></button>
-                    </div>
-                    <textarea id="annotationText" placeholder="What do you see?"></textarea>
-                </div>
                 <!-- heatmap canvas goes here -->
             </div>
 
-            <div class="canvas-container" data-image-url="what.bmp" data-id="2"  oncontextmenu="return false;">
+            <div class="canvas-container" data-image-url="free1.jpg" data-id="2"  oncontextmenu="return false;">
                 <!-- image canvas goes here -->
-                <div class="annotation">
-                    <div id="annotationButtons">
-                        <button id="saveAnnotation"><i class="fa fa-check"></i></button>
-                        <button id="closeAnnotation"><i class="fa fa-times"></i></button>
-                    </div>
-                    <textarea id="annotationText" placeholder="What do you see?"></textarea>
-                </div>
                 <!-- heatmap canvas goes here -->
             </div>
 
-			<ul id = "heatmapPanel" style = "color:#fff;">
-				<li>
-                    <label>Hue</label><br>
-                    <input id = "hueLevel" type="range" value = "0" min="0" max="360">
-                    <span class = "sizeNumber">0</span>
-                </li>
-				<li>
-                    <label>Saturation</label><br>
-                    <input id = "satLevel" type="range" value = "50" min="0" max="100">
-                    <span class = "sizeNumber">50</span>
-                <li>
-				<li>
-                    <label>Hue scale (Multiple colors)</label><br><input type = "checkbox" id = "hueScale"><br>
-                </li>
-			</ul>
-			<button type = "button" class = "fillAlg">Generate heatmap</button>
+            <div id="heatmap-panel-container">
+    			<ul id = "heatmapPanel">
+    				<li>
+                        <label>Hue</label><br>
+                        <input id = "hueLevel" type="range" value = "0" min="0" max="360">
+                        <span class = "sizeNumber">0</span>
+                    </li>
+    				<li>
+                        <label>Saturation</label><br>
+                        <input id = "satLevel" type="range" value = "50" min="0" max="100">
+                        <span class = "sizeNumber">50</span>
+                    </li>
+    				<li>
+                        <label>Hue scale (Multiple colors)</label><br>
+                        <input type = "checkbox" id = "hueScale"><br>
+                    </li>
+                    <li>
+                        <button type = "button" class = "fillAlg">Generate heatmap</button>
+                    </li>
+    			</ul>
+            </div>
+
         </div>
 
 
@@ -63,7 +58,9 @@
         <script src="canvas-image-marker.js"></script>
         <script>
             $(document).ready(function() {
-                $('.canvas-container').canvasMarkingTool();
+                $('.canvas-container').canvasMarkingTool({
+                    annotation: true
+                });
             });
         </script>
 

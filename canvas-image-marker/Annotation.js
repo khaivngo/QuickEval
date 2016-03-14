@@ -1,49 +1,49 @@
-var Annotation = function(annotationElement, annotationText) {
-    this.annotation = annotationElement;
-    this.annotationText = annotationText;
+var Annotation = function(canvasID) {
+    this.annotationBox = [
+        '<div class="annotation" data-id="" canvas-id="' + canvasID + '">',
+            '<div id="annotationButtons">',
+                '<button id="saveAnnotation"><i class="fa fa-check"></i></button>',
+                '<button id="closeAnnotation"><i class="fa fa-times"></i></button>',
+            '</div>',
+            '<textarea id="annotationText" placeholder="What do you see?" value=""></textarea>',
+        '</div>'
+    ].join('');
 };
 
-/**
- * Get the value from the data-id attribute of the annotation container,
- * and update the savedShape at the corresponding array index.
- */
-Annotation.prototype.saveAnnotation = function(e) {
-    e.preventDefault();
-
-    var shapeID = this.annotation.attr('data-id');
-    var annoText = $.trim(this.annotationText.val());
-
-    /* get the annotation text and update the saved shape with that id */
-    savedShapes[shapeID].annotation = annoText;
-
-    closeAnnotation(e);
+Annotation.prototype.createAnnotation = function(appendContainer) {
+    $(appendContainer).append(this.annotationBox);
 };
 
 /**
  * Open and display the annotation box at the user's mouse position.
  * As well as displaying any previous set annotation text.
  */
-Annotation.prototype.openAnnotation = function(mouseY, mouseX, shapeIndex) {
+Annotation.prototype.openAnnotation = function(mouseY, mouseX, shapeIndex, canvasIndex, annotationText) {
     var self = this;
-    this.annotation.css({
-        'display': 'block',
-        'top': ( mouseY - (this.annotation.outerHeight() + 9) ) + "px",
-        'left': ( mouseX - (this.annotation.outerWidth() / 2) ) + "px"
-    });
-    // this.annotation.attr('data-id', shapeIndex);
-    // this.annotationText.val(savedShapes[shapeIndex].annotation);
+    // $(canvasContainer).append($(self.annotationBox));
 
-    // var annotationBox = [
-    //     '<div class="annotation" data-id="' + shapeIndex + '">',
-    //         '<div id="annotationButtons">',
-    //             '<button id="saveAnnotation"><i class="fa fa-check"></i></button>',
-    //             '<button id="closeAnnotation"><i class="fa fa-times"></i></button>',
-    //         '</div>',
-    //         '<textarea id="annotationText" placeholder="What do you see?" value="' + savedShapes[shapeIndex].annotation + '"></textarea>',
-    //     '</div>'
-    // ].join('');
+    console.log($('.annotation').attr('canvas-id', canvasIndex));
+
+    // $(self.annotationBox).attr('data-id', shapeIndex);
+    // $(self.annotationBox).val(annotationText);
+
+    // $(canvasContainer).append($(self.annotationBox));
+
+};
+
+
+/**
+ * Get the value from the data-id attribute of the annotation container,
+ * and update the savedShape at the corresponding array index.
+ */
+Annotation.prototype.saveAnnotation = function() {
+    // var shapeID = this.annotation.attr('data-id');
+    // var annoText = $.trim(this.annotationText.val());
     //
-    // $(".canvas-container").prepend(annotationBox);
+    // /* get the annotation text and update the saved shape with that id */
+    // savedShapes[shapeID].annotation = annoText;
+    //
+    // closeAnnotation(e);
 };
 
 /**
