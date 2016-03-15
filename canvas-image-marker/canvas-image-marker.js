@@ -32,11 +32,19 @@
 		var matrixCtx = matrixCanvas[0].getContext('2d');
 
         if (settings.annotation) {
-            // var Remark = new Annotation(canvasIndex);
-            // // append a annotationBox to the canvasContainer element
-            // Remark.createAnnotation(canvasContainer);
-            // var annotationBox = $('.annotation').attr('canvas-id', canvasIndex);
-            // annotationBox.css('display', 'block');
+            var Remark = new Annotation();
+            // append a annotationBox to the canvasContainer element
+            Remark.createAnnotation(canvasContainer, canvasIndex);
+
+            Remark.annotationSaveButton.on('click', function(e) {
+                var shapeID = Remark.annotationBox.attr('data-id'); /* id of clicked shape */
+                var annoText = $.trim(Remark.annotationTextarea.val()); /* text of clicked shape */
+
+                /* update the annotation property of the shape */
+                savedShapes[shapeID].annotation = annoText;
+
+                Remark.closeAnnotation(e);
+            });
         }
 
         $(document).ready(function() {
@@ -182,7 +190,6 @@
                 ctx.fill();
                 ctx.stroke();
             }
-
         };
 
         /**
@@ -269,7 +276,13 @@
 
             draw();
             drawSavedShapesEnd();
+
+            // console.time("json");
+            // var h = JSON.stringify(savedShapes);
+            // console.log(h.length);
+            // console.time("json");
         };
+
 
         /**
          * Delete one shape, by removing the last array element.
@@ -277,7 +290,6 @@
          * @return void
          */
         var undo = function() {
-
             (points.length > 0) ? points = [] : savedShapes.pop();
 
             draw();
