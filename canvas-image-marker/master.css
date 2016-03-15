@@ -2,6 +2,13 @@ body {
     background-color: #777;
     position: relative;
     font-family: Helvetica;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 ::-webkit-input-placeholder{ font-style: italic; font-size: 14px; }

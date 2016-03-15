@@ -1,17 +1,44 @@
-var Annotation = function(canvasID) {
-    this.annotationBox = [
-        '<div class="annotation" data-id="" canvas-id="' + canvasID + '">',
-            '<div id="annotationButtons">',
-                '<button id="saveAnnotation"><i class="fa fa-check"></i></button>',
-                '<button id="closeAnnotation"><i class="fa fa-times"></i></button>',
-            '</div>',
-            '<textarea id="annotationText" placeholder="What do you see?" value=""></textarea>',
-        '</div>'
-    ].join('');
+var Annotation = function() {
+    this.annotationBox;
+    this.annotationTextarea;
+    this.annotationButtonBar;
+    this.annotationSaveButton;
+    this.annotationCloseButton;
 };
 
-Annotation.prototype.createAnnotation = function(appendContainer) {
-    $(appendContainer).append(this.annotationBox);
+/**
+ * Create and append the HTML annotation element. Set all class properties
+ * when the element is created.
+ */
+Annotation.prototype.createAnnotation = function(appendContainer, canvasIndex) {
+    // create and append a annotation box to the canvas
+    var annotation = [
+        '<div class="annotation" data-id="" canvas-id="' + canvasIndex + '">',
+            '<div class="annotationButtons">',
+                '<button class="saveAnnotation"><i class="fa fa-check"></i></button>',
+                '<button class="closeAnnotation"><i class="fa fa-times"></i></button>',
+            '</div>',
+            '<textarea class="annotationText" placeholder="What do you see?" value=""></textarea>',
+        '</div>'
+    ].join('');
+    $(appendContainer).append(annotation);
+
+    // get all the annotation elements
+    this.annotationBox = $('.annotation[canvas-id=' + canvasIndex + ']');
+    this.annotationTextarea = this.annotationBox.find('.annotationText');
+    this.annotationButtonBar = this.annotationBox.find('.annotationButtons');
+    this.annotationSaveButton = this.annotationBox.find('.saveAnnotation');
+    this.annotationCloseButton = this.annotationBox.find('.closeAnnotation');
+
+    // enable the annotation box to be draggable
+    var helper = new Helper;
+    helper.makeDraggable(this.annotationBox, this.annotationBox);
+
+    // register events
+    var self = this;
+    this.annotationCloseButton.on('click', function(e) {
+        self.closeAnnotation(e);
+    });
 };
 
 /**
@@ -19,31 +46,14 @@ Annotation.prototype.createAnnotation = function(appendContainer) {
  * As well as displaying any previous set annotation text.
  */
 Annotation.prototype.openAnnotation = function(mouseY, mouseX, shapeIndex, canvasIndex, annotationText) {
-    var self = this;
-    // $(canvasContainer).append($(self.annotationBox));
+    this.annotationBox.css({
+        'display': 'block',
+        'top': ( mouseY - (this.annotationBox.outerHeight() + 9) ) + "px",
+        'left': ( mouseX - (this.annotationBox.outerWidth() / 2) ) + "px"
+    });
 
-    console.log($('.annotation').attr('canvas-id', canvasIndex));
-
-    // $(self.annotationBox).attr('data-id', shapeIndex);
-    // $(self.annotationBox).val(annotationText);
-
-    // $(canvasContainer).append($(self.annotationBox));
-
-};
-
-
-/**
- * Get the value from the data-id attribute of the annotation container,
- * and update the savedShape at the corresponding array index.
- */
-Annotation.prototype.saveAnnotation = function() {
-    // var shapeID = this.annotation.attr('data-id');
-    // var annoText = $.trim(this.annotationText.val());
-    //
-    // /* get the annotation text and update the saved shape with that id */
-    // savedShapes[shapeID].annotation = annoText;
-    //
-    // closeAnnotation(e);
+    this.annotationBox.attr('data-id', shapeIndex);
+    this.annotationTextarea.val(annotationText);
 };
 
 /**
@@ -51,8 +61,5 @@ Annotation.prototype.saveAnnotation = function() {
  */
 Annotation.prototype.closeAnnotation = function(e) {
     e.preventDefault();
-    this.annotation.css('display', 'none');
+    this.annotationBox.css('display', 'none');
 };
-
-// var Annotation = new Annotation($('.annotation'), $('.annotationText'));
-// Annotation.openAnnotation(500, 500, 1);
