@@ -155,3 +155,22 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 {
 	padding: 2% 0;
 }
+
+/*----------------------
+    Heatmap Scale
+-----------------------*/
+
+#heatmapLegend
+{
+	padding: 20px;
+	padding-bottom: 10px;
+	display: inline;
+}
+
+	#heatmapLegend .scaleItem
+	{
+		width: 20px;
+		height: 20px;
+		display: inline-block;
+		margin: 2px;
+	}
