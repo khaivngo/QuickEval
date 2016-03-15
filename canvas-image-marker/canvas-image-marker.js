@@ -37,10 +37,10 @@
             Remark.createAnnotation(canvasContainer, canvasIndex);
 
             Remark.annotationSaveButton.on('click', function(e) {
-                var shapeID = Remark.annotationBox.attr('data-id'); /* id of clicked shape */
-                var annoText = $.trim(Remark.annotationTextarea.val()); /* text of clicked shape */
+                var shapeID = Remark.annotationBox.attr('data-id'); // id of clicked shape
+                var annoText = $.trim(Remark.annotationTextarea.val()); // text of clicked shape
 
-                /* update the annotation property of the shape */
+                // update the annotation property of the shape
                 savedShapes[shapeID].annotation = annoText;
 
                 Remark.closeAnnotation(e);
@@ -49,7 +49,7 @@
 
         $(document).ready(function() {
             setCanvasImage();
-            $(canvasContainer).append(canvas); /* append the resized canvas to the DOM */
+            $(canvasContainer).append(canvas); // append the resized canvas to the DOM
             $(canvasContainer).append(matrixCanvas);
 
             canvas.on('mousedown', startdrag);
@@ -59,9 +59,6 @@
             $('#undo').on('click', undo);
             $('#marking-tool').on('click', setTool);
             $('.fillAlg').on('click', calcPolygonPoints);
-
-            // params: element which will be moved, element which is dragable
-            // makeDraggable( ".annotation", ".annotationButtons" );
         });
 
         /**
@@ -379,7 +376,7 @@
 				var hueLow = 125;						// Green value in hue scale
 				var hue = hueLow - (hueLow * valPerc);
 				color = 'hsl(' + hue + ',50%,50%)';
-			
+
 				return color;
 			}
 
@@ -389,7 +386,7 @@
 				var hueStd = 0;
 
 				var color = 'hsl(' + hue + ',' + sat + '%,' + light + '%)';
-				
+
 				return color;
 			}
 
@@ -402,7 +399,7 @@
 		}
 		/**
 		 * Render the legend scale for the heatmap.
-		 *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl. 
+		 *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl.
 		 *	@param  {Int}	  The hue value.
 		 *	@param  {Int}	  The saturation value.
 		 *  @return {Void}
@@ -411,39 +408,39 @@
 		{
 			var colorStep = 0;
 			var RANGE = 10;
-			
+
 			var htmlScale = "";
-			
+
 			$('#heatmapLegend').remove();
-			
+
 			switch (scaleType)
 			{
 				case 0:
 					colorStep = 100 / RANGE;
-					
+
 					htmlScale += '<div id = "heatmapLegend">';
-					
+
 					for(var i = 0; i < RANGE; i++)
 					{
 						var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
-						htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';	
+						htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';
 					}
-					
+
 					htmlScale += '</div>'
 					$('body').append(htmlScale);
 					break;
-					
+
 				case 1:
 					colorStep = 125 / RANGE;
-					
+
 					htmlScale += '<div id = "heatmapLegend">';
-					
+
 					for(var i = RANGE-1; i >= 0; i--)
 					{
 						var color = 'hsl(' + colorStep * i + ',50%, 50%)';
-						htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';	
+						htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';
 					}
-					
+
 					htmlScale += '</div>'
 					$('body').append(htmlScale);
 					break;
@@ -455,7 +452,7 @@
 		 *	@param  {array}	  The matrix data to draw.
 		 *	@param  {Int}	  The hue value for the heatmap.
 		 *	@param  {Int}	  The saturation value for the heatmap.
-		 *	@param  {Int}	  The scale type, 0: grayscale, 1: hsl. 
+		 *	@param  {Int}	  The scale type, 0: grayscale, 1: hsl.
 		 *	@return {Void}.
 		 */
 		function drawMatrixCanvas(data, hue, sat, scaleType)

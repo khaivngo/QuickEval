@@ -1,10 +1,15 @@
 var Annotation = function() {
     this.annotationBox;
     this.annotationTextarea;
+    this.annotationButtonBar;
     this.annotationSaveButton;
     this.annotationCloseButton;
 };
 
+/**
+ * Create and append the HTML annotation element. Set all class properties
+ * when the element is created.
+ */
 Annotation.prototype.createAnnotation = function(appendContainer, canvasIndex) {
     // create and append a annotation box to the canvas
     var annotation = [
@@ -21,8 +26,13 @@ Annotation.prototype.createAnnotation = function(appendContainer, canvasIndex) {
     // get all the annotation elements
     this.annotationBox = $('.annotation[canvas-id=' + canvasIndex + ']');
     this.annotationTextarea = this.annotationBox.find('.annotationText');
+    this.annotationButtonBar = this.annotationBox.find('.annotationButtons');
     this.annotationSaveButton = this.annotationBox.find('.saveAnnotation');
     this.annotationCloseButton = this.annotationBox.find('.closeAnnotation');
+
+    // enable the annotation box to be draggable
+    var helper = new Helper;
+    helper.makeDraggable(this.annotationBox, this.annotationBox);
 
     // register events
     var self = this;
