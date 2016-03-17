@@ -22,7 +22,7 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     margin: 20px auto;
 }
 
-#marking-tool-panel {
+.marking-tool-panel {
     margin: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #aaa;
@@ -58,7 +58,7 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     margin: 0 15px;
 }
 
-#undo, #marking-tool, .fillAlg {
+.undo, .marking-tool, .fillAlg {
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;

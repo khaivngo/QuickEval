@@ -12,12 +12,21 @@
         // establish our default settings, override (merge) if any provided
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url'),
-            imageId: $(this).attr('data-id'),
             annotation: false
         }, options);
 
         var canvas = $('<canvas>');
         var ctx = canvas[0].getContext('2d');
+
+        var toolPanel = $(
+            '<div id="marking-tool-panel" style="position: absolute; z-index: 200;">' +
+                '<button class="undo"><i class="fa fa-undo"></i></button>' +
+                '<button class="marking-tool">' +
+                    '<i class="fa fa-pencil-square-o"></i>' +
+                    '<i class="fa fa-eraser"></i>' +
+                '</button>' +
+            '</div>'
+        );
 
         var canvasContainer = element;
         var image;
@@ -56,8 +65,11 @@
             canvas.on('mouseup', stopdrag);
             canvas.on('dblclick', doubleClick);
 
-            $('#undo').on('click', undo);
-            $('#marking-tool').on('click', setTool);
+            $(canvasContainer).before(toolPanel);
+
+            toolPanel.find('.undo').on('click', undo);
+            toolPanel.find('.marking-tool').on('click', setTool);
+
             $('.fillAlg').on('click', calcPolygonPoints);
         });
 
@@ -69,7 +81,7 @@
 
             var resize = function() {
                 canvas.attr('height', image.height).attr('width', image.width);
-                matrixCanvas.attr('height', image.height).attr('width', image.width);
+                // matrixCanvas.attr('height', image.height).attr('width', image.width);
             };
 
             $(image).load(resize);
@@ -79,7 +91,7 @@
                 resize();
 
             canvas.css({ background: 'url(' + image.src + ')' });
-            matrixCanvas.css({ background: '#333', display: 'block' });
+            // matrixCanvas.css({ background: '#333', display: 'block' });
         };
 
 		var Shape = function(points, annotation)
@@ -219,8 +231,8 @@
 
 		var drawSavedShapesEnd = function() {
             if (savedShapes.length > 0) {
-                ctx.fillStyle = 'rgba(0, 100, 0, 0.5)';
-                ctx.strokeStyle = 'rgba(0, 100, 0, 0.5)';
+                ctx.fillStyle = 'rgba(0, 100, 0, 0.8)';
+                ctx.strokeStyle = 'rgba(0, 100, 0, 0.8)';
                 ctx.lineWidth = 2;
 
                 for (var k = 0; k < savedShapes.length; k++) {
@@ -272,14 +284,7 @@
             points = []; /* remove the current shape now that it's saved */
 
             draw();
-            drawSavedShapesEnd();
-
-            // console.time("json");
-            // var h = JSON.stringify(savedShapes);
-            // console.log(h.length);
-            // console.time("json");
         };
-
 
         /**
          * Delete one shape, by removing the last array element.

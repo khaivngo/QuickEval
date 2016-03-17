@@ -12,16 +12,15 @@ var Annotation = function() {
  */
 Annotation.prototype.createAnnotation = function(appendContainer, canvasIndex) {
     // create and append a annotation box to the canvas
-    var annotation = [
-        '<div class="annotation" data-id="" canvas-id="' + canvasIndex + '">',
-            '<div class="annotationButtons">',
-                '<button class="saveAnnotation"><i class="fa fa-check"></i></button>',
-                '<button class="closeAnnotation"><i class="fa fa-times"></i></button>',
-            '</div>',
-            '<textarea class="annotationText" placeholder="What do you see?" value=""></textarea>',
+    $(appendContainer).append(
+        '<div class="annotation" data-id="" canvas-id="' + canvasIndex + '">' +
+            '<div class="annotationButtons">' +
+                '<button class="saveAnnotation"><i class="fa fa-check"></i></button>' +
+                '<button class="closeAnnotation"><i class="fa fa-times"></i></button>' +
+            '</div>' +
+            '<textarea class="annotationText" placeholder="What do you see?" value=""></textarea>' +
         '</div>'
-    ].join('');
-    $(appendContainer).append(annotation);
+    );
 
     // get all the annotation elements
     this.annotationBox = $('.annotation[canvas-id=' + canvasIndex + ']');
