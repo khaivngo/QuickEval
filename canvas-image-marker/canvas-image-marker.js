@@ -28,8 +28,8 @@
 
         var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
 
-        var matrixCanvas = $('<canvas>');
-		var matrixCtx = matrixCanvas[0].getContext('2d');
+         var matrixCanvas = $('<canvas>');
+		var matrixCtx = matrixCanvas[0].getContext('2d'); 
 
         if (settings.annotation) {
             var Remark = new Annotation();
@@ -50,7 +50,7 @@
         $(document).ready(function() {
             setCanvasImage();
             $(canvasContainer).append(canvas); // append the resized canvas to the DOM
-            $(canvasContainer).append(matrixCanvas);
+           // $(canvasContainer).append(matrixCanvas);
 
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);

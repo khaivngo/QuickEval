@@ -58,7 +58,7 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     margin: 0 15px;
 }
 
-#undo, #marking-tool, .fillAlg {
+#undo, #marking-tool, #saveShapeDB {
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;
