@@ -1,5 +1,8 @@
 <!doctype html>
 <html lang="en">
+
+	<?php require_once("tempdb/DBconnect.php"); ?>
+
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +10,7 @@
         <link rel="stylesheet" href="master.css" media="screen" title="core styles" charset="utf-8">
         <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
     </head>
+	
     <body>
         <div id="main-content-wrapper" class="container">
 
@@ -20,10 +24,10 @@
 				<button id="saveShapeDB"><i class="fa fa-floppy-o"></i></button>
             </div>
 
-            <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
+           <!--  <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
                 <!-- image canvas goes here -->
                 <!-- heatmap canvas goes here -->
-            </div>
+           <!-- </div> -->
 
             <div class="canvas-container" data-image-url="free1.jpg" data-id="2"  oncontextmenu="return false;">
                 <!-- image canvas goes here -->
