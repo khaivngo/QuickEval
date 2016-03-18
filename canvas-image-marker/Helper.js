@@ -8,13 +8,13 @@ var Helper = function() {};
 */
 Helper.prototype.makeDraggable = function(grabable, moveable) {
      $(grabable).on('mousedown', moveable, function() {
-         $(grabable).addClass('draggable').parents().on('mousemove', function(e) {
+         $(moveable).addClass('draggable').parents().on('mousemove', function(e) {
              e.preventDefault();
              $('.draggable').offset({
                  top: e.pageY - $('.draggable').outerHeight() / 2,
                  left: e.pageX - $('.draggable').outerWidth() / 2
              }).on('mouseup', function() {
-                 $(grabable).removeClass('draggable');
+                 $(moveable).removeClass('draggable');
              });
          });
      }).on('mouseup', function() {

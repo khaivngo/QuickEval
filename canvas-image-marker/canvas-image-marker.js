@@ -65,12 +65,12 @@
             canvas.on('mouseup', stopdrag);
             canvas.on('dblclick', doubleClick);
 
-            $(canvasContainer).before(toolPanel);
+            $(canvasContainer).after(toolPanel);
 
             toolPanel.find('.undo').on('click', undo);
             toolPanel.find('.marking-tool').on('click', setTool);
 
-            $('.fillAlg').on('click', calcPolygonPoints);
+            // $('.fillAlg').on('click', calcPolygonPoints);
         });
 
         /**
@@ -140,7 +140,7 @@
 
         /**
          * Calls the drawing function if the current mouse point
-         * is atleast 6 pixels away from the last point.
+         * is atleast 6 pixels away from the last point (in either in the y or x direction).
          *
          * @return {boolean} false
          */
@@ -154,7 +154,7 @@
             for (var i = 0; i < points.length; i++) {
                 dis = Math.sqrt(Math.pow(x - points[i].x, 2) + Math.pow(y - points[i].y, 2));
                 if ( dis < 6 ) {
-                    // return if we do not have enough distance
+                    // return out of this function if we do not have enough distance
                     return false;
                 }
             }
@@ -263,6 +263,22 @@
                     // for each point in the delete shape look for a match in existing shapes
                     for (var i = 0; i < deleteArea[0].fill.length; i++) {
                         for (var j = 0; j < savedShapes.length; j++) {
+
+                            savedShapes[j].fill.sort;
+
+                            // function compare(a, b) {
+                            //     if (a.x < b.x)
+                            //         return -1;
+                            //     else if (a.x > b.x)
+                            //         return 1;
+                            //     else
+                            //         return 0;
+                            // }
+                            //
+                            // savedShapes[j].fill.sort(compare);
+
+
+
                             for (var k = 0; k < savedShapes[j].fill.length; k++) {
                                 /* if both X and Y matches in the savedShape and deleteArea array */
                                 if ( savedShapes[j].fill[k].x == deleteArea[0].fill[i].x &&

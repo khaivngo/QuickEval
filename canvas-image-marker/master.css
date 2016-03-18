@@ -18,20 +18,14 @@ body {
 textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
 #main-content-wrapper {
-    width: 950px;
-    margin: 20px auto;
+    width: 500px;
+    margin: 100px auto;
 }
 
 .marking-tool-panel {
     margin: 10px;
     padding-bottom: 10px;
     border-bottom: 1px solid #aaa;
-}
-
-.canvas-container {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 10px;
 }
 
 #heatmap-panel-container {
@@ -69,38 +63,6 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     font-size: 20px;
 }
 
-
-/*------------------------
-    annotation buttons
-------------------------*/
-
-.annotationButtons {
-    display: block;
-    background-color: #ddd;
-    padding: 2px;
-    text-align: right;
-}
-
-.saveAnnotation, .closeAnnotation  {
-    display: inline-block;
-    padding: 5px 10px;
-    font-size: 20px;
-    margin: 0;
-    background-color: #fff;
-    border: 1px solid #aaa;
-    color: #fff;
-}
-
-.saveAnnotation { color: #579640; }
-.closeAnnotation { color: #FF2323; }
-
-.canvas-container {
-    margin-top: 20px;
-    /* make sure our absolute positioned annotations
-     * are placed relative to the canvas */
-    position: relative;
-}
-
 /*---------------------
     annotation box
 ----------------------*/
@@ -109,7 +71,6 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     display: none;
     position: absolute;
     width: 250px;
-    cursor: move;
     padding: 0;
     margin: 0;
 	background: #fff;
@@ -151,6 +112,42 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     font-size: 16px;
     font-family: Helvetica;
 }
+
+/*------------------------
+    annotation buttons
+------------------------*/
+
+.annotationButtons {
+    display: flex;
+    background-color: #ddd;
+    padding: 2px;
+}
+
+/* the area which is grabable on the annotation box */
+.dragHandle {
+    flex-grow: 1;
+    cursor: move;
+}
+
+.saveAnnotation, .closeAnnotation  {
+    padding: 5px 10px;
+    font-size: 18px;
+    margin: 0;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    color: #fff;
+}
+
+.saveAnnotation { color: #579640; }
+.closeAnnotation { color: #666; }
+
+.canvas-container {
+    margin-top: 20px;
+    /* make sure our absolute positioned annotations
+     * are placed relative to the canvas */
+    position: relative;
+}
+
 
 /*----------------------
     Heatmap panel
