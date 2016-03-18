@@ -37,7 +37,7 @@
 
         var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
 
-        var matrixCanvas = $('<canvas>');
+         var matrixCanvas = $('<canvas>');
 		var matrixCtx = matrixCanvas[0].getContext('2d');
 
         if (settings.annotation) {
@@ -59,7 +59,7 @@
         $(document).ready(function() {
             setCanvasImage();
             $(canvasContainer).append(canvas); // append the resized canvas to the DOM
-            $(canvasContainer).append(matrixCanvas);
+           // $(canvasContainer).append(matrixCanvas);
 
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);
@@ -70,7 +70,12 @@
             toolPanel.find('.undo').on('click', undo);
             toolPanel.find('.marking-tool').on('click', setTool);
 
-            // $('.fillAlg').on('click', calcPolygonPoints);
+            $('#undo').on('click', undo);
+            $('#marking-tool').on('click', setTool);
+            $('#saveShapeDB').on('click', saveShapeToDB);
+
+
+            $('.fillAlg').on('click', calcPolygonPoints);
         });
 
         /**
@@ -320,6 +325,33 @@
             draw();
         };
 
+/*---------------------------------------------------------------------------
+							Save shape to db
+-----------------------------------------------------------------------------*/
+
+var saveShapeToDB = function()
+{
+	if(savedShapes.length > 0)
+	{
+		var imgSrc = settings.imageUrl;
+
+		$.ajax
+		({
+			url: "saveShapesToDb.php",
+			data: { imgSrc: imgSrc, savedShapes: JSON.stringify(savedShapes) },
+			type: "POST"
+		})
+		.done(function(data)
+		{
+			console.log(savedShapes[0]);
+			console.log(data);
+			console.log( 'Saved successfully: ' + data / savedShapes.length * 100 + '% data.');
+		});
+
+	}
+	else
+		alert('Please create a shape before saving');
+};
 
 /*---------------------------------------------------------------------------
 							Fill Algorithm for Polygon
@@ -559,7 +591,7 @@
 		{
 			// This method is more effective rather than using For or For-each loops
 			// URL: http://stackoverflow.com/questions/9229645/remove-duplicates-from-javascript-array
-			// Answear by: georg | paragraph "Unique by..."
+			// Answer by: georg | paragraph "Unique by..."
 			// Fetched: 02.03.2016, 00:30.
 
 			function uniqBy(a, key)
@@ -696,7 +728,7 @@
 			}
 			else
 				alert('Please create a polygon');
-		}
+		};
 
 		/**
 		 * Calculate all points inside a shape.
