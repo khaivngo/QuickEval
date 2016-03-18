@@ -24,10 +24,10 @@
 				<button id="saveShapeDB"><i class="fa fa-floppy-o"></i><span style = "font-size: 50%;"> Save to db, klikk på denne etter endt brukertest<br> (OBS, klikk bare en gang for å unngå dupes( Refresh page etter brukertest(peneste knappen jeg har laget noen gang))).</span></button>
             </div>
 
-            <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
+          <!--  <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
                 <!-- image canvas goes here -->
                 <!-- heatmap canvas goes here -->
-            </div>
+          <!--  </div> -->
 
             <div class="canvas-container" data-image-url="free1.jpg" data-id="2"  oncontextmenu="return false;">
                 <!-- image canvas goes here -->
