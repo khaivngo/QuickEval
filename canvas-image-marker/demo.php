@@ -63,7 +63,7 @@
                     annotation: true
                 });
 
-				$(".panable").panzoom({  });
+				$(".panable").panzoom();
             });
         </script>
 
