@@ -2,6 +2,7 @@ body {
     background-color: #777;
     position: relative;
     font-family: Helvetica;
+    padding-top: 100px;
 
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -19,14 +20,59 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
 #main-content-wrapper {
     width: 500px;
-    margin: 100px auto;
+    margin: 0 auto;
+}
+
+.canvas-container {
+    margin: 0;
+    padding: 0;
+    /* make sure our absolute positioned annotations
+     * are placed relative to the canvas */
+    position: relative;
 }
 
 .marking-tool-panel {
-    margin: 10px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #aaa;
+    z-index: 200;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
+
+.mode {
+    display: flex;
+    justify-content: center;
+}
+
+.mode:nth-child(1) {
+    margin-bottom: 10px;
+}
+
+.marking-tool-panel button {
+
+    padding: 5px 10px;
+}
+
+.marking-tool-panel button:nth-child(1) {
+    margin-right: 6px;
+}
+
+.marking-tools {
+    display: none;
+    align-items: center;
+    background: #aaa;
+    padding: 0 5px;
+}
+
+.marking-tools button {
+    font-size: 20px;
+    font-family: Calibri;
+    padding: 5px;
+    margin-bottom: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
 
 #heatmap-panel-container {
     margin: 10px;
@@ -52,11 +98,14 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     margin: 0 15px;
 }
 
-.undo, .marking-tool, .fillAlg, #saveShapeDB {
+.undo, .marking-tool, .erase-tool,
+.enable-panzoom, .enable-marking,
+.fillAlg, #saveShapeDB {
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;
     font-size: 25px;
+    outline: 0;
 }
 
 .fillAlg {
@@ -141,13 +190,6 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 .saveAnnotation { color: #579640; }
 .closeAnnotation { color: #666; }
 
-.canvas-container {
-    margin-top: 20px;
-    /* make sure our absolute positioned annotations
-     * are placed relative to the canvas */
-    position: relative;
-}
-
 
 /*----------------------
     Heatmap panel
@@ -178,3 +220,41 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 		display: inline-block;
 		margin: 2px;
 	}
+
+
+/*---------------------------------
+    enable marking button arrow
+---------------------------------*/
+.down-arrow {
+    position: relative;
+}
+
+/* .down-arrow:before */
+.down-arrow:after {
+	top: 100%;
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.down-arrow:after {
+	border-color: rgba(255, 255, 255, 0);
+	border-top-color: #ccc;
+	border-width: 8px;
+	margin-left: -8px;
+}
+
+.down-arrow:before {
+	border-color: rgba(221, 221, 221, 0);
+	border-top-color: #888;
+	border-width: 10px;
+	margin-left: -10px;
+}
+
+.highlighted {
+    background: #eee;
+}

@@ -1,38 +1,31 @@
 <!doctype html>
 <html lang="en">
 
-	<?php require_once("tempdb/DBconnect.php"); ?>
+	<?php //require_once("tempdb/DBconnect.php"); ?>
 
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Banana</title>
-        <link rel="stylesheet" href="master.css" media="screen" title="core styles" charset="utf-8">
-        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/master.css" media="screen" title="core styles" charset="utf-8">
+        <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     </head>
-	
     <body>
         <div id="main-content-wrapper" class="container">
 
-            <div id="marking-tool-panel">
-                <button id="undo"><i class="fa fa-undo"></i></button>
-                <button id="marking-tool">
-                    <i class="fa fa-pencil-square-o"></i>
-                    <i class="fa fa-eraser"></i>
-                </button>
-				
-				<button id="saveShapeDB"><i class="fa fa-floppy-o"></i><span style = "font-size: 50%;"> Save to db, klikk på denne etter endt brukertest<br> (OBS, klikk bare en gang for å unngå dupes( Refresh page etter brukertest(peneste knappen jeg har laget noen gang))).</span></button>
-            </div>
+			<div class="panable" style="width: 400px; height: 600px;">
+	            <div class="canvas-container" data-image-url="img/final13.bmp" oncontextmenu="return false;">
+	                <!-- image canvas goes here -->
+	            </div>
+			</div>
 
-            <div class="canvas-container" data-image-url="flora.jpg" data-id="1" oncontextmenu="return false;">
-                <!-- image canvas goes here -->
-                <!-- heatmap canvas goes here -->
-            </div>
-
-            <div class="canvas-container" data-image-url="free1.jpg" data-id="2"  oncontextmenu="return false;">
-                <!-- image canvas goes here -->
-                <!-- heatmap canvas goes here -->
-            </div>
+			<button id="saveShapeDB" style="position: fixed; top: 0; right: 0;">
+				<i class="fa fa-floppy-o"></i>
+				<!-- <span style = "font-size: 50%;">
+					Save to db, klikk på denne etter endt brukertest<br>
+					(OBS, klikk bare en gang for å unngå dupes( Refresh page etter brukertest(peneste knappen jeg har laget noen gang))).
+				</span> -->
+			</button>
 
           <!--  <div id="heatmap-panel-container">
     			<ul id = "heatmapPanel">
@@ -59,7 +52,8 @@
         </div>
 
 
-        <script src="jquery.js"></script>
+        <script src="libs/jquery.js"></script>
+		<script src="libs/jquery.panzoom/dist/jquery.panzoom.js"></script>
         <script src="Helper.js"></script>
         <script src="Annotation.js"></script>
         <script src="canvas-image-marker.js"></script>
@@ -68,6 +62,8 @@
                 $('.canvas-container').canvasMarkingTool({
                     annotation: true
                 });
+
+				$(".panable").panzoom({  });
             });
         </script>
 

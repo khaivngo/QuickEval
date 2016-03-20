@@ -9,7 +9,7 @@
     };
 
     var initCanvasMarkingTool = function(canvasIndex, element, options) {
-        // establish our default settings, override (merge) if any provided
+        // establish our default settings, override if any provided
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url'),
             annotation: false
@@ -19,12 +19,15 @@
         var ctx = canvas[0].getContext('2d');
 
         var toolPanel = $(
-            '<div id="marking-tool-panel" style="position: absolute; z-index: 200;">' +
-                '<button class="undo"><i class="fa fa-undo"></i></button>' +
-                '<button class="marking-tool">' +
-                    '<i class="fa fa-pencil-square-o"></i>' +
-                    '<i class="fa fa-eraser"></i>' +
-                '</button>' +
+            '<div class="marking-tool-panel">' +
+                '<div class="mode">' +
+                    '<button class="enable-panzoom down-arrow highlighted"><i class="fa fa-arrows-alt"></i></button>' +
+                    '<button class="enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
+                    '<div class="mode marking-tools">' +
+                        '<button class="erase-tool"><i class="fa fa-eraser"></i></button>' +
+                        '<button class="undo"><i class="fa fa-undo"></i></button>' +
+                    '</div>' +
+                '</div>' +
             '</div>'
         );
 
@@ -37,7 +40,7 @@
 
         var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
 
-         var matrixCanvas = $('<canvas>');
+        var matrixCanvas = $('<canvas>');
 		var matrixCtx = matrixCanvas[0].getContext('2d');
 
         if (settings.annotation) {
@@ -59,24 +62,57 @@
         $(document).ready(function() {
             setCanvasImage();
             $(canvasContainer).append(canvas); // append the resized canvas to the DOM
-           // $(canvasContainer).append(matrixCanvas);
+            // $(canvasContainer).append(matrixCanvas);
 
-            canvas.on('mousedown', startdrag);
-            canvas.on('mouseup', stopdrag);
-            canvas.on('dblclick', doubleClick);
-
-            $(canvasContainer).after(toolPanel);
-
+            $('body').prepend(toolPanel);
             toolPanel.find('.undo').on('click', undo);
-            toolPanel.find('.marking-tool').on('click', setTool);
+            toolPanel.find('.marking-tool').on('click', setMarkingActiveTool);
+            toolPanel.find('.erase-tool').on('click', setEraseActiveTool);
+            toolPanel.find('.enable-marking').on('click', disablePanzoom);
+            toolPanel.find('.enable-panzoom').on('click', enablePanzoom);
 
-            $('#undo').on('click', undo);
-            $('#marking-tool').on('click', setTool);
+
             $('#saveShapeDB').on('click', saveShapeToDB);
-
 
             $('.fillAlg').on('click', calcPolygonPoints);
         });
+
+        var disablePanzoom = function() {
+            enableMarking();
+
+            toolPanel.find('.enable-marking').addClass('down-arrow highlighted');
+            toolPanel.find('.enable-panzoom').removeClass('down-arrow highlighted');
+
+            toolPanel.find('.marking-tools').css("display", "flex");
+
+            // disable panning of the images so we can use the marking tool on the image
+            $(".panable").panzoom("option", "disablePan", true);
+        };
+        var enablePanzoom = function() {
+            disableMarking();
+
+            toolPanel.find('.enable-panzoom').addClass('down-arrow highlighted');
+            toolPanel.find('.enable-marking').removeClass('down-arrow highlighted');
+            toolPanel.find('.marking-tools').css("display", "none");
+
+            // disable panning of the images so we can use the marking tool on the image
+            $(".panable").panzoom("option", "disablePan", false);
+        };
+
+        var setEraseActiveTool = function() { TOOL = "DELETE"; };
+        var setMarkingActiveTool = function() { TOOL = "MARKER"; };
+
+        var enableMarking = function() {
+            canvas.on('mousedown', startdrag);
+            canvas.on('mouseup', stopdrag);
+            canvas.on('dblclick', doubleClick);
+        };
+
+        var disableMarking = function() {
+            canvas.off('mousedown');
+            canvas.off('mouseup');
+            canvas.off('dblclick');
+        };
 
         /**
          * Figure out the size of the image, so we can set the canvas to the same size.
@@ -206,14 +242,6 @@
             }
         };
 
-        /**
-         * Switch between the marker or delete tool.
-         * If the tool is MARKER set it as DELETE, else set it as MARKER.
-         */
-        var setTool = function() {
-            (TOOL == "MARKER") ? TOOL = "DELETE" : TOOL = "MARKER";
-        };
-
         var drawSavedShapes = function() {
             if (savedShapes.length > 0) {
                 ctx.fillStyle = 'rgba(0, 100, 0, 0.5)';
@@ -268,22 +296,6 @@
                     // for each point in the delete shape look for a match in existing shapes
                     for (var i = 0; i < deleteArea[0].fill.length; i++) {
                         for (var j = 0; j < savedShapes.length; j++) {
-
-                            savedShapes[j].fill.sort;
-
-                            // function compare(a, b) {
-                            //     if (a.x < b.x)
-                            //         return -1;
-                            //     else if (a.x > b.x)
-                            //         return 1;
-                            //     else
-                            //         return 0;
-                            // }
-                            //
-                            // savedShapes[j].fill.sort(compare);
-
-
-
                             for (var k = 0; k < savedShapes[j].fill.length; k++) {
                                 /* if both X and Y matches in the savedShape and deleteArea array */
                                 if ( savedShapes[j].fill[k].x == deleteArea[0].fill[i].x &&
