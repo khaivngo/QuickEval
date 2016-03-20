@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 
-	<?php //require_once("tempdb/DBconnect.php"); ?>
+	<?php require_once("tempdb/DBconnect.php"); ?>
 
     <head>
         <meta charset="utf-8">

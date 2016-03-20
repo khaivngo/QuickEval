@@ -264,8 +264,8 @@
 
 		var drawSavedShapesEnd = function() {
             if (savedShapes.length > 0) {
-                ctx.fillStyle = 'rgba(0, 100, 0, 0.8)';
-                ctx.strokeStyle = 'rgba(0, 100, 0, 0.8)';
+                ctx.fillStyle = 'rgba(0, 100, 0, 0.6)';
+                ctx.strokeStyle = 'rgba(0, 100, 0, 0.6)';
                 ctx.lineWidth = 2;
 
                 for (var k = 0; k < savedShapes.length; k++) {

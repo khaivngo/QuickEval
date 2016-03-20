@@ -243,7 +243,7 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
 .down-arrow:after {
 	border-color: rgba(255, 255, 255, 0);
-	border-top-color: #ccc;
+	border-top-color: #eee;
 	border-width: 8px;
 	margin-left: -8px;
 }
