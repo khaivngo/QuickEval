@@ -7,8 +7,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Heatmap</title>
-        <link rel="stylesheet" href="master.css" media="screen" title="core styles" charset="utf-8">
-        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/master.css" media="screen" title="core styles" charset="utf-8">
+        <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     </head>
 	
     <body>
@@ -44,7 +44,7 @@
         </div>
 
 
-        <script src="jquery.js"></script>
+        <script src="libs/jquery.js"></script>
         <script src="heatmap.js"></script>
 
 

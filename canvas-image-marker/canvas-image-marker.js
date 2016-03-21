@@ -37,6 +37,8 @@
         var points = [];
         var savedShapes = [];
         var deleteArea = [];
+		
+		var savedData = false;	// temp bool for saving in user testing.
 
         var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
 
@@ -343,26 +345,49 @@
 
 var saveShapeToDB = function()
 {
-	if(savedShapes.length > 0)
+	$('#uploadBar').css('display','block');
+	$('#uploadBar #bar').css('width','0');
+	$('#uploadBar #barText').text('');
+	
+	if(savedShapes.length > 0 && !savedData)
 	{
 		var imgSrc = settings.imageUrl;
-
-		$.ajax
-		({
-			url: "saveShapesToDb.php",
-			data: { imgSrc: imgSrc, savedShapes: JSON.stringify(savedShapes) },
-			type: "POST"
-		})
-		.done(function(data)
+		var perc =  0;
+		var counter = 0;
+		
+		for(var i = 0; i < savedShapes.length; i ++)
 		{
-			console.log(savedShapes[0]);
-			console.log(data);
-			console.log( 'Saved successfully: ' + data / savedShapes.length * 100 + '% data.');
-		});
-
+			$.ajax
+			({
+				url: "saveShapesToDb.php",
+				data: { imgSrc: imgSrc, shapeItem: JSON.stringify(savedShapes[i]) },
+				type: "POST",
+				error: function (jqXHR, exception) 
+				{
+					$('#uploadBar #barText').text(jqXHR.status + ' ' + jqXHR.responseText );
+				},
+			})
+			.done(function(data)
+			{
+				console.log(data);
+				
+				counter ++;
+				perc = counter / savedShapes.length * 100;
+				console.log(perc + ' %');
+				
+			
+				$('#uploadBar #bar').animate({'width':perc+'%'},'fast');
+				$('#uploadBar #barText').text(perc+'%');
+				
+				if(perc == 100)
+					$('#uploadBar #barText').text('Data successfully saved 100%');
+				
+			});	
+		}
+		savedData = true;
 	}
 	else
-		alert('Please create a shape before saving');
+		alert('Please create a shape before saving\n\nOr you have already saved the data');
 };
 
 /*---------------------------------------------------------------------------

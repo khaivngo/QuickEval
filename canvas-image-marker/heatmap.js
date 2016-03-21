@@ -6,14 +6,14 @@
 var savedShapes;
 
 var image = new Object();
-image.width = 500;
-image.height = 300;
+image.width = 800;
+image.height = 800;
 
 var matrixCanvas = $('<canvas>');
 var matrixCtx = matrixCanvas[0].getContext('2d');
 
 matrixCanvas.attr('height', image.height).attr('width', image.width);
-matrixCanvas.css('background','url(free1.jpg)' );
+matrixCanvas.css('background','url(img/final13.bmp)' );
 
 $(document).ready(function()
 {
@@ -32,7 +32,8 @@ $(document).ready(function()
 			shapes[i].fill = JSON.parse(shapes[i].fill);
 		}
 		savedShapes = shapes;
-		calcPolygonPoints();	
+		
+		calcPolygonPoints();
 	});
 	$('#genHeatmap').on('click',function(){calcPolygonPoints();});
 	$('#hueLevel').change(function() { $(this).next().text( $(this).val() ); });
@@ -218,38 +219,43 @@ function drawMatrixCanvas(data, hue, sat, scaleType)
  */
 function calcPolygonPoints()
 {
-	//console.log(savedShapes);
-	var hue = $('#hueLevel').val();
-	var sat = $('#satLevel').val();
-	var scale = 0;
-
-	var t0 = performance.now();
-	var allMarkedPoints = [];											// Store all marked pixels.
-
-	for (var i = 0; i < savedShapes.length; i++)
+	if(savedShapes.length > 0 )
 	{
-		for(var j = 0; j < savedShapes[i].fill.length; j ++)
+		//console.log(savedShapes);
+		var hue = $('#hueLevel').val();
+		var sat = $('#satLevel').val();
+		var scale = 0;
+
+		var t0 = performance.now();
+		var allMarkedPoints = [];											// Store all marked pixels.
+
+		for (var i = 0; i < savedShapes.length; i++)
 		{
-			allMarkedPoints.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
+			for(var j = 0; j < savedShapes[i].fill.length; j ++)
+			{
+				allMarkedPoints.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
+			}
 		}
+
+		//console.log('Before removing dupes: ' + allMarkedPoints.length);
+		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
+		//console.log('After removing dupes: ' + allMarkedPoints.length);
+
+		if( $('#hueScale[type=checkbox]').is(':checked') )
+			scale = 1;
+
+
+		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
+		drawMatrixCanvas(matrix, hue, sat, scale);
+
+		//drawMatrixTable(matrix);
+		
+		var t1 = performance.now();
+		console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
+
+		//return allMarkedPoints;
 	}
-
-	//console.log('Before removing dupes: ' + allMarkedPoints.length);
-	//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
-	//console.log('After removing dupes: ' + allMarkedPoints.length);
-
-	if( $('#hueScale[type=checkbox]').is(':checked') )
-		scale = 1;
-
-
-	var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
-	drawMatrixCanvas(matrix, hue, sat, scale);
-
-	//drawMatrixTable(matrix);
-	
-	var t1 = performance.now();
-	console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
-
-	//return allMarkedPoints;
+	else
+		alert('No data in database.');
 
 }

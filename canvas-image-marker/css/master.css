@@ -258,3 +258,34 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 .highlighted {
     background: #eee;
 }
+
+/*--Upload---*/
+
+	#uploadBar
+	{
+		position: fixed;
+		top: 0%;
+		margin: 0;
+		right: 3.2%;
+		display: none;
+		background: #333;
+		padding: 10px;
+		width: 250px;
+		height: 29px;
+	}
+		
+		#uploadBar #bar
+		{
+			background: #0a5;
+			height: 10px;
+			width: 0%;
+		}
+		
+		#uploadBar #barText
+		{
+			color: #fff;
+			text-align: center;
+			padding: 5px;
+		}
+/*---End Upload---*/
+
