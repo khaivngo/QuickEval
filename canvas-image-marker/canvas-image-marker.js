@@ -24,7 +24,7 @@
                     '<button class="enable-panzoom down-arrow highlighted"><i class="fa fa-arrows-alt"></i></button>' +
                     '<button class="enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
                     '<div class="mode marking-tools">' +
-                        '<button class="erase-tool"><i class="fa fa-eraser"></i></button>' +
+                        '<button class="erase-tool"><i class="fa fa-scissors"></i></button>' +
                         '<button class="undo"><i class="fa fa-undo"></i></button>' +
                     '</div>' +
                 '</div>' +
