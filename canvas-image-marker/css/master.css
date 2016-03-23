@@ -12,11 +12,11 @@ body {
     user-select: none;
 }
 
-::-webkit-input-placeholder{ font-style: italic; font-size: 14px; }
-        ::-moz-placeholder { font-style: italic; font-size: 14px; }
-    :-ms-input-placeholder { font-style: italic; font-size: 14px; }
-         :-moz-placeholder { font-style: italic; font-size: 14px; }
-textarea:placeholder-shown { font-style: italic; font-size: 14px; }
+::-webkit-input-placeholder { font-style: italic; font-size: 14px; }
+         ::-moz-placeholder { font-style: italic; font-size: 14px; }
+     :-ms-input-placeholder { font-style: italic; font-size: 14px; }
+          :-moz-placeholder { font-style: italic; font-size: 14px; }
+ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
 #main-content-wrapper {
     width: 500px;
@@ -29,6 +29,7 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
     /* make sure our absolute positioned annotations
      * are placed relative to the canvas */
     position: relative;
+    left: -50%;
 }
 
 .marking-tool-panel {
@@ -273,14 +274,14 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 		width: 250px;
 		height: 29px;
 	}
-		
+
 		#uploadBar #bar
 		{
 			background: #0a5;
 			height: 10px;
 			width: 0%;
 		}
-		
+
 		#uploadBar #barText
 		{
 			color: #fff;
@@ -288,4 +289,3 @@ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 			padding: 5px;
 		}
 /*---End Upload---*/
-

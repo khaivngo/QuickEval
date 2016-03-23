@@ -49,6 +49,7 @@ Annotation.prototype.createAnnotation = function(appendContainer, canvasIndex) {
  */
 Annotation.prototype.openAnnotation = function(mouseY, mouseX, shapeIndex, canvasIndex, annotationText) {
     this.annotationBox.css({
+        'position': 'absolute',
         'display': 'block',
         'top': ( mouseY - (this.annotationBox.outerHeight() + 9) ) + "px",
         'left': ( mouseX - (this.annotationBox.outerWidth() / 2) ) + "px"

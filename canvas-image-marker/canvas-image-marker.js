@@ -15,8 +15,13 @@
             annotation: false
         }, options);
 
+        // canvas where the drawing will take place
         var canvas = $('<canvas>');
         var ctx = canvas[0].getContext('2d');
+
+        // put our savedShapes here, so we don't have to redraw them every time something changes
+        var savedCanvas = $('<canvas>');
+		var savedCtx = savedCanvas[0].getContext('2d');
 
         var toolPanel = $(
             '<div class="marking-tool-panel">' +
@@ -28,8 +33,7 @@
                         '<button class="undo"><i class="fa fa-undo"></i></button>' +
                     '</div>' +
                 '</div>' +
-            '</div>'
-        );
+            '</div>');
 
         var canvasContainer = element;
         var image;
@@ -37,13 +41,10 @@
         var points = [];
         var savedShapes = [];
         var deleteArea = [];
-		
+
 		var savedData = false;	// temp bool for saving in user testing.
 
         var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
-
-        var matrixCanvas = $('<canvas>');
-		var matrixCtx = matrixCanvas[0].getContext('2d');
 
         if (settings.annotation) {
             var Remark = new Annotation();
@@ -63,23 +64,60 @@
 
         $(document).ready(function() {
             setCanvasImage();
+            $(canvasContainer).append(savedCanvas); // append the resized canvas to the DOM
             $(canvasContainer).append(canvas); // append the resized canvas to the DOM
-            // $(canvasContainer).append(matrixCanvas);
 
             $('body').prepend(toolPanel);
             toolPanel.find('.undo').on('click', undo);
             toolPanel.find('.marking-tool').on('click', setMarkingActiveTool);
             toolPanel.find('.erase-tool').on('click', setEraseActiveTool);
-            toolPanel.find('.enable-marking').on('click', disablePanzoom);
-            toolPanel.find('.enable-panzoom').on('click', enablePanzoom);
+            toolPanel.find('.enable-marking').on('click', setModeToPanning);
+            toolPanel.find('.enable-panzoom').on('click', setModeToDrawing);
 
 
             $('#saveShapeDB').on('click', saveShapeToDB);
-
-            $('.fillAlg').on('click', calcPolygonPoints);
         });
 
-        var disablePanzoom = function() {
+        /**
+         * Figure out the size of the image, so we can set the canvas to the same size.
+         */
+        var setCanvasImage = function() {
+            image = new Image();
+
+            var resize = function() {
+                // make all elements the same size as the image
+                $('.canvas-container').css({
+                    height: image.height,
+                    width: image.width
+                });
+                canvas.attr('height', image.height).attr('width', image.width);
+                savedCanvas.attr('height', image.height).attr('width', image.width);
+            };
+
+            $(image).load(resize);
+            image.src = settings.imageUrl;
+
+            if (image.loaded)
+                resize();
+
+            savedCanvas.css({
+                background: 'url(' + image.src + ')',
+                position: "absolute",
+                top: 0,
+                right: 0
+            });
+
+            canvas.css({
+                position: "absolute",
+                top: 0,
+                right: 0
+            });
+        };
+
+        /**
+         * Disable the panning feature, so we can draw on the image instead of moving it.
+         */
+        var setModeToPanning = function() {
             enableMarking();
 
             toolPanel.find('.enable-marking').addClass('down-arrow highlighted');
@@ -90,7 +128,11 @@
             // disable panning of the images so we can use the marking tool on the image
             $(".panable").panzoom("option", "disablePan", true);
         };
-        var enablePanzoom = function() {
+
+        /**
+         * Enable panning, turn off canvas drawing.
+         */
+        var setModeToDrawing = function() {
             disableMarking();
 
             toolPanel.find('.enable-panzoom').addClass('down-arrow highlighted');
@@ -101,40 +143,30 @@
             $(".panable").panzoom("option", "disablePan", false);
         };
 
-        var setEraseActiveTool = function() { TOOL = "DELETE"; };
-        var setMarkingActiveTool = function() { TOOL = "MARKER"; };
+        var setEraseActiveTool = function() {
+            TOOL = "DELETE";
+        };
 
+        var setMarkingActiveTool = function() {
+            TOOL = "MARKER";
+        };
+
+        /**
+         * Enable the drawing events.
+         */
         var enableMarking = function() {
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);
             canvas.on('dblclick', doubleClick);
         };
 
+        /**
+         * Disable the drawing events.
+         */
         var disableMarking = function() {
             canvas.off('mousedown');
             canvas.off('mouseup');
             canvas.off('dblclick');
-        };
-
-        /**
-         * Figure out the size of the image, so we can set the canvas to the same size.
-         */
-        var setCanvasImage = function() {
-            image = new Image();
-
-            var resize = function() {
-                canvas.attr('height', image.height).attr('width', image.width);
-                // matrixCanvas.attr('height', image.height).attr('width', image.width);
-            };
-
-            $(image).load(resize);
-            image.src = settings.imageUrl;
-
-            if (image.loaded)
-                resize();
-
-            canvas.css({ background: 'url(' + image.src + ')' });
-            // matrixCanvas.css({ background: '#333', display: 'block' });
         };
 
 		var Shape = function(points, annotation)
@@ -220,8 +252,6 @@
             /* clear the canvas each time */
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-            drawSavedShapesEnd();
-
             /* do not draw before we have atleast two points */
             if (points.length > 1) {
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
@@ -244,35 +274,23 @@
             }
         };
 
-        var drawSavedShapes = function() {
+        /**
+         * Draw the all the shapes in the savedShapes array.
+         *
+         * @return void
+         */
+		var drawSavedShapes = function() {
+            /* clear the canvas each time */
+            savedCtx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
             if (savedShapes.length > 0) {
-                ctx.fillStyle = 'rgba(0, 100, 0, 0.5)';
-                ctx.strokeStyle = 'rgba(0, 100, 0, 0.5)';
-                ctx.lineWidth = 2;
-
-                for (var k = 0; k < savedShapes.length; k++) {
-                    ctx.beginPath();
-                    ctx.moveTo(savedShapes[k].points.x, savedShapes[k].points.y);
-
-                    for (var d = 0; d < savedShapes[k].points.length; d++) {
-                        ctx.lineTo(savedShapes[k].points[d].x, savedShapes[k].points[d].y);
-                    }
-                    ctx.closePath();
-                    ctx.fill();
-                    // ctx.stroke();
-                }
-            }
-        };
-
-		var drawSavedShapesEnd = function() {
-            if (savedShapes.length > 0) {
-                ctx.fillStyle = 'rgba(0, 100, 0, 0.6)';
-                ctx.strokeStyle = 'rgba(0, 100, 0, 0.6)';
-                ctx.lineWidth = 2;
+                savedCtx.fillStyle = 'rgba(0, 100, 0, 0.6)';
+                savedCtx.strokeStyle = 'rgba(0, 100, 0, 0.6)';
+                savedCtx.lineWidth = 2;
 
                 for (var k = 0; k < savedShapes.length; k++) {
                     for (var d = 0; d < savedShapes[k].fill.length; d++) {
-                        ctx.fillRect(savedShapes[k].fill[d].x, savedShapes[k].fill[d].y, 1, 1);
+                        savedCtx.fillRect(savedShapes[k].fill[d].x, savedShapes[k].fill[d].y, 1, 1);
                     }
                 }
             }
@@ -319,6 +337,7 @@
             points = []; /* remove the current shape now that it's saved */
 
             draw();
+            drawSavedShapes();
         };
 
         /**
@@ -348,13 +367,13 @@ var saveShapeToDB = function()
 	$('#uploadBar').css('display','block');
 	$('#uploadBar #bar').css('width','0');
 	$('#uploadBar #barText').text('');
-	
+
 	if(savedShapes.length > 0 && !savedData)
 	{
 		var imgSrc = settings.imageUrl;
 		var perc =  0;
 		var counter = 0;
-		
+
 		for(var i = 0; i < savedShapes.length; i ++)
 		{
 			$.ajax
@@ -362,7 +381,7 @@ var saveShapeToDB = function()
 				url: "saveShapesToDb.php",
 				data: { imgSrc: imgSrc, shapeItem: JSON.stringify(savedShapes[i]) },
 				type: "POST",
-				error: function (jqXHR, exception) 
+				error: function (jqXHR, exception)
 				{
 					$('#uploadBar #barText').text(jqXHR.status + ' ' + jqXHR.responseText );
 				},
@@ -370,19 +389,19 @@ var saveShapeToDB = function()
 			.done(function(data)
 			{
 				console.log(data);
-				
+
 				counter ++;
 				perc = counter / savedShapes.length * 100;
 				console.log(perc + ' %');
-				
-			
+
+
 				$('#uploadBar #bar').animate({'width':perc+'%'},'fast');
 				$('#uploadBar #barText').text(perc+'%');
-				
+
 				if(perc == 100)
 					$('#uploadBar #barText').text('Data successfully saved 100%');
-				
-			});	
+
+			});
 		}
 		savedData = true;
 	}
