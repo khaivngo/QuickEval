@@ -26,11 +26,12 @@
         var toolPanel = $(
             '<div class="marking-tool-panel">' +
                 '<div class="mode">' +
-                    '<button class="enable-panzoom down-arrow highlighted"><i class="fa fa-arrows-alt"></i></button>' +
-                    '<button class="enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
+                    '<button class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows-alt"></i></button>' +
+                    '<button class="tool-button enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
                     '<div class="mode marking-tools">' +
-                        '<button class="erase-tool"><i class="fa fa-scissors"></i></button>' +
-                        '<button class="undo"><i class="fa fa-undo"></i></button>' +
+                        '<button class="tool-button draw-tool down-arrow"><i class="fa fa-pencil"></i></button>' +
+                        '<button class="tool-button erase-tool"><i class="fa fa-scissors"></i></button>' +
+                        '<button class="tool-button undo"><i class="fa fa-undo"></i></button>' +
                     '</div>' +
                 '</div>' +
             '</div>');
@@ -70,13 +71,21 @@
             $('body').prepend(toolPanel);
             toolPanel.find('.undo').on('click', undo);
             toolPanel.find('.marking-tool').on('click', setMarkingActiveTool);
+            toolPanel.find('.draw-tool').on('click', setMarkingActiveTool);
             toolPanel.find('.erase-tool').on('click', setEraseActiveTool);
             toolPanel.find('.enable-marking').on('click', setModeToPanning);
             toolPanel.find('.enable-panzoom').on('click', setModeToDrawing);
 
+            toolPanel.find('.marking-tools button').on('click', function() {
+                toolPanel.find('.marking-tools button').removeClass('down-arrow');
+                $(this).addClass('down-arrow');
+            });
+
 
             $('#saveShapeDB').on('click', saveShapeToDB);
         });
+
+
 
         /**
          * Figure out the size of the image, so we can set the canvas to the same size.
@@ -120,8 +129,8 @@
         var setModeToPanning = function() {
             enableMarking();
 
-            toolPanel.find('.enable-marking').addClass('down-arrow highlighted');
-            toolPanel.find('.enable-panzoom').removeClass('down-arrow highlighted');
+            toolPanel.find('.enable-marking').css('background', '#eee');
+            toolPanel.find('.enable-panzoom').removeClass('down-arrow');
 
             toolPanel.find('.marking-tools').css("display", "flex");
 
@@ -135,8 +144,8 @@
         var setModeToDrawing = function() {
             disableMarking();
 
-            toolPanel.find('.enable-panzoom').addClass('down-arrow highlighted');
-            toolPanel.find('.enable-marking').removeClass('down-arrow highlighted');
+            toolPanel.find('.enable-panzoom').addClass('down-arrow');
+            toolPanel.find('.enable-marking').removeClass('right-arrow');
             toolPanel.find('.marking-tools').css("display", "none");
 
             // disable panning of the images so we can use the marking tool on the image
@@ -157,7 +166,7 @@
         var enableMarking = function() {
             canvas.on('mousedown', startdrag);
             canvas.on('mouseup', stopdrag);
-            canvas.on('dblclick', doubleClick);
+            canvas.on('dblclick', findClickedShape);
         };
 
         /**
@@ -181,7 +190,7 @@
             }
         };
 
-        var doubleClick = function(e) {
+        var findClickedShape = function(e) {
             var mouseX  = e.offsetX;
             var mouseY  = e.offsetY;
 
@@ -349,6 +358,7 @@
             (points.length > 0) ? points = [] : savedShapes.pop();
 
             draw();
+            drawSavedShapes();
         };
 
         var reset = function() {
@@ -356,6 +366,7 @@
             savedShapes = [];
 
             draw();
+            drawSavedShapes();
         };
 
 /*---------------------------------------------------------------------------

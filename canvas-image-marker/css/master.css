@@ -50,11 +50,10 @@ body {
 }
 
 .marking-tool-panel button {
-
     padding: 5px 10px;
 }
 
-.marking-tool-panel button:nth-child(1) {
+.marking-tool-panel button:nth-last-child(n+2) {
     margin-right: 6px;
 }
 
@@ -99,18 +98,12 @@ body {
     margin: 0 15px;
 }
 
-.undo, .marking-tool, .erase-tool,
-.enable-panzoom, .enable-marking,
-.fillAlg, #saveShapeDB {
+.tool-button {
     padding: 10px 20px;
     background-color: #ccc;
     border: 0;
     font-size: 25px;
     outline: 0;
-}
-
-.fillAlg {
-    font-size: 20px;
 }
 
 /*---------------------
@@ -223,11 +216,13 @@ body {
 	}
 
 
-/*---------------------------------
-    enable marking button arrow
----------------------------------*/
+/*-------------------
+    down arrow
+-------------------*/
+
 .down-arrow {
     position: relative;
+    background: #eee;
 }
 
 /* .down-arrow:before */
@@ -256,8 +251,37 @@ body {
 	margin-left: -10px;
 }
 
-.highlighted {
+/*------------------
+    right arrow
+------------------*/
+
+.right-arrow {
+	position: relative;
     background: #eee;
+}
+
+.right-arrow:after, .right-arrow:before {
+	left: 100%;
+	top: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.right-arrow:after {
+	border-color: rgba(136, 183, 213, 0);
+	border-left-color: #eee;
+	border-width: 8px;
+	margin-top: -8px;
+}
+.right-arrow:before {
+	border-color: rgba(194, 225, 245, 0);
+	border-left-color: #888;
+	border-width: 10px;
+	margin-top: -10px;
 }
 
 /*--Upload---*/
