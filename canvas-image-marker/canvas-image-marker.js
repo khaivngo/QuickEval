@@ -26,8 +26,8 @@
         var toolPanel = $(
             '<div class="marking-tool-panel">' +
                 '<div class="mode">' +
-                    '<button class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows-alt"></i></button>' +
-                    '<button class="tool-button enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
+                    '<button style="font-size: 25px;" class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows-alt"></i></button>' +
+                    '<button style="font-size: 25px;" class="tool-button enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
                     '<div class="mode marking-tools">' +
                         '<button class="tool-button draw-tool down-arrow"><i class="fa fa-pencil"></i></button>' +
                         '<button class="tool-button erase-tool"><i class="fa fa-scissors"></i></button>' +
@@ -68,7 +68,7 @@
             $(canvasContainer).append(savedCanvas); // append the resized canvas to the DOM
             $(canvasContainer).append(canvas); // append the resized canvas to the DOM
 
-            $('body').prepend(toolPanel);
+            $(canvasContainer).parent().parent().parent().prepend(toolPanel);
             toolPanel.find('.undo').on('click', undo);
             toolPanel.find('.marking-tool').on('click', setMarkingActiveTool);
             toolPanel.find('.draw-tool').on('click', setMarkingActiveTool);
@@ -124,7 +124,7 @@
         };
 
         /**
-         * Disable the panning feature, so we can draw on the image instead of moving it.
+         * Enable canvas drawing, turn off panning.
          */
         var setModeToPanning = function() {
             enableMarking();
@@ -133,9 +133,10 @@
             toolPanel.find('.enable-panzoom').removeClass('down-arrow');
 
             toolPanel.find('.marking-tools').css("display", "flex");
+            canvas.css({ cursor: "default" });
 
             // disable panning of the images so we can use the marking tool on the image
-            $(".panable").panzoom("option", "disablePan", true);
+            $(".panzoom").panzoom("option", "disablePan", true);
         };
 
         /**
@@ -144,12 +145,14 @@
         var setModeToDrawing = function() {
             disableMarking();
 
+            canvas.css({ cursor: "move" });
+
             toolPanel.find('.enable-panzoom').addClass('down-arrow');
             toolPanel.find('.enable-marking').removeClass('right-arrow');
             toolPanel.find('.marking-tools').css("display", "none");
 
             // disable panning of the images so we can use the marking tool on the image
-            $(".panable").panzoom("option", "disablePan", false);
+            $(".panzoom").panzoom("option", "disablePan", false);
         };
 
         var setEraseActiveTool = function() {

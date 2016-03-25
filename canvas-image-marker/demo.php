@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 
-	<?php require_once("tempdb/DBconnect.php"); ?>
+	<?php //require_once("tempdb/DBconnect.php"); ?>
 
     <head>
         <meta charset="utf-8">
@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     </head>
     <body>
-		
+
         <div id="main-content-wrapper" class="container">
 
 			<div class="panable" style="width: 400px; height: 600px;">
@@ -27,9 +27,9 @@
 					(OBS, klikk bare en gang for å unngå dupes( Refresh page etter brukertest(peneste knappen jeg har laget noen gang))).
 				</span> -->
 			</button>
-			
+
 			<div id = "uploadBar"><div id = "bar"></div><div id = "barText"></div></div>
-			
+
 
           <!--  <div id="heatmap-panel-container">
     			<ul id = "heatmapPanel">

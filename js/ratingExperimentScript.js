@@ -25,7 +25,7 @@ $(document).ready(function () {
     });
     $('#rating-images').disableSelection();
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------  
+//----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -43,8 +43,8 @@ $(document).ready(function () {
 
                 // console.log(draggableUrl);
 
-                $('#drop-left').find('img').attr('src', draggableUrl);
-                $('#drop-left').find('img').remove();
+                $('#drop-left').find('.canvas-container').attr('src', draggableUrl);
+                $('#drop-left').find('.canvas-container').remove();
                 $('#pan1').prepend('<img class= "picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
 
                 pictureInPanner(fetchedInitialPosition, "left");
@@ -131,7 +131,7 @@ $(document).ready(function () {
 
     });
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------  
+//----------------------------------------------------------------------------------------------------------------------------------------------------
 
     getExperimentIdPost();
     experimentType(experimentId);
@@ -196,7 +196,7 @@ $(document).ready(function () {
     IESpecific();
 
 });
-//----------------------------------------------------------------------------------------------------------------------------------------------------  
+//----------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Loops through all images in sortable and getting their id and position
@@ -342,7 +342,7 @@ function loadExperiment() {
         loadExperiment();                                       //goes to the next step which in most cases is pictures.
     }
 
-    if (data['type'] == "pictureQueue") {                       //is picture set 
+    if (data['type'] == "pictureQueue") {                       //is picture set
 
         if (ratingRunned == 1) {
             postRating();
@@ -491,14 +491,14 @@ function loadOriginal(originalImageUrl) {
 function loadImageIntoPanner(pictureOrderId, imageUrl, side) {
 
     if (side == "left") {
-        $('#pan1').find('img').attr('src', imageUrl);
-        $('#pan1').find('img').attr('pictureOrderId', pictureOrderId);
+        $('#pan1').find('.canvas-container').attr('data-image-url', imageUrl);
+        $('#pan1').find('.canvas-container').attr('pictureOrderId', pictureOrderId);
         $('#left-reproduction-link').attr('href', imageUrl);
     }
     else {
-        $('#pan2').find('img').attr('src', imageUrl);
+        $('#pan2').find('.canvas-container').attr('data-image-url', imageUrl);
 
-        $('#pan2').find('img').attr('pictureOrderId', pictureOrderId);
+        $('#pan2').find('.canvas-container').attr('pictureOrderId', pictureOrderId);
         $('#right-reproduction-link').attr('href', imageUrl);
     }
 }

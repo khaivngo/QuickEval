@@ -168,8 +168,8 @@ function loadOriginal(originalImageUrl) {
  * @returns {undefined}
  */
 function loadCategoryReproduction(pictureOrderId, reproductionImageUrl) {
-    $('#reproduction').find('img').attr('src', reproductionImageUrl);
-    $('#reproduction').find('img').attr('id', pictureOrderId);
+    $('#reproduction').find('.canvas-container').attr('data-image-url', reproductionImageUrl);
+    $('#reproduction').find('.canvas-container').attr('id', pictureOrderId);
     $('#reproduction-link').attr('href', reproductionImageUrl);
 }
 
