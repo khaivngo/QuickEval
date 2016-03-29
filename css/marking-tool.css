@@ -1,9 +1,4 @@
 body {
-    background-color: #777;
-    position: relative;
-    font-family: Helvetica;
-    padding-top: 100px;
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -18,18 +13,13 @@ body {
           :-moz-placeholder { font-style: italic; font-size: 14px; }
  textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
-#main-content-wrapper {
-    width: 500px;
-    margin: 0 auto;
-}
-
 .canvas-container {
     margin: 0;
     padding: 0;
     /* make sure our absolute positioned annotations
      * are placed relative to the canvas */
     position: relative;
-    left: -50%;
+    /*left: -50%;*/
 }
 
 .marking-tool-panel {
@@ -72,32 +62,6 @@ body {
     padding-left: 10px;
     padding-right: 10px;
 }
-
-
-#heatmap-panel-container {
-    margin: 10px;
-    padding: 0;
-    clear: both;
-}
-
-#heatmapPanel {
-    list-style: none;
-    color: #fff;
-    display: block;
-    margin-top: 60px;
-}
-
-#heatmapPanel ul {
-    padding: 0;
-    margin: 0;
-}
-
-#heatmapPanel li {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 15px;
-}
-
 .tool-button {
     padding: 10px 20px;
     background-color: #ccc;
@@ -116,32 +80,32 @@ body {
     width: 250px;
     padding: 0;
     margin: 0;
-	background: #fff;
+    background: #fff;
     z-index: 100;
 }
 
 .annotation:after, .annotation:before {
-	top: 100%;
-	left: 50%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
 }
 
 .annotation:after {
-	border-color: rgba(255, 255, 255, 0);
-	border-top-color: #fff;
-	border-width: 8px;
-	margin-left: -8px;
+    border-color: rgba(255, 255, 255, 0);
+    border-top-color: #fff;
+    border-width: 8px;
+    margin-left: -8px;
 }
 .annotation:before {
-	border-color: rgba(221, 221, 221, 0);
-	border-top-color: #888;
-	border-width: 10px;
-	margin-left: -10px;
+    border-color: rgba(221, 221, 221, 0);
+    border-top-color: #888;
+    border-width: 10px;
+    margin-left: -10px;
 }
 
 .annotationText {
@@ -184,38 +148,6 @@ body {
 .saveAnnotation { color: #579640; }
 .closeAnnotation { color: #666; }
 
-
-/*----------------------
-    Heatmap panel
------------------------*/
-
-#heatmapPanel{list-style: none;}
-
-#heatmapPanel li
-{
-	padding: 2% 0;
-}
-
-/*----------------------
-    Heatmap Scale
------------------------*/
-
-#heatmapLegend
-{
-	padding: 20px;
-	padding-bottom: 10px;
-	display: inline;
-}
-
-	#heatmapLegend .scaleItem
-	{
-		width: 20px;
-		height: 20px;
-		display: inline-block;
-		margin: 2px;
-	}
-
-
 /*-------------------
     down arrow
 -------------------*/
@@ -227,28 +159,28 @@ body {
 
 /* .down-arrow:before */
 .down-arrow:after {
-	top: 100%;
-	left: 50%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
 }
 
 .down-arrow:after {
-	border-color: rgba(255, 255, 255, 0);
-	border-top-color: #eee;
-	border-width: 8px;
-	margin-left: -8px;
+    border-color: rgba(255, 255, 255, 0);
+    border-top-color: #eee;
+    border-width: 8px;
+    margin-left: -8px;
 }
 
 .down-arrow:before {
-	border-color: rgba(221, 221, 221, 0);
-	border-top-color: #888;
-	border-width: 10px;
-	margin-left: -10px;
+    border-color: rgba(221, 221, 221, 0);
+    border-top-color: #888;
+    border-width: 10px;
+    margin-left: -10px;
 }
 
 /*------------------
@@ -256,62 +188,30 @@ body {
 ------------------*/
 
 .right-arrow {
-	position: relative;
+    position: relative;
     background: #eee;
 }
 
 .right-arrow:after, .right-arrow:before {
-	left: 100%;
-	top: 50%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
 }
 
 .right-arrow:after {
-	border-color: rgba(136, 183, 213, 0);
-	border-left-color: #eee;
-	border-width: 8px;
-	margin-top: -8px;
+    border-color: rgba(136, 183, 213, 0);
+    border-left-color: #eee;
+    border-width: 8px;
+    margin-top: -8px;
 }
 .right-arrow:before {
-	border-color: rgba(194, 225, 245, 0);
-	border-left-color: #888;
-	border-width: 10px;
-	margin-top: -10px;
+    border-color: rgba(194, 225, 245, 0);
+    border-left-color: #888;
+    border-width: 10px;
+    margin-top: -10px;
 }
-
-/*--Upload---*/
-
-	#uploadBar
-	{
-		position: fixed;
-		top: 20%;
-		left: 40%;
-		margin: 0;
-		display: none;
-		background: #333;
-		padding: 10px;
-		width: 20%;
-		
-		z-index: 100;
-		
-	}
-
-		#uploadBar #bar
-		{
-			background: #0a5;
-			height: 10px;
-			width: 0%;
-		}
-
-		#uploadBar #barText
-		{
-			color: #fff;
-			text-align: center;
-			padding: 5px;
-		}
-/*---End Upload---*/

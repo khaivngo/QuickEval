@@ -56,6 +56,9 @@ if (isset($_GET["invite"])) {
     <script src="js/Observer/alterExperimentPosition.js"></script>
     <script src="js/experimentScripts.js"></script>
     <script src="js/stopwatch.js"></script>
+
+    <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 </head>
 
 <body class="metro" style="background-color:#808080;" onload="show();
@@ -138,7 +141,10 @@ if (isset($_GET["invite"])) {
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan1" class="panzoom">
-                        <img id="pictureLeft" class="picture" src="flower.jpeg"/>
+                        <!-- <img id="pictureLeft" class="picture" src="flower.jpeg"/> -->
+                        <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+        	                <!-- image canvas goes here -->
+        	            </div>
                     </div>
                 </div>
             </section>
@@ -166,7 +172,10 @@ if (isset($_GET["invite"])) {
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan2" class="panzoom">
-                        <img id="pictureRight" class="picture" src="images/initiatePicture.png"/>
+                        <!-- <img id="pictureRight" class="picture" src="images/initiatePicture.png"/> -->
+                        <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+        	                <!-- image canvas goes here -->
+        	            </div>
                     </div>
                 </div>
             </section>
@@ -184,6 +193,17 @@ if (isset($_GET["invite"])) {
         <button class="button" id="button-next" style="width: 100%; height:25px;  ">Next</button>
     </div>
 </div>
+
+<script src="canvas-image-marker/Helper.js"></script>
+<script src="canvas-image-marker/Annotation.js"></script>
+<script src="canvas-image-marker/canvas-image-marker.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.canvas-container').canvasMarkingTool({
+            annotation: true
+        });
+    });
+</script>
 
 </body>
 </html>

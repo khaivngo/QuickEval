@@ -61,6 +61,8 @@ if (isset($_GET["invite"])) {
     <script src="js/ratingExperimentScript.js"></script>
     <script src="js/categoryExperimentScript.js"></script>
 
+    <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 </head>
 
 <!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
@@ -162,7 +164,10 @@ if (isset($_GET["invite"])) {
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
-                    <img class="picture" src="images/initiatePicture.png"/>
+                    <!-- <img class="picture" src="images/initiatePicture.png"/> -->
+                    <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+                        <!-- image canvas goes here -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -184,6 +189,17 @@ if (isset($_GET["invite"])) {
     </div>
 
 </div>
+
+<script src="canvas-image-marker/Helper.js"></script>
+<script src="canvas-image-marker/Annotation.js"></script>
+<script src="canvas-image-marker/canvas-image-marker.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.canvas-container').canvasMarkingTool({
+            annotation: true
+        });
+    });
+</script>
 
 
 </body>

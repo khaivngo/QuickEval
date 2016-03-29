@@ -434,8 +434,8 @@ function setPictures(object) {
     imageUrlLeft = data[1].url;
     imageUrlRight = data[2].url;
 
-    $('#left-reproduction').find('img').attr('src', imageUrlLeft);
-    $('#right-reproduction').find('img').attr('src', imageUrlRight);
+    $('#left-reproduction').find('.canvas-container').attr('data-image-url', imageUrlLeft);
+    $('#right-reproduction').find('.canvas-container').attr('data-image-url', imageUrlRight);
     $('#left-reproduction-link').attr('href', imageUrlLeft);
     $('#right-reproduction-link').attr('href', imageUrlRight);
     $('#left-reproduction-link').attr('pictureOrderId', pictureOrderIdLeft);

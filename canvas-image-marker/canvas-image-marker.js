@@ -364,7 +364,7 @@ var saveShapeToDB = function()
 				type: "POST",
 				error: function (jqXHR, exception) 
 				{
-					$('#uploadBar #barText').html('<img style = "width: 100%;" src = "https://media.giphy.com/media/RSdCETrepVFxm/giphy.gif">' + jqXHR.status + ' ' + jqXHR.responseText + '<br><br> <h2>Ehm, kan du please ta testen pÃ¥ nytt</h2>' );
+					$('#uploadBar #barText').html('<img style = "width: 100%;" src = "https://media.giphy.com/media/RSdCETrepVFxm/giphy.gif">' + jqXHR.status + ' ' + jqXHR.responseText + '<br><br> <h2>Ehm, kan du please ta testen på nytt</h2>' );
 				},
 			})
 			.done(function(data, jqXHR)
