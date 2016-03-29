@@ -4,29 +4,11 @@ require_once "tempdb/DBconnect.php";
 
 $imgSrc = $_POST['imgSrc'];
 $shape = json_decode($_POST['shapeItem']);
+$counter = 0;
+$saved = false;
 
-//$points = "";
-
-/* for($i = 0; $i < count($savedShapes); $i++)
-{
-	/* for($j = 0; $j < count($savedShapes[$i]->fill); $j++ )
-	{
-		$points .= $savedShapes[$i]->fill[$j]->x . ', ' . $savedShapes[$i]->fill[$j]->y . ', ';
-	} */
-	/*
-	$annotation = $savedShapes[$i]->annotation;
-	$fill = json_encode($savedShapes[$i]->fill);
-		
-	$query = "INSERT INTO shape (image_src, fill, annotation) VALUES (?,?,?)";
-
-	$sth = $db->prepare($query);				// Prepare the query.
-	if($sth->execute(array( $imgSrc, $fill, $annotation )) )// Execute the query.
-		$counterCheck++;
-}
-
-echo $counterCheck;  */
-
-
+ini_set('mysql.connect_timeout', 300);
+ini_set('default_socket_timeout', 300);
 	
 $annotation = $shape->annotation;
 $fill = json_encode($shape->fill);
@@ -34,7 +16,16 @@ $fill = json_encode($shape->fill);
 $query = "INSERT INTO shape (image_src, fill, annotation) VALUES (?,?,?)";
 
 $sth = $db->prepare($query);				// Prepare the query.
-$sth->execute(array( $imgSrc, $fill, $annotation ))// Execute the query.
+
+while(!$saved)
+{	
+	$counter ++;
+	if( $sth->execute(array( $imgSrc, $fill, $annotation )) );
+		$saved=true;
+}	
+
+if($saved)
+	echo $counter;
 
 
 

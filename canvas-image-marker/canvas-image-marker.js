@@ -346,8 +346,8 @@
 var saveShapeToDB = function()
 {
 	$('#uploadBar').css('display','block');
-	$('#uploadBar #bar').css('width','0');
-	$('#uploadBar #barText').text('');
+	$('#uploadBar #bar').css('width','1%');
+	$('#uploadBar #barText').text('0%');
 	
 	if(savedShapes.length > 0 && !savedData)
 	{
@@ -364,31 +364,31 @@ var saveShapeToDB = function()
 				type: "POST",
 				error: function (jqXHR, exception) 
 				{
-					$('#uploadBar #barText').text(jqXHR.status + ' ' + jqXHR.responseText );
+					$('#uploadBar #barText').html('<img style = "width: 100%;" src = "https://media.giphy.com/media/RSdCETrepVFxm/giphy.gif">' + jqXHR.status + ' ' + jqXHR.responseText + '<br><br> <h2>Ehm, kan du please ta testen på nytt</h2>' );
 				},
 			})
-			.done(function(data)
+			.done(function(data, jqXHR)
 			{
-				console.log(data);
+				console.log(data, jqXHR);
 				
 				counter ++;
-				perc = counter / savedShapes.length * 100;
-				console.log(perc + ' %');
+				perc = Math.round(counter / savedShapes.length * 100);
 				
 			
-				$('#uploadBar #bar').animate({'width':perc+'%'},'fast');
+				$('#uploadBar #bar').animate({'width':perc+'%'},2);
 				$('#uploadBar #barText').text(perc+'%');
 				
 				if(perc == 100)
 					$('#uploadBar #barText').text('Data successfully saved 100%');
 				
-			});	
+			});
 		}
 		savedData = true;
 	}
 	else
 		alert('Please create a shape before saving\n\nOr you have already saved the data');
 };
+
 
 /*---------------------------------------------------------------------------
 							Fill Algorithm for Polygon
