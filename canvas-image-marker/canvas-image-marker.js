@@ -15,6 +15,11 @@
             annotation: false
         }, options);
 
+        // get the current database id of the experiment
+        var experimentID = $(this).attr('data-experimentId');
+        // get the current database id of the image
+        var pictureID = $(this).attr('data-picture-id');
+
         // canvas where the drawing will take place
         var canvas = $('<canvas>');
         var ctx = canvas[0].getContext('2d');
@@ -26,7 +31,7 @@
         var toolPanel = $(
             '<div class="marking-tool-panel">' +
                 '<div class="mode">' +
-                    '<button style="font-size: 25px;" class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows-alt"></i></button>' +
+                    '<button style="font-size: 25px;" class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows"></i></button>' +
                     '<button style="font-size: 25px;" class="tool-button enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
                     '<div class="mode marking-tools">' +
                         '<button class="tool-button draw-tool down-arrow"><i class="fa fa-pencil"></i></button>' +
@@ -81,11 +86,37 @@
                 $(this).addClass('down-arrow');
             });
 
-
-            $('#saveShapeDB').on('click', saveShapeToDB);
+            $('#button-finished').on('click', sendMarkToDB);
         });
 
+        var sendMarkToDB = function() {
+            savedShapes.forEach(function(shape) {
+                var fillAsJSONstring = JSON.stringify(shape.fill) );
+                $.ajax({
+                    url: 'ajax/observer/experimentMarks.php',
+                    type: 'POST',
+                    data: {
+                        mark: fillAsJSONstring,
+                        remark: shape.annotation,
+                        experiment_id: experimentID,
+                        picture_id: pictureID
+                    },
+                    dataType: 'json',
+                    encode: true,
+                    cache: false,
+                    processData: true
+                })
+                .done(function(response) {
+                    console.log(response);
+                })
+                .fail(function(response) {
+                    console.log(response.responseText);
+                });
+            });
 
+            // delete all savedShapes in order to make it ready for the next image set
+            reset();
+        };
 
         /**
          * Figure out the size of the image, so we can set the canvas to the same size.
@@ -319,10 +350,10 @@
             if (points.length > 2) {
                 if (TOOL == "MARKER") {
                     // save all the x and y coordinates as well as any comment
-                    savedShapes.push( new Shape(points, "") );
+                    savedShapes.push( new Shape(points, " ") );
                     savedShapes[savedShapes.length-1].setFill();
                 } else if (TOOL == "DELETE") {
-                    deleteArea.push( new Shape(points, "") );
+                    deleteArea.push( new Shape(points, " ") );
                     deleteArea[deleteArea.length-1].setFill();
 
                     // for each point in the delete shape look for a match in existing shapes
@@ -358,6 +389,8 @@
          * @return void
          */
         var undo = function() {
+            flattenShapes();
+
             (points.length > 0) ? points = [] : savedShapes.pop();
 
             draw();
@@ -370,6 +403,28 @@
 
             draw();
             drawSavedShapes();
+        };
+
+        var flattenShapes = function() {
+
+            var pp = [
+                // {x: 4, y: 5},
+                // {x: 4, y: 5},
+                // {x: 4, y: 6},
+                // {x: 3, y: 10},
+                // {x: 3, y: 10},
+                // {x: 34, y: 56}
+            ];
+
+            // for (var i = 0; i < savedShapes.length; ) {
+            //     pp.push(savedShapes[i].fill);
+            // }
+
+
+            // var flattened = _.uniqWith(savedShapes[0].fill, _.isEqual);
+
+            // console.log(savedShapes[0].fill);
+
         };
 
 /*---------------------------------------------------------------------------
