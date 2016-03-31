@@ -91,7 +91,7 @@
 
         var sendMarkToDB = function() {
             savedShapes.forEach(function(shape) {
-                var fillAsJSONstring = JSON.stringify(shape.fill) );
+                var fillAsJSONstring = JSON.stringify(shape.fill);
                 $.ajax({
                     url: 'ajax/observer/experimentMarks.php',
                     type: 'POST',
