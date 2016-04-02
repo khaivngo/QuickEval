@@ -74,29 +74,7 @@ body {
 }
 
 
-#heatmap-panel-container {
-    margin: 10px;
-    padding: 0;
-    clear: both;
-}
 
-#heatmapPanel {
-    list-style: none;
-    color: #fff;
-    display: block;
-    margin-top: 60px;
-}
-
-#heatmapPanel ul {
-    padding: 0;
-    margin: 0;
-}
-
-#heatmapPanel li {
-    display: inline-block;
-    vertical-align: top;
-    margin: 0 15px;
-}
 
 .tool-button {
     padding: 10px 20px;
@@ -183,38 +161,6 @@ body {
 
 .saveAnnotation { color: #579640; }
 .closeAnnotation { color: #666; }
-
-
-/*----------------------
-    Heatmap panel
------------------------*/
-
-#heatmapPanel{list-style: none;}
-
-#heatmapPanel li
-{
-	padding: 2% 0;
-}
-
-/*----------------------
-    Heatmap Scale
------------------------*/
-
-#heatmapLegend
-{
-	padding: 20px;
-	padding-bottom: 10px;
-	display: inline;
-}
-
-	#heatmapLegend .scaleItem
-	{
-		width: 20px;
-		height: 20px;
-		display: inline-block;
-		margin: 2px;
-	}
-
 
 /*-------------------
     down arrow

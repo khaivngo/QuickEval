@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Heatmap</title>
         <link rel="stylesheet" href="css/master.css" media="screen" title="core styles" charset="utf-8">
+        <link rel="stylesheet" href="css/heatmap.css" media="screen" title="core styles" charset="utf-8">
         <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     </head>
 	
@@ -21,23 +22,41 @@
 
             <div id="heatmap-panel-container">
     			<ul id = "heatmapPanel">
-    				<li>
-                        <label>Hue</label><br>
-                        <input id = "hueLevel" type="range" value = "0" min="0" max="360">
-                        <span class = "sizeNumber">0</span>
+    				<li id = "hueSection">
+                        <h2>hue</h2>
+						<input type = "number" class = "sizeNumber" value = "0">
+                        <div class = "rangeSlider">
+							<div class = "rangeSliderLowValue">0</div> 
+							<input id = "hueLevel" type="range" value = "0" min="0" max="360">
+							<div class = "rangeSliderMaxValue">360</div>
+                        <div>
+                    </li>
+    				<li id = "satSection">
+                        <h2>saturation</h2>
+						<input type = "number" class = "sizeNumber" value = "50">
+						<div class = "rangeSlider">
+							<div class = "rangeSliderLowValue">0</div> 
+							<input id = "satLevel" type="range" value = "50" min="0" max="100">
+							<div class = "rangeSliderMaxValue">100</div>
+                        <div>
                     </li>
     				<li>
-                        <label>Saturation</label><br>
-                        <input id = "satLevel" type="range" value = "50" min="0" max="100">
-                        <span class = "sizeNumber">50</span>
+                        <input type = "checkbox" id = "hueScale">
+						<label for = "hueScale">Hue scale (Multiple colors)</label>
                     </li>
-    				<li>
-                        <label>Hue scale (Multiple colors)</label><br>
-                        <input type = "checkbox" id = "hueScale"><br>
+					<li>
+                        <input type = "checkbox" id = "reverseScale">
+						<label for = "reverseScale">Reverse scale</label>
+                    </li>
+					<li>
+                        <input type = "checkbox" id = "liveGen">
+						<label for = "liveGen">Enable live generating (only for hardcore computers)</label>
                     </li>
                     <li>
                         <button type = "button" id = "genHeatmap">Generate heatmap</button>
+						<a id = "downloadImage"><button type = "button" >Download image</button></a>
                     </li>
+			
     			</ul>
             </div>
 
