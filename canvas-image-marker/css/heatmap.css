@@ -1,0 +1,249 @@
+
+ 
+body
+{
+	background: #eee;
+}
+
+
+#heatmapCanvasContainer
+{
+	display: inline-block;
+	width: 70%;
+}
+
+#heatmapCanvasContainer canvas
+{
+	display: 	block;
+	position: 	absolute;
+	top: 		60%;
+	left: 		5%;
+}
+
+/*----------------------
+    Heatmap panel
+-----------------------*/
+ 
+#heatmap-panel-container
+{
+	display:	inline-block;
+	width:		30%;
+	position: 	absolute;
+	right: 		10%;
+}
+
+#heatmapPanel
+{
+	padding: 	0;
+    margin: 	0;
+    list-style: none;
+    color: 		#333;
+    margin-top: 60px;
+}
+
+	#heatmapPanel li 
+	{
+		display: block;
+		vertical-align: top;
+	
+		padding: 5% 0;
+		border-bottom: 1px solid #d4d4d4;
+		box-shadow: 0 1px #fafafa;
+	} 
+	
+		.activeSection
+		{
+			opacity: 1;
+		}
+		
+		.inactiveSection
+		{
+			opacity: .25;
+		}
+	
+	#heatmapPanel li h2
+	{
+		font-variant: small-caps;
+		text-align: center;
+		font-size: 125%;
+		font-weight: normal;
+		letter-spacing: 1px;
+	}
+	
+		#heatmapPanel li .sizeNumber
+		{
+			display: block;
+			margin: 0 auto;
+			padding: 10px;
+			
+			font-size: 125%;
+			text-align: center;
+			background: none;
+			border: none;
+			width:	80px;
+		}
+
+	.rangeSlider
+	{
+		display: block;
+		width: 100%;
+		
+	}
+	
+	.rangeSlider *		/* Every child of rangeSlider */
+	{
+		display: inline-block;
+		margin: 10px;
+	}
+	
+	
+/*
+	Range input
+*/
+
+input[type=range]
+{
+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+  width: 79.1%; /* Specific width is required for Firefox. */  
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type=range]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+  background: transparent; /* Hides the slider so custom styles can be added */
+  border-color: transparent;
+  color: transparent;
+}
+
+/*-----------------------------------------*/
+
+/* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+
+  -webkit-appearance: none;
+  border: 6px solid #fff;
+  height: 32px;
+  width: 32px;
+  border-radius: 50%;
+  background-color: #f88;
+  cursor: pointer;
+  margin-top: -10px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+  /* box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; */ /* Add cool effects to your sliders! */
+}
+
+
+
+	/* All the same stuff for Firefox */
+	input[type=range]::-moz-range-thumb {
+	  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+	  border: 1px solid #000000;
+	  height: 36px;
+	  width: 16px;
+	  border-radius: 3px;
+	  background: #ffffff;
+	  cursor: pointer;
+	}
+
+	/* All the same stuff for IE */
+	input[type=range]::-ms-thumb {
+	  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+	  border: 1px solid #000000;
+	  height: 36px;
+	  width: 16px;
+	  border-radius: 3px;
+	  background: #ffffff;
+	  cursor: pointer;
+	}
+	
+/*---*/	
+
+input[type=range]::-webkit-slider-runnable-track
+{
+
+	width: 100%;
+	height: 10px;
+	/* background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet, red); */
+		
+	background: #fff;	
+			 
+	border-radius: 50px;
+	  
+	  /* box-shadow: 1px 1px 1px #ddd; */
+	  /* border: 0.2px solid #010101; */
+	  
+	cursor: pointer;
+}
+
+/* input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #fff;
+} */
+
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  background: #3071a9;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2a6495;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #3071a9;
+}
+input[type=range]::-ms-fill-upper {
+  background: #3071a9;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #367ebd;
+}	
+
+
+
+
+
+/*----------------------
+    Heatmap LEGEND
+-----------------------*/
+
+#heatmapLegend
+{
+	padding: 20px;
+	padding-bottom: 10px;
+	display: inline;
+	background: #333;
+}
+
+	#heatmapLegend .scaleItem
+	{
+		width: 20px;
+		height: 20px;
+		display: inline-block;
+		margin: 2px;
+	}
