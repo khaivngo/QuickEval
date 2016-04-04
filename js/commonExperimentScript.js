@@ -112,6 +112,7 @@ function formatTime(time) {
     var min = parseInt(time / 6000),
         sec = parseInt(time / 100) - (min * 60),
         hundredths = pad(time - (sec * 100) - (min * 6000), 2);
+
     return (min > 0 ? pad(min, 2) : "00") + ":" + pad(sec, 2) + ":" + hundredths;
 }
 
@@ -308,7 +309,7 @@ function exitFullscreen() {
     }
 }
 
-/*-------------------------------------------------------------------------------------------------------------------------------------------*/
+/*------------------------------------------------------------------------*/
 
 
 /**
@@ -319,7 +320,6 @@ function exitFullscreen() {
 function setBackgroundColour(colour) {
     $('body').css('background-color', '' + colour + '!important');
     $('#rating').css('background-color', '' + colorLuminance(colour, -0.2) + '!important');
-
 }
 
 /**
@@ -348,14 +348,6 @@ function checkIfExperimentTaken() {
  * Disables panning.
  */
 function disablePanning() {
-   // automaticPanningReset();
-    //console.log("Disable panning");
-    var elem;
-
-    //elem = $('#pan1, #pan2, #pan3');
-    //elem.panzoom("disable");
-
-    //$('.panning-reset').remove();
     $('#drop-left').css("height", "40%");
     $('#drop-left').css("width", "30%");
 

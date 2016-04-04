@@ -41,8 +41,6 @@ $(document).ready(function () {
                 var draggableUrl = ui.draggable.find('img').attr("src");
                 var fetchedInitialPosition = ui.draggable.find('#initial-position').text();
 
-                // console.log(draggableUrl);
-
                 $('#drop-left').find('.canvas-container').attr('src', draggableUrl);
                 $('#drop-left').find('.canvas-container').remove();
                 $('#pan1').prepend('<img class= "picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
@@ -72,25 +70,25 @@ $(document).ready(function () {
         });
     });
 
-//---------------------------------------------Button listeners---------------------------------------------------------------------------------------
+//--------------------------Button listeners------------------------------
 
-    $('#left-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#left-reproduction-link').attr('href');      //fetching url of picture
+    $('#left-reproduction-link').on('click', function () {      //sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");       //opening new document
+        var url = $('#left-reproduction-link').attr('href');    //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#original-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#original-link').attr('href');      //fetching url of picture
+    $('#original-link').on('click', function () {               //sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");       //opening new document
+        var url = $('#original-link').attr('href');             //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#right-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#right-reproduction-link').attr('href');      //fetching url of picture
+    $('#right-reproduction-link').on('click', function () {         //sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");           //opening new document
+        var url = $('#right-reproduction-link').attr('href');       //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
@@ -131,14 +129,13 @@ $(document).ready(function () {
 
     });
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------
 
     getExperimentIdPost();
     experimentType(experimentId);
 
 
     if (type == 1) {
-        console.log("scaling for rank order");
         (function () {
             var $section = $('#set1, #set2, #set3');
             $section.find('.panzoom').panzoom({
@@ -152,26 +149,6 @@ $(document).ready(function () {
             }).panzoom('zoom');
         })();
 
-
-        //
-        ////Automatic panning reset
-        //$('#drop-left .panzoom, #drop-right .panzoom, #original .panzoom').mousedown(function () {
-        //    //console.log('Mousedown');
-        //    $('body').mouseup(function () {
-        //        //console.log('Mouseup');
-        //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-        //    });
-        //
-        //    $('body').mouseleave(function () {
-        //
-        //        // Create a new mouse up object with 'which' specified to be 1.
-        //        var e = $.Event("mouseup", {which: 1});
-        //        // Triggers it on the body.
-        //        $("body").trigger(e);
-        //        //console.log("leave")
-        //    });
-        //
-        //});
 
         $('#panzoom-reset').click(function () {
             $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
@@ -273,13 +250,14 @@ function loadReproductionsSortable(data) {
     for (i = 1; i <= length; i++) {                         //goes through all objects getting their data.
         var reproductionImageUrl = data[i].url;                 //getting url
         var reproductionPictureOrder = data[i].pictureOrderId;  //getting id
+        var picId = data[i].id;
 
         if (i == 1) {              //first picture gets loaded into left panner.
-            loadImageIntoPanner(reproductionPictureOrder, reproductionImageUrl, "left");
+            loadImageIntoPanner(reproductionPictureOrder, reproductionImageUrl, picId, "left");
         }
 
         if (i == 2) {              //second picture get loaded into right panner.
-            loadImageIntoPanner(reproductionPictureOrder, reproductionImageUrl, "right");
+            loadImageIntoPanner(reproductionPictureOrder, reproductionImageUrl, picId, "right");
         }
 
 
@@ -488,17 +466,22 @@ function loadOriginal(originalImageUrl) {
  * @param {type} side tells function which panner picture is to be loaded in.
  * @returns {undefined}
  */
-function loadImageIntoPanner(pictureOrderId, imageUrl, side) {
+function loadImageIntoPanner(pictureOrderId, imageUrl, picId, side) {
 
     if (side == "left") {
         $('#pan1').find('.canvas-container').attr('data-image-url', imageUrl);
+
         $('#pan1').find('.canvas-container').attr('pictureOrderId', pictureOrderId);
+        $('#pan1').find('.canvas-container').attr('data-picture-id', picId);
+
         $('#left-reproduction-link').attr('href', imageUrl);
     }
     else {
         $('#pan2').find('.canvas-container').attr('data-image-url', imageUrl);
 
         $('#pan2').find('.canvas-container').attr('pictureOrderId', pictureOrderId);
+        $('#pan2').find('.canvas-container').attr('data-picture-id', picId);
+
         $('#right-reproduction-link').attr('href', imageUrl);
     }
 }
@@ -510,7 +493,6 @@ function loadImageIntoPanner(pictureOrderId, imageUrl, side) {
  * @returns {undefined}
  */
 function postResultsRating(experimentId, pictureOrderId) {
-    console.log("postResultsRating");
     $.ajax
     ({
         url: 'ajax/observer/insertIntoResultRating.php',
@@ -548,9 +530,9 @@ function experimentType(experimentId) {
                 updateType();
         },
         error: function (xhr, ajaxOptions, thrownError) {
-//                    console.log("Error");
-//                    console.log(xhr.status);
-//                    console.log(thrownError);
+            // console.log("Error");
+            // console.log(xhr.status);
+            // console.log(thrownError);
         }
     });
 }

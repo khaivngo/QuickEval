@@ -31,7 +31,7 @@
 
         <script src="js/scientist/exportExperiment.js"></script>
         <script src="js/indexScripts.js"></script>
-        <script src="js/scripts.js"></script>	
+        <script src="js/scripts.js"></script>
         <script src="js/Observer/alterExperimentPosition.js"></script>
 
 
@@ -40,7 +40,7 @@
     </head>
     <body class="metro" style="overflow-y:scroll">
         <div id="wrapper">
-            <?php include_once("includes/header.html"); ?>    
+            <?php include_once("includes/header.html"); ?>
             <div id="panels" style="width:1000px; margin:auto">
                 <div id="top-panels" style="max-height: 500px; width: 100%">
                     <h1>Select Experiment</h1>
@@ -114,7 +114,7 @@
                         <div class="input-control text" data-role="input-control">
                             <input id="experiment-search" type="text">
                             <button class="btn-search"></button>
-                        </div>	
+                        </div>
 
                         <div class="listview-outlook" data-role="listview">
                             <div id="experiment-list" class="list-group ">
@@ -138,8 +138,8 @@
                         </div>
                         <div id="experiment-buttons" style="margin: 0 5%">
                         </div>
-                    
-                        
+
+
 
                     </div>
                 </div>

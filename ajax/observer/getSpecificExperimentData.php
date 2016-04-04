@@ -11,11 +11,12 @@ try {                                   //gets whether the experiment is hidden
 
     $stmt->execute(array(':id' => $_POST['experimentId']));
 	$res = $stmt->fetchAll();
-	
-	echo json_encode($res);	
-	
+
+	echo json_encode($res);
+    exit;
+
 } catch (Exception $excpt) {
-  // ChromePhp::log($excpt->getMessage());
+    // ChromePhp::log($excpt->getMessage());
 }
 
 ?>

@@ -91,6 +91,6 @@ class DB
 		return $this->error;
 	}
 
-} # End of Database class
+} # End of DB class
 
 ?>

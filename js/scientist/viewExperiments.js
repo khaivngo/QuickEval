@@ -15,7 +15,8 @@ function viewExperiment($experimentId) {
     var data = getExperimentById($experimentId);
 
     // get all marks for heatmap
-    getArtifactMarks($experimentId);
+    // getArtifactMarks($experimentId);
+    getImages($experimentId);
 
     //Removes lists to display experiment
     $('.listview-outlook').siblings(':eq(0)').remove();
@@ -58,7 +59,56 @@ function viewExperiment($experimentId) {
     }
 }
 
-function getArtifactMarks(experimentId) {
+function displayHeatmap() {
+    // var output = "";
+    // output +=
+    //     '<div style="position: relative;">' +
+    //         '<div class="canvas-container"' +
+    //             'data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.jpeg"' +
+    //             'oncontextmenu="return false;"' +
+    //             'data-experiment-id="' + experimentId + '">' +
+    //         '</div>' +
+    //     '</div>';
+
+    $('.heatmap-fullscreen').html("what");
+    $('.heatmap-fullscreen').css({ 'display' : 'block' });
+
+    // getArtifactMarksForExperimentPicture();
+}
+
+
+function getImages(experimentId) {
+    $.ajax({
+        url: 'ajax/scientist/getAllExperimentPictures.php',
+        type: 'POST',
+        data: {
+            experiment_id: experimentId
+        },
+        dataType: 'json',
+        encode: true,
+        cache: false
+    })
+    .done(function(data) {
+        if (data.length > 0) {
+            console.log(data);
+            var output = "";
+            var owner = data[1][0].person;
+            // loop through each experiment image
+            data[0].forEach(function(image) {
+                output += '<img class="open-heatmap" src="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.jpeg" style="width: 200px;">';
+            });
+
+            $('#heatmap-results').append(output);
+
+            $('.open-heatmap').on('click', displayHeatmap);
+
+            $('.canvas-container').canvasMarkingTool();
+        }
+    })
+    .fail(function(response) {});
+}
+
+function getArtifactMarksForExperimentPicture(experimentId) {
     $.ajax({
         url: 'ajax/scientist/getExperimentArtifactMarks.php',
         type: 'POST',
@@ -71,8 +121,7 @@ function getArtifactMarks(experimentId) {
     })
     .done(function(data) {
         if (data.length > 0) {
-            // set up canvas
-            $('.canvas-container').canvasMarkingTool();
+
         }
     })
     .fail(function(response) {});

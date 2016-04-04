@@ -10,6 +10,7 @@ if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
+        exit;
     }
 }
 
@@ -21,11 +22,8 @@ if (isset($_GET["invite"])) {
 
         $res = $stmt->fetchAll();
         $_SESSION['experimentId'] = $res[0]['id'];
-    } catch (Exception $ex) {
-
-    }
+    } catch (Exception $ex) {}
 } else {
-
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
@@ -57,24 +55,17 @@ if (isset($_GET["invite"])) {
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
 
-
-    <?php
-    //    if (!isset($_SESSION['user'])) {
-    //      header("Location: login.php");
-    // }
-    ?>
     <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 
 </head>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!------------------------------------------------>
 
-<!--Starts timer-->
-<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show();
-            start();">
+<!-- Starts timer -->
+<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show(); start();">
 
-<div id="popupContact" style="">
+<div id="popupContact">
     <p id="contactArea" style="font-size:18px;">
         Press ESC, Continue or anywhere else to close and continue.
         <br/><br/>
@@ -137,7 +128,7 @@ if (isset($_GET["invite"])) {
 <div id="backgroundPopup4"></div>
 
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!------------------------------->
 
 <div id="header-div">
     <div class="inner-header">
@@ -192,9 +183,6 @@ if (isset($_GET["invite"])) {
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
-                    <!-- <div class="canvas-container" data-image-url="canvas-image-marker/img/final13.bmp" oncontextmenu="return false;"> -->
-    	                <!-- image canvas goes here -->
-    	            <!-- </div> -->
                 </div>
             </div>
             <br>

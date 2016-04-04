@@ -15,9 +15,9 @@
             annotation: false
         }, options);
 
-        // get the current database id of the experiment
+        /* get the current database id of the experiment */
         var experimentID = $(this).attr('data-experimentId');
-        // get the current database id of the image
+        /* get the current database id of the image */
         var pictureID = $(this).attr('data-picture-id');
 
         // canvas where the drawing will take place
@@ -31,10 +31,10 @@
         var toolPanel = $(
             '<div class="marking-tool-panel">' +
                 '<div class="mode">' +
-                    '<button style="font-size: 25px;" class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows"></i></button>' +
-                    '<button style="font-size: 25px;" class="tool-button enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
+                    '<button title="Make image movable" style="font-size: 25px; background: #eee;" class="tool-button enable-panzoom down-arrow"><i class="fa fa-arrows"></i></button>' +
+                    '<button title="Enable marking tool" style="font-size: 25px;" class="tool-button enable-marking marking-tool"><i class="fa fa-pencil-square-o"></i></button>' +
                     '<div class="mode marking-tools">' +
-                        '<button class="tool-button draw-tool down-arrow"><i class="fa fa-pencil"></i></button>' +
+                        '<button class="tool-button draw-tool down-arrow" style="background: #eee;"><i class="fa fa-pencil"></i></button>' +
                         '<button class="tool-button erase-tool"><i class="fa fa-scissors"></i></button>' +
                         '<button class="tool-button undo"><i class="fa fa-undo"></i></button>' +
                     '</div>' +
@@ -80,9 +80,20 @@
             toolPanel.find('.erase-tool').on('click', setEraseActiveTool);
             toolPanel.find('.enable-marking').on('click', setModeToPanning);
             toolPanel.find('.enable-panzoom').on('click', setModeToDrawing);
+            // $(document).keydown(function(e){
+            //       if( e.which === 90 && e.ctrlKey && e.shiftKey ) {
+            //          undo();
+            //       }
+            //       else if( e.which === 90 && e.ctrlKey ) {
+            //          undo();
+            //       }
+            // });
 
             toolPanel.find('.marking-tools button').on('click', function() {
                 toolPanel.find('.marking-tools button').removeClass('down-arrow');
+                toolPanel.find('.marking-tools button').css('background', '#ccc');
+
+                $(this).css('background', '#eee');
                 $(this).addClass('down-arrow');
             });
 

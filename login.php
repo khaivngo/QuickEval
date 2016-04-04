@@ -23,21 +23,24 @@
     <script src="js/sha3.js"></script>
     <script src="js/scripts.js"></script>
     <script src="js/loginScripts.js"></script>
-    <?php echo (isset($_GET['redirect'])) ? '<input type="hidden" id="redirect" value="'. $_GET['redirect'] .'"/>'  : '' ?>
+    <?php echo (isset($_GET['redirect'])) ? '<input type="hidden" id="redirect" value="'. $_GET['redirect'] .'"/>'  : ''; ?>
 
     <?php
-    if (isset($_SESSION['user'])) {
-        if(isset($_GET['redirect'])) {
-            $url = 'Location: ' . $_GET['redirect'];
-            header('Location: ' . $_GET['redirect']);
-        } elseif ($_SESSION['user']['userType'] < 2) {
-            header('Location: adminpanel.php');
-        } elseif ($_SESSION['user']['userType'] == 2) {
-            header('Location: scientistpanel.php');
-        } elseif ($_SESSION['user']['userType'] > 2) {
-            header('Location: index.php');
+        if (isset($_SESSION['user'])) {
+            if(isset($_GET['redirect'])) {
+                header('Location: ' . $_GET['redirect']);
+                exit;
+            } elseif ($_SESSION['user']['userType'] < 2) {
+                header('Location: adminpanel.php');
+                exit;
+            } elseif ($_SESSION['user']['userType'] == 2) {
+                header('Location: scientistpanel.php');
+                exit;
+            } elseif ($_SESSION['user']['userType'] > 2) {
+                header('Location: index.php');
+                exit;
+            }
         }
-    }
     ?>
 
 </head>
@@ -47,8 +50,8 @@
         <div style="background: url(images/hig.jpg) top left no-repeat; background-size: cover; height:300px;">
             <div style="width:500px; height: 100%; padding: 50px; background-color: #fff; background-color: rgba(0,0,0,0.5);">
                 <h1 class="fg-white" style="font-weight: 550">QuickEval</h1>
-                <h3 class="fg-white" style="font-weight: 300">QuickEval is a web-based tool for psychometric image evaluation. 
-                    It supports rank order, paired comparison and category judgement. 
+                <h3 class="fg-white" style="font-weight: 300">QuickEval is a web-based tool for psychometric image evaluation.
+                    It supports rank order, paired comparison and category judgement.
                     The tool is provided by the Norwegian Colour and Visual Computing Laboratory.</h3>
 
             </div>
