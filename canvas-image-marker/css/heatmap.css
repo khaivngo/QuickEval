@@ -5,17 +5,39 @@ body
 	background: #eee;
 }
 
+
+#heatmapCanvasContainer
+{
+	display: inline-block;
+	width: 70%;
+}
+
+#heatmapCanvasContainer canvas
+{
+	display: 	block;
+	position: 	absolute;
+	top: 		60%;
+	left: 		5%;
+}
+
 /*----------------------
     Heatmap panel
 -----------------------*/
  
-#heatmapPanel 
+#heatmap-panel-container
 {
-	padding: 0;
-    margin: 0;
+	display:	inline-block;
+	width:		30%;
+	position: 	absolute;
+	right: 		10%;
+}
+
+#heatmapPanel
+{
+	padding: 	0;
+    margin: 	0;
     list-style: none;
-    color: #333;
-    display: block;
+    color: 		#333;
     margin-top: 60px;
 }
 
