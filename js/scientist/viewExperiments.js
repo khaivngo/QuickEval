@@ -61,19 +61,22 @@ function viewExperiment($experimentId) {
 
 function displayHeatmap() {
 
-    console.log( $(this).attr('data-experiment-id') );
-    // var output = "";
-    // output +=
-    //     '<div style="position: relative;">' +
-    //         '<div class="canvas-container"' +
-    //             'data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.jpeg"' +
-    //             'oncontextmenu="return false;"' +
-    //             'data-experiment-id="' + experimentId + '">' +
-    //         '</div>' +
-    //     '</div>';
+    console.log( $('select').find(':selected').attr('data-experiment-id') );
+    console.log( $("select").find(':selected').attr('data-picture-queue') );
+
+    var output =
+        '<div style="position: relative;">' +
+            '<div class="canvas-container"' +
+                // 'data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.jpeg"' +
+                'oncontextmenu="return false;"' +
+                // 'data-experiment-id="' + experimentId + '">' +
+            '</div>' +
+        '</div>';
 
     // $('.heatmap-fullscreen').html("what");
     // $('.heatmap-fullscreen').css({ 'display' : 'block' });
+    $('#heatmap-results').append(output);
+    // $('.canvas-container').canvasHeatmap();
 
     // getArtifactMarksForExperimentPicture();
 }
@@ -103,12 +106,11 @@ function getImages(experimentId) {
                 });
             output += "</select>";
 
-            output += '<button class="primary heatmap-button">Show heatmap</button>';
+            output += '<button class="primary heatmap-button open-heatmap">Show heatmap</button>';
             output += '<button class="primary heatmap-button">Export heatmap</button>';
             output += '<button class="primary heatmap-button">Download image</button>';
 
             $('#heatmap-results').append(output);
-            $('.canvas-container').canvasHeatmap();
 
             // display heatmap of clicked picture
             $('.open-heatmap').on('click', displayHeatmap);
