@@ -93,15 +93,19 @@ function getImages(experimentId) {
     .done(function(data) {
         if (data.length > 0) {
             console.log(data);
-            var output = "";
+
             var owner = data[1][0].person;
             // loop through each experiment image
-            data[0].forEach(function(image) {
-                output +=
-                    '<img data-picture-queue="' + image.pictureQueue + '"  data-experiment-id="' +
-                    experimentId + '" class="open-heatmap" src="uploads/' +
-                    owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '" style="width: 200px;">';
-            });
+            var output = '<select style="width: 200px; padding: 10px;">';
+                data[0].forEach(function(image) {
+                    output +=
+                        '<option data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
+                });
+            output += "</select>";
+
+            output += '<button class="primary heatmap-button">Show heatmap</button>';
+            output += '<button class="primary heatmap-button">Export heatmap</button>';
+            output += '<button class="primary heatmap-button">Download image</button>';
 
             $('#heatmap-results').append(output);
             $('.canvas-container').canvasHeatmap();
