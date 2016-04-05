@@ -1,21 +1,21 @@
 (function($) {
     'use strict';
 
-    $.fn.canvasMarkingTool = function(options) {
+    $.fn.canvasHeatmap = function(options) {
         this.each(function(canvasIndex, element) {
             // first argument sets the context of "this" in the initCanvasMarkingTool function
-            initCanvasMarkingTool.apply(element, [canvasIndex, element, options]);
+            initCanvasHeatmap.apply(element, [canvasIndex, element, options]);
         });
     };
 
-    var initCanvasMarkingTool = function(canvasIndex, element, options) {
+    var initCanvasHeatmap = function(canvasIndex, element, options) {
         // establish our default settings, override if any provided
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url'),
         }, options);
 
         // get the current database id of the experiment
-        // var experimentID = $(this).attr('data-experimentId');
+        var experimentID = $(this).attr('data-experiment-id');
         // get the current database id of the image
         // var pictureID = $(this).attr('data-picture-id');
 

@@ -60,6 +60,8 @@ function viewExperiment($experimentId) {
 }
 
 function displayHeatmap() {
+
+    console.log( $(this).attr('data-experiment-id') );
     // var output = "";
     // output +=
     //     '<div style="position: relative;">' +
@@ -70,8 +72,8 @@ function displayHeatmap() {
     //         '</div>' +
     //     '</div>';
 
-    $('.heatmap-fullscreen').html("what");
-    $('.heatmap-fullscreen').css({ 'display' : 'block' });
+    // $('.heatmap-fullscreen').html("what");
+    // $('.heatmap-fullscreen').css({ 'display' : 'block' });
 
     // getArtifactMarksForExperimentPicture();
 }
@@ -95,17 +97,24 @@ function getImages(experimentId) {
             var owner = data[1][0].person;
             // loop through each experiment image
             data[0].forEach(function(image) {
-                output += '<img class="open-heatmap" src="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.jpeg" style="width: 200px;">';
+                output +=
+                    '<img data-picture-queue="' + image.pictureQueue + '"  data-experiment-id="' +
+                    experimentId + '" class="open-heatmap" src="uploads/' +
+                    owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '" style="width: 200px;">';
             });
 
             $('#heatmap-results').append(output);
+            $('.canvas-container').canvasHeatmap();
 
+            // display heatmap of clicked picture
             $('.open-heatmap').on('click', displayHeatmap);
-
-            $('.canvas-container').canvasMarkingTool();
         }
     })
     .fail(function(response) {});
+}
+
+function getFileExtension(filename) {
+    return filename.split('.').pop();
 }
 
 function getArtifactMarksForExperimentPicture(experimentId) {
