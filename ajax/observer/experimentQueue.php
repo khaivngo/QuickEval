@@ -8,8 +8,8 @@ $option = $_GET['option'];
 if($option == "startNewObserverExperiment") {
 	$experimentId = $_GET['experimentId'];
 	$_SESSION['user']['activeObserverExperiment'] = $experimentId;
-	
-	$sql = "SELECT * FROM experimentqueue 
+
+	$sql = "SELECT * FROM experimentqueue
 			JOIN experimentorder ON experimentorder.experimentqueue=experimentqueue.id
 			WHERE experimentqueue.experiment = ?
 			ORDER BY experimentorder.eOrder ASC;";
@@ -23,16 +23,14 @@ if($option == "startNewObserverExperiment") {
 }
 
 /**
-* This will get the next position, 
+* This will get the next position,
 * whether it be a pictureOrder, new pictureQueue, or instruction
 */
-
-
 else if($option == "getNextPosition") {
 	//echo "GetNextPosition</br>";
 	if($_SESSION['activeObserverExperiment'] == null) {
 		echo json_encode(array("type" => "finished"));
-		return;	
+		return;
 	}
 	//PictureQueue er aktiv, sjekk om det finnes flere bilder i pictureQueuen.
 	//
@@ -46,32 +44,32 @@ else if($option == "getNextPosition") {
 			if($exType == "pair") {
 				$_SESSION['activeObserverExperiment']['activePictureOrder'][0]+=2;				//This is for pair comparison only.
 				$_SESSION['activeObserverExperiment']['activePictureOrder'][1]+=2;
-				writeOutPicture();	
+				writeOutPicture();
 			}
 			else if($exType == "category") {
 				$_SESSION['activeObserverExperiment']['activePictureOrder'][0]+=1;				//This is for pair comparison only.
 				//echo "</br>Prover å hente ut pictureOrder = " . $_SESSION['activeObserverExperiment']['activePictureOrder'][0];
 				writeOutPictureForCategory();
-				
+
 			}
-			
+
 		}
 			else {	//ingen flere bilder igjen
 				//echo "</br>Ingen Flere bilder igjen";
 				$_SESSION['activeObserverExperiment']['activePictureOrder'] = null;
 				$_SESSION['activeObserverExperiment']['pictureOrder'] = null;
 				finishedCurrentExperimentOrder($db);
-			} 
+			}
 	}
 	else {
 		//echo "</br>finishedExperimentOrder";
 		finishedCurrentExperimentOrder($db);
-	}	
+	}
 	//pictureQueue er ikke aktiv.  Da kan det hentes ut instruction eller pictureQuue
 
 }
 /**
- * This function is run every time an experimentOrder is finished. 
+ * This function is run every time an experimentOrder is finished.
  * Will write out picture, or instruction depending on what current experimentOrder is.
  * @param $db = PDO connection to the database.
  */
@@ -82,8 +80,8 @@ function finishedCurrentExperimentOrder($db) {
 		$index = $_SESSION['activeObserverExperiment']['index'];
 		$_SESSION['activeObserverExperiment']['activeExperimentOrder'] = $_SESSION['activeObserverExperiment']['experimentorder'][$index];
 		$_SESSION['activeObserverExperiment']['index']++;
-		
-	//	var_dump($_SESSION['activeObserverExperiment']);	
+
+	//	var_dump($_SESSION['activeObserverExperiment']);
 		if($_SESSION['activeObserverExperiment']['activeExperimentOrder']['pictureQueue'] != null) {	//The current experimentOrder has a foreign key
 			//echo "</br>pictureQueue is active";
 			newPictureQueue($db);
@@ -107,8 +105,8 @@ function finishedCurrentExperimentOrder($db) {
 	//Experiment is finished
 	else {
 	//	echo "ExperimentFinished";
-		$_SESSION['activeObserverExperiment'] = null; 
-		echo json_encode(array("type" => "finished"));	
+		$_SESSION['activeObserverExperiment'] = null;
+		echo json_encode(array("type" => "finished"));
 	}
 }
 
@@ -139,8 +137,8 @@ function shuffleTheCards($cards) {
         //echo $cards[$i+1]['picture'];
         $sorted[] = array($cards[$i], $cards[$i+1]);
     }
-    
-    shuffle($sorted);    
+
+    shuffle($sorted);
     $c = count($sorted)-1;
     for($i = 0; $i <= $c; $i++) {
         //echo "</br>dumping $i";
@@ -183,7 +181,7 @@ function newPictureQueue($db) {
 				//Henter ut alle bilder for en bildekø.
 	$exType = getExperimentType($db);
 	//echo "<br/>New pictureQueue";
-	//Må muligens adde ORDER BY pOrder her ? 
+	//Må muligens adde ORDER BY pOrder her ?
 	//This SQL gets ALL the pictures for a given pictureQueue.
 	$sql = "SELECT * FROM experimentorder
 						JOIN pictureorder ON pictureorder.pictureQueue=experimentorder.pictureQueue
@@ -198,11 +196,11 @@ function newPictureQueue($db) {
         } else {
             shuffle($result);
         }
-	$_SESSION['activeObserverExperiment']['pictureOrder'] = $result;                
-        
+	$_SESSION['activeObserverExperiment']['pictureOrder'] = $result;
+
 	if($exType == "pair") {		//Pair comparison will always return two pictures.  "0" and "1" are indexes in the stored array.
 	//	echo "<br/>PairComparisjoN";
-                    
+
 			$_SESSION['activeObserverExperiment']['activePictureOrder'] = array(0 => 0, 1 => 1);
 	}
 	else if($exType == "category") {	//Category will always return ALL pictures, or just one.
@@ -242,7 +240,7 @@ function writeOutPicture() {
 				$picture2 = $_SESSION['activeObserverExperiment']['activePictureOrder'][1];
 				$pictures[0]['pictureId'] =  $_SESSION['activeObserverExperiment']['pictureOrder'][$picture1]['picture'];	//Gets ID from database for picture
 				$pictures[0]['pictureOrderId'] = $_SESSION['activeObserverExperiment']['pictureOrder'][$picture1]['id'];
-				
+
 				$pictures[1]['pictureId'] =  $_SESSION['activeObserverExperiment']['pictureOrder'][$picture2]['picture'];	//Gets ID from database for picture
 				$pictures[1]['pictureOrderId'] = $_SESSION['activeObserverExperiment']['pictureOrder'][$picture2]['id'];
 				echo json_encode(array("type" => "pictureQueue","pictureQueue" => $pictures));
@@ -253,7 +251,7 @@ function writeOutPicture() {
  */
 function getExperimentType($db) {
 	$sql = "SELECT type FROM experimenttype
-			JOIN experiment 
+			JOIN experiment
 			ON experimenttype.id = experiment.experimentType
 			WHERE experiment.id = ?";
 	$sth = $db->prepare($sql);

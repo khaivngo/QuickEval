@@ -36,6 +36,13 @@ function getNextInExperimentForObserver() {
         dataType: 'json',
         success: function(data)
         {
+            if (data.type != "finished") {
+                getCurrentPictureQueue(
+                    data.pictureQueue[0].pictureId,
+                    data.pictureQueue[0].pictureOrderId
+                );
+            }
+
         	if(data.type == "pictureQueue") {
         		returnData = {type : "pictureQueue"};
 	            for(var i = 0; i < data.pictureQueue.length; i++) {
@@ -52,6 +59,33 @@ function getNextInExperimentForObserver() {
         }
     });
     return returnData;
+}
+
+function getCurrentPictureQueue(pictureID, pictureOrderID) {
+    $.ajax({
+        url: 'ajax/observer/getCurrentPictureQueue.php',
+        type: 'POST',
+        data: {
+            pictureID: pictureID,
+            pictureOrderID: pictureOrderID
+        },
+        dataType: 'json',
+        encode: true,
+        cache: false,
+        processData: true
+    })
+    .done(function(response) {
+        $('.canvas-container').attr('data-picture-queue', response[0].pictureQueue);
+        $(document).trigger('data-attribute-changed');
+        // $(document).ready(function() {
+        //     $('.canvas-container').canvasMarkingTool({
+        //         annotation: true
+        //     });
+        // });
+    })
+    .fail(function(response) {
+        console.log(response.responseText);
+    });
 }
 
 /**

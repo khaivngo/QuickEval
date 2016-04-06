@@ -19,6 +19,14 @@
         var experimentID = $(this).attr('data-experimentId');
         /* get the current database id of the image */
         var pictureID = $(this).attr('data-picture-id');
+        /* get the picture queue */
+        var pictureQueue = $(this).attr('data-picture-queue');
+
+        // listen for updates on the data-picture-queue attribute on the .canvas-container element
+        // so we can update the variable in here
+        $(document).on('data-attribute-changed', function() {
+            pictureQueue = $('.canvas-container').attr('data-picture-queue');
+        });
 
         // canvas where the drawing will take place
         var canvas = $('<canvas>');
@@ -110,7 +118,8 @@
                         mark: fillAsJSONstring,
                         remark: shape.annotation,
                         experiment_id: experimentID,
-                        picture_id: pictureID
+                        picture_id: pictureID,
+                        picture_queue: pictureQueue
                     },
                     dataType: 'json',
                     encode: true,
