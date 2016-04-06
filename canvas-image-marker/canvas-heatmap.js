@@ -52,7 +52,7 @@
             $(canvasContainer).append(matrixCanvas); // append the resized canvas to the DOM
             $(canvasContainer).after(mergedCanvas); // append the resized canvas to the DOM
 
-            getArtifactMarks(options.experimentID, options.pictureQueue);
+            getArtifactMarks(options.experimentID, options.pictureQueue, options.pictureID);
         });
 
         /**
@@ -80,7 +80,7 @@
                 resize();
 
             imageCanvas.css({
-                background: 'url(' + image.src + ')',
+                background: 'url(' + image.src + ') no-repeat',
                 position: "absolute", top: 0, right: 0
             });
 
@@ -98,12 +98,13 @@
          *				Fill Algorithm for Polygon                *
          *--------------------------------------------------------*/
 
-         function getArtifactMarks(experimentID, pictureQueue) {
+         function getArtifactMarks(experimentID, pictureQueue, pictureID) {
              $.ajax({
                  url: 'ajax/scientist/getExperimentArtifactMarks.php',
                  type: 'POST',
                  data: {
                      experiment_id: experimentID,
+                     picture_id: pictureID,
                      picture_queue: pictureQueue
                  },
                  dataType: 'json',
