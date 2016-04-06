@@ -14,14 +14,6 @@
             imageUrl: $(this).attr('data-image-url')
         }, options);
 
-        // canvas where the drawing will take place
-        // var canvas = $('<canvas>');
-        // var ctx = canvas[0].getContext('2d');
-        //
-        // // put our savedShapes here, so we don't have to redraw them every time something changes
-        // var savedCanvas = $('<canvas>');
-		// var savedCtx = savedCanvas[0].getContext('2d');
-
         var HUE_LOW = 200;		// For heatmap lowest value in HSL scale.
 
         var image = new Object();
@@ -48,7 +40,6 @@
         var mergedCanvas = $('<canvas>');
         var mergedCtx = mergedCanvas[0].getContext('2d');
 
-
         var canvasContainer = element;
         var image;
 
@@ -56,9 +47,6 @@
 
         $(document).ready(function() {
             setCanvasImage();
-            // $(canvasContainer).append(savedCanvas); // append the resized canvas to the DOM
-            // $(canvasContainer).append(canvas); // append the resized canvas to the DOM
-            // $(canvasContainer).after(matrixCanvas); // append the resized canvas to the DOM
 
             $(canvasContainer).append(imageCanvas); // append the resized canvas to the DOM
             $(canvasContainer).append(matrixCanvas); // append the resized canvas to the DOM
@@ -79,8 +67,6 @@
                     height: image.height,
                     width: image.width
                 });
-                // canvas.attr('height', image.height).attr('width', image.width);
-                // savedCanvas.attr('height', image.height).attr('width', image.width);
 
                 imageCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasImage');
                 matrixCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasMatrix');
@@ -105,15 +91,6 @@
             mergedCanvas.css({
                 position: "absolute", top: 0, right: 0
             });
-
-            // savedCanvas.css({
-            //     background: 'url(' + image.src + ')',
-            //     position: "absolute", top: 0, right: 0
-            // });
-            //
-            // canvas.css({
-            //     position: "absolute", top: 0, right: 0
-            // });
         }
 
 
@@ -135,18 +112,14 @@
              })
              .done(function(data) {
                 if (data.length > 0) {
-                    console.log(data);
 
                     var shapes = [];
 
-                    // Parse the fill array with its objects
                     for (var i = 0; i < data.length; i++) {
                         shapes.push({ fill: JSON.parse(data[i].marked_pixels) });
                     }
 
                     savedShapes = shapes;
-
-                    console.log(savedShapes);
 
                     calcPolygonPoints();
                 }
