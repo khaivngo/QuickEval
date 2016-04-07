@@ -63,13 +63,15 @@ function displayHeatmap() {
     var experimentID = $('select').find(':selected').attr('data-experiment-id');
     var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
     var pictureURL = $("select").find(':selected').attr('data-image-url');
+    var pictureID = $("select").find(':selected').attr('data-image-id');
+    // console.log(pictureID);
 
     var output =
         '<div style="position: relative;">' +
             '<div class="canvas-container" id="heatmapCanvasContainer"' +
-                'data-image-url="' + pictureURL + '"' +
-                'oncontextmenu="return false;"' +
-                'data-experiment-id="' + experimentID + '">' +
+                ' data-image-url="' + pictureURL + '"' +
+                ' oncontextmenu="return false;"' +
+                ' data-experiment-id="' + experimentID + '">' +
             '</div>' +
         '</div>';
 
@@ -78,6 +80,7 @@ function displayHeatmap() {
 
     $('.canvas-container').canvasHeatmap({
         experimentID: experimentID,
+        pictureID: pictureID,
         pictureQueue: pictureQueue
     });
 
@@ -85,7 +88,7 @@ function displayHeatmap() {
 }
 
 /**
- * Get all images for a experiment and create a drowdown list of down.
+ * Get all images for a experiment and create a drowdown list of them.
  */
 function getImages(experimentId) {
     $.ajax({
@@ -100,14 +103,14 @@ function getImages(experimentId) {
     })
     .done(function(data) {
         if (data.length > 0) {
-            // person who owns/created experiment
+            // id of person who owns/created experiment, needed in the URL to the image
             var owner = data[1][0].person;
             // loop through each experiment image
             var output = '<select style="width: 200px; padding: 10px;">';
                 data[0].forEach(function(image) {
                     output +=
                         '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
-                        ' data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
+                        ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
                 });
             output += "</select>";
 

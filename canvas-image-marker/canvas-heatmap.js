@@ -52,7 +52,7 @@
             $(canvasContainer).append(matrixCanvas); // append the resized canvas to the DOM
             $(canvasContainer).after(mergedCanvas); // append the resized canvas to the DOM
 
-            getArtifactMarks(options.experimentID, options.pictureQueue, options.pictureID);
+            getArtifactMarks(settings.experimentID, settings.pictureQueue, settings.pictureID);
         });
 
         /**
@@ -65,7 +65,8 @@
                 // make all elements the same size as the image
                 $('.canvas-container').css({
                     height: image.height,
-                    width: image.width
+                    width: image.width,
+                    background: "red"
                 });
 
                 imageCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasImage');
@@ -80,6 +81,7 @@
                 resize();
 
             imageCanvas.css({
+                // background: "#ddd",
                 background: 'url(' + image.src + ') no-repeat',
                 position: "absolute", top: 0, right: 0
             });
@@ -505,7 +507,6 @@
 
          	if(savedShapes.length > 0 )
          	{
-         		console.log(savedShapes);
          		var hue = $('#hueLevel').val();
          		var sat = $('#satLevel').val();
          		var scale = 0;
