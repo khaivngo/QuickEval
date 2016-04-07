@@ -43,6 +43,10 @@ if (isset($_GET["invite"])) {
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
+    <script src="canvas-image-marker/Helper.js"></script>
+    <script src="canvas-image-marker/Annotation.js"></script>
+    <script src="canvas-image-marker/canvas-image-marker.js"></script>
+
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
 
@@ -167,6 +171,7 @@ if (isset($_GET["invite"])) {
                         data-experimentId="<?php echo $_SESSION['experimentId']; ?>"
                         data-image-url="images/initiatePicture.png"
                         data-picture-id=""
+                        data-picture-queue=""
                         oncontextmenu="return false;">
     	                <!-- image canvas goes here -->
     	            </div>
@@ -201,6 +206,7 @@ if (isset($_GET["invite"])) {
                         class="canvas-container"
                         data-image-url="images/initiatePicture.png"
                         data-picture-id=""
+                        data-picture-queue=""
                         oncontextmenu="return false;">
     	                <!-- image canvas goes here -->
     	            </div>
@@ -227,9 +233,6 @@ if (isset($_GET["invite"])) {
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 
-<script src="canvas-image-marker/Helper.js"></script>
-<script src="canvas-image-marker/Annotation.js"></script>
-<script src="canvas-image-marker/canvas-image-marker.js"></script>
 <script>
     $(document).ready(function() {
         $('.canvas-container').canvasMarkingTool({

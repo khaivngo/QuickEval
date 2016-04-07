@@ -60,28 +60,36 @@ function viewExperiment($experimentId) {
 }
 
 function displayHeatmap() {
-
-    console.log( $('select').find(':selected').attr('data-experiment-id') );
-    console.log( $("select").find(':selected').attr('data-picture-queue') );
+    var experimentID = $('select').find(':selected').attr('data-experiment-id');
+    var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
+    var pictureURL = $("select").find(':selected').attr('data-image-url');
+    var pictureID = $("select").find(':selected').attr('data-image-id');
+    // console.log(pictureID);
 
     var output =
         '<div style="position: relative;">' +
-            '<div class="canvas-container"' +
-                // 'data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.jpeg"' +
-                'oncontextmenu="return false;"' +
-                // 'data-experiment-id="' + experimentId + '">' +
+            '<div class="canvas-container" id="heatmapCanvasContainer"' +
+                ' data-image-url="' + pictureURL + '"' +
+                ' oncontextmenu="return false;"' +
+                ' data-experiment-id="' + experimentID + '">' +
             '</div>' +
         '</div>';
 
-    // $('.heatmap-fullscreen').html("what");
-    // $('.heatmap-fullscreen').css({ 'display' : 'block' });
+    $('.canvas-container').remove();
     $('#heatmap-results').append(output);
-    // $('.canvas-container').canvasHeatmap();
 
-    // getArtifactMarksForExperimentPicture();
+    $('.canvas-container').canvasHeatmap({
+        experimentID: experimentID,
+        pictureID: pictureID,
+        pictureQueue: pictureQueue
+    });
+
+
 }
 
-
+/**
+ * Get all images for a experiment and create a drowdown list of them.
+ */
 function getImages(experimentId) {
     $.ajax({
         url: 'ajax/scientist/getAllExperimentPictures.php',
@@ -95,14 +103,14 @@ function getImages(experimentId) {
     })
     .done(function(data) {
         if (data.length > 0) {
-            console.log(data);
-
+            // id of person who owns/created experiment, needed in the URL to the image
             var owner = data[1][0].person;
             // loop through each experiment image
             var output = '<select style="width: 200px; padding: 10px;">';
                 data[0].forEach(function(image) {
                     output +=
-                        '<option data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
+                        '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
+                        ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
                 });
             output += "</select>";
 
@@ -121,25 +129,6 @@ function getImages(experimentId) {
 
 function getFileExtension(filename) {
     return filename.split('.').pop();
-}
-
-function getArtifactMarksForExperimentPicture(experimentId) {
-    $.ajax({
-        url: 'ajax/scientist/getExperimentArtifactMarks.php',
-        type: 'POST',
-        data: {
-            experiment_id: experimentId
-        },
-        dataType: 'json',
-        encode: true,
-        cache: false
-    })
-    .done(function(data) {
-        if (data.length > 0) {
-
-        }
-    })
-    .fail(function(response) {});
 }
 
 
