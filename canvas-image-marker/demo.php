@@ -22,10 +22,6 @@
 
 			<button id="saveShapeDB" style="position: fixed; top: 0; right: 0;">
 				<i class="fa fa-floppy-o"></i>
-				<!-- <span style = "font-size: 50%;">
-					Save to db, klikk på denne etter endt brukertest<br>
-					(OBS, klikk bare en gang for å unngå dupes( Refresh page etter brukertest(peneste knappen jeg har laget noen gang))).
-				</span> -->
 			</button>
 
 			<div id = "uploadBar"><div id = "bar"></div><div id = "barText"></div></div>
@@ -60,7 +56,7 @@
 		<script src="libs/jquery.panzoom/dist/jquery.panzoom.js"></script>
         <script src="Helper.js"></script>
         <script src="Annotation.js"></script>
-        <script src="canvas-image-marker.js"></script>
+        <script src="canvas-image-marker-testing.js"></script>
         <script>
             $(document).ready(function() {
                 $('.canvas-container').canvasMarkingTool({

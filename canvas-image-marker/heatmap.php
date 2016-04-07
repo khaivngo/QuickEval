@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Heatmap</title>
         <link rel="stylesheet" href="css/master.css" media="screen" title="core styles" charset="utf-8">
-        <link rel="stylesheet" href="css/heatmap.css" media="screen" title="core styles" charset="utf-8">
+        <link rel="stylesheet" href="css/heatmap.css">
         <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     </head>
 	
@@ -21,7 +21,7 @@
 			<ul id = "heatmapPanel">
 				<li id = "hueSection">
 					<h2>hue</h2>
-					<input type = "number" class = "sizeNumber" value = "0">
+					<input type = "number" name = "hueNumber" class = "sizeNumber" value = "0">
 					<div class = "rangeSlider">
 						<div class = "rangeSliderLowValue">0</div> 
 						<input id = "hueLevel" type="range" value = "0" min="0" max="360">
@@ -30,7 +30,7 @@
 				</li>
 				<li id = "satSection">
 					<h2>saturation</h2>
-					<input type = "number" class = "sizeNumber" value = "50">
+					<input type = "number" name = "satNumber" class = "sizeNumber" value = "50">
 					<div class = "rangeSlider">
 						<div class = "rangeSliderLowValue">0</div> 
 						<input id = "satLevel" type="range" value = "50" min="0" max="100">

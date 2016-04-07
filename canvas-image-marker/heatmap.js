@@ -72,13 +72,15 @@ $(document).ready(function()
 		calcPolygonPoints();
 	});
 	
+	/*------*/
+	
 	// Generate heatmap button.
 	$('#genHeatmap').on('click',function()
 	{
 		calcPolygonPoints();
 	});
 	
-	/*------*/
+	
 	
 	/**
 	 *  UI for heatmap generator.
@@ -87,10 +89,11 @@ $(document).ready(function()
 	 */
 	$('#heatmapPanel li input[type=range]').on('input',function(event)
 	{
-		var hue = $('#hueLevel').val();		// Get the current hue level.
-		var sat = $('#satLevel').val();		// Get the current saturation level.
+		var hue = $('#hueLevel').val();	
+		var sat = $('#satLevel').val();		
 		
-		$(this).parent().parent().find('.sizeNumber').val( $(this).val() ); // Change current label text value for this slider.
+		// Change the current label text value for this slider.
+		$(this).parent().parent().find('.sizeNumber').val( $(this).val() ); 
 		
 		setSliderColor(hue, sat);			
 		
@@ -98,11 +101,31 @@ $(document).ready(function()
 			calcPolygonPoints();
 	});
 	
+	/**
+	 *  UI for heatmap generator.
+	 *	When the user changes the input value for either hue or saturation.
+	 *  @return {void}.
+	 */
 	$('#heatmapPanel li input[type=number]').on('input',function(event)
 	{
 		var hue = $('#hueSection input[type=number]').val();
 		var sat = $('#satSection input[type=number]').val();
 		
+		var maxInputVal = 0;
+		
+		// Set values as minimum or maximum if exaggerated:  
+		if( $(this).attr('name') == 'satNumber' )
+			maxInputVal = parseInt( $('#satLevel').attr('max') );
+		else
+			maxInputVal = parseInt( $('#hueLevel').attr('max') );
+		
+		if( $(this).val() > maxInputVal )
+			$(this).val(maxInputVal);
+
+		if( $(this).val() < 0 )
+			$(this).val(0);
+		
+		// Set the value for the sliders
 		$('#hueLevel').val(hue);
 		$('#satLevel').val(sat);
 		
@@ -112,6 +135,11 @@ $(document).ready(function()
 			calcPolygonPoints();
 	});
 	
+	/**
+	 *  UI for heatmap generator.
+	 *	If the scale should be displayed as HSL colors.
+	 *  @return {void}.
+	 */
 	$('#hueScale[type=checkbox]').on('change',function(event)
 	{
 		var range = document.getElementById("hueLevel");
@@ -128,6 +156,11 @@ $(document).ready(function()
 		}
 	});
 	
+	/**
+	 *  UI for heatmap generator.
+	 *	If the user wants to activate the live generator for each change.
+	 *  @return {void}.
+	 */
 	$('#liveGen[type=checkbox]').on('change',function(event)
 	{
 		var genButton = document.getElementById("genHeatmap");
@@ -144,7 +177,11 @@ $(document).ready(function()
 		}
 	});
 	
-	
+	/**
+	 *  UI for heatmap generator.
+	 *	Download the current canvas as a PNG file.
+	 *  @return {void}.
+	 */
 	document.getElementById('downloadImage').addEventListener('click', function()
 	{
 		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
@@ -153,22 +190,34 @@ $(document).ready(function()
 });
 
 
-
+/**
+ *  Download canvas as an image.
+ *	@param  {DOM-element}  	The download link button element.
+ *	@param  {String}	   	The ID of the canvas to be downloaded.
+ *	@param  {String}	   	The filename for the downloaded image.
+ *	@return {Void}		  	
+ */
 function downloadCanvas(link, canvasId, filename)
 {
+	// Merge the image and the heatmap to one canvas:
 	var imageCanvasTemp = document.getElementById('heatmapCanvasImage');
 	var matrixCanvasTemp = document.getElementById('heatmapCanvasMatrix');
-	
 	mergedCtx.drawImage(imageCanvasTemp, 0, 0);
 	mergedCtx.drawImage(matrixCanvasTemp, 0, 0);
 	
 	link.href = document.getElementById(canvasId).toDataURL(); 
 	link.download = filename;
 	
-	// Reset mergedCtx for further manipulation
+	// Reset mergedCtx for further manipulation:
 	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
 }
 
+/**
+ *  Change the color of the slider thumb.
+ *	@param  {Int}	The hue level.
+ *	@param  {Int}	The saturation level.
+ *	@return {Void}		  	
+ */
 function setSliderColor(hue, sat)
 {
 	for(var i = 0; i < document.styleSheets[1].rules.length; i++) 
@@ -216,9 +265,9 @@ function createMatrix(data)
 	return matrix;
 }
 /**
- *  Generate color for the heatmap.
- *	@param  {Int}	  The current intersection value for the pixel.
- *	@param  {Int}	  The highest value of intersections.
+ *  Generate HSL color for the heatmap.
+ *	@param  {Float}	  The percentage value for generating the hue level.
+ *	@param  {Int}	  The saturation value.
  *	@return {String}  color in hsl format.
  */
 function hueScale(valPerc, sat)
@@ -227,7 +276,13 @@ function hueScale(valPerc, sat)
 	var color = 'hsl(' + hue + ',' + sat + '%,50%)';
 	return color;
 }
-
+/**
+ *  Generate grayscale color for the heatmap.
+ *	@param  {Float}	  The percentage value for generating the light level.
+ *	@param  {Int}	  The hue value.
+ *	@param  {Int}	  The saturation value.
+ *	@return {String}  color in grayscale format.
+ */
 function grayScale(valPerc, hue, sat)
 {
 	var light = valPerc * 100;
@@ -237,9 +292,13 @@ function grayScale(valPerc, hue, sat)
 
 /**
  *  Generate color for the heatmap.
- *	@param  {Int}	  The current intersection value for the pixel.
- *	@param  {Int}	  The highest value of intersections.
- *	@return {String}  color in hsl format.
+ *	@param  {Int}	   The current intersection value for the pixel.
+ *	@param  {Int}	   The highest value of intersections.
+ *	@param	{Int}	   The type of scale that should be displayed in heatmap legend. 
+ *	@param	{Int}	   The hue value.
+ *	@param	{Int}	   The saturation value.
+ *	@param	{Boolean}  Whether the scale should be reversed or not.
+ *	@return {String}   The color in hsl format.
  */
 function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 {
@@ -273,8 +332,6 @@ function renderHeatmapLegend(scaleType, maxVal, hue, sat, reverse)
 	
 	var x = 0;
 	var y = image.height + heatmapLegend.marginTop;
-	
-	
 	
 	switch (scaleType)
 	{
