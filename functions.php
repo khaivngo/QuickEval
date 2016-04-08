@@ -45,6 +45,7 @@ function checkLogin($db) {
  */
 function redirectAfterLogin($url) {
 	header('Location: login.php?redirect=' . $url);
+	exit;
 }
 
 /**

@@ -3,6 +3,7 @@
 <?php
     if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin('index.php');
+        exit;
     }
 ?>
 <html lang="en">

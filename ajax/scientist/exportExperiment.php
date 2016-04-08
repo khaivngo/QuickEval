@@ -5,14 +5,15 @@
 
 require_once('../../db.php');
 if (!isset($_SESSION['user'])) {
-               header("Location: ../../login.php"); 
-            }
+   header("Location: ../../login.php");
+   exit;
+}
 if($_SESSION['user']['userType'] > 2) {
 	return;
-}			
-            
+}
+
 	$option = $_GET['option'];
-	
+
 	if($option == "generateSQL") {
 		deleteOlderFiles();
 		$experimentId = $_GET['experimentId'];
@@ -26,10 +27,10 @@ if($_SESSION['user']['userType'] > 2) {
 		$result = $sth->fetch();
 		serializeData($result, "experiment.txt");
 		if($result['experimentType'] == 1)	 {			//Rating
-				
+
 		} else if ($result['experimentType'] == 3) {	//Category
 			$sql = "SELECT categoryname.id,categoryname.name,categoryname.personId,
-			        categoryname.standardFlag FROM categoryname 
+			        categoryname.standardFlag FROM categoryname
 					JOIN experimentcategory ON categoryname.id = experimentcategory.category
 					WHERE experimentcategory.experiment = ?;";
 			$sth = $db->prepare($sql);
@@ -51,7 +52,7 @@ if($_SESSION['user']['userType'] > 2) {
 		$sth->execute();
 		$result = $sth->fetchAll();
 		serializeData($result,"pictureQueue.txt");
-		
+
 		//PictureOrder
 		$sql = "SELECT pictureorder.id,pictureorder.pOrder, pictureorder.picture,pictureorder.picturequeue FROM pictureOrder
 				JOIN picturequeue ON picturequeue.id = pictureOrder.pictureQueue
@@ -65,11 +66,11 @@ if($_SESSION['user']['userType'] > 2) {
 		$result = $sth->fetchAll();
 		serializeData($result,"pictureorder.txt");
 		//////////////////////////////////////////////////////////////////////
-		// experimentOrder SORTER PÅ eORDER
+		// experimentOrder SORTER Pï¿½ eORDER
 		//////////////////////////////////////////////////////////////////////
 		$sqlExport['experimentorder'] = array();
-		$sql = 
-		"SELECT eOrder,pictureSet,experimentQueue,pictureQueue,instruction FROM experimentqueue 
+		$sql =
+		"SELECT eOrder,pictureSet,experimentQueue,pictureQueue,instruction FROM experimentqueue
 		INNER JOIN experimentorder ON experimentqueue.id=experimentorder.experimentqueue
 		WHERE experimentqueue.experiment = ?;";
 		$sth = $db->prepare($sql);
@@ -100,11 +101,11 @@ if($_SESSION['user']['userType'] > 2) {
 		$sth->bindParam(1,$experimentId);
 		$sth->execute();
 		$result = $sth->fetchAll();
-		serializeData($result, "infotype.txt");		
+		serializeData($result, "infotype.txt");
 		//////////////////////////////////////////////////////////////////////
 		// Pictures
 		//////////////////////////////////////////////////////////////////////
-		
+
 		$pictures = getAllPicturesInExperiment($experimentId, $db);
 		$picturesUrl = array();
 		$pictureSQL = array();
@@ -118,7 +119,7 @@ if($_SESSION['user']['userType'] > 2) {
 			$sth->execute();
 			$result = $sth->fetch();
 			$pictureSQL[] = $result;
-			
+
 			if(!in_array($result['pictureSet'], $pictureSetFound)) {
 				//Gets pictureSet for a picture, and stores it in array.
 				$pictureSetFound[] = $result['pictureSet'];
@@ -128,7 +129,7 @@ if($_SESSION['user']['userType'] > 2) {
 				$sth->execute();
 				$result = $sth->fetch();
 				$pictureSet[] = $result;
-				
+
 
 			}
 		}
@@ -138,7 +139,7 @@ if($_SESSION['user']['userType'] > 2) {
 
 		serializeData($pictureSQL, "picture.txt");
 		serializeDatA($pictureSet, "pictureset.txt");
-		
+
 		$filePath = "data/" . $_SESSION['user']['id'] . "/" . $experimentId . ".zip";
 		if(file_exists($filePath)) {
 			echo json_encode($filePath);
@@ -150,11 +151,11 @@ if($_SESSION['user']['userType'] > 2) {
  * Will write data to a given file and add it into the zipped folder.
  * @param $data is an array with JSON data.
  * @param $filename of the file we want to add to the zipfile.
- * 
+ *
  */
 function serializeData($data, $filename) {
 	$dir = "data/" . $_SESSION['user']['id'] . "";
-	
+
 	if(!is_dir("data")) {		//This should only run ONCE in case the /data/ folder doesnt exist.
 		mkdir("data", true);
 	}
@@ -163,7 +164,7 @@ function serializeData($data, $filename) {
 	}
 	$writeableData = json_encode($data);
 	//file_put_contents(($dir . "/" .$filename), $writeableData);
-	
+
 	$zip = new Ziparchive();
 	$fileName = "data/" . $_SESSION['user']['id'] ."/". $_GET['experimentId'] . ".zip";
 	$open = $zip->open($fileName, ZIPARCHIVE::CREATE);
@@ -171,7 +172,7 @@ function serializeData($data, $filename) {
 		die ("Troubles, please try again!");
 	}
 	$zip->addFromString($filename, $writeableData);
-	$zip->close(); 
+	$zip->close();
 }
 
 /**
@@ -183,8 +184,8 @@ function generateUrl($picture){
 	$index = strripos($picture[1],".");
 	$fileType = substr($picture[1],$index, strlen($picture[1]));
 	$url = array();
-	$url['uploadFolder'] = "uploads/" . $picture['person'] . "/" . $picture[4] . "/";		
-	$url['url'] = "../../" . $url['uploadFolder'] . $picture['url'] . $fileType; 	
+	$url['uploadFolder'] = "uploads/" . $picture['person'] . "/" . $picture[4] . "/";
+	$url['url'] = "../../" . $url['uploadFolder'] . $picture['url'] . $fileType;
 
 	$url['id'] = $picture[0];
 	$url['name'] = $picture[1];
@@ -229,8 +230,8 @@ function getPictureUrl($pictureId, $db) {
 		$sth->bindParam(1,$experimentId);
 		$sth->execute();
 		$result = $sth->fetchAll();
-		
-		
+
+
 		$pictureArray = array();
 		$foundPictureSets = array();
 		foreach($result as $pictureId) {
@@ -277,9 +278,9 @@ function getPictureUrl($pictureId, $db) {
 		   	if($age > $hours) {
 		   		unlink($info);
 		   	}
-		  } 
+		  }
 		}
-		
+
 		$directories = scandir("data/");
 		foreach($directories as $dir) {
 			if($dir != "." && $dir != "..") {

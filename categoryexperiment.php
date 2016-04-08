@@ -10,6 +10,7 @@ if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
+        exit;
     }
 }
 

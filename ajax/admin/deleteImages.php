@@ -6,8 +6,9 @@ require_once('../../db.php');
 require_once('../../functions.php');
 
 if (!isset($_SESSION['user'])) {
-               header("Location: ../../login.php"); 
-            }  
+               header("Location: ../../login.php");
+               exit;
+            }
 
 $option = $_GET['option'];	//imageset, images
 $access = $_SESSION['user']['userType'];
@@ -18,19 +19,19 @@ if(checkLogin($db) > 2) {
 }
 
 
-try {      
+try {
 	$arrayId = $_GET['imageArray'];
 	if($option =="images")
-	{   	
+	{
 		foreach($arrayId  as $imageId) {
 			deletePicture($imageId, $db, $access, $userId,0);
 		}
 		echo json_encode(1);
 	}
-	
+
 	else if($option =="imageset")
-	{		 
-		 foreach($arrayId as $imagesetId) 
+	{
+		 foreach($arrayId as $imagesetId)
 		 {
 		 	if(checkOwnerOfSet($imagesetId, $db, $userId) == 1 || $access == 1) 	//If admin or owner of set.
 		 	{
@@ -39,19 +40,19 @@ try {
 				 $sth->bindParam(1,$imagesetId);
 				 $sth->execute();
 				 $result = $sth->fetchAll();
-				 
+
 				 foreach($result as $image)
 				 {
 				 	deletePicture($image['id'], $db, $access,$userId,1);
 				 }
-				 
+
 				 $sql = "DELETE FROM pictureset
 				 		WHERE id = ?";
 				 $sth = $db->prepare($sql);
 				 $sth->bindParam(1,$imagesetId);
 				 $sth->execute();
 				 rmdir("../../uploads/" . $userId . "/" . $imagesetId);
-				 
+
 				 $sql = "SELECT * FROM pictureset WHERE person = ?;";
 				 $sth = $db->prepare($sql);
 				 $sth->bindParam(1, $userId);
@@ -59,17 +60,17 @@ try {
 				 if($sth->rowCount() == 0) {
 				 	rmdir("../../uploads/" . $userId);
 				 }
-				 
+
 				 echo json_encode(1);
 		 	}
 		 }
 	}
-	
-	
+
+
 
 } catch (Exception $ex) {
 	echo json_encode(0);
-	
+
 }
 /**
  * Will delete a given picture
@@ -79,7 +80,7 @@ try {
  * @param $userId = $userId for logged in user.
  * @param $deleteOriginal true/false if you want to delete the original photo.
  */
-function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {	
+function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {
 	try {
 			$filePath = getFilePath($imageId, $db, $userId);
 			$sql = "SELECT * FROM picture
@@ -88,25 +89,25 @@ function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {
 			$sth = $db->prepare($sql);
 			$sth->bindParam(1,$imageId);
 			$sth->execute();
-			$result = $sth->fetch();	
+			$result = $sth->fetch();
 			$imagesetId = $result['id'];
 
-			
+
 			/**
 			 * If user owns picture, OR is admin with accesslevel 1
 			 */
-			if(($result['person'] == $userId || $access == 1) && isset($result['pictureSet'])) 
-			{	
-				$sql2 = "SELECT * FROM pictureOrder 
+			if(($result['person'] == $userId || $access == 1) && isset($result['pictureSet']))
+			{
+				$sql2 = "SELECT * FROM pictureOrder
 						WHERE picture = ?";
 				$sth2 = $db->prepare($sql2);
 				$sth2->bindParam(1, $imageId);
 				$sth2->execute();
 				/**									 					**\
 				 * Deletes picture if it doesnt exist in a pictureOrder *
-				 */									  
-				if(!$sth2->fetch()) 
-				{	
+				 */
+				if(!$sth2->fetch())
+				{
 					//Picture is not in a set, will then be deleted!
 					$sql3 = "";
 					if($deleteOriginal == 0)	{ 				//Happens when deleting single images
@@ -120,13 +121,13 @@ function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {
 					$sth3 = $db->prepare($sql3);
 					$sth3->bindParam(1,$imageId);
 					$sth3->execute();
-					
+
 					//Checks if the picture got deleted
 					$sql4 = "SELECT * FROM picture WHERE id = ?";
 					$sth4 = $db->prepare($sql);
 					$sth4->bindParam(1,$imageId);
 					$sth4->execute();
-					
+
 					if($sth4->rowCount() == 0) {	//Picture got deleted!
 						$sql5 = "UPDATE pictureset
 								SET pictureAmount=(pictureAmount-1)
@@ -135,10 +136,10 @@ function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {
 						$sth5->bindParam(1,$imagesetId);
 						$sth5->execute();
 						unlink($filePath);
-					} 
-					
+					}
+
 				}
-				
+
 			}
 	} catch (Exception $ex) {
 		json_encode(0);
@@ -157,11 +158,11 @@ function getFilePath($imageId, $db, $userId) {
 	$sth->bindParam(1,$imageId);
 	$sth->execute();
 	$result = $sth->fetch();
-	
+
 	$url = $result['url'];
 	$index = strripos($result['name'],".");
 	$fileType = substr($result['name'],$index, strlen($result['name']));
-	
+
 	return("../../uploads/" . $userId . "/" . $result['pictureSet'] . "/" . $result['url'] . $fileType);
 }
 /**
@@ -177,7 +178,7 @@ function checkOwnerOfSet($imagesetId, $db, $userId) {
 	$sth->bindParam(1, $imagesetId);
 	$sth->execute();
 	$result = $sth->fetch();
-	
+
 	if($result['person'] == $userId) {
 		return 1;
 	} else {
@@ -198,9 +199,8 @@ function checkOwnerOfPicture($imageId, $db, $userId) {
 	$sth->bindParam(1, $imageId);
 	$sth->execute();
 	$result = $sth->fetch();
-	
+
 	return checkOwnerOfSet($result['pictureSet'], $db,$userId);
 }
 
 ?>
-

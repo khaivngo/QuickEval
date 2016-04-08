@@ -7,8 +7,9 @@ require_once('../../db.php');
 require_once('../../functions.php');
 
 if (!isset($_SESSION['user'])) {
-	header("Location: ../../login.php"); 
-}	
+	header("Location: ../../login.php");
+	exit;
+}
 
 try {
 

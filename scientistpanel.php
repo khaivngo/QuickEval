@@ -6,6 +6,7 @@ require_once 'functions.php';   //also starts session
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['userType'] > 2) {
         header('Location: index.php');
+        exit;
     }
 } else {
     redirectAfterLogin('scientistpanel.php');

@@ -64,7 +64,6 @@ function displayHeatmap() {
     var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
     var pictureURL = $("select").find(':selected').attr('data-image-url');
     var pictureID = $("select").find(':selected').attr('data-image-id');
-    // console.log(pictureID);
 
     var output =
         '<div style="position: relative;">' +
@@ -78,12 +77,13 @@ function displayHeatmap() {
     $('.canvas-container').remove();
     $('#heatmap-results').append(output);
 
+    /* run our plugin on the newly created canvas-container element
+     * pass the ID and queue of the picture */
     $('.canvas-container').canvasHeatmap({
         experimentID: experimentID,
         pictureID: pictureID,
         pictureQueue: pictureQueue
     });
-
 
 }
 
@@ -103,9 +103,9 @@ function getImages(experimentId) {
     })
     .done(function(data) {
         if (data.length > 0) {
-            // id of person who owns/created experiment, needed in the URL to the image
+            // id of person who owns/created experiment, needed in the path to the image
             var owner = data[1][0].person;
-            // loop through each experiment image
+            // loop through each experiment image and create a dropdown list with the image names
             var output = '<select style="width: 200px; padding: 10px;">';
                 data[0].forEach(function(image) {
                     output +=

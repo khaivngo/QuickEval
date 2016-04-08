@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<?php 
-    session_start();  
+<?php
+    session_start();
     if(isset($_SESSION['user']['id'])) {
         if($_SESSION['user']['userType'] > 1) {
             header('Location: index.php');
+            exit;
         }
     } else {
         header('Location: index.php');
+        exit;
     }
 ?>
 
@@ -31,13 +33,13 @@
         <script src="min/metro.min.js"></script>
 
         <!-- Other JS -->
-        <script src="js/admin/adminScripts.js"></script>      
+        <script src="js/admin/adminScripts.js"></script>
         <script src="js/admin/adminPanelScripts.js"></script>
-        <script src="js/scripts.js"></script>		
+        <script src="js/scripts.js"></script>
 
-		
-		
-		
+
+
+
     </head>
     <body class="metro">
         <div id="wrapper">
@@ -56,7 +58,7 @@
                             <li class="title">Users</li>
                             <li id="delete-anonymous" ><a href="#"><i class="icon-cycle"></i>Clean Up Anonymous Users</a></li>
                             <li id="change-access" ><a href="#"><i class="icon-user-3"></i>Change User Access</a></li>
-                            
+
                             <li class="title">Experiments</li>
                             <li id="delete-experiments" ><a href="#"><i class="icon-remove"></i>Delete Experiments</a></li>
                             <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Manage Instructions</a></li>
