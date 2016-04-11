@@ -19,7 +19,7 @@ body {
  textarea:placeholder-shown { font-style: italic; font-size: 14px; }
 
 #main-content-wrapper {
-    width: 500px;
+    width: 600px;
     margin: 0 auto;
 }
 
@@ -29,7 +29,6 @@ body {
     /* make sure our absolute positioned annotations
      * are placed relative to the canvas */
     position: relative;
-    left: -50%;
 }
 
 .marking-tool-panel {
@@ -242,9 +241,9 @@ body {
 		background: #333;
 		padding: 10px;
 		width: 20%;
-		
+
 		z-index: 100;
-		
+
 	}
 
 		#uploadBar #bar

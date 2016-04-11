@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <?php
-require_once 'functions.php';   //also starts session
+    # also starts session
+    require_once 'functions.php';
 
-//Checks if user is logged in, and the user is scientist or higher level
-if (isset($_SESSION['user'])) {
-    if ($_SESSION['user']['userType'] > 2) {
-        header('Location: index.php');
-        exit;
+    # checks if user is logged in, and the user is scientist or higher level
+    if (isset($_SESSION['user'])) {
+        if ($_SESSION['user']['userType'] > 2) {
+            header('Location: index.php');
+            exit;
+        }
+    } else {
+        redirectAfterLogin('scientistpanel.php');
     }
-} else {
-    redirectAfterLogin('scientistpanel.php');
-}
-
 ?>
 <html lang="en">
     <head>
@@ -24,7 +24,7 @@ if (isset($_SESSION['user'])) {
         <link href="css/metro-bootstrap.css" rel="stylesheet">
         <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
         <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="css/highslide.css" />
+        <link href="css/highslide.css" rel="stylesheet">
         <link href="css/style.css" rel="stylesheet">
 
         <!-- JQuery -->
@@ -60,6 +60,9 @@ if (isset($_SESSION['user'])) {
         <script src="js/scientist/experimentResults.js"></script>
         <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
+
+        <link rel="stylesheet" href="canvas-image-marker\libs\font-awesome\css\font-awesome.min.css">
+
 
 		<script src="js/scientist/math.js" ></script>
 
@@ -126,19 +129,22 @@ if (isset($_SESSION['user'])) {
                             <li class="title">Other</li>
                             <li id="invite-scientist" ><a href="#"><i class="icon-user"></i>Invite Scientist</a></li>
                             <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Delete Instructions</a></li>
-
                         </ul>
                     </nav>
                 </div>
-                <div id="right-panel" class="span7" style="float: left; margin:20px">
+
+                <div id="right-panel" class="span7" style="float: left; margin:20px;">
+                    <!-- loads content into this div based on menu choice -->
                 </div>
+
                 <div id="right-menu" class="bg-steel" style="float: left;">
-
-
+                    <!-- dunno what this is -->
                 </div>
+
                 <div id='below-right-menu' style='float:left'>
-
+                    <!-- dunno what this is -->
                 </div>
+
             </div>
             <?php include_once("includes/footer.html"); ?>
         </div>

@@ -17,144 +17,150 @@
     </div>
 
     <div id="selected-experiment" style="margin:20px 0">
-        <fieldset>
+        <fieldset style="padding-bottom: 30px;">
             <h2 id="experiment-name">Experiment Name</h2>
             <p id="experiment-type"></p>
             <p id="experiment-description"></p>
-            <p id="experiment-url" style="position: absolute"></p>
+            <p id="experiment-url"></p>
 
-            <button id="export-experiment" class="primary" style="margin-top: 30px; width:140px">Export Experiment</button> <br/>
-            <button id="export-heatmap" class="primary" style="margin-top: 30px; width: 140px;">Export Heatmap</button><br/>
+            <div class="primary-buttons">
+                <button id="export-experiment" class="primary" style="padding: 10px 15px;"><i class="fa fa-download"></i> Export Experiment</button>
 
-            <div id='export-parameters'>
-                <fieldset>
-                    <div id="parameter-complete" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Only exports results from observers who completed the full experiment" data-hint-position="right">Complete Results</span>
-                        </label>
-                    </div> <br/>
-                    <legend id="paramters-title">Parameters</legend>
-                    <div id="parameter-metadata" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Experiment information like name, description, timestamp, scientist" data-hint-position="right">Metadata</span>
-                        </label>
-                    </div> <br/>
-                    <div id="parameter-parameters" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Displays parameters like display original, display timer etc" data-hint-position="right">Parameters</span>
-                        </label>
-                    </div> <br/>
-                    <div id="parameter-instructions" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Displays instructions used in experiment." data-hint-position="right">Instructions</span>
-                        </label>
-                    </div> <br/>
-                    <div id="parameter-image-sets" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Displays imagesets with their names and images" data-hint-position="right">Image Sets</span>
-                        </label>
-                    </div> <br/>
-                    <div id="parameter-observer-data" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Displays all observers used in experiment and their userdata" data-hint-position="right">Observer Data</span>
-                        </label>
-                    </div> <br/>
-                    <div id="parameter-input-field-data" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Displays all inputfields used in experiment and results from observers like first name, age" data-hint-position="right">Input Field Data</span>
-                        </label>
-                    </div> <br/>
-                    <div id="parameter-results" class="input-control checkbox hei" data-role="input-control">
-                        <label>
-                            <input type="checkbox" checked/>
-                            <span class="check"></span>
-                            <span class="hint-trigger" data-hint="Displays results for experiment." data-hint-position="right">Results</span>
-                        </label>
-                    </div> <br/>
-                </fieldset>
+                <div id='export-parameters'>
+                    <fieldset>
+                        <div id="parameter-complete" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Only exports results from observers who completed the full experiment" data-hint-position="right">Complete Results</span>
+                            </label>
+                        </div> <br/>
+                        <legend id="paramters-title">Parameters</legend>
+                        <div id="parameter-metadata" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Experiment information like name, description, timestamp, scientist" data-hint-position="right">Metadata</span>
+                            </label>
+                        </div> <br/>
+                        <div id="parameter-parameters" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Displays parameters like display original, display timer etc" data-hint-position="right">Parameters</span>
+                            </label>
+                        </div> <br/>
+                        <div id="parameter-instructions" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Displays instructions used in experiment." data-hint-position="right">Instructions</span>
+                            </label>
+                        </div> <br/>
+                        <div id="parameter-image-sets" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Displays imagesets with their names and images" data-hint-position="right">Image Sets</span>
+                            </label>
+                        </div> <br/>
+                        <div id="parameter-observer-data" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Displays all observers used in experiment and their userdata" data-hint-position="right">Observer Data</span>
+                            </label>
+                        </div> <br/>
+                        <div id="parameter-input-field-data" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Displays all inputfields used in experiment and results from observers like first name, age" data-hint-position="right">Input Field Data</span>
+                            </label>
+                        </div> <br/>
+                        <div id="parameter-results" class="input-control checkbox hei" data-role="input-control">
+                            <label>
+                                <input type="checkbox" checked/>
+                                <span class="check"></span>
+                                <span class="hint-trigger" data-hint="Displays results for experiment." data-hint-position="right">Results</span>
+                            </label>
+                        </div> <br/>
+                    </fieldset>
+                </div>
+                <button id="export-results" class="primary" style="padding: 10px 15px;"><i class="fa fa-download"></i> Export Results</button>
+
+                <button id="set-hidden" class="primary" style="padding: 10px 15px;"><i class="fa fa-eye-slash"></i> Set Hidden</button>
+                <button id="set-public" class="primary" style="padding: 10px 15px;">Set Public</button>
             </div>
-            <button id="export-results" class="primary" style="margin: 10px 0; width:140px">Export Results</button><br/>
 
-            <button id="set-hidden" class="primary" style="margin: 10px 0; width:140px">Set Hidden</button>
-            <button id="set-public" class="primary" style="margin: 10px 0; width:140px">Set Public</button><br/>
-
-            <button id="clear-results" class="primary danger" title="Removes all results connected to the experiment" style="margin: 10px 0; width:140px">Clear experiment results</button><br/>
-            <button id="delete-experiment" class="danger" style="width:140px">Delete Experiment</button>
+            <div class="danger-buttons" style="margin-top: 10px;">
+                <button id="clear-results" class="danger" style="padding: 10px 15px;" title="Removes all results connected to the experiment">Clear experiment results</button>
+                <button id="delete-experiment" class="danger" style="padding: 10px 15px;"><i class="fa fa-trash-o"></i> Delete Experiment</button>
+            </div>
         </fieldset>
 
 
     	<p>Experiment statistics</p>
     	<div id="selected-experiment" class = "primary">
-        <table class="table bordered" id="table3">
-            <tbody id="statistics">
-            </tbody>
-        </table>
+            <table class="table bordered" id="table3">
+                <tbody id="statistics">
+                </tbody>
+            </table>
     	</div>
 
-
+        <script src="js/plugins/jquery.panzoom.min.js"></script>
         <script src="canvas-image-marker/Helper.js"></script>
         <script src="canvas-image-marker/Annotation.js"></script>
         <script src="canvas-image-marker/canvas-heatmap.js"></script>
 
-        <div id="heatmap-results" style="position: relative;">
+        <div id="heatmap-results" >
             <h3>Heatmap</h3>
-            <!-- images from the selected experiment gets appended here -->
-        </div>
 
-        <div id="heatmap-panel-container">
-			<ul id="heatmapPanel">
-				<li id="hueSection">
-					<h2>hue</h2>
-					<input type = "number" class = "sizeNumber" value = "0">
-					<div class = "rangeSlider">
-						<div class = "rangeSliderLowValue">0</div>
-						<input id = "hueLevel" type="range" value = "0" min="0" max="360">
-						<div class = "rangeSliderMaxValue">360</div>
-					</div>
-				</li>
-				<li id = "satSection">
-					<h2>saturation</h2>
-					<input type="number" class="sizeNumber" value="50">
-					<div class = "rangeSlider">
-						<div class = "rangeSliderLowValue">0</div>
-						<input id = "satLevel" type="range" value = "50" min="0" max="100">
-						<div class = "rangeSliderMaxValue">100</div>
-					</div>
-				</li>
-				<li>
-					<input type = "checkbox" id = "hueScale">
-					<label for = "hueScale">Hue scale (Multiple colors)</label>
-				</li>
-				<li>
-					<input type = "checkbox" id = "reverseScale">
-					<label for = "reverseScale">Reverse scale</label>
-				</li>
-				<li>
-					<input type = "checkbox" id = "liveGen">
-					<label for = "liveGen">Enable live generating (only for hardcore computers)</label>
-				</li>
-				<li>
-					<button type = "button" id = "genHeatmap">Generate heatmap</button>
-					<a id = "downloadImage"><button type = "button" >Download image</button></a>
-				</li>
-			</ul>
-		</div>
+            <div style="overflow: hidden; position: relative; height: 100%; width: 100%;">
+                <div id="pan" class="panzoom" style="max-width: 800px; max-height: 600px;">
+                    <!-- selected image gets appended here -->
+                </div>
+            </div>
 
-
+            <div id="heatmap-panel-container">
+    			<ul id="heatmapPanel">
+    				<li id="hueSection">
+    					<h2>hue</h2>
+    					<input type="number" class="sizeNumber" value="0">
+    					<div class="rangeSlider">
+    						<div class="rangeSliderLowValue">0</div>
+    						<input id="hueLevel" type="range" value="0" min="0" max="360">
+    						<div class="rangeSliderMaxValue">360</div>
+    					</div>
+    				</li>
+    				<li id="satSection">
+    					<h2>saturation</h2>
+    					<input type="number" class="sizeNumber" value="50">
+    					<div class="rangeSlider">
+    						<div class="rangeSliderLowValue">0</div>
+    						<input id="satLevel" type="range" value="50" min="0" max="100">
+    						<div class="rangeSliderMaxValue">100</div>
+    					</div>
+    				</li>
+    				<li>
+    					<input type="checkbox" id="hueScale">
+    					<label for="hueScale">Hue scale (Multiple colors)</label>
+    				</li>
+    				<li>
+    					<input type="checkbox" id="reverseScale">
+    					<label for="reverseScale">Reverse scale</label>
+    				</li>
+    				<li>
+    					<input type="checkbox" id="liveGen">
+    					<label for="liveGen">Enable live generating (only for hardcore computers)</label>
+    				</li>
+    				<li>
+    					<button type="button" id="genHeatmap">Generate heatmap</button>
+    					<a id="downloadImage"><button type="button">Download image</button></a>
+    				</li>
+    			</ul>
+    		</div>
+        </div> <!-- /#heatmap-results -->
 
 
         <div id="experiment-results">

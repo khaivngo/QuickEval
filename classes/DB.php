@@ -42,8 +42,8 @@ class DB
 	 * It binds the paramters we give it, if any, and runs the query and fetch the results
 	 * as an array of objects into this class's results property.
 	 *
-	 * @param: $sql, database query.
-	 * @param: $params, optional values to bind.
+	 * @param $sql, database query.
+	 * @param $params, optional values to bind.
 	 */
 	public function run_query($sql, $params = [])
 	{

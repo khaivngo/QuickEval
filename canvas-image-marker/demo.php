@@ -14,7 +14,7 @@
 
         <div id="main-content-wrapper" class="container">
 
-			<div class="panable" style="width: 400px; height: 600px;">
+			<div class="panable">
 	            <div class="canvas-container" data-image-url="img/final13.bmp" oncontextmenu="return false;">
 	                <!-- image canvas goes here -->
 	            </div>
