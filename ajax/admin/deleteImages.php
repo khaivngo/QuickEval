@@ -6,9 +6,9 @@ require_once('../../db.php');
 require_once('../../functions.php');
 
 if (!isset($_SESSION['user'])) {
-               header("Location: ../../login.php");
-               exit;
-            }
+   header("Location: ../../login.php");
+   exit;
+}
 
 $option = $_GET['option'];	//imageset, images
 $access = $_SESSION['user']['userType'];
@@ -140,11 +140,21 @@ function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {
 
 				}
 
+                require_once "../../classes/DB.php";
+
+                # delete any artifact marks associated with a image
+                DB::run_query(
+                    "DELETE FROM artifactmark WHERE picture_id = ?", [
+                        $imageId
+                    ]
+                );
+
 			}
 	} catch (Exception $ex) {
 		json_encode(0);
   }
 }
+
 /**
  * Gets file path for a given image.
  * @param $imageId = ID for the picture you want filePath for.
@@ -165,6 +175,7 @@ function getFilePath($imageId, $db, $userId) {
 
 	return("../../uploads/" . $userId . "/" . $result['pictureSet'] . "/" . $result['url'] . $fileType);
 }
+
 /**
  * Checks if the logged in user owns a given pictureSet
  * @param $imagesetId = ID for the pictureSetId you want to check owner of.
