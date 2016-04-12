@@ -85,7 +85,7 @@ function displayHeatmap() {
         pictureID: pictureID,
         pictureQueue: pictureQueue
     });
-
+    // exportHeatmap(settings.experimentID, settings.pictureQueue, settings.pictureID);
 }
 
 /**
@@ -113,12 +113,12 @@ function getImages(experimentId) {
                     data[0].forEach(function(image) {
                         output +=
                             '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
-                            ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
+                            ' data-image-name=' + image.name + ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
                     });
                 output += "</select>";
 
                 output += '<button style="padding: 10px 15px;" class="primary heatmap-button open-heatmap">Show heatmap</button>';
-                output += '<button style="padding: 10px 15px;" class="primary heatmap-button">Export heatmap</button>';
+                output += '<button style="padding: 10px 15px;" id="export-heatmap" class="primary heatmap-button">Export heatmap</button>';
                 // output += '<button class="primary heatmap-button">Download image</button>';
                 output += '<button class="heatmap-settings-button"><i class="fa fa-cog"></i></button>';
             output += '</div>';
@@ -250,10 +250,28 @@ function setUpListeners() {
         generateSQLForExperiment(experimentId);
     });
 
+    var experimentId = $('#experiment-name').attr('experimentid');
+
+
     $(document.body).off('click', '#export-heatmap');
     $(document.body).on('click', '#export-heatmap', function () {
-        var experimentId = $('#experiment-name').attr('experimentid');
-        generateSQLForHeatmap(experimentId);
+        var experimentID = $('select').find(':selected').attr('data-experiment-id');
+        var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
+         var pictureName = $("select").find(':selected').attr('data-image-name');
+           var pictureID = $("select").find(':selected').attr('data-image-id');
+    //     var pictureWidth = $("select").find(':selected').attr('data-image-id');
+    //    var pictureHeight = $("select").find(':selected').attr('data-image-id');
+
+        // check that an image has been selected
+        if (pictureQueue != 'undefined') {
+            window.open(
+                'exportHeatmap.php?id=' + experimentID +
+                '&pictureQueue=' + pictureQueue +
+                '&pictureID=' + pictureID +
+                '&pictureName=' + pictureName,
+                '_blank'
+            );
+        }
     });
 
     $(document.body).off('click', '#confirm-delete');

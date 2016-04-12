@@ -50,7 +50,7 @@
 
             $(canvasContainer).append(imageCanvas); // append the resized canvas to the DOM
             $(canvasContainer).append(matrixCanvas); // append the resized canvas to the DOM
-            $(canvasContainer).after(mergedCanvas); // append the resized canvas to the DOM
+            $(canvasContainer).append(mergedCanvas); // append the resized canvas to the DOM
 
             getArtifactMarks(settings.experimentID, settings.pictureQueue, settings.pictureID);
         });
@@ -63,7 +63,7 @@
 
             var resize = function() {
                 // make all elements the same size as the image
-                $('.canvas-container').css({
+                $(canvasContainer).css({
                     height: image.height + heatmapLegend.height,
                     width: image.width,
                     background: "#ccc"
@@ -127,17 +127,15 @@
              });
          }
 
-        //  setImage();
-         //
-        //  function setImage()
-        //  {
+        // setImage();
+
+        // function setImage() {
         //     base_image = new Image();
         //     base_image.src = 'uploads/378/340/o_1aeln85vvcubl8810mo77f1ko21e.jpeg';
-        //     base_image.onload = function()
-        //     {
-        //     	imageCtx.drawImage(base_image, 0, 0);
+        //     base_image.onload = function() {
+        //         imageCtx.drawImage(base_image, 0, 0);
         //     }
-        //  }
+        // }
 
 
         /*---------------------------------------
@@ -285,6 +283,7 @@
 
          	return matrix;
          }
+         
          /**
           * Generate color for the heatmap.
           *	@param  {Int}	  The current intersection value for the pixel.
