@@ -14,7 +14,7 @@
             imageUrl: $(this).attr('data-image-url')
         }, options);
 
-        var HUE_LOW = 200;		// For heatmap lowest value in HSL scale.
+        var HUE_LOW = 240;		// For heatmap lowest value in Jet scale.
 
         var image = new Object();
         image.width = 800;
@@ -189,7 +189,7 @@
          			calcPolygonPoints();
          	});
 
-         	$('#hueScale[type=checkbox]').on('change',function(event)
+         	$('#jetScale[type=checkbox]').on('change',function(event)
          	{
          		var range = document.getElementById("hueLevel");
 
@@ -299,7 +299,7 @@
           *	@param  {Int}	  The highest value of intersections.
           *	@return {String}  color in hsl format.
           */
-         function hueScale(valPerc, sat)
+         function jetScale(valPerc, sat)
          {
          	var hue = HUE_LOW - (HUE_LOW * valPerc);
          	var color = 'hsl(' + hue + ',' + sat + '%,50%)';
@@ -321,7 +321,7 @@
           */
          function heatmapColor(cur, max, scaleType, hue, sat, reverse)
          {
-         	var valPerc = ( (cur-1) / (max-1) );
+         	var valPerc = (cur-1) / (max-1);
 
          	if(reverse)
          		valPerc = 1 - valPerc;
@@ -329,12 +329,12 @@
          	switch(scaleType)
          	{
          		case 0: return grayScale(valPerc, hue, sat);
-         		case 1: return hueScale(valPerc, sat);
+         		case 1: return jetScale(valPerc, sat);
          	}
          }
          /**
           * Render the legend scale for the heatmap.
-          *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl.
+          *	@param  {Int}	  The scale type, 0: monochromatic, 1: jet.
           *	@param  {Int}	  The hue value.
           *	@param  {Int}	  The saturation value.
           * @return {Void}
@@ -451,7 +451,7 @@
           *	@param  {array}	  The matrix data to draw.
           *	@param  {Int}	  The hue value for the heatmap.
           *	@param  {Int}	  The saturation value for the heatmap.
-          *	@param  {Int}	  The scale type, 0: grayscale, 1: hsl.
+          *	@param  {Int}	  The scale type, 0: grayscale, 1: jet.
           *	@return {Void}.
           */
          function drawMatrixCanvas(data, hue, sat, scaleType, reverse)
@@ -527,7 +527,7 @@
          		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
          		//console.log('After removing dupes: ' + allMarkedPoints.length);
 
-         		if( $('#hueScale[type=checkbox]').is(':checked') )
+         		if( $('#jetScale[type=checkbox]').is(':checked') )
          			scale = 1;
 
          		if( $('#reverseScale[type=checkbox]').is(':checked') )
