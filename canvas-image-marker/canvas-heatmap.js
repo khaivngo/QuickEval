@@ -64,9 +64,9 @@
             var resize = function() {
                 // make all elements the same size as the image
                 $('.canvas-container').css({
-                    height: image.height,
+                    height: image.height + heatmapLegend.height,
                     width: image.width,
-                    background: "red"
+                    background: "#ccc"
                 });
 
                 imageCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasImage');
@@ -95,11 +95,9 @@
             });
         }
 
-
-        /*--------------------------------------------------------*
-         *				Fill Algorithm for Polygon                *
-         *--------------------------------------------------------*/
-
+         /**
+          * Get all artifact marks for a specific image.
+          */
          function getArtifactMarks(experimentID, pictureQueue, pictureID) {
              $.ajax({
                  url: 'ajax/scientist/getExperimentArtifactMarks.php',
@@ -126,8 +124,7 @@
 
                     calcPolygonPoints();
                 }
-             })
-             .fail(function(response) {});
+             });
          }
 
         //  setImage();
@@ -143,19 +140,14 @@
         //  }
 
 
+        /*---------------------------------------
+         		Fill Algorithm for Polygon
+         ---------------------------------------*/
+
          $(document).ready(function()
          {
-         	$('#heatmapCanvasContainer').append(imageCanvas);
-         	$('#heatmapCanvasContainer').append(matrixCanvas);
-         	$('#heatmapCanvasContainer').append(mergedCanvas);
-
          	// Generate heatmap button.
-         	$('#genHeatmap').on('click',function()
-         	{
-         		calcPolygonPoints();
-         	});
-
-         	/*------*/
+         	$('#genHeatmap').on('click', calcPolygonPoints);
 
          	/**
          	 *  UI for heatmap generator.

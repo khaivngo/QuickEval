@@ -60,30 +60,31 @@ function viewExperiment($experimentId) {
 }
 
 function displayHeatmap() {
+    /* remove any previously added images, if this is the second time we call this function */
+    $('.canvas-container').remove();
+
     var experimentID = $('select').find(':selected').attr('data-experiment-id');
     var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
-    var pictureURL = $("select").find(':selected').attr('data-image-url');
-    var pictureID = $("select").find(':selected').attr('data-image-id');
-    // console.log(pictureID);
+      var pictureURL = $("select").find(':selected').attr('data-image-url');
+       var pictureID = $("select").find(':selected').attr('data-image-id');
 
     var output =
-        '<div style="position: relative;">' +
-            '<div class="canvas-container" id="heatmapCanvasContainer"' +
-                ' data-image-url="' + pictureURL + '"' +
-                ' oncontextmenu="return false;"' +
-                ' data-experiment-id="' + experimentID + '">' +
-            '</div>' +
+        '<div class="canvas-container" style="position: relative;"' +
+            ' data-image-url="' + pictureURL + '"' +
+            ' oncontextmenu="return false;"' +
+            ' data-experiment-id="' + experimentID + '">' +
         '</div>';
 
-    $('.canvas-container').remove();
-    $('#heatmap-results').append(output);
+    $('#pan').append(output);
+    $('#pan').panzoom();
 
+    /* run our plugin on the newly created canvas-container element
+     * pass the ID and queue of the picture */
     $('.canvas-container').canvasHeatmap({
         experimentID: experimentID,
         pictureID: pictureID,
         pictureQueue: pictureQueue
     });
-
 
 }
 
@@ -103,28 +104,35 @@ function getImages(experimentId) {
     })
     .done(function(data) {
         if (data.length > 0) {
-            // id of person who owns/created experiment, needed in the URL to the image
+            // id of person who owns/created experiment, needed in the path to the image
             var owner = data[1][0].person;
-            // loop through each experiment image
-            var output = '<select style="width: 200px; padding: 10px;">';
-                data[0].forEach(function(image) {
-                    output +=
-                        '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
-                        ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
-                });
-            output += "</select>";
+            // loop through each experiment image and create a dropdown list with the image names
+            var output = '<div id="heatmap-options">';
+                output += '<select style="width: 200px; padding: 10px;">';
+                output += '<option>Choose image</option>';
+                    data[0].forEach(function(image) {
+                        output +=
+                            '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
+                            ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
+                    });
+                output += "</select>";
 
-            output += '<button class="primary heatmap-button open-heatmap">Show heatmap</button>';
-            output += '<button class="primary heatmap-button">Export heatmap</button>';
-            output += '<button class="primary heatmap-button">Download image</button>';
+                output += '<button style="padding: 10px 15px;" class="primary heatmap-button open-heatmap">Show heatmap</button>';
+                output += '<button style="padding: 10px 15px;" class="primary heatmap-button">Export heatmap</button>';
+                // output += '<button class="primary heatmap-button">Download image</button>';
+                output += '<button class="heatmap-settings-button"><i class="fa fa-cog"></i></button>';
+            output += '</div>';
 
-            $('#heatmap-results').append(output);
+            $('#heatmap-results h3').after(output);
 
             // display heatmap of clicked picture
             $('.open-heatmap').on('click', displayHeatmap);
+            // bind a open/close event on heatmap settings button click
+            $('.heatmap-settings-button').on('click', function() {
+                $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+            });
         }
-    })
-    .fail(function(response) {});
+    });
 }
 
 function getFileExtension(filename) {

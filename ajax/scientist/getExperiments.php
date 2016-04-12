@@ -5,8 +5,9 @@
 
 require_once('../../db.php');
 if (!isset($_SESSION['user'])) {
-	header("Location: ../../login.php"); 
-}	
+	header("Location: ../../login.php");
+	exit;
+}
 
 try {
 	$sql = "SELECT id, title, isPublic FROM experiment WHERE person = ?";

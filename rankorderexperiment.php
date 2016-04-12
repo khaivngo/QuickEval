@@ -61,10 +61,7 @@ if (isset($_GET["invite"])) {
 
     <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
-
 </head>
-
-<!------------------------------------------------>
 
 <!-- Starts timer -->
 <body class="metro" style="background-color:#808080; overflow:hidden;" onload="show(); start();">

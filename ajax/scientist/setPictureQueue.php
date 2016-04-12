@@ -1,16 +1,20 @@
 <?php
 /**
  * This file will handle all the different pictureOrders for all experiments.
- * 
+ *
  */
 require_once('../../db.php');
+
 include_once('../../functions.php');
 if (!isset($_SESSION['user'])) {
-	header("Location: ../../login.php"); 
+	header("Location: ../../login.php");
+	exit;
 }
+
 if($_SESSION['user']['userType'] > 2) {
 	return;
 }
+
 /**
  * A function that will create a pictureQueue.
  * @param $images an awway with imageId's of which to create a queue from.
@@ -18,7 +22,7 @@ if($_SESSION['user']['userType'] > 2) {
  * @return $pairs, an array with the new queue.
  */
 function makeQueue($images, $imagesShownRightAndLeft) {
-	$pairs = array();	
+	$pairs = array();
 	$index = 1;
 	$arrIndex = 0;
 	foreach($images as $image) {
@@ -34,7 +38,7 @@ function makeQueue($images, $imagesShownRightAndLeft) {
 		}
 		$index++;
 	}
-	shuffle($pairs);	
+	shuffle($pairs);
 	return $pairs;
 }
 
@@ -43,20 +47,20 @@ $option = $_GET['option'];
 if($option == "generateRandom") {
 $rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
 	$imagesetId = $_GET['imagesetId'];
-	
+
 	$sql = "SELECT * FROM picture WHERE pictureSet = ? AND isOriginal = 0";
 	$sth = $db->prepare($sql);
 	$sth->bindParam(1, $imagesetId);
 	$sth->execute();
 	$images = $sth->fetchAll();
-	
+
 	$imagesToCheck = array();			//CheckOwnerForPicture expects simply id, not a whole class
 	foreach($images as $image) {
 		$imagesToCheck[] = $image['id'];
 	}
-	
+
 	$pairs = makeQueue($images, $rightAndLeft);
-	
+
 	$db->beginTransaction();
 
 	$sql = "INSERT INTO `picturequeue` (`id`, `title`) VALUES (NULL, NULL);";
@@ -71,14 +75,14 @@ $rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view p
 		$sth->bindParam(2,$pair[0]);
 		$sth->bindParam(3,$pictureQueueId);
 		$sth->execute();
-		
+
 		$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(1,$order);
 		$sth->bindParam(2,$pair[1]);
 		$sth->bindParam(3,$pictureQueueId);
-		$sth->execute();	
-		
+		$sth->execute();
+
 		$order++;
 	}
 	$db->commit();
@@ -87,25 +91,25 @@ $rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view p
 
 else if($option == "notRandom") {
 /**
- * Får medsendt en array med to bildeideer.  Disse skal inn i en kanskje eksisterendes pictureQueue OM DEN FINNES
+ * Fï¿½r medsendt en array med to bildeideer.  Disse skal inn i en kanskje eksisterendes pictureQueue OM DEN FINNES
  * Har ikke addet sikkerhetssjekker her.
- * Kan vell egentlig gå ut i fra at denne funksjonen blir kjørt en gang for hvert enkelt bildesett som lages. typ ganske mange ganger
+ * Kan vell egentlig gï¿½ ut i fra at denne funksjonen blir kjï¿½rt en gang for hvert enkelt bildesett som lages. typ ganske mange ganger
  */
  $rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
 $images = $_GET['images'];
 	$pictureQueueId = $_GET['pictureQueueId'];	//This is 0 if it is for a new set.
 	$imagesArray = array();
-	
-	
-	foreach($images as $image) {		
+
+
+	foreach($images as $image) {
 		$sql = "SELECT * FROM picture WHERE id = ?;";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(1,$image);
 		$sth->execute();
 		$imagesArray[] = $sth->fetch();
-		
+
 	}
-	
+
 	$pairs = makeQueue($imagesArray, $rightAndLeft);
 	if(count($pairs > 1)) {
 		$db->beginTransaction();
@@ -116,10 +120,10 @@ $images = $_GET['images'];
 			$sth = $db->prepare($sql);
 			$sth->bindParam(1,$name);
 			$sth->execute();
-			
-			$pictureQueueId =  $db->lastInsertId();	
+
+			$pictureQueueId =  $db->lastInsertId();
 			$order = 0;
-			
+
 		} else {					//PictureQueue exists.  Need to get order from pictureOrder
 			$sql = "SELECT * FROM pictureorder where pictureQueue = ?
 			ORDER BY pOrder DESC
@@ -130,7 +134,7 @@ $images = $_GET['images'];
 			$result = $sth->fetch();
 			$order = ($result['pOrder']+1);
 		}
-		
+
 		foreach($pairs as $pair) {
 			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
 			$sth = $db->prepare($sql);
@@ -138,7 +142,7 @@ $images = $_GET['images'];
 			$sth->bindParam(2,$pair[0]);
 			$sth->bindParam(3,$pictureQueueId);
 			$sth->execute();
-			
+
 			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
 			$sth = $db->prepare($sql);
 			$sth->bindParam(1,$order);
@@ -155,27 +159,27 @@ $images = $_GET['images'];
 else if($option == "ratingCategory") {
 	$db->beginTransaction();
 	try {
-		//Trenger bare å lagre med eOrder 0
+		//Trenger bare ï¿½ lagre med eOrder 0
 		$imagesetId = $_GET['imagesetId'];
-		
+
 		$sql = "INSERT INTO `picturequeue` (`id`, `title`) VALUES (NULL, NULL);";
 		$sth = $db->prepare($sql);
-		$sth->execute();		
+		$sth->execute();
 		$pictureQueueId =  $db->lastInsertId();
-		
+
 		$sql = "SELECT * FROM picture WHERE pictureSet = ? AND isOriginal = 0;";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(1, $imagesetId);
 		$sth->execute();
 		$result = $sth->fetchAll();
-		
+
 		foreach($result as $image) {
 			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (0, ?, ?);";
 			$sth = $db->prepare($sql);
 			$sth->bindParam(1,$image['id']);
 			$sth->bindParam(2,$pictureQueueId);
 			$sth->execute();
-		}	
+		}
 		$db->commit();
 		echo json_encode($pictureQueueId);
 	} catch(Exception $e) {

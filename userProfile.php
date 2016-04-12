@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-<?php session_start();  if($_SESSION['user']['userType'] > 3) header('Location: index.php');?>
+<?php
+    session_start();
+
+    if($_SESSION['user']['userType'] > 3) {
+        header('Location: index.php');
+        exit;
+    }
+?>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -21,14 +28,14 @@
 
         <!-- Other JS -->
         <script src="js/userProfileScripts.js"></script>
-        <script src="js/scripts.js"></script>  
+        <script src="js/scripts.js"></script>
 		<script src="js/sha3.js"></script>
-		
+
 		<script type="text/javascript">
 			window.onload = fillUserInfo();
 		</script>
 
-		
+
     </head>
     <body class="metro" onload="fillUserInfo();">
         <div id="wrapper">
@@ -46,7 +53,7 @@
                                 <li id="change-email" ><a href="#"><i class="icon-mail"></i>Change Email</a></li>
                             </ul>
                         </nav>
-                    </div>                                                   
+                    </div>
                 </div>
                 <div id="right-panel" style="float: left; margin:20px; width: 49%;">
                 </div>

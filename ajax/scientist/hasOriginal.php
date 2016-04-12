@@ -4,14 +4,18 @@
  */
 require_once('../../db.php');
 include_once('../../functions.php');
+
 if (!isset($_SESSION['user'])) {
-	header("Location: ../../login.php"); 
+	header("Location: ../../login.php");
+	exit;
 }
+
 if($_SESSION['user']['userType'] > 2) {
 	return;
 }
 
 $pictureSetId = $_GET['pictureSetId'];
+
 $sql = "SELECT pictureset.id FROM pictureset " .
 	"JOIN picture ON picture.pictureSet = pictureset.id " .
 	"WHERE pictureset.id = ? AND picture.isOriginal = 1";
