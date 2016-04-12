@@ -264,18 +264,20 @@ function createMatrix(data)
 
 	return matrix;
 }
+
 /**
- *  Generate HSL color for the heatmap.
+ *  Generate Jet scale color for the heatmap.
  *	@param  {Float}	  The percentage value for generating the hue level.
  *	@param  {Int}	  The saturation value.
  *	@return {String}  color in hsl format.
  */
-function hueScale(valPerc, sat)
+function jetScale(value, sat)
 {
-	var hue = HUE_LOW - (HUE_LOW * valPerc);
+	var hue = HUE_LOW - (HUE_LOW * value);
 	var color = 'hsl(' + hue + ',' + sat + '%,50%)';
 	return color;
 }
+
 /**
  *  Generate grayscale color for the heatmap.
  *	@param  {Float}	  The percentage value for generating the light level.
@@ -283,9 +285,9 @@ function hueScale(valPerc, sat)
  *	@param  {Int}	  The saturation value.
  *	@return {String}  color in grayscale format.
  */
-function grayScale(valPerc, hue, sat)
+function grayScale(value, hue, sat)
 {
-	var light = valPerc * 100;
+	var light = value * 100;
 	var color = 'hsl(' + hue + ',' + sat + '%,' + light + '%)';
 	return color;
 }
@@ -294,25 +296,26 @@ function grayScale(valPerc, hue, sat)
  *  Generate color for the heatmap.
  *	@param  {Int}	   The current intersection value for the pixel.
  *	@param  {Int}	   The highest value of intersections.
- *	@param	{Int}	   The type of scale that should be displayed in heatmap legend. 
+ *	@param	{Int}	   The type of scale that should be rendered in heatmap. 
  *	@param	{Int}	   The hue value.
  *	@param	{Int}	   The saturation value.
  *	@param	{Boolean}  Whether the scale should be reversed or not.
- *	@return {String}   The color in hsl format.
+ *	@return {String}   The color in HSL format.
  */
 function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 {
-	valPerc = ( (cur-1) / (max-1) );
+	var value = (cur-1) / (max-1);		// Float value for generating the color.
 	
-	if(reverse)
-		valPerc = 1 - valPerc;
+	if(reverse) 						// Reverse the scale if true.
+		value = 1 - value;
 	
-	switch(scaleType)
+	switch(scaleType) 					// Return the color in HSL format:
 	{
-		case 0: return grayScale(valPerc, hue, sat);
-		case 1: return hueScale(valPerc, sat);
+		case 0: return grayScale(value, hue, sat);
+		case 1: return jetScale(value, sat);
 	}
 }
+	
 /**
  * Render the legend scale for the heatmap.
  *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl.
@@ -459,7 +462,7 @@ function drawMatrixCanvas(data, hue, sat, scaleType, reverse)
 	{
 		for(var j= 0; j < data[i].length; j ++)
 		{
-			if(data[i][j].val > 0)
+			if(data[i][j].val > 0) 		// Print element only if it's marked.
 			{
 				var point = [i,j];
 				matrixCtx.fillStyle = heatmapColor(data[i][j].val, maxVal, scaleType, hue, sat, reverse);
