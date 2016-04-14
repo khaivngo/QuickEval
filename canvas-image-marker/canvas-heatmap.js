@@ -16,10 +16,6 @@
 
         var HUE_LOW = 240;		// For heatmap lowest value in Jet scale.
 
-        var image = new Object();
-        image.width = 800;
-        image.height = 800;
-
         var heatmapLegend = new Object();
         heatmapLegend.height = 60;							// Extended value for heatmap legend scale in canvas.
         heatmapLegend.square = heatmapLegend.height / 2;	// Height/width for each square box in the heatmap legend.
@@ -47,6 +43,7 @@
 
         $(document).ready(function() {
             setCanvasImage();
+            setImage();
 
             $(canvasContainer).append(imageCanvas); // append the resized canvas to the DOM
             $(canvasContainer).append(matrixCanvas); // append the resized canvas to the DOM
@@ -81,7 +78,6 @@
                 resize();
 
             imageCanvas.css({
-                // background: "#ddd",
                 background: 'url(' + image.src + ') no-repeat',
                 position: "absolute", top: 0, right: 0
             });
@@ -127,15 +123,37 @@
              });
          }
 
-        // setImage();
 
-        // function setImage() {
-        //     base_image = new Image();
-        //     base_image.src = 'uploads/378/340/o_1aeln85vvcubl8810mo77f1ko21e.jpeg';
-        //     base_image.onload = function() {
-        //         imageCtx.drawImage(base_image, 0, 0);
-        //     }
-        // }
+         function exportHeatmap(experimentID, pictureQueue, pictureID) {
+             $.ajax({
+                 url: 'ajax/scientist/getExperimentArtifactMarks.php',
+                 type: 'POST',
+                 data: {
+                     experiment_id: experimentID,
+                     picture_id: pictureID,
+                     picture_queue: pictureQueue
+                 },
+                 dataType: 'json',
+                 encode: true,
+                 cache: false
+             })
+             .done(function(data) {
+                console.log('sent');
+             });
+         }
+
+
+        /**
+         * Draws the image on the image canvas for when the image is downloaded
+         * (simply having the image as a background with CSS won't work).
+         */
+        function setImage() {
+            var base_image = new Image();
+            base_image.src = settings.imageUrl;
+            base_image.onload = function() {
+                imageCtx.drawImage(base_image, 0, 0);
+            }
+        }
 
 
         /*---------------------------------------
@@ -153,7 +171,7 @@
          	 *  @return {void}.
          	 */
          	$('#heatmapPanel li input[type=range]').on('input',function(event)
-         	{
+            {
          		var hue = $('#hueLevel').val();		// Get the current hue level.
          		var sat = $('#satLevel').val();		// Get the current saturation level.
 
@@ -238,9 +256,9 @@
 
          function setSliderColor(hue, sat)
          {
-         	for(var i = 0; i < document.styleSheets[1].rules.length; i++)
+         	for(var i = 0; i < document.styleSheets[4].rules.length; i++)
          	{
-         		var rule = document.styleSheets[1].rules[i];
+         		var rule = document.styleSheets[4].rules[i];
          		if(rule.cssText.match('::-webkit-slider-thumb'))
          			rule.style.backgroundColor = 'hsl('+hue+','+sat+'%,50%)';
          	}
@@ -283,7 +301,7 @@
 
          	return matrix;
          }
-         
+
          /**
           * Generate color for the heatmap.
           *	@param  {Int}	  The current intersection value for the pixel.
@@ -433,7 +451,7 @@
 
          	textPosX_MAX = range * heatmapLegend.square + textPaddingleft + heatmapLegend.marginLeft + textPadding;
 
-         	mergedCtx.fillText("MIN 0", textPadding, textPosY);						// Set label for minimum value.
+         	mergedCtx.fillText("MIN 1", textPadding, textPosY);						// Set label for minimum value.
          	mergedCtx.fillText('MAX(' + maxVal + ')',textPosX_MAX + 20, textPosY );	// Set label for maximum value.
          }
 
