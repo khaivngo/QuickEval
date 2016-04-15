@@ -88,14 +88,6 @@
             toolPanel.find('.erase-tool').on('click', setEraseActiveTool);
             toolPanel.find('.enable-marking').on('click', setModeToPanning);
             toolPanel.find('.enable-panzoom').on('click', setModeToDrawing);
-            // $(document).keydown(function(e){
-            //       if( e.which === 90 && e.ctrlKey && e.shiftKey ) {
-            //          undo();
-            //       }
-            //       else if( e.which === 90 && e.ctrlKey ) {
-            //          undo();
-            //       }
-            // });
 
             toolPanel.find('.marking-tools button').on('click', function() {
                 toolPanel.find('.marking-tools button').removeClass('down-arrow');
@@ -244,6 +236,12 @@
             }
         };
 
+        /**
+         * Whenever a double click event takes place on the canvas this function
+         * checks whether the click is inside a shape.
+         *
+         * Note: We have to redraw before we can call isPointInPath()
+         */
         var findClickedShape = function(e) {
             var mouseX  = e.offsetX;
             var mouseY  = e.offsetY;
@@ -405,12 +403,11 @@
 
         /**
          * Delete one shape, by removing the last array element.
+         * If no shapes are saved, empty the current drawn shape.
          *
          * @return void
          */
         var undo = function() {
-            flattenShapes();
-
             (points.length > 0) ? points = [] : savedShapes.pop();
 
             draw();
@@ -425,101 +422,14 @@
             drawSavedShapes();
         };
 
-        var flattenShapes = function() {
-
-            var pp = [
-                // {x: 4, y: 5},
-                // {x: 4, y: 5},
-                // {x: 4, y: 6},
-                // {x: 3, y: 10},
-                // {x: 3, y: 10},
-                // {x: 34, y: 56}
-            ];
-
-            // for (var i = 0; i < savedShapes.length; ) {
-            //     pp.push(savedShapes[i].fill);
-            // }
 
 
-            // var flattened = _.uniqWith(savedShapes[0].fill, _.isEqual);
-
-            // console.log(savedShapes[0].fill);
-
-        };
-
-/*---------------------------------------------------------------------------
-							Save shape to db
------------------------------------------------------------------------------*/
-
-var saveShapeToDB = function()
-{
-	$('#uploadBar').css('display','block');
-	$('#uploadBar #bar').css('width','0');
-	$('#uploadBar #barText').text('');
-
-	if(savedShapes.length > 0 && !savedData)
-	{
-		var imgSrc = settings.imageUrl;
-		var perc =  0;
-		var counter = 0;
-
-		for(var i = 0; i < savedShapes.length; i ++)
-		{
-			$.ajax
-			({
-				url: "saveShapesToDb.php",
-				data: { imgSrc: imgSrc, shapeItem: JSON.stringify(savedShapes[i]) },
-				type: "POST",
-				error: function (jqXHR, exception)
-				{
-					$('#uploadBar #barText').text(jqXHR.status + ' ' + jqXHR.responseText );
-				},
-			})
-			.done(function(data)
-			{
-				console.log(data);
-
-				counter ++;
-				perc = counter / savedShapes.length * 100;
-				console.log(perc + ' %');
-
-
-				$('#uploadBar #bar').animate({'width':perc+'%'},'fast');
-				$('#uploadBar #barText').text(perc+'%');
-
-				if(perc == 100)
-					$('#uploadBar #barText').text('Data successfully saved 100%');
-
-			});
-		}
-		savedData = true;
-	}
-	else
-		alert('Please create a shape before saving\n\nOr you have already saved the data');
-};
-
-/*---------------------------------------------------------------------------
-							Fill Algorithm for Polygon
------------------------------------------------------------------------------*/
+        /*---------------------------------------------
+        		  Fill Algorithm for Polygon
+        ---------------------------------------------*/
 
 		$('#hueLevel').change(function() { $(this).next().text( $(this).val() ); });
 		$('#satLevel').change(function() { $(this).next().text( $(this).val() ); });
-
-		function writeToFile(arr)
-		{
-			var array = JSON.stringify(arr);
-
-			$.ajax
-			({
-				url: "writeDataToFile.php",
-				data: { array: array },
-				type: "POST"
-			})
-			.done(function(data)
-			{
-				alert(data);
-			});
-		}
 
 		/**
 		 *  Create a matrix of the experiment image with marked points as data.
@@ -595,6 +505,7 @@ var saveShapeToDB = function()
 			}
 
 		}
+
 		/**
 		 * Render the legend scale for the heatmap.
 		 *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl.

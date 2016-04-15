@@ -96,7 +96,7 @@
           */
          function getArtifactMarks(experimentID, pictureQueue, pictureID) {
              $.ajax({
-                 url: 'ajax/scientist/getExperimentArtifactMarks.php',
+                 url: 'ajax/scientist/getPictureArtifactMarks.php',
                  type: 'POST',
                  data: {
                      experiment_id: experimentID,
@@ -229,6 +229,17 @@
          		}
          	});
 
+            // listen for changes to the opacity number input and update the
+            // matrix canvas with the new a new opacity value
+            $('#opacity-value').on('input', function() {
+         		$('#opacity-slider').val( $(this).val() ); // val()ception
+
+                var opacityLevel = $(this).val() / 10;
+         		changeOpacityOfMatrixCanvas(opacityLevel);
+         	});
+
+            // listen for changes to the opacity slider and update the
+            // matrix canvas with the new a new opacity value
             $('#opacity-of-marks input[type="range"]').on('input', function() {
                 // Change current label text value for this slider.
          		$(this).parent().parent().find('.sizeNumber').val( $(this).val() );

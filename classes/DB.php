@@ -74,6 +74,17 @@ class DB
 		return $this;
 	}
 
+	/**
+	 * This is simply a helper function that shortens the syntax of
+	 * running a query and fetching the results.
+	 *
+	 * @param $sql, database query.
+	 * @param $params, optional values to bind.
+	 */
+	public static function run($sql, $params) {
+		return DB::instance()->run_query($sql, $params)->get_results();
+	}
+
 	# Setters and getters.
 	public function get_results() {
 		return $this->results;
