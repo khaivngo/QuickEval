@@ -518,12 +518,13 @@ function calcPolygonPoints()
 		if( $('#reverseScale[type=checkbox]').is(':checked') )
 			reverse = true;
 		
+		
 
 
 		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
 		drawMatrixCanvas(matrix, hue, sat, scale, reverse);
 
-		//drawMatrixTable(matrix);
+		generateMatrixCSV(matrix);
 		
 		var t1 = performance.now();
 		console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
@@ -532,5 +533,34 @@ function calcPolygonPoints()
 	}
 	else
 		alert('No data in database.');
+	
+	// Render matrix in html table,
+	// (!) not finished.
+	function generateMatrixCSV(matrixData)
+	{	
+		var matrixText = "";
+
+		for(var i = 0; i < 80; i++ )
+		{	
+			for(var j = 0; j < 80; j++ )
+			{
+				matrixText += matrixData[i][j].val;
+			}
+			
+			matrixText += "\n";
+		}
+
+		$.ajax
+		({
+			url: 'matrix.php',
+			type: 'POST',
+			data: {matrix: matrixText}
+		})
+		.done(function(data)
+		{
+			$('body').append('<a download href = "matrix.csv">download file</a>')
+		});
+	}
+
 
 }
