@@ -63,7 +63,7 @@
                 $(canvasContainer).css({
                     height: image.height + heatmapLegend.height,
                     width: image.width,
-                    background: "#ccc"
+                    background: "#ddd"
                 });
 
                 imageCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasImage');
@@ -229,6 +229,13 @@
          		}
          	});
 
+            $('#opacity-of-marks input[type="range"]').on('input', function() {
+                // Change current label text value for this slider.
+         		$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
+
+                var opacityLevel = $(this).val() / 10;
+         		changeOpacityOfMatrixCanvas(opacityLevel);
+         	});
 
          	document.getElementById('downloadImage').addEventListener('click', function()
          	{
@@ -263,6 +270,13 @@
          			rule.style.backgroundColor = 'hsl('+hue+','+sat+'%,50%)';
          	}
          }
+
+         /**
+          * @param {float} Number between 1 and 0.
+          */
+         var changeOpacityOfMatrixCanvas = function(value) {
+             matrixCanvas.css({ opacity: value });
+         };
 
          /**
           * Create a matrix of the experiment image with marked points as data.

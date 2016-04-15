@@ -85,7 +85,6 @@ function displayHeatmap() {
         pictureID: pictureID,
         pictureQueue: pictureQueue
     });
-    // exportHeatmap(settings.experimentID, settings.pictureQueue, settings.pictureID);
 }
 
 /**
@@ -109,7 +108,7 @@ function getImages(experimentId) {
             // loop through each experiment image and create a dropdown list with the image names
             var output = '<div id="heatmap-options">';
                 output += '<select style="width: 200px; padding: 10px;">';
-                output += '<option>Choose image</option>';
+                    output += '<option>Choose image</option>';
                     data[0].forEach(function(image) {
                         output +=
                             '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
@@ -119,7 +118,7 @@ function getImages(experimentId) {
 
                 output += '<button style="padding: 10px 15px;" class="primary heatmap-button open-heatmap">Show heatmap</button>';
                 output += '<button style="padding: 10px 15px;" id="export-heatmap" class="primary heatmap-button">Export heatmap</button>';
-                // output += '<button class="primary heatmap-button">Download image</button>';
+                output += '<a id="downloadImage"><button type="button">Download image</button></a>';
                 output += '<button class="heatmap-settings-button"><i class="fa fa-cog"></i></button>';
             output += '</div>';
 

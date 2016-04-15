@@ -118,6 +118,10 @@ textarea    {
     position: fixed;
     right: 0;
     top: 0;
+    bottom: 0;
+    z-index: 100;
+    overflow-y: auto;
+    background: #eee;
 }
 
 #heatmapPanel {
@@ -125,7 +129,6 @@ textarea    {
     margin: 0;
     list-style: none;
     color: #333;
-    margin-top: 60px;
     background: #eee;
     padding: 20px;
     max-width: 500px;
@@ -163,12 +166,22 @@ textarea    {
 }
 
 .rangeSlider {
-	display: block;
-	width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* always show the arrows of the number input, only works in chrome */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+   opacity: 1;
+}
+
+input[type="range"] {
+    max-height: 10px;
 }
 
 .rangeSlider * { /* Every child of rangeSlider */
-	display: inline-block;
+	/*display: flex;*/
 	margin: 10px;
 }
 
