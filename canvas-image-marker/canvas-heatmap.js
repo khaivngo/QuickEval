@@ -95,6 +95,11 @@
           * Get all artifact marks for a specific image.
           */
          function getArtifactMarks(experimentID, pictureQueue, pictureID) {
+             // fade the canvas and add a loading spinner,
+             // removed when artifact marks as been fetched and drawn
+             imageCanvas.css({ opacity: 0.7 });
+             $('#pan').parent().append('<i style="margin: 20px; position: absolute; top: 0; left: 0;" class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom"></i>');
+
              $.ajax({
                  url: 'ajax/scientist/getPictureArtifactMarks.php',
                  type: 'POST',
@@ -109,9 +114,7 @@
              })
              .done(function(data) {
                 if (data.length > 0) {
-
                     var shapes = [];
-
                     for (var i = 0; i < data.length; i++) {
                         shapes.push({ fill: JSON.parse(data[i].marked_pixels) });
                     }
@@ -120,12 +123,17 @@
 
                     calcPolygonPoints();
                 }
+
+                // remove loading spinner and set the image opacity back to 100%
+                $('.fa-spinner').remove();
+                imageCanvas.css({ opacity: 1 });
              });
          }
 
 
          function exportHeatmap(experimentID, pictureQueue, pictureID) {
-             $.ajax({
+
+             var settingsObj = {
                  url: 'ajax/scientist/getExperimentArtifactMarks.php',
                  type: 'POST',
                  data: {
@@ -136,10 +144,9 @@
                  dataType: 'json',
                  encode: true,
                  cache: false
-             })
-             .done(function(data) {
-                console.log('sent');
-             });
+             };
+
+             $.ajax(settingsObj);
          }
 
 
@@ -163,7 +170,15 @@
          $(document).ready(function()
          {
          	// Generate heatmap button.
-         	$('#genHeatmap').on('click', calcPolygonPoints);
+         	// $('#genHeatmap').on('click', calcPolygonPoints);
+            
+            $('#heatmapPanel li input[type=range]').on('change', function(event) {
+                calcPolygonPoints();
+            });
+
+            $('#reverseScale[type=checkbox]').on('change',function() {
+                calcPolygonPoints();
+         	});
 
          	/**
          	 *  UI for heatmap generator.
@@ -211,6 +226,8 @@
          			range.disabled = false;
          			$('#hueSection').attr('class','activeSection');
          		}
+
+                calcPolygonPoints();
          	});
 
          	$('#liveGen[type=checkbox]').on('change',function(event)
@@ -227,7 +244,10 @@
          			genButton.disabled = false;
          			$('#genHeatmap').attr('class','activeSection');
          		}
+
+                calcPolygonPoints();
          	});
+
 
             // listen for changes to the opacity number input and update the
             // matrix canvas with the new a new opacity value
@@ -283,11 +303,11 @@
          }
 
          /**
-          * @param {float} Number between 1 and 0.
+          * @param {float} Number between 0 and 1.
           */
-         var changeOpacityOfMatrixCanvas = function(value) {
+         function changeOpacityOfMatrixCanvas(value) {
              matrixCanvas.css({ opacity: value });
-         };
+         }
 
          /**
           * Create a matrix of the experiment image with marked points as data.

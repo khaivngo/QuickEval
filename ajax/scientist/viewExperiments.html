@@ -113,16 +113,17 @@
         <script src="canvas-image-marker/Annotation.js"></script>
         <script src="canvas-image-marker/canvas-heatmap.js"></script>
 
-        <div id="heatmap-results" >
+        <div id="heatmap-results">
             <h3>Heatmap</h3>
 
-            <div style="overflow: hidden; position: relative; height: 100%; width: 100%;">
+            <div style="overflow: hidden; position: relative; border: 1px solid #eee; height: 100%; width: 100%;">
                 <div id="pan" class="panzoom" style="max-width: 800px; max-height: 600px;">
                     <!-- selected image gets appended here -->
                 </div>
             </div>
 
             <div id="heatmap-panel-container">
+                <i style="position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i>
                 <ul id="heatmapPanel">
                     <li id="hueSection">
                         <h2 style="font-family: Helvetica;">hue</h2>
@@ -163,9 +164,9 @@
                             <div class="rangeSliderMaxValue">10</div>
                         </div>
                     </li>
-                    <li>
+                    <!-- <li>
                         <button type="button" id="genHeatmap">Generate heatmap</button>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div> <!-- /#heatmap-results -->

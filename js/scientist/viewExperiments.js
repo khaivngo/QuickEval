@@ -85,6 +85,7 @@ function displayHeatmap() {
         pictureID: pictureID,
         pictureQueue: pictureQueue
     });
+
 }
 
 /**
@@ -116,18 +117,29 @@ function getImages(experimentId) {
                     });
                 output += "</select>";
 
-                output += '<button style="padding: 10px 15px;" class="primary heatmap-button open-heatmap">Show heatmap</button>';
+                // output += '<button style="padding: 10px 15px;" class="primary heatmap-button open-heatmap">Show heatmap</button>';
+                output += '<a id="downloadImage">';
+                    output += '<button style="margin-left: 10px; padding: 10px 15px;" class="primary" type="button">Download image</button>';
+                output += '</a>';
                 output += '<button style="padding: 10px 15px;" id="export-heatmap" class="primary heatmap-button">Export heatmap</button>';
-                output += '<a id="downloadImage"><button type="button">Download image</button></a>';
-                output += '<button class="heatmap-settings-button"><i class="fa fa-cog"></i></button>';
             output += '</div>';
 
             $('#heatmap-results h3').after(output);
 
+            $('#pan').parent().append('<button style="padding-top: 5px; z-index: 900;margin: 5px; position: absolute; top: 0;right:0;" class="heatmap-settings-button"><i class="fa fa-2x fa-cog"></i></button>');
+
+
             // display heatmap of clicked picture
-            $('.open-heatmap').on('click', displayHeatmap);
+            // $('.open-heatmap').on('click', displayHeatmap);
+
+            $('select').on('change', displayHeatmap);
+
             // bind a open/close event on heatmap settings button click
             $('.heatmap-settings-button').on('click', function() {
+                $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+            });
+
+            $('#close-heatmap-panel').on('click', function() {
                 $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
             });
         }
