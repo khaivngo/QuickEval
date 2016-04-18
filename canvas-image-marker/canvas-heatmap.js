@@ -131,8 +131,8 @@
          }
 
 
-         function exportHeatmap(experimentID, pictureQueue, pictureID) {
-
+         function exportHeatmap(experimentID, pictureQueue, pictureID)
+         {
              var settingsObj = {
                  url: 'ajax/scientist/getExperimentArtifactMarks.php',
                  type: 'POST',
@@ -171,8 +171,8 @@
          {
          	// Generate heatmap button.
          	// $('#genHeatmap').on('click', calcPolygonPoints);
-            
-            $('#heatmapPanel li input[type=range]').on('change', function(event) {
+
+            $('#heatmapPanel li input[type=range]').on('change', function() {
                 calcPolygonPoints();
             });
 

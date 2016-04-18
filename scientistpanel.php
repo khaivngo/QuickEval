@@ -61,8 +61,6 @@
         <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
 
-        <link rel="stylesheet" href="canvas-image-marker\libs\font-awesome\css\font-awesome.min.css">
-
 
 		<script src="js/scientist/math.js" ></script>
 
@@ -104,6 +102,8 @@
                 thumbnailId: 'thumb1'
             }
         </script>
+
+        <link rel="stylesheet" href="canvas-image-marker\libs\font-awesome\css\font-awesome.min.css">
     </head>
     <body class="metro" style="overflow-y:scroll">
         <div id="wrapper">
