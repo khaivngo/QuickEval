@@ -889,7 +889,8 @@ function saveShapeToDB()
                 rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
 
                                                                     // Find all the points that are inside the polygon:
-            for(var i = rect_p1; i < rect_p3; i ++ )
+            var A1 = performance.now();
+			for(var i = rect_p1; i < rect_p3; i ++ )
             {
                 for(var j = rect_p2; j < rect_p4; j++)
                 {
@@ -899,8 +900,42 @@ function saveShapeToDB()
                         fillArray.push( {x:i, y:j} );
                 }
             }
+			var A2 = performance.now();
+			var B1 = performance.now();
+			
+			for(var i = 0; i < 800; i ++ )
+            {
+                for(var j = 0; j < 800; j++)
+                {
+                    var point = [i,j];          					// Check this point.
 
+                    if( pointInsidePolygon(point, tempPolygonArr) )	// The point is inside the polygon:
+                        fillArray.push( {x:i, y:j} );
+                }
+            }
+			var B2 = performance.now();
+			
+			var aTime = (A2-A1) / 1000;
+			var bTime = (B2-B1) / 1000;
+			
+			/* var aTime = aTime.toFixed(3); 
+			var bTime = bTime.toFixed(3); */ 
+			
+			var pctDiff =  (( bTime - aTime) / bTime ) * 100;
+			pctDiff = pctDiff.toFixed(2);
+			
+			console.log('Optimized fill algorithm took: ' + aTime + ' seconds');
+			console.log('Regular fill algorithm took: ' + bTime + ' seconds');
+			console.log('Percentage decrease: ' + pctDiff + '%');
+			
+			console.log('Number of points: ' + fillArray.length / 2 + '\n\n');
+			
+			
+			
+			
             return fillArray;
+			
+			
         }
 
 
