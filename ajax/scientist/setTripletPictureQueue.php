@@ -21,46 +21,27 @@ if($_SESSION['user']['userType'] > 2) {
  * @param $imagesShownRightAndLeft 1/0 of whether to show a picture on both sides.
  * @return $pairs, an array with the new queue.
  */
-function makeQueue($images, $imagesShownRightAndLeft) {
-	$pairs = array();
-	$index = 1;
-	$arrIndex = 0;
-	foreach($images as $image) {
-		for($i = $index;$i < count($images);$i++ ) {
-			$pairs[$arrIndex][0] = $image['id'];
-			$pairs[$arrIndex][1] = $images[$i]['id'];
-			if($imagesShownRightAndLeft == 1) {
-				$arrIndex++;
-				$pairs[$arrIndex][0] = $images[$i]['id'];
-				$pairs[$arrIndex][1] = $image['id'];
-			}
-			$arrIndex++;
-		}
-		$index++;
-	}
-	shuffle($pairs);
-	return $pairs;
-}
+function makeTripletQueue($images, $imagesShownRightAndLeft) {
 
-function makeTripletQueue($images) {
+	// if (count($images) == 7) {
+		$pairs[] = [ $images[1]['id'], $images[2]['id'], $images[4]['id'] ];
+		$pairs[] = [ $images[2]['id'], $images[3]['id'], $images[5]['id'] ];
+		$pairs[] = [ $images[3]['id'], $images[4]['id'], $images[6]['id'] ];
+		$pairs[] = [ $images[4]['id'], $images[5]['id'], $images[7]['id'] ];
+		$pairs[] = [ $images[5]['id'], $images[6]['id'], $images[1]['id'] ];
+		$pairs[] = [ $images[6]['id'], $images[7]['id'], $images[2]['id'] ];
+		$pairs[] = [ $images[7]['id'], $images[1]['id'], $images[3]['id'] ];
+	// }
 
-	if (count($images) == 7) {
-		$pairs[] = [ $images[0]['id'], $images[1]['id'], $images[3]['id'] ]; // 1, 2, 4
-		$pairs[] = [ $images[1]['id'], $images[2]['id'], $images[4]['id'] ]; // 2, 3, 5
-		$pairs[] = [ $images[2]['id'], $images[3]['id'], $images[5]['id'] ]; // 3, 4, 6
-		$pairs[] = [ $images[3]['id'], $images[4]['id'], $images[6]['id'] ]; // 4, 5, 7
-		$pairs[] = [ $images[4]['id'], $images[5]['id'], $images[0]['id'] ]; // 5, 6, 1
-		$pairs[] = [ $images[5]['id'], $images[6]['id'], $images[1]['id'] ]; // 6, 7, 2
-		$pairs[] = [ $images[6]['id'], $images[0]['id'], $images[2]['id'] ]; // 7, 1, 3
-	}
+	
 
-	return $pairs;
+
 }
 
 $option = $_GET['option'];
 
 if($option == "generateRandom") {
-	$rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
+$rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
 	$imagesetId = $_GET['imagesetId'];
 
 	$sql = "SELECT * FROM picture WHERE pictureSet = ? AND isOriginal = 0";
@@ -74,11 +55,7 @@ if($option == "generateRandom") {
 		$imagesToCheck[] = $image['id'];
 	}
 
-	if ($_GET['experimentType'] == "Triplet Comparison") {
-		$pairs = makeTripletQueue($images, $rightAndLeft);
-	} else {
-		$pairs = makeQueue($images, $rightAndLeft);
-	}
+	$pairs = makeQueue($images, $rightAndLeft);
 
 	$db->beginTransaction();
 
@@ -87,64 +64,35 @@ if($option == "generateRandom") {
 	$sth->execute();
 	$pictureQueueId =  $db->lastInsertId();
 	$order = 0;
+	foreach($pairs as $pair) {
+		$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
+		$sth = $db->prepare($sql);
+		$sth->bindParam(1,$order);
+		$sth->bindParam(2,$pair[0]);
+		$sth->bindParam(3,$pictureQueueId);
+		$sth->execute();
 
-	if ($_GET['experimentType'] == "Triplet Comparison") {
-		foreach($pairs as $pair) {
-			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1,$order);
-			$sth->bindParam(2,$pair[0]);
-			$sth->bindParam(3,$pictureQueueId);
-			$sth->execute();
+		$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
+		$sth = $db->prepare($sql);
+		$sth->bindParam(1,$order);
+		$sth->bindParam(2,$pair[1]);
+		$sth->bindParam(3,$pictureQueueId);
+		$sth->execute();
 
-			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1,$order);
-			$sth->bindParam(2,$pair[1]);
-			$sth->bindParam(3,$pictureQueueId);
-			$sth->execute();
-
-			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1,$order);
-			$sth->bindParam(2,$pair[2]);
-			$sth->bindParam(3,$pictureQueueId);
-			$sth->execute();
-
-			$order++;
-		}
-	} else {
-		foreach($pairs as $pair) {
-			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1,$order);
-			$sth->bindParam(2,$pair[0]);
-			$sth->bindParam(3,$pictureQueueId);
-			$sth->execute();
-
-			$sql = "INSERT INTO `pictureorder` (`pOrder`, `picture`, `pictureQueue`) VALUES (?, ?, ?);";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1,$order);
-			$sth->bindParam(2,$pair[1]);
-			$sth->bindParam(3,$pictureQueueId);
-			$sth->execute();
-
-			$order++;
-		}
+		$order++;
 	}
-
 	$db->commit();
 	echo json_encode($pictureQueueId);
 }
 
 else if($option == "notRandom") {
-	/**
-	 * F�r medsendt en array med to bildeideer.  Disse skal inn i en kanskje eksisterendes pictureQueue OM DEN FINNES
-	 * Har ikke addet sikkerhetssjekker her.
-	 * Kan vel egentlig g� ut i fra at denne funksjonen blir kj�rt en gang for hvert enkelt bildesett som lages. typ ganske mange ganger
-	 */
- 	$rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
-	$images = $_GET['images'];
+/**
+ * F�r medsendt en array med to bildeideer.  Disse skal inn i en kanskje eksisterendes pictureQueue OM DEN FINNES
+ * Har ikke addet sikkerhetssjekker her.
+ * Kan vell egentlig g� ut i fra at denne funksjonen blir kj�rt en gang for hvert enkelt bildesett som lages. typ ganske mange ganger
+ */
+ $rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
+$images = $_GET['images'];
 	$pictureQueueId = $_GET['pictureQueueId'];	//This is 0 if it is for a new set.
 	$imagesArray = array();
 
@@ -155,6 +103,7 @@ else if($option == "notRandom") {
 		$sth->bindParam(1,$image);
 		$sth->execute();
 		$imagesArray[] = $sth->fetch();
+
 	}
 
 	$pairs = makeQueue($imagesArray, $rightAndLeft);

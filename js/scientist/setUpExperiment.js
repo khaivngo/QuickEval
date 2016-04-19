@@ -752,7 +752,9 @@ function addExperimentQueue(experimentId) {
                 var pictureQueueId; //Id of the picturequeue
                 //Creates and adds pairing queue if pairing, else the entire pictureset
                 if ($('#experiment-type').val() == "Paired comparison") {
-                    pictureQueueId = generateRandomPictureQueue(imageSet, +$('#same-pair').find('input').prop('checked'));
+                    pictureQueueId = generateRandomPictureQueue($('#experiment-type').val(), imageSet, +$('#same-pair').find('input').prop('checked'));
+                } else if ($('#experiment-type').val() == "Triplet Comparison") {
+                    pictureQueueId = generateRandomPictureQueue($('#experiment-type').val(), imageSet, +$('#same-pair').find('input').prop('checked'));
                 } else {
                     pictureQueueId = setPictureQueueRatingCategory(imageSet);
                 }

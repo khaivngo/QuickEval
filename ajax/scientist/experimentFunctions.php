@@ -22,10 +22,10 @@ $option = $_GET['option'];
 		 `allowTies`, `showOriginal`, `horizontalFlip`,
 		 `monitorDistance`, `lightType`, `naturalLighting`, `screenLuminance`,
 		 `whitePoint`, `whitePointRoom`, `ambientIllumination`, `person`,
-	     `experimentType`, `inviteHash`, `viewingDistance`) 
+	     `experimentType`, `inviteHash`, `viewingDistance`)
 
-        
-		     
+
+
 
 
 	   VALUES
@@ -37,7 +37,7 @@ $option = $_GET['option'];
               ?, ?, ?);";
 
 		      //?, ?, ?);";
-//`experimentType`, `inviteHash`, `viewingDistance`) 
+//`experimentType`, `inviteHash`, `viewingDistance`)
 
 
             $screenLuminance = null;
