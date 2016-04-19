@@ -11,13 +11,15 @@ function generateRandomPictureQueue(imagesetId, rightAndLeft) {
         url: 'ajax/scientist/setPictureQueue.php',
         async: false,
         data: {
-        	'imagesetId'  :imagesetId,
-        	'rightAndLeft':rightAndLeft,
-        	'option':'generateRandom'
+        	'imagesetId'  : imagesetId,
+        	'rightAndLeft': rightAndLeft,
+        	'option' 	  : 'generateRandom'
         },
         dataType: 'json',
         success: function(data) {
         	pictureQueueId = data;
+			console.log(data);
+			alert(data);
         },
         error: function(request, status, error) {
             alert(request.responseText);
@@ -33,7 +35,7 @@ function generateRandomPictureQueue(imagesetId, rightAndLeft) {
  * @param pictureQueueId is the queue which to add pictures to. if it is 0 then a new queue is begun.
  * @param name = name of the queue.
  * @return pictureQueueId of the active Queue which pictures was added to
- * 
+ *
  */
 function setPictureQueue(imagesArray, rightAndLeft, pictureQueueId, name) {
 	var pictureQueueId;

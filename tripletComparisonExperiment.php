@@ -5,18 +5,18 @@ require_once('functions.php');
 if (!isset($_SESSION['user']['id'])) {
     if (isset($_GET["invite"])) {
         $hash = $_GET["invite"];
-        $url = "pairComparisonExperiment.php?invite=";
+        $url = "tripletComparisonExperiment.php?invite=";
 
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
+        exit;
     }
 
 }
 if (isset($_GET["invite"])) {
     $hash = $_GET["invite"];
-    $url = "pairComparisonExperiment.php?invite=";
-
+    $url = "tripletComparisonExperiment.php?invite=";
 
     try {
         $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
@@ -30,8 +30,8 @@ if (isset($_GET["invite"])) {
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
+<!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -69,7 +69,7 @@ if (isset($_GET["invite"])) {
         <br/><br/>
     </p>
 
-    <div id="popupButtons" class="popupButtons" style="">
+    <div id="popupButtons" class="popupButtons">
         <button id="quit" class="button size2">Quit</button>
         <button id="continue" class="button size2">Continue</button>
     </div>
@@ -102,8 +102,7 @@ if (isset($_GET["invite"])) {
 </div>
 <div id="backgroundPopup3"></div>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-
+<!---------------->
 
 <div id="paircomparison">
 
@@ -112,15 +111,18 @@ if (isset($_GET["invite"])) {
             <button id="button-instruction" class="button top-buttons" style="margin-left:15px; margin-right:20px">
                 Instruction
             </button>
-            <button id="enter-fullscreen" class="button fullscreen top-buttons" style="margin-left:10px; "><i
-                    class="icon-fullscreen"></i>Enter fullscreen
+
+            <button id="enter-fullscreen" class="button fullscreen top-buttons" style="margin-left:10px; ">
+                <i class="icon-fullscreen"></i>Enter fullscreen
             </button>
+
             <button id="exit-fullscreen" class="button fullscreenExit top-buttons" style="margin-left:1px; ">Exit
                 fullscreen
             </button>
 
-            <span id="ie-info-fullscreen"
-                  style="color:white;">Press F11 for fullscreen, F11 or ESC to exit fullscreen</span>
+            <span id="ie-info-fullscreen" style="color:white;">
+                Press F11 for fullscreen, F11 or ESC to exit fullscreen
+            </span>
             <button class="button cancel-experiment" id="cancel-experiment">Cancel experiment</button>
 
             <div id="info" class="center" style="color:white;">
