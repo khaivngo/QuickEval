@@ -143,7 +143,10 @@ function getImages(experimentId) {
                 $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
             });
         }
-    });
+    })
+	.error(function(request, status, error) {
+		console.log(request.responseText);
+	});
 }
 
 function getFileExtension(filename) {
