@@ -121,7 +121,7 @@
 
                     savedShapes = shapes;
 
-                    calcPolygonPoints();
+                    heatmapMain();
                 }
 
                 // remove loading spinner and set the image opacity back to 100%
@@ -131,8 +131,8 @@
          }
 
 
-         function exportHeatmap(experimentID, pictureQueue, pictureID)
-         {
+         function exportHeatmap(experimentID, pictureQueue, pictureID) {
+
              var settingsObj = {
                  url: 'ajax/scientist/getExperimentArtifactMarks.php',
                  type: 'POST',
@@ -163,22 +163,12 @@
         }
 
 
-        /*---------------------------------------
-         		Fill Algorithm for Polygon
-         ---------------------------------------*/
-
          $(document).ready(function()
          {
          	// Generate heatmap button.
-         	// $('#genHeatmap').on('click', calcPolygonPoints);
-
-            $('#heatmapPanel li input[type=range]').on('change', function() {
-                calcPolygonPoints();
-            });
-
-            $('#reverseScale[type=checkbox]').on('change',function() {
-                calcPolygonPoints();
-         	});
+         	// $('#genHeatmap').on('click', heatmapMain);
+            
+           
 
          	/**
          	 *  UI for heatmap generator.
@@ -195,7 +185,7 @@
          		setSliderColor(hue, sat);
 
          		if( $('#liveGen[type=checkbox]').is(':checked') )
-         			calcPolygonPoints();
+         			heatmapMain();
          	});
 
          	$('#heatmapPanel li input[type=number]').on('input',function(event)
@@ -209,25 +199,25 @@
          		setSliderColor(hue, sat);
 
          		if( $('#liveGen[type=checkbox]').is(':checked') )
-         			calcPolygonPoints();
+         			heatmapMain();
          	});
 
-         	$('#jetScale[type=checkbox]').on('change',function(event)
+         	$('#monochromaticScale[type=checkbox]').on('change',function(event)
          	{
          		var range = document.getElementById("hueLevel");
 
          		if( $(this).is(':checked') )
          		{
-         			range.disabled = true;
-         			$('#hueSection').attr('class','inactiveSection');
-         		}
-         		else
-         		{
          			range.disabled = false;
          			$('#hueSection').attr('class','activeSection');
          		}
+         		else
+         		{
+         			range.disabled = true;
+         			$('#hueSection').attr('class','inactiveSection');
+         		}
 
-                calcPolygonPoints();
+                heatmapMain();
          	});
 
          	$('#liveGen[type=checkbox]').on('change',function(event)
@@ -245,7 +235,15 @@
          			$('#genHeatmap').attr('class','activeSection');
          		}
 
-                calcPolygonPoints();
+                heatmapMain();
+         	});
+			
+			 $('#heatmapPanel li input[type=range]').on('change', function(event) {
+                heatmapMain();
+            });
+
+            $('#reverseScale[type=checkbox]').on('change',function() {
+                heatmapMain();
          	});
 
 
@@ -553,7 +551,7 @@
           * Estimates from the current savedShapes.
           * @return {Array} Array of every marked pixel.
           */
-         function calcPolygonPoints()
+         function heatmapMain()
          {
          	//setImage();
          	matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
@@ -563,11 +561,11 @@
          	{
          		var hue = $('#hueLevel').val();
          		var sat = $('#satLevel').val();
-         		var scale = 0;
-         		var reverse = false;
+         		var scaleType = 1;										// Type of scale for heatmap.
+         		var reverse = false;									// Reverse the color scale.
 
          		var t0 = performance.now();
-         		var allMarkedPoints = [];											// Store all marked pixels.
+         		var allMarkedPoints = [];								// Store all marked pixels.
 
          		for (var i = 0; i < savedShapes.length; i++)
          		{
@@ -581,16 +579,14 @@
          		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
          		//console.log('After removing dupes: ' + allMarkedPoints.length);
 
-         		if( $('#jetScale[type=checkbox]').is(':checked') )
-         			scale = 1;
+         		if( $('#monochromaticScale[type=checkbox]').is(':checked') )
+         			scaleType = 0;
 
          		if( $('#reverseScale[type=checkbox]').is(':checked') )
          			reverse = true;
 
-
-
          		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
-         		drawMatrixCanvas(matrix, hue, sat, scale, reverse);
+         		drawMatrixCanvas(matrix, hue, sat, scaleType, reverse);
 
          		//drawMatrixTable(matrix);
 

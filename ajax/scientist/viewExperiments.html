@@ -125,7 +125,7 @@
             <div id="heatmap-panel-container">
                 <i style="z-index: 1000; position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i>
                 <ul id="heatmapPanel">
-                    <li id="hueSection">
+                    <li id="hueSection" class = "inactiveSection">
                         <h2 style="font-family: Helvetica;">hue</h2>
                         <input type="number" class="sizeNumber" value="0">
                         <div class="rangeSlider">
@@ -144,8 +144,8 @@
                         </div>
                     </li>
                     <li>
-                        <input type="checkbox" id="jetScale">
-                        <label for="jetScale">Hue scale (Multiple colors)</label>
+                        <input type="checkbox" id="monochromaticScale">
+                        <label for="monochromaticScale">Monochromatic scale</label>
                     </li>
                     <li>
                         <input type="checkbox" id="reverseScale">
