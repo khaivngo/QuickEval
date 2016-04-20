@@ -14,7 +14,10 @@
             imageUrl: $(this).attr('data-image-url')
         }, options);
 
-        var HUE_LOW = 240;		// For heatmap lowest value in Jet scale.
+        var HUE_LOW = 240;									// For heatmap lowest value in Jet scale.
+
+		// Browser support:
+		var isFirefox = typeof InstallTrigger !== 'undefined';
 
         var heatmapLegend = new Object();
         heatmapLegend.height = 60;							// Extended value for heatmap legend scale in canvas.
@@ -120,7 +123,7 @@
                     }
 
                     savedShapes = shapes;
-
+					setScaleType();
                     heatmapMain();
                 }
 
@@ -177,66 +180,52 @@
          	 */
          	$('#heatmapPanel li input[type=range]').on('input',function(event)
             {
-         		var hue = $('#hueLevel').val();		// Get the current hue level.
-         		var sat = $('#satLevel').val();		// Get the current saturation level.
+         		var hue = $('#hueLevel').val();
+				var sat = $('#satLevel').val();
 
-         		$(this).parent().parent().find('.sizeNumber').val( $(this).val() ); // Change current label text value for this slider.
+				// Change the current label text value for this slider.
+				$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
 
-         		setSliderColor(hue, sat);
+				if(!isFirefox)
+					setSliderColor(hue, sat);
 
-         		if( $('#liveGen[type=checkbox]').is(':checked') )
-         			heatmapMain();
+				//if( $('#liveGen[type=checkbox]').is(':checked') )
+					heatmapMain();
          	});
 
          	$('#heatmapPanel li input[type=number]').on('input',function(event)
          	{
          		var hue = $('#hueSection input[type=number]').val();
-         		var sat = $('#satSection input[type=number]').val();
+				var sat = $('#satSection input[type=number]').val();
+				var opa = $('#opacity-of-marks input[type=number]').val();
 
-         		$('#hueLevel').val(hue);
-         		$('#satLevel').val(sat);
+				var maxInputVal = 0;
 
-         		setSliderColor(hue, sat);
+				// Set values as minimum or maximum if exaggerated:
+				if( $(this).attr('name') == 'satNumber' )
+					maxInputVal = parseInt( $('#satLevel').attr('max') );
+				else if
+					maxInputVal = parseInt( $('#hueLevel').attr('max') );
+				else
+					maxInputVal = parseInt( $('#opacity-slider').attr('max') );
 
-         		if( $('#liveGen[type=checkbox]').is(':checked') )
-         			heatmapMain();
+				if( $(this).val() > maxInputVal )
+					$(this).val(maxInputVal);
+
+				if( $(this).val() < 0 )
+					$(this).val(0);
+
+				// Set the value for the sliders
+				$('#hueLevel').val(hue);
+				$('#satLevel').val(sat);
+				$('#opacity-slider').val(sat);
+
+				setSliderColor(hue, sat);
+
+				//if( $('#liveGen[type=checkbox]').is(':checked') )
+					heatmapMain();
          	});
 
-         	$('#monochromaticScale[type=checkbox]').on('change',function(event)
-         	{
-         		var range = document.getElementById("hueLevel");
-
-         		if( $(this).is(':checked') )
-         		{
-         			range.disabled = false;
-         			$('#hueSection').attr('class','activeSection');
-         		}
-         		else
-         		{
-         			range.disabled = true;
-         			$('#hueSection').attr('class','inactiveSection');
-         		}
-
-                heatmapMain();
-         	});
-
-         	$('#liveGen[type=checkbox]').on('change',function(event)
-         	{
-         		var genButton = document.getElementById("genHeatmap");
-
-         		if( $(this).is(':checked') )
-         		{
-         			genButton.disabled = true;
-         			$('#genHeatmap').attr('class','inactiveSection');
-         		}
-         		else
-         		{
-         			genButton.disabled = false;
-         			$('#genHeatmap').attr('class','activeSection');
-         		}
-
-                heatmapMain();
-         	});
 
 			 $('#heatmapPanel li input[type=range]').on('change', function(event) {
                 heatmapMain();
@@ -290,21 +279,66 @@
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          }
 
-         function setSliderColor(hue, sat)
-         {
-         	for(var i = 0; i < document.styleSheets[4].rules.length; i++)
-         	{
-         		var rule = document.styleSheets[4].rules[i];
-         		if(rule.cssText.match('::-webkit-slider-thumb'))
-         			rule.style.backgroundColor = 'hsl('+hue+','+sat+'%,50%)';
-         	}
-         }
+		function setScaleType()
+		{
+			var hueRange = document.getElementById("hueLevel");
+			var satRange = document.getElementById("satLevel");
+			var hueSection = $('#hueSection');
+			var satSection = $('#satSection');
+
+			var scaleType = $('#scaleType').find(":selected").index();
+
+			// Reset:
+			hueRange.disabled = false;
+			hueSection.attr('class','activeSection');
+
+			satRange.disabled = false;
+			satSection.attr('class','activeSection');
+
+			// Set preferences for this scale:
+			switch(scaleType)
+			{
+				case 0:									// Jet scale:
+					hueRange.disabled = true;
+					hueSection.attr('class','inactiveSection');
+				break;
+
+				case 1:									// Monochromatic scale:
+					/* Magic! */
+				break;
+			}
+
+			heatmapMain();
+		}
+
+        /**
+		 *  Change the color of the slider thumb.
+		 *	@param  {Int}	The hue level.
+		 *	@param  {Int}	The saturation level.
+		 *	@return {Void}
+		 */
+		function setSliderColor(hue, sat)
+		{
+			for(var i = 0; i < document.styleSheets[1].rules.length; i++)
+			{
+				var rule = document.styleSheets[1].rules[i];
+				if
+				(
+					rule.cssText.match('::-webkit-slider-thumb') ||
+					rule.cssText.match('::-moz-range-thumb') ||
+					rule.cssText.match('::-ms-thumb')
+				)
+				{
+					rule.style.backgroundColor = 'hsl('+hue+','+sat+'%,50%)';
+				}
+			}
+		}
 
          /**
           * @param {float} Number between 0 and 1.
           */
          function changeOpacityOfMatrixCanvas(value) {
-             imageCanvas.css({ opacity: value });
+             matrixCanvas.css({ opacity: value });
          }
 
          /**
@@ -346,18 +380,24 @@
          }
 
          /**
-          * Generate color for the heatmap.
-          *	@param  {Int}	  The current intersection value for the pixel.
-          *	@param  {Int}	  The highest value of intersections.
-          *	@return {String}  color in hsl format.
-          */
+		  * Generate Jet scale color for the heatmap.
+		  *	@param  {Float}	  The percentage value for generating the hue level.
+		  *	@param  {Int}	  The saturation value.
+		  *	@return {String}  color in hsl format.
+		  */
          function jetScale(valPerc, sat)
          {
          	var hue = HUE_LOW - (HUE_LOW * valPerc);
          	var color = 'hsl(' + hue + ',' + sat + '%,50%)';
          	return color;
          }
-
+		 /**
+		  * Generate grayscale color for the heatmap.
+		  *	@param  {Float}	  The percentage value for generating the light level.
+		  *	@param  {Int}	  The hue value.
+		  *	@param  {Int}	  The saturation value.
+		  *	@return {String}  color in grayscale format.
+		  */
          function grayScale(valPerc, hue, sat)
          {
          	var light = valPerc * 100;
@@ -366,24 +406,29 @@
          }
 
          /**
-          * Generate color for the heatmap.
-          *	@param  {Int}	  The current intersection value for the pixel.
-          *	@param  {Int}	  The highest value of intersections.
-          *	@return {String}  color in hsl format.
-          */
-         function heatmapColor(cur, max, scaleType, hue, sat, reverse)
-         {
-         	var valPerc = (cur-1) / (max-1);
+		  * Generate color for the heatmap.
+		  *	@param  {Int}	   The current intersection value for the pixel.
+		  *	@param  {Int}	   The highest value of intersections.
+		  *	@param	{Int}	   The type of scale that should be rendered in heatmap.
+		  *	@param	{Int}	   The hue value.
+		  *	@param	{Int}	   The saturation value.
+		  *	@param	{Boolean}  Whether the scale should be reversed or not.
+		  *	@return {String}   The color in HSL format.
+		  */
+        function heatmapColor(cur, max, scaleType, hue, sat, reverse)
+		{
+			var value = (cur-1) / (max-1);		// Float value for generating the color.
 
-         	if(reverse)
-         		valPerc = 1 - valPerc;
+			if(reverse) 						// Reverse the scale if true.
+				value = 1 - value;
 
-         	switch(scaleType)
-         	{
-         		case 0: return grayScale(valPerc, hue, sat);
-         		case 1: return jetScale(valPerc, sat);
-         	}
-         }
+			switch(scaleType) 					// Return the color in HSL format:
+			{
+				case 0: return jetScale(value, sat);
+				case 1: return grayScale(value, hue, sat);
+
+			}
+		}
          /**
           * Render the legend scale for the heatmap.
           *	@param  {Int}	  The scale type, 0: monochromatic, 1: jet.
@@ -503,7 +548,7 @@
           *	@param  {array}	  The matrix data to draw.
           *	@param  {Int}	  The hue value for the heatmap.
           *	@param  {Int}	  The saturation value for the heatmap.
-          *	@param  {Int}	  The scale type, 0: grayscale, 1: jet.
+          *	@param  {Int}	  The scale type, 0: jet, 1: grayscale.
           *	@return {Void}.
           */
          function drawMatrixCanvas(data, hue, sat, scaleType, reverse)
@@ -546,6 +591,34 @@
          	console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
 
+		// Render matrix in html table,
+		// (!) not finished.
+		function generateMatrixCSV(matrixData)
+		{
+			var matrixText = "";
+
+			for(var i = 0; i < 80; i++ )
+			{
+				for(var j = 0; j < 80; j++ )
+				{
+					matrixText += matrixData[i][j].val;
+				}
+
+				matrixText += "\n";
+			}
+
+			$.ajax
+			({
+				url: 'matrix.php',
+				type: 'POST',
+				data: {matrix: matrixText}
+			})
+			.done(function(data)
+			{
+				//$('body').append('<a download href = "matrix.csv">download file</a>')
+			});
+		}
+
          /**
           * Calculate total pixel points for all polygons.
           * Estimates from the current savedShapes.
@@ -561,7 +634,7 @@
          	{
          		var hue = $('#hueLevel').val();
          		var sat = $('#satLevel').val();
-         		var scaleType = 1;										// Type of scale for heatmap.
+				var scaleType = $('#scaleType').find(":selected").index();
          		var reverse = false;									// Reverse the color scale.
 
          		var t0 = performance.now();
@@ -588,7 +661,7 @@
          		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
          		drawMatrixCanvas(matrix, hue, sat, scaleType, reverse);
 
-         		//drawMatrixTable(matrix);
+         		//generateMatrixCSV(matrix);
 
          		var t1 = performance.now();
          		console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
