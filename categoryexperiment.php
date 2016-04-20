@@ -29,7 +29,7 @@ if (isset($_GET["invite"])) {
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -66,7 +66,7 @@ if (isset($_GET["invite"])) {
     <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 </head>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------------->
 
 
 <body class="metro" style="background-color:#808080;" onload="show();
@@ -114,7 +114,7 @@ if (isset($_GET["invite"])) {
 <div id="backgroundPopup3"></div>
 
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------------------------->
 
 <div id="header-div" style="width:100%; height:50px; background-color: #282828;">
     <div class="inner-header">
@@ -139,7 +139,7 @@ if (isset($_GET["invite"])) {
     </div>
 </div>
 
-<div id="category-container" style="">
+<div id="category-container">
 <!--    <span id="original-tag" class="span-original-tag"><p>Original</p></span>-->
 <!--    <br>-->
     <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">

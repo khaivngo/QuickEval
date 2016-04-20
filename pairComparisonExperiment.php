@@ -1,38 +1,36 @@
 <?php
-require_once('db.php');
-require_once('functions.php');
+    require_once('db.php');
+    require_once('functions.php');
 
-if (!isset($_SESSION['user']['id'])) {
+    if (!isset($_SESSION['user']['id'])) {
+        if (isset($_GET["invite"])) {
+            $hash = $_GET["invite"];
+            $url = "pairComparisonExperiment.php?invite=";
+
+            redirectAfterLogin($url . $hash);
+        } else {
+            header("Location: login.php");
+            exit;
+        }
+    }
+
     if (isset($_GET["invite"])) {
         $hash = $_GET["invite"];
         $url = "pairComparisonExperiment.php?invite=";
 
-        redirectAfterLogin($url . $hash);
+        try {
+            $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
+
+            $res = $stmt->fetchAll();
+            $_SESSION['experimentId'] = $res[0]['id'];
+        } catch (Exception $ex) {}
+
     } else {
-        header("Location: login.php");
-        exit;
+        $_SESSION['experimentId'] = $_POST['experimentId'];
     }
-
-}
-if (isset($_GET["invite"])) {
-    $hash = $_GET["invite"];
-    $url = "pairComparisonExperiment.php?invite=";
-
-
-    try {
-        $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
-
-        $res = $stmt->fetchAll();
-        $_SESSION['experimentId'] = $res[0]['id'];
-    } catch (Exception $ex) {
-
-    }
-} else {
-    $_SESSION['experimentId'] = $_POST['experimentId'];
-}
 ?>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -106,7 +104,7 @@ if (isset($_GET["invite"])) {
 </div>
 <div id="backgroundPopup3"></div>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------->
 
 
 <div id="paircomparison">

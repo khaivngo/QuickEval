@@ -15,7 +15,7 @@
         }, options);
 
         var HUE_LOW = 240;									// For heatmap lowest value in Jet scale.
-		
+
 		// Browser support:
 		var isFirefox = typeof InstallTrigger !== 'undefined';
 
@@ -170,8 +170,8 @@
          {
          	// Generate heatmap button.
          	// $('#genHeatmap').on('click', heatmapMain);
-            
-           
+
+
 
          	/**
          	 *  UI for heatmap generator.
@@ -180,15 +180,15 @@
          	 */
          	$('#heatmapPanel li input[type=range]').on('input',function(event)
             {
-         		var hue = $('#hueLevel').val();	
-				var sat = $('#satLevel').val();		
-				
+         		var hue = $('#hueLevel').val();
+				var sat = $('#satLevel').val();
+
 				// Change the current label text value for this slider.
-				$(this).parent().parent().find('.sizeNumber').val( $(this).val() ); 
-				
+				$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
+
 				if(!isFirefox)
-					setSliderColor(hue, sat);			
-				
+					setSliderColor(hue, sat);
+
 				//if( $('#liveGen[type=checkbox]').is(':checked') )
 					heatmapMain();
          	});
@@ -198,35 +198,35 @@
          		var hue = $('#hueSection input[type=number]').val();
 				var sat = $('#satSection input[type=number]').val();
 				var opa = $('#opacity-of-marks input[type=number]').val();
-				
+
 				var maxInputVal = 0;
-				
-				// Set values as minimum or maximum if exaggerated:  
+
+				// Set values as minimum or maximum if exaggerated:
 				if( $(this).attr('name') == 'satNumber' )
 					maxInputVal = parseInt( $('#satLevel').attr('max') );
 				else if
 					maxInputVal = parseInt( $('#hueLevel').attr('max') );
 				else
 					maxInputVal = parseInt( $('#opacity-slider').attr('max') );
-				
+
 				if( $(this).val() > maxInputVal )
 					$(this).val(maxInputVal);
 
 				if( $(this).val() < 0 )
 					$(this).val(0);
-				
+
 				// Set the value for the sliders
 				$('#hueLevel').val(hue);
 				$('#satLevel').val(sat);
 				$('#opacity-slider').val(sat);
-				
+
 				setSliderColor(hue, sat);
-				
+
 				//if( $('#liveGen[type=checkbox]').is(':checked') )
 					heatmapMain();
          	});
 
-			
+
 			 $('#heatmapPanel li input[type=range]').on('change', function(event) {
                 heatmapMain();
             });
@@ -237,21 +237,21 @@
 
 
             // listen for changes to the opacity number input and update the
-            // matrix canvas with the new a new opacity value
+            // matrix canvas with the new opacity value
             $('#opacity-value').on('input', function() {
          		$('#opacity-slider').val( $(this).val() ); // val()ception
 
-                var opacityLevel = $(this).val() / 10;
+                var opacityLevel = $(this).val() / 100;
          		changeOpacityOfMatrixCanvas(opacityLevel);
          	});
 
             // listen for changes to the opacity slider and update the
-            // matrix canvas with the new a new opacity value
+            // matrix canvas with the new opacity value
             $('#opacity-of-marks input[type="range"]').on('input', function() {
                 // Change current label text value for this slider.
          		$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
 
-                var opacityLevel = $(this).val() / 10;
+                var opacityLevel = $(this).val() / 100;
          		changeOpacityOfMatrixCanvas(opacityLevel);
          	});
 
@@ -278,23 +278,23 @@
          	// Reset mergedCtx for further manipulation
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          }
-		
+
 		function setScaleType()
 		{
 			var hueRange = document.getElementById("hueLevel");
 			var satRange = document.getElementById("satLevel");
 			var hueSection = $('#hueSection');
 			var satSection = $('#satSection');
-			
+
 			var scaleType = $('#scaleType').find(":selected").index();
-			
+
 			// Reset:
 			hueRange.disabled = false;
 			hueSection.attr('class','activeSection');
-			
+
 			satRange.disabled = false;
 			satSection.attr('class','activeSection');
-			
+
 			// Set preferences for this scale:
 			switch(scaleType)
 			{
@@ -302,25 +302,25 @@
 					hueRange.disabled = true;
 					hueSection.attr('class','inactiveSection');
 				break;
-				
+
 				case 1:									// Monochromatic scale:
 					/* Magic! */
 				break;
 			}
-			
+
 			heatmapMain();
 		}
-		
+
         /**
 		 *  Change the color of the slider thumb.
 		 *	@param  {Int}	The hue level.
 		 *	@param  {Int}	The saturation level.
-		 *	@return {Void}		  	
+		 *	@return {Void}
 		 */
 		function setSliderColor(hue, sat)
-		{	
-			for(var i = 0; i < document.styleSheets[1].rules.length; i++) 
-			{		
+		{
+			for(var i = 0; i < document.styleSheets[1].rules.length; i++)
+			{
 				var rule = document.styleSheets[1].rules[i];
 				if
 				(
@@ -409,7 +409,7 @@
 		  * Generate color for the heatmap.
 		  *	@param  {Int}	   The current intersection value for the pixel.
 		  *	@param  {Int}	   The highest value of intersections.
-		  *	@param	{Int}	   The type of scale that should be rendered in heatmap. 
+		  *	@param	{Int}	   The type of scale that should be rendered in heatmap.
 		  *	@param	{Int}	   The hue value.
 		  *	@param	{Int}	   The saturation value.
 		  *	@param	{Boolean}  Whether the scale should be reversed or not.
@@ -418,15 +418,15 @@
         function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 		{
 			var value = (cur-1) / (max-1);		// Float value for generating the color.
-			
+
 			if(reverse) 						// Reverse the scale if true.
 				value = 1 - value;
-			
+
 			switch(scaleType) 					// Return the color in HSL format:
 			{
 				case 0: return jetScale(value, sat);
 				case 1: return grayScale(value, hue, sat);
-				
+
 			}
 		}
          /**
@@ -590,20 +590,20 @@
          	var t1 = performance.now();
          	console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
-		 
+
 		// Render matrix in html table,
 		// (!) not finished.
 		function generateMatrixCSV(matrixData)
-		{	
+		{
 			var matrixText = "";
 
 			for(var i = 0; i < 80; i++ )
-			{	
+			{
 				for(var j = 0; j < 80; j++ )
 				{
 					matrixText += matrixData[i][j].val;
 				}
-				
+
 				matrixText += "\n";
 			}
 
@@ -617,7 +617,7 @@
 			{
 				//$('body').append('<a download href = "matrix.csv">download file</a>')
 			});
-		} 
+		}
 
          /**
           * Calculate total pixel points for all polygons.

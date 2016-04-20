@@ -109,7 +109,7 @@ function getImages(experimentId) {
             // loop through each experiment image and create a dropdown list with the image names
             var output = '<div id="heatmap-options">';
                 output += '<select style="width: 200px; padding: 10px;">';
-                    output += '<option>Choose image</option>';
+                    output += '<option disabled>Choose image</option>';
                     data[0].forEach(function(image) {
                         output +=
                             '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +

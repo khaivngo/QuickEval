@@ -5,7 +5,7 @@ require_once('functions.php');
 if (!isset($_SESSION['user']['id'])) {
     if (isset($_GET["invite"])) {
         $hash = $_GET["invite"];
-        $url = "rankOrderexperiment.php?invite=";
+        $url = "artifactmarkingexperiment.php?invite=";
 
         redirectAfterLogin($url . $hash);
     } else {
@@ -22,10 +22,13 @@ if (isset($_GET["invite"])) {
 
         $res = $stmt->fetchAll();
         $_SESSION['experimentId'] = $res[0]['id'];
-    } catch (Exception $ex) {}
+    } catch (Exception $ex) {
+
+    }
 } else {
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,19 +37,18 @@ if (isset($_GET["invite"])) {
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+
+
     <!-- CSS -->
     <link href="css/metro-bootstrap.css" rel="stylesheet">
     <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
-
-    <script src="canvas-image-marker/Helper.js"></script>
-    <script src="canvas-image-marker/Annotation.js"></script>
-    <script src="canvas-image-marker/canvas-image-marker.js"></script>
 
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
@@ -54,21 +56,25 @@ if (isset($_GET["invite"])) {
     <!-- Other JS -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
-    <script src="js/Observer/alterExperimentPosition.js"></script>
     <script src="js/commonExperimentScript.js"></script>
-    <script src="js/ratingExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
+    <script src="js/Observer/alterExperimentPosition.js"></script>
+    <script src="js/ratingExperimentScript.js"></script>
+    <script src="js/categoryExperimentScript.js"></script>
 
     <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 </head>
 
-<!-- Starts timer -->
-<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show(); start();">
+<!---------------------------------------------------------------------------------------->
 
-<div id="popupContact">
-    <p id="contactArea" style="font-size:18px;">
+
+<body class="metro" style="background-color:#808080;" onload="show();
+            start();">
+
+<div id="popupContact" style="">
+    <p id="contactArea" class="contactArea-center" style="font-size:18px;">
         Press ESC, Continue or anywhere else to close and continue.
         <br/><br/>
         Click Quit to return to front page.
@@ -76,16 +82,14 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons" class="popupButtons" style="">
-        <button id="quit" class="button size2">Quit</button>
+        <button id="quit" class="button size2" style="margin-right:10px;">Quit</button>
         <button id="continue" class="button size2">Continue</button>
     </div>
 </div>
-
-
 <div id="backgroundPopup"></div>
 
 <div id="popupContact2">
-    <p id="contactArea2" style="font-size:18px;">
+    <p id="contactArea2" class="contactArea-center" style="font-size:18px;">
         <br/>
         <strong>INSTRUCTION</strong>
         <br/><br/>
@@ -105,34 +109,15 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons3" class="popupButtons">
-        <button id="continue3" class="button size2">Continue</button>
-        <button id="quit3" class="button size2" style="margin-right:10px;">Quit</button>
+        <button id="quit2" class="button size2" style="margin-right:10px;">Quit</button>
     </div>
 </div>
 <div id="backgroundPopup3"></div>
 
 
-<div id="popupContact4">
-    <p id="contactArea4" class="contactArea-center" style="font-size:18px;">
-        <br/>
-        <strong>NEXT?</strong>
-        <br/><br/>
-        You sure you want to go next? All pictures haven't been sorted <br><br> Click Continue to keep sorting or Next
-        to go to next picture set.
-        <br/><br/>
-    </p>
+<!---------------------------------------------------------------------------------->
 
-    <div id="popupButtons4" class="popupButtons">
-        <button id="continue4" class="button size2" style="">Continue</button>
-        <button id="button-next-rating" class="button size2">Next</button>
-    </div>
-</div>
-<div id="backgroundPopup4"></div>
-
-
-<!------------------------------->
-
-<div id="header-div">
+<div id="header-div" style="width:100%; height:50px; background-color: #282828;">
     <div class="inner-header">
         <button id="button-instruction" class="button top-buttons" style="margin-left:15px; margin-right:20px">
             Instruction
@@ -150,87 +135,65 @@ if (isset($_GET["invite"])) {
 
         <div id="info" class="center" style="color:white;">
             <span id="progress">&nbsp<span id="time" onload="start();"></span></span>
+            <!--Comparison <span id="current-step"></span> of <span id="total-steps"></span> &nbsp |-->
         </div>
     </div>
 </div>
 
-<div id="rating-container">
-    <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
+<div id="category-container">
+    <!-- <span id="original-tag" class="span-original-tag"><p>Original</p></span> -->
+    <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">
+        <span id="original-tag" class="span-original-tag"><p>Original</p></span>
 
-    <div id="drop-left" class="" style="margin-left: 0; display:inline-block; height: 50%; width: 30%;">
-        <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
-                <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
-
-                <div id="pan1" class="panzoom">
-                    <!-- <img class="picture" src="images/initiatePicture.png"/> -->
-
-                    <div class="canvas-container picture"
-                        data-experimentId="<?php echo $_SESSION['experimentId']; ?>"
-                        data-image-url="images/initiatePicture.png"
-                        data-picture-id=""
-                        data-picture-queue=""
-                        oncontextmenu="return false;">
-    	                <!-- image canvas goes here -->
-    	            </div>
-
-                </div>
-            </div>
-        </section>
-        <div id="picture-in-panner-left"><span><strong></strong></span></div>
-    </div>
-
-    <div id="original" style="margin-left:1%; margin-right:1%; display:inline-block; height: 50%; width: 30%;">
-        <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+        <section id="set1">
+            <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
-                <div id="pan3" class="panzoom">
+                <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
+                <div id="pan1" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
-            <br>
         </section>
+        <br>
+        <br>
     </div>
 
-    <div id="drop-right" class="" style=" display:inline-block; height: 50%; width: 30%;">
+
+    <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left: 2%; width:40%; height:70%;">
         <section id="set2" style="">
             <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
-                <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
+                <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
                     <!-- <img class="picture" src="images/initiatePicture.png"/> -->
-
-                    <div data-experimentId="<?php echo $_SESSION['experimentId']; ?>"
-                        class="canvas-container"
-                        data-image-url="images/initiatePicture.png"
-                        data-picture-id=""
-                        data-picture-queue=""
-                        oncontextmenu="return false;">
-    	                <!-- image canvas goes here -->
-    	            </div>
-
+                    <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+                        <!-- image canvas goes here -->
+                    </div>
                 </div>
             </div>
         </section>
-        <div id="picture-in-panner-right"><span><strong></strong></span></div>
+        <br>
+
+        <div class="category-button-container">
+            <button style="float:left;" class="size2 panning-reset">Reset panning</button>
+
+            <div class="input-control select size3" style="text-align:center;">
+                <select id="categories" style="background-color:#C8C8C8;">
+                    <option value="null" disabled>Select category</option>
+                </select>
+            </div>
+            <button class="size2" id="button-next-category" style="float:right; ">Next</button>
+        </div>
     </div>
 
     <div style="width:100%;">
-        <button class="size2 panning-reset">Reset panning</button>
-
-    </div>
-</div>
-
-
-<div id="rating" class="footer rating-collection center" style="">
-    <div id="rating-images">
     </div>
 
 </div>
 
-<button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
-
-
+<script src="canvas-image-marker/Helper.js"></script>
+<script src="canvas-image-marker/Annotation.js"></script>
+<script src="canvas-image-marker/canvas-image-marker.js"></script>
 <script>
     $(document).ready(function() {
         $('.canvas-container').canvasMarkingTool({
@@ -238,7 +201,6 @@ if (isset($_GET["invite"])) {
         });
     });
 </script>
-
 
 
 </body>

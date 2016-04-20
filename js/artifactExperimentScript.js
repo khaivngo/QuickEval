@@ -16,47 +16,23 @@ $(document).ready(function () {
             $set: $section.find('.parent > div'),
             minScale: 1,
             maxScale: 1
-
         }).panzoom('zoom');
     })();
 
-
-    //Automatic panning reset
-    //$('#left-reproduction .panzoom, #right-reproduction .panzoom, #original .panzoom').mousedown(function () {
-    //    //console.log('Mousedown');
-    //    $('body').mouseup(function () {
-    //        //console.log('Mouseup');
-    //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-    //    });
-    //
-    //    $('body').mouseleave(function () {
-    //
-    //        // Create a new mouse up object with 'which' specified to be 1.
-    //        var e = $.Event("mouseup", {which: 1});
-    //        // Triggers it on the body.
-    //        $("body").trigger(e);
-    //        //console.log("leave")
-    //    });
-    //
-    //});
 
     $('#panzoom-reset').click(function()    {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
 
     });
 
-//
-//$('#pictureOriginal').panzoom({
-//    maxScale: this.naturalWidth / this.clientWidth
-//});
 
-//------------------------Based on http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/ ---------------------
+    // Based on http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/
 
     $('#toggle-button').click(function () {
         toggleSlide();
     });
 
-//---------------------------------------------------------------------------------------------------------------------------------------
+    //------------------------------
 
     //shows which reproduction is selected
     $('#left-reproduction, #right-reproduction').click(function () {
@@ -90,23 +66,23 @@ $(document).ready(function () {
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 
-    $('#left-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#left-reproduction-link').attr('href');      //fetching url of picture
+    $('#left-reproduction-link').on('click', function () {        // sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");         // opening new document
+        var url = $('#left-reproduction-link').attr('href');      // fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#original-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#original-link').attr('href');      //fetching url of picture
+    $('#original-link').on('click', function () {               // sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");       // opening new document
+        var url = $('#original-link').attr('href');             // fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#right-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#right-reproduction-link').attr('href');      //fetching url of picture
+    $('#right-reproduction-link').on('click', function () {      // sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");        // opening new document
+        var url = $('#right-reproduction-link').attr('href');    // fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
@@ -143,7 +119,7 @@ $(document).ready(function () {
     $('#button-none').click(function () {
         nextComparison();
     });
-    
+
     $('#quit').click(function () {       //If user confirms cancel he is returned to main page
         window.location = 'index.php';
     });
@@ -265,6 +241,7 @@ function toggleSlider() {
         slider.classList.add('opened');
     }
 }
+
 var runned = 0;
 
 /**
