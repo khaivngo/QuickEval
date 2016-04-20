@@ -122,8 +122,8 @@
                 </div>
             </div>
 
-            <div id="heatmap-panel-container">
-                <i style="z-index: 1000; position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i>
+            <div id="heatmap-panel-container" style="z-index: 1000">
+                <i style="z-index: 1000; position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #aaa;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i>
                 <ul id="heatmapPanel">
                     <li id="hueSection" class = "inactiveSection">
                         <h2 style="font-family: Helvetica;">hue</h2>
@@ -151,17 +151,17 @@
                         <input type="checkbox" id="reverseScale">
                         <label for="reverseScale">Reverse scale</label>
                     </li>
-                    <li>
+                    <li style="opacity: 0;">
                         <input type="checkbox" id="liveGen">
                         <label for="liveGen">Enable live generating (CPU consuming)</label>
                     </li>
                     <li id="opacity-of-marks">
                         <h2 style="font-family: Helvetica;">opacity of marks</h2>
-                        <input id="opacity-value" type="number" class="sizeNumber" value="10" min="0" max="10">
+                        <input id="opacity-value" type="number" class="sizeNumber" value="100" min="0" max="100">
                         <div class="rangeSlider">
                             <div class="rangeSliderLowValue">0</div>
-                            <input id="opacity-slider" type="range" value="10" min="0" max="10">
-                            <div class="rangeSliderMaxValue">10</div>
+                            <input id="opacity-slider" type="range" value="100" min="0" max="100">
+                            <div class="rangeSliderMaxValue">100%</div>
                         </div>
                     </li>
                     <!-- <li>
