@@ -2,10 +2,10 @@
  *	Generate Heatmap
  */
 
-
+var isFirefox = typeof InstallTrigger !== 'undefined';
 var savedShapes;
 
-var HUE_LOW = 200;		// For heatmap lowest value in HSL scale.
+var HUE_LOW = 240;		// For heatmap lowest value in HSL scale.
 
 var image = new Object();
 image.width = 800;
@@ -68,8 +68,8 @@ $(document).ready(function()
 			shapes[i].fill = JSON.parse(shapes[i].fill);
 		}
 		savedShapes = shapes;
-		
-		calcPolygonPoints();
+		setScaleType();
+		heatmapMain();
 	});
 	
 	/*------*/
@@ -77,7 +77,7 @@ $(document).ready(function()
 	// Generate heatmap button.
 	$('#genHeatmap').on('click',function()
 	{
-		calcPolygonPoints();
+		heatmapMain();
 	});
 	
 	
@@ -87,23 +87,25 @@ $(document).ready(function()
 	 *	When the user changes the Sliders range, either hue or saturation.
 	 *  @return {void}.
 	 */
-	$('#heatmapPanel li input[type=range]').on('input',function(event)
-	{
+	$('#heatmapPanel li input[type=range]').on('input change',function(event)
+	{	
 		var hue = $('#hueLevel').val();	
 		var sat = $('#satLevel').val();		
 		
 		// Change the current label text value for this slider.
 		$(this).parent().parent().find('.sizeNumber').val( $(this).val() ); 
 		
-		setSliderColor(hue, sat);			
+		if(!isFirefox)
+			setSliderColor(hue, sat);			
 		
-		if( $('#liveGen[type=checkbox]').is(':checked') )
-			calcPolygonPoints();
+		//if( $('#liveGen[type=checkbox]').is(':checked') )
+			heatmapMain();
+		
 	});
 	
 	/**
 	 *  UI for heatmap generator.
-	 *	When the user changes the input value for either hue or saturation.
+	 *	When the user changes the input value for either hue, saturation or opacity.
 	 *  @return {void}.
 	 */
 	$('#heatmapPanel li input[type=number]').on('input',function(event)
@@ -131,8 +133,8 @@ $(document).ready(function()
 		
 		setSliderColor(hue, sat);
 		
-		if( $('#liveGen[type=checkbox]').is(':checked') )
-			calcPolygonPoints();
+		//if( $('#liveGen[type=checkbox]').is(':checked') )
+			heatmapMain();
 	});
 	
 	/**
@@ -140,20 +142,14 @@ $(document).ready(function()
 	 *	If the scale should be displayed as HSL colors.
 	 *  @return {void}.
 	 */
-	$('#hueScale[type=checkbox]').on('change',function(event)
+	$('#scaleType').on('change',function(event,index)
 	{
-		var range = document.getElementById("hueLevel");
-		
-		if( $(this).is(':checked') )
-		{	
-			range.disabled = true;
-			$('#hueSection').attr('class','inactiveSection');
-		}
-		else
-		{
-			range.disabled = false;
-			$('#hueSection').attr('class','activeSection');
-		}
+		setScaleType();
+	});
+	
+	$('#reverseScale').on('change',function()
+	{
+		heatmapMain();
 	});
 	
 	/**
@@ -161,7 +157,7 @@ $(document).ready(function()
 	 *	If the user wants to activate the live generator for each change.
 	 *  @return {void}.
 	 */
-	$('#liveGen[type=checkbox]').on('change',function(event)
+	/* $('#liveGen[type=checkbox]').on('change',function(event)
 	{
 		var genButton = document.getElementById("genHeatmap");
 		
@@ -175,7 +171,7 @@ $(document).ready(function()
 			genButton.disabled = false;
 			$('#genHeatmap').attr('class','activeSection');
 		}
-	});
+	}); */
 	
 	/**
 	 *  UI for heatmap generator.
@@ -212,6 +208,38 @@ function downloadCanvas(link, canvasId, filename)
 	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
 }
 
+function setScaleType()
+{
+	var hueRange = document.getElementById("hueLevel");
+	var satRange = document.getElementById("satLevel");
+	var hueSection = $('#hueSection');
+	var satSection = $('#satSection');
+	
+	var scaleType = $('#scaleType').find(":selected").index();
+	
+	// Reset:
+	hueRange.disabled = false;
+	hueSection.attr('class','activeSection');
+	
+	satRange.disabled = false;
+	satSection.attr('class','activeSection');
+	
+	// Set preferences for this scale:
+	switch(scaleType)
+	{
+		case 0:									// Jet scale:
+			hueRange.disabled = true;
+			hueSection.attr('class','inactiveSection');
+		break;
+		
+		case 1:									// Monochromatic scale:
+			/* Code */
+		break;
+	}
+	
+	heatmapMain();
+}
+
 /**
  *  Change the color of the slider thumb.
  *	@param  {Int}	The hue level.
@@ -219,12 +247,19 @@ function downloadCanvas(link, canvasId, filename)
  *	@return {Void}		  	
  */
 function setSliderColor(hue, sat)
-{
+{	
 	for(var i = 0; i < document.styleSheets[1].rules.length; i++) 
-	{
+	{		
 		var rule = document.styleSheets[1].rules[i];
-		if(rule.cssText.match('::-webkit-slider-thumb'))
+		if
+		(
+			rule.cssText.match('::-webkit-slider-thumb') ||
+			rule.cssText.match('::-moz-range-thumb') ||
+			rule.cssText.match('::-ms-thumb')
+		)
+		{
 			rule.style.backgroundColor = 'hsl('+hue+','+sat+'%,50%)';
+		}
 	}
 }
 
@@ -311,8 +346,9 @@ function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 	
 	switch(scaleType) 					// Return the color in HSL format:
 	{
-		case 0: return grayScale(value, hue, sat);
-		case 1: return jetScale(value, sat);
+		case 0: return jetScale(value, sat);
+		case 1: return grayScale(value, hue, sat);
+		
 	}
 }
 	
@@ -339,41 +375,6 @@ function renderHeatmapLegend(scaleType, maxVal, hue, sat, reverse)
 	switch (scaleType)
 	{
 		case 0:
-			colorStep = 100 / (range-1);
-			
-			if(!reverse)
-			{	
-				for(var i = 0; i < range; i++)
-				{
-					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
-					matrixCtx.fillStyle = color;
-					
-					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
-					
-					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
-
-					deltaPadding += heatmapLegend.paddingLeft;
-					index ++;
-				}
-			}
-			else
-			{
-				for(var i = range-1; i >= 0; i--)
-				{
-					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
-					matrixCtx.fillStyle = color;
-					
-					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
-					
-					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
-
-					deltaPadding += heatmapLegend.paddingLeft;
-					index ++;
-				}
-			}
-			break;
-
-		case 1:
 			colorStep = HUE_LOW / (range-1);
 			
 			if(!reverse)
@@ -406,7 +407,43 @@ function renderHeatmapLegend(scaleType, maxVal, hue, sat, reverse)
 					index ++;
 				}
 			}
-			break;
+		break;
+		
+		case 1:
+			colorStep = 100 / (range-1);
+			
+			if(!reverse)
+			{	
+				for(var i = 0; i < range; i++)
+				{
+					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
+					matrixCtx.fillStyle = color;
+					
+					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
+					
+					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
+
+					deltaPadding += heatmapLegend.paddingLeft;
+					index ++;
+				}
+			}
+			else
+			{
+				for(var i = range-1; i >= 0; i--)
+				{
+					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
+					matrixCtx.fillStyle = color;
+					
+					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
+					
+					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
+
+					deltaPadding += heatmapLegend.paddingLeft;
+					index ++;
+				}
+			}
+		break;
+
 	}
 	
 	mergedCtx.fillstyle = "#000";
@@ -434,7 +471,7 @@ function renderHeatmapLegend(scaleType, maxVal, hue, sat, reverse)
  *	@param  {array}	  The matrix data to draw.
  *	@param  {Int}	  The hue value for the heatmap.
  *	@param  {Int}	  The saturation value for the heatmap.
- *	@param  {Int}	  The scale type, 0: grayscale, 1: hsl.
+ *	@param  {Int}	  The scale type, 0: jet, 1: grayscale.
  *	@return {Void}.
  */
 function drawMatrixCanvas(data, hue, sat, scaleType, reverse)
@@ -477,12 +514,40 @@ function drawMatrixCanvas(data, hue, sat, scaleType, reverse)
 	console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
 } 
  
+// Render matrix in html table,
+// (!) not finished.
+function generateMatrixCSV(matrixData)
+{	
+	var matrixText = "";
+
+	for(var i = 0; i < 80; i++ )
+	{	
+		for(var j = 0; j < 80; j++ )
+		{
+			matrixText += matrixData[i][j].val;
+		}
+		
+		matrixText += "\n";
+	}
+
+	$.ajax
+	({
+		url: 'matrix.php',
+		type: 'POST',
+		data: {matrix: matrixText}
+	})
+	.done(function(data)
+	{
+		//$('body').append('<a download href = "matrix.csv">download file</a>')
+	});
+} 
+ 
 /**
  * Calculate total pixel points for all polygons.
  * Estimates from the current savedShapes.
  * @return {Array} Array of every marked pixel.
  */
-function calcPolygonPoints()
+function heatmapMain()
 {
 	console.log('number of shapes: ' + savedShapes.length);
 	//setImage();
@@ -494,8 +559,10 @@ function calcPolygonPoints()
 		//console.log(savedShapes);
 		var hue = $('#hueLevel').val();
 		var sat = $('#satLevel').val();
-		var scale = 0;
+		var scaleType = $('#scaleType').find(":selected").index();
+		
 		var reverse = false;
+		
 
 		var t0 = performance.now();
 		var allMarkedPoints = [];											// Store all marked pixels.
@@ -511,18 +578,12 @@ function calcPolygonPoints()
 		//console.log('Before removing dupes: ' + allMarkedPoints.length);
 		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
 		//console.log('After removing dupes: ' + allMarkedPoints.length);
-
-		if( $('#hueScale[type=checkbox]').is(':checked') )
-			scale = 1;
 		
 		if( $('#reverseScale[type=checkbox]').is(':checked') )
 			reverse = true;
 		
-		
-
-
 		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
-		drawMatrixCanvas(matrix, hue, sat, scale, reverse);
+		drawMatrixCanvas(matrix, hue, sat, scaleType, reverse);
 
 		generateMatrixCSV(matrix);
 		
@@ -533,34 +594,4 @@ function calcPolygonPoints()
 	}
 	else
 		alert('No data in database.');
-	
-	// Render matrix in html table,
-	// (!) not finished.
-	function generateMatrixCSV(matrixData)
-	{	
-		var matrixText = "";
-
-		for(var i = 0; i < 80; i++ )
-		{	
-			for(var j = 0; j < 80; j++ )
-			{
-				matrixText += matrixData[i][j].val;
-			}
-			
-			matrixText += "\n";
-		}
-
-		$.ajax
-		({
-			url: 'matrix.php',
-			type: 'POST',
-			data: {matrix: matrixText}
-		})
-		.done(function(data)
-		{
-			$('body').append('<a download href = "matrix.csv">download file</a>')
-		});
-	}
-
-
 }
