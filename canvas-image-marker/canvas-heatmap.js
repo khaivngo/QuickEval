@@ -1,3 +1,7 @@
+/**
+ *  Creates the heatmap for a specific image.
+ *  - Display annotations and heatmap-settings
+ */
 (function($) {
     'use strict';
 
@@ -13,19 +17,98 @@
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url')
         }, options);
-
-        var HUE_LOW = 240;									// For heatmap lowest value in Jet scale.
-
+		
+		// For heatmap lowest value in Jet scale.
+        var HUE_LOW = 240;									
+		
 		// Browser support:
 		var isFirefox = typeof InstallTrigger !== 'undefined';
-
+		
+		// Position of heatmap legend:
         var heatmapLegend = new Object();
         heatmapLegend.height = 60;							// Extended value for heatmap legend scale in canvas.
         heatmapLegend.square = heatmapLegend.height / 2;	// Height/width for each square box in the heatmap legend.
         heatmapLegend.marginTop = 5;						// Remember to consider the heatmapLegend.height value when assigning new value.
         heatmapLegend.marginLeft = 75;						// Remember to consider the image.width value when assigning new value.
         heatmapLegend.paddingLeft = 4;						// Padding left for each square box.
+		
+		// Matrix
+		var ImageMatrix = function()
+        {
+            this.data;
+			this.maxVal;
+			
+			/**
+			  * Create a matrix of the experiment image with marked points as data.
+			  *	@return {array}	 The matrix.
+			  */
+            this.createMatrix = function()
+            {
+				var tempArray = [];
+				
+                for (var i = 0; i < savedShapes.length; i++)
+         		{
+         			for(var j = 0; j < savedShapes[i].fill.length; j ++)
+         			{
+         				tempArray.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
+         			}
+         		}
+				
+				//var t0 = performance.now();
+				var matrix = [];
 
+				// Init matrix: Very good performance:
+				for (var i = 0; i < image.width; i++)
+				{
+					matrix[i] = [];
+					for (var j = 0; j < image.height; j++)
+					{
+						matrix[i][j] = {val: 0};
+					}
+				}
+
+				//var t1 = performance.now();
+				//console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+
+				//var t2 = performance.now();
+
+				// Calc matrix: Very good Performance:
+				for(var i = 0; i < tempArray.length; i++)
+				{
+					matrix[ tempArray[i][0] ][ tempArray[i][1] ].val++;
+				}
+
+				//var t3 = performance.now();
+				//console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
+
+				this.data = matrix;
+            }
+			
+			this.calcMaxValue = function()
+			{
+				var maxVal = 0;
+
+				// Get max intersection value:
+				for(var i = 0; i < this.data.length; i ++)
+				{
+					for(var j= 0; j < this.data[i].length; j ++)
+					{
+						if(i == 0)
+							maxVal = this.data[i][j].val;
+						else
+						{
+							if(this.data[i][j].val > maxVal)
+								maxVal = this.data[i][j].val;
+						}
+					}
+				}
+				
+				this.maxVal = maxVal;
+			}
+        };
+		
+		// Matrix object:
+		var imgMatrix = new ImageMatrix();
 
         // Canvas base image:
         var imageCanvas = $('<canvas>');
@@ -53,8 +136,26 @@
             $(canvasContainer).append(mergedCanvas); // append the resized canvas to the DOM
 
             getArtifactMarks(settings.experimentID, settings.pictureQueue, settings.pictureID);
+			
+			selectTabContent(0);	// Default tab heatmap-settings.
         });
-
+		
+		function selectTabContent(tab)
+		{
+			switch(tab)
+			{
+				case 0:			// Heatmap settings 
+					$('#annotationSection').css('display','none');
+					$('#heatmapPanel').css('display','block');
+					
+				break;
+				case 1:			// Annotations
+					$('#annotationSection').css('display','block');
+					$('#heatmapPanel').css('display','none');
+				break;
+			}
+		}
+		
         /**
          * Figure out the size of the image, so we can set the canvas to the same size.
          */
@@ -119,12 +220,21 @@
                 if (data.length > 0) {
                     var shapes = [];
                     for (var i = 0; i < data.length; i++) {
-                        shapes.push({ fill: JSON.parse(data[i].marked_pixels) });
+                        shapes.push({
+							fill: JSON.parse(data[i].marked_pixels),
+							annotation: data[i].remark,
+							visible: true
+						});
                     }
 
                     savedShapes = shapes;
+					
+					imgMatrix.createMatrix();
+					imgMatrix.calcMaxValue();
+					
 					setScaleType();
                     heatmapMain();
+					renderAnnotations();
                 }
 
                 // remove loading spinner and set the image opacity back to 100%
@@ -152,7 +262,6 @@
              $.ajax(settingsObj);
          }
 
-
         /**
          * Draws the image on the image canvas for when the image is downloaded
          * (simply having the image as a background with CSS won't work).
@@ -163,7 +272,7 @@
             base_image.onload = function() {
                 imageCtx.drawImage(base_image, 0, 0);
             }
-        }
+        };
 
 
          $(document).ready(function()
@@ -171,7 +280,11 @@
          	// Generate heatmap button.
          	// $('#genHeatmap').on('click', heatmapMain);
 
-
+			$('.tabSection').on('click', function()
+			{
+				var index = $('.tabSection').index(this);
+				selectTabContent(index);
+			});
 
          	/**
          	 *  UI for heatmap generator.
@@ -203,11 +316,17 @@
 
 				// Set values as minimum or maximum if exaggerated:
 				if( $(this).attr('name') == 'satNumber' )
+				{
 					maxInputVal = parseInt( $('#satLevel').attr('max') );
-				else if
+				}
+				else if( $(this).attr('name') == 'hueNumber' )
+				{
 					maxInputVal = parseInt( $('#hueLevel').attr('max') );
+				}
 				else
+				{
 					maxInputVal = parseInt( $('#opacity-slider').attr('max') );
+				}
 
 				if( $(this).val() > maxInputVal )
 					$(this).val(maxInputVal);
@@ -259,10 +378,66 @@
          	{
          		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
          	}, false);
+			
+			/*------------------
+				Annotations UI
+			-------------------*/
+			
+			$('#annotationList').delegate('li','click', function(event)
+			{	
+				var target = $(event.target);
+				var index = $('#annotationList li').index(this);
+				var curActive;
+				
+				
+				// Turn off:
+				if( target.is('.visibleStatus[data-visible=1]') )
+				{
+					target.attr('data-visible','0').html('');
+					savedShapes[index].visible = false;
+					$(this).attr('class','inactiveAnnotation');
+				}
+				// Turn off:
+				else if (target.is('.visibleStatus[data-visible=1] i') )
+				{
+					target.parent().attr('data-visible','0').html('');
+					savedShapes[index].visible = false;
+					$(this).attr('class','inactiveAnnotation');
+
+				}
+				// Turn on:
+				else if( target.is('.visibleStatus[data-visible=0]') )
+				{
+					target.attr('data-visible','1').html('<i class="fa fa-eye"></i>');
+					savedShapes[index].visible = true;
+					
+					$('#annotationList li').attr('class','inactiveAnnotation');
+					$(this).attr('class','activeAnnotation');
+				}
+				// Only selection:
+				else
+				{
+					$('#annotationList li').attr('class','inactiveAnnotation');
+					$(this).attr('class','activeAnnotation');
+				}
+				
+				// Get index of element that is active:
+				$('#annotationList li').each(function()
+				{
+					if( $(this).hasClass('activeAnnotation') )
+						curActive = $('#annotationList li').index(this);
+				});
+				
+				// Render shapes:
+				if(curActive != undefined )
+					displayAnnotationShapes(curActive);
+				else
+					displayAnnotationShapes(false);
+			});
+			
+			
 
          });
-
-
 
          function downloadCanvas(link, canvasId, filename)
          {
@@ -341,43 +516,7 @@
              matrixCanvas.css({ opacity: value });
          }
 
-         /**
-          * Create a matrix of the experiment image with marked points as data.
-          *
-          *	@param  {array}  The array with marked points.
-          *	@return {array}	 The matrix.
-          */
-         function createMatrix(data)
-         {
-         	var t0 = performance.now();
-         	var matrix = [];
-
-         	// Init matrix: Very good performance:
-         	for (var i = 0; i < image.width; i++)
-         	{
-         		matrix[i] = [];
-         		for (var j = 0; j < image.height; j++)
-         		{
-         			matrix[i][j] = {val: 0};
-         		}
-         	}
-
-         	var t1 = performance.now();
-         	console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
-
-         	var t2 = performance.now();
-
-         	// Calc matrix: Very good Performance:
-         	for(var i = 0; i < data.length; i++)
-         	{
-         		matrix[ data[i][0] ][ data[i][1] ].val++;
-         	}
-
-         	var t3 = performance.now();
-         	console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
-
-         	return matrix;
-         }
+         
 
          /**
 		  * Generate Jet scale color for the heatmap.
@@ -551,48 +690,34 @@
           *	@param  {Int}	  The scale type, 0: jet, 1: grayscale.
           *	@return {Void}.
           */
-         function drawMatrixCanvas(data, hue, sat, scaleType, reverse)
+         function drawMatrixCanvas(matrix, hue, sat, scaleType, reverse)
          {
-         	var t0 = performance.now();
-         	var maxVal = 0;
-
-         	// Get max intersection value:
-         	for(var i = 0; i < data.length; i ++)
-         	{
-         		for(var j= 0; j < data[i].length; j ++)
-         		{
-         			if(i == 0)
-         				maxVal = data[i][j].val;
-         			else
-         			{
-         				if(data[i][j].val > maxVal)
-         					maxVal = data[i][j].val;
-         			}
-         		}
-         	}
-
+         	//var t0 = performance.now();
+         	
          	// Draw matrix with heatmap:
-         	for(var i = 0; i < data.length; i++)
+         	for(var i = 0; i < matrix.data.length; i++)
          	{
-         		for(var j= 0; j < data[i].length; j ++)
+         		for(var j = 0; j < matrix.data[i].length; j++)
          		{
-         			if(data[i][j].val > 0)
+         			if(matrix.data[i][j].val > 0)
          			{
          				var point = [i,j];
-         				matrixCtx.fillStyle = heatmapColor(data[i][j].val, maxVal, scaleType, hue, sat, reverse);
+         				matrixCtx.fillStyle = heatmapColor(matrix.data[i][j].val, matrix.maxVal, scaleType, hue, sat, reverse);
          				matrixCtx.fillRect( point[0], point[1], 1, 1 );
          			}
          		}
          	}
 
-         	renderHeatmapLegend(scaleType, maxVal, hue, sat, reverse);
+         	renderHeatmapLegend(scaleType, matrix.maxVal, hue, sat, reverse);
 
-         	var t1 = performance.now();
-         	console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+         	//var t1 = performance.now();
+         	//console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
 
-		// Render matrix in html table,
-		// (!) not finished.
+		/** 
+		 * Render matrix in html table,
+		 * (!) not finished.
+		 */
 		function generateMatrixCSV(matrixData)
 		{
 			var matrixText = "";
@@ -637,34 +762,21 @@
 				var scaleType = $('#scaleType').find(":selected").index();
          		var reverse = false;									// Reverse the color scale.
 
-         		var t0 = performance.now();
-         		var allMarkedPoints = [];								// Store all marked pixels.
-
-         		for (var i = 0; i < savedShapes.length; i++)
-         		{
-         			for(var j = 0; j < savedShapes[i].fill.length; j ++)
-         			{
-         				allMarkedPoints.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
-         			}
-         		}
+         		//var t0 = performance.now();
 
          		//console.log('Before removing dupes: ' + allMarkedPoints.length);
          		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
          		//console.log('After removing dupes: ' + allMarkedPoints.length);
 
-         		if( $('#monochromaticScale[type=checkbox]').is(':checked') )
-         			scaleType = 0;
-
          		if( $('#reverseScale[type=checkbox]').is(':checked') )
          			reverse = true;
 
-         		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
-         		drawMatrixCanvas(matrix, hue, sat, scaleType, reverse);
+         		drawMatrixCanvas(imgMatrix, hue, sat, scaleType, reverse);
 
          		//generateMatrixCSV(matrix);
 
-         		var t1 = performance.now();
-         		console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
+         		//var t1 = performance.now();
+         		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
 
          		//return allMarkedPoints;
          	}
@@ -673,7 +785,56 @@
 
          }
 
+		/*------------------------
+			Annotations Functions
+		  ------------------------*/
+		
+		function renderAnnotations()
+		{
+			var annotationList = $('#annotationList');
+			var htmlRender = "";
+			
+			annotationList.empty();
+			
+			for(var i = 0; i < savedShapes.length; i++)
+			{
+				if(savedShapes[i].annotation != "")
+					htmlRender += '<li class = "inactiveAnnotation">'+
+									'<div class = "annotationColumn">' +
+										'<div class="visibleStatus" data-visible="1"><i class="fa fa-eye"></i></div>' +
+									'</div>'+	
+									'<div class = "annotationColumn">' +
+										'<div class="shapeIndex">Shape ' + (i+1) +'</div> '+
+										'<div class="annotationText"><i>"'+ savedShapes[i].annotation + '"</i></div>' +
+									'</div>'+	
+								  '</li>';
+			}
+			annotationList.append(htmlRender);
+		}
+		
+		function displayAnnotationShapes(index)
+		{	
+			matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
 
+			for(var i = 0; i < savedShapes.length; i ++)
+			{
+				for(var j = 0; j < savedShapes[i].fill.length; j++)
+				{
+					if( savedShapes[i].visible )			
+					{
+						var point = [ savedShapes[i].fill[j].x, savedShapes[i].fill[j].y ];
+						
+						// Set selected annotation shape to blue:	
+						if(i === index)
+							matrixCtx.fillStyle = 'hsla(190,75%,50%,.75)';
+						else
+							matrixCtx.fillStyle = 'hsla(0,0%,0%,.5)';
+						
+						matrixCtx.fillRect( point[0], point[1], 1, 1 );
+					}
+				}
+			}
+		}
 
 
 

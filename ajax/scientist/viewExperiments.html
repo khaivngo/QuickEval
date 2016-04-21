@@ -123,7 +123,11 @@
             </div>
 
             <div id="heatmap-panel-container">
-                <i style="position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i>
+			 <!--  <i style="position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i> -->
+				
+				<div id = "heatmapTab" class = "tabSection">Heatmap</div>
+				<div id = "annotationTab" class = "tabSection">Annotations</div>
+				
                 <ul id="heatmapPanel">
 					<li>
 						<select id = "scaleType">
@@ -170,6 +174,12 @@
                         <button type="button" id="genHeatmap">Generate heatmap</button>
                     </li> -->
                 </ul>
+				
+				<div id = "annotationSection">
+					<ul id = "annotationList">
+						<!-- Annotation items goes here -->
+					</ul>
+				</div>
             </div>
         </div> <!-- /#heatmap-results -->
 

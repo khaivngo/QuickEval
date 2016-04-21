@@ -124,16 +124,35 @@ textarea    {
     background: #eee;
 }
 
-#heatmapPanel {
-	padding: 0;
-    margin: 0;
+.tabSection
+{
+	display:inline-block;
+	padding: 13px 0;
+	background: #fff;
+	width: 50%;
+	
+	text-align: center;
+}
+	.tabSection:nth-child(2)
+	{
+		margin-left: -3.9px;
+		border-left: 1px solid #dfdfdf;
+	}
+
+#heatmapPanel,#annotationSection 
+{
+    margin: 	0;
     list-style: none;
-    color: #333;
+    color: 		#333;
     background: #eee;
-    padding: 20px;
-    max-width: 500px;
+    padding: 	20px;
+	width:		400px;
+	max-width: 	500px;
 }
 
+/*--------------------------
+    Heatmap Section
+--------------------------*/
 #heatmapPanel li {
 	display: block;
 	vertical-align: top;
@@ -195,7 +214,6 @@ input[type="range"] {
 #heatmapPanel label {
     display: inline-block;
 }
-
 
 /*--------------------------
     Heatmap: Range input
@@ -298,7 +316,6 @@ input[type="range"]:focus::-ms-fill-upper {
     background: #367ebd;
 }
 
-
 /*----------------------
     Heatmap: LEGEND
 ----------------------*/
@@ -315,3 +332,85 @@ input[type="range"]:focus::-ms-fill-upper {
 	display: inline-block;
 	margin: 2px;
 }
+
+/*----------------------
+    Annotation Section
+----------------------*/
+
+#annotationList	/* UL */
+{
+	list-style:	none;
+	padding: 	10px 5px;
+	margin: 	10px 0;
+	background: #ddd;
+	border: 	1px solid #ccc;
+	overflow-y:	auto;
+	height:		720px;
+}
+
+	#annotationList li
+	{
+		display:		block;
+		margin:			4px 0;
+		border-top:		1px solid hsla(0, 0%, 95%, 0.75);
+		border-bottom: 	3px solid hsla(0, 0%, 75%, 0.75);
+		padding: 		20px;
+		cursor: 		pointer;
+	}
+	
+	.annotationColumn
+	{
+		display: inline-block;
+		vertical-align: middle;
+		padding-right: 15px;
+	}
+	
+		#annotationList li .visibleStatus
+		{
+			width: 30px;
+			height:30px;
+			border:1px solid #cfcfcf;
+			text-align: center;
+			line-height: 28px;
+		}
+	
+		#annotationList li .shapeIndex
+		{
+			font-size:		90%;
+			font-weight: 	bold;
+			margin-bottom:	2px;
+		}
+		
+		#annotationList li .annotationText
+		{
+			font-size:	100%;
+		}		
+		
+		#annotationList li:hover
+		{
+			background: #fff;
+		}
+		
+	.activeAnnotation
+	{
+		background: #0ac !important;
+		color:		#fff !important;
+	}
+	
+	.inactiveAnnotation
+	{
+		background: #eee;
+		color:		#333;
+	}
+	
+	
+
+
+
+
+
+
+
+
+
+
