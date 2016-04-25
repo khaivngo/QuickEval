@@ -21,8 +21,6 @@
 		// For heatmap lowest value in Jet scale.
         var HUE_LOW = 240;									
 		
-		console.log(settings);
-		
 		// Browser support:
 		var isFirefox = typeof InstallTrigger !== 'undefined';
 		
@@ -47,7 +45,7 @@
 			  */
             this.createMatrix = function()
             {
-				var tempArray = [];
+				var tempArray = [];		// Keeps all saved shapes in array format.
 				
                 for (var i = 0; i < savedShapes.length; i++)
          		{
@@ -69,7 +67,7 @@
 						matrix[i][j] = {val: 0};
 					}
 				}
-
+				console.log(matrix);
 				//var t1 = performance.now();
 				//console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
 
@@ -319,7 +317,7 @@
 					case 1:
 						for(var i = 0; i < savedShapes.length; i ++)
 						{
-							$('.visibleStatus').attr('data-visible','1').html('');
+							$('.visibleStatus').attr('data-visible','0').html('');
 							savedShapes[i].visible = false;
 							$('#annotationList li').attr('class','inactiveAnnotation');
 							displayAnnotationShapes(false);
@@ -575,9 +573,9 @@
 							visible: true
 						});
                     }
-
-                    savedShapes = shapes;
 					
+					savedShapes = shapes;
+					console.log(savedShapes);
 					imgMatrix.createMatrix();
 					imgMatrix.calcMaxValue();
 					imgMatrix.generateCSV();
@@ -585,6 +583,7 @@
 					heatmapPreferencesObj.setScaleType(0);	
                     heatmapMain();
 					renderAnnotations();
+					
                 }
 
                 // remove loading spinner and set the image opacity back to 100%
@@ -594,7 +593,7 @@
          }
 
 
-         function exportHeatmap(experimentID, pictureQueue, pictureID) {
+         /* function exportHeatmap(experimentID, pictureQueue, pictureID) {
 
              var settingsObj = {
                  url: 'ajax/scientist/getExperimentArtifactMarks.php',
@@ -610,7 +609,7 @@
              };
 
              $.ajax(settingsObj);
-         }
+         } */
 
         /**
          * Draws the image on the image canvas for when the image is downloaded
@@ -745,42 +744,7 @@
 
          	switch (scaleType)
          	{
-         		case 0:
-         			colorStep = 100 / (range-1);
-
-         			if(!reverse)
-         			{
-         				for(var i = 0; i < range; i++)
-         				{
-         					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
-         					matrixCtx.fillStyle = color;
-
-         					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
-
-         					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
-
-         					deltaPadding += heatmapLegend.paddingLeft;
-         					index ++;
-         				}
-         			}
-         			else
-         			{
-         				for(var i = range-1; i >= 0; i--)
-         				{
-         					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
-         					matrixCtx.fillStyle = color;
-
-         					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
-
-         					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
-
-         					deltaPadding += heatmapLegend.paddingLeft;
-         					index ++;
-         				}
-         			}
-         			break;
-
-         		case 1:
+				case 0:
          			colorStep = HUE_LOW / (range-1);
 
          			if(!reverse)
@@ -813,7 +777,44 @@
          					index ++;
          				}
          			}
-         			break;
+         		break;
+				
+         		case 1:
+         			colorStep = 100 / (range-1);
+
+         			if(!reverse)
+         			{
+         				for(var i = 0; i < range; i++)
+         				{
+         					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
+         					matrixCtx.fillStyle = color;
+
+         					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
+
+         					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
+
+         					deltaPadding += heatmapLegend.paddingLeft;
+         					index ++;
+         				}
+         			}
+         			else
+         			{
+         				for(var i = range-1; i >= 0; i--)
+         				{
+         					var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
+         					matrixCtx.fillStyle = color;
+
+         					x = heatmapLegend.square * index + deltaPadding + heatmapLegend.marginLeft;
+
+         					matrixCtx.fillRect( x, y, heatmapLegend.square, heatmapLegend.square );
+
+         					deltaPadding += heatmapLegend.paddingLeft;
+         					index ++;
+         				}
+         			}
+         		break;
+
+         		
          	}
 
          	mergedCtx.fillstyle = "#000";
@@ -879,6 +880,9 @@
          	matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
 			
+			console.log(savedShapes);
+			console.log(savedShapes.length);
+			
          	if(savedShapes.length > 0 )
          	{
          		var hue = $('#hueLevel').val();
@@ -898,7 +902,7 @@
          		/* if( $('#reverseScale[type=checkbox]').is(':checked') )
          			reverse = true; */
 
-         		drawMatrixCanvas(imgMatrix, 0, sat, scaleType, reverse);
+         		drawMatrixCanvas(imgMatrix, hue, sat, scaleType, reverse);
 
          		//var t1 = performance.now();
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
@@ -925,7 +929,7 @@
 			for(var i = 0; i < savedShapes.length; i++)
 			{
 				var annotation = "";
-				if(savedShapes[i].annotation != "")
+				if(savedShapes[i].annotation != " ")
 					annotation = savedShapes[i].annotation;
 				else
 					annotation = "No comment";
@@ -958,9 +962,9 @@
 						
 						// Set selected annotation shape to blue:	
 						if(i === index)
-							matrixCtx.fillStyle = 'hsla(190,75%,50%,.75)';
+							matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';
 						else
-							matrixCtx.fillStyle = 'hsla(0,0%,0%,.5)';
+							matrixCtx.fillStyle = 'hsla(0,0%,0%,.1)';
 						
 						matrixCtx.fillRect( point[0], point[1], 1, 1 );
 					}
