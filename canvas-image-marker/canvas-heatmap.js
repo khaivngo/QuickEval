@@ -36,7 +36,8 @@
 		var ImageMatrix = function()
         {
             this.data;
-			this.maxVal;
+			this.maxVal;				//
+			this.csv;					// Matrix in plaintext.
 			
 			/**
 			  * Create a matrix of the experiment image with marked points as data.
@@ -105,11 +106,82 @@
 				
 				this.maxVal = maxVal;
 			}
+			
+			this.generateCSV = function()
+			{
+				var matrixText = "";
+
+				for(var i = 0; i < image.width; i++ )
+				{
+					for(var j = 0; j < image.height; j++ )
+					{
+						matrixText += this.data[i][j].val;
+						
+						if(j+1 < image.height)
+							matrixText += ',';
+					}
+					matrixText += "\n";
+				}
+				
+				this.csv = matrixText;
+				
+				$.ajax
+				({
+					url: 'canvas-image-marker/heatmapMatrixCSV.php',
+					type: 'POST',
+					data: {matrix: matrixText}
+				})
+				.done(function(data)
+				{
+					alert(data);
+					$('#matrixCSV').attr('href','canvas-image-marker/matrix.csv')
+				});
+			}
         };
 		
-		// Matrix object:
-		var imgMatrix = new ImageMatrix();
+		var heatmapPreferences = function()
+		{
+			// Properties:
+			this.scaleType = 0; 			// Int.
+			this.reverse = false;			// Boolean.
+			
+			// Set functions:
+			
+			this.setScaleType = function(scaleType)
+			{
+				var hueRange = document.getElementById("hueLevel");
+				var satRange = document.getElementById("satLevel");
+				var hueSection = $('#hueSection');
+				var satSection = $('#satSection');
 
+				// Reset:
+				hueRange.disabled = false;
+				satRange.disabled = false;
+				hueSection.attr('class','activeSection');
+				satSection.attr('class','activeSection');
+
+				// Set preferences for this scale:
+				switch(scaleType)
+				{
+					case 0:									// Jet scale:
+						hueRange.disabled = true;
+						hueSection.attr('class','inactiveSection');
+					break;
+
+					case 1:									// Monochromatic scale:
+						/* Magic! */
+					break;
+				}
+				
+				this.scaleType = scaleType;
+			}
+			
+			this.setReverse = function(status)
+			{
+				this.reverse = status;
+			}
+		};
+		
         // Canvas base image:
         var imageCanvas = $('<canvas>');
         var imageCtx = imageCanvas[0].getContext('2d');
@@ -126,32 +198,306 @@
         var image;
 
         var savedShapes;
+		
+		// Heatmap Preferences object:
+		var heatmapPreferencesObj = new heatmapPreferences(); 
+					
+		// Matrix object:
+		var imgMatrix = new ImageMatrix();
 
-        $(document).ready(function() {
+        $(document).ready(function()
+		{
             setCanvasImage();
             setImage();
 
-            $(canvasContainer).append(imageCanvas); // append the resized canvas to the DOM
-            $(canvasContainer).append(matrixCanvas); // append the resized canvas to the DOM
-            $(canvasContainer).append(mergedCanvas); // append the resized canvas to the DOM
+            $(canvasContainer).append(imageCanvas); 	// Append the resized canvas to the DOM
+            $(canvasContainer).append(matrixCanvas); 	// Append the resized canvas to the DOM
+            $(canvasContainer).append(mergedCanvas); 	// Append the resized canvas to the DOM
 
             getArtifactMarks(settings.experimentID, settings.pictureQueue, settings.pictureID);
 			
 			selectTabContent(0);	// Default tab heatmap-settings.
-        });
-		
+			
+			
+         	// Generate heatmap button.
+         	// $('#genHeatmap').on('click', heatmapMain);
+
+			$('.tabSection').on('click', function()
+			{
+				var index = $('.tabSection').index(this);
+				selectTabContent(index);
+			});
+			
+			/*------------------
+				Toolbar panel
+			-------------------*/
+			/**
+			 *  Toolbar for the heatmap settings
+			 *	
+			 */
+			 
+			$('#scaleType').on('change',function()
+			{
+				var scaleType = $('#scaleType').find(":selected").index();
+				heatmapPreferencesObj.setScaleType(scaleType);
+				heatmapMain();
+			});
+			
+			$('#reverseScale').on('click',function()
+			{
+				var buttonStatus;
+				
+				// Reset button:
+				if( $(this).hasClass('activeTool') )
+				{
+					$(this).removeClass('activeTool');
+					buttonStatus = false;
+				}
+				else
+				{
+					$(this).addClass('activeTool');
+					buttonStatus = true;
+				}
+				
+				/* if( $(this).attr('data-section') && buttonStatus )
+				{
+					// Reset active class for this section.
+					var section = parseInt( $(this).attr('data-section') );	// Int value for tool section.
+					$('#heatmapToolbar li[data-section=' + section + ']').removeClass('activeTool');
+				} */
+				
+				heatmapPreferencesObj.setReverse(buttonStatus);
+				heatmapMain();
+			});	
+			
+			/* $('#exportHeatmapCSV').on('click',function()
+			{
+				alert('sdfsd');
+			}); */
+			
+			/**
+			 *  Toolbar for the annotation settings
+			 *	
+			 */
+			$('#annotationToolbar li').on('click',function()
+			{
+				var buttonStatus = true;
+				
+				// Reset button:
+				if( $(this).hasClass('activeTool') )
+				{
+					$(this).removeClass('activeTool');
+					buttonStatus = false;
+				}	
+				
+				var cmd = parseInt( $(this).attr('data-cmd') );			// Int value for tool command.
+				
+				if( $(this).attr('data-section') && buttonStatus )
+				{
+					// Reset active class for this section.
+					var section = parseInt( $(this).attr('data-section') );	// Int value for tool section.
+					$('#annotationToolbar li[data-section=' + section + ']').removeClass('activeTool');
+				}
+				
+				$(this).addClass('activeTool');
+				
+				switch(cmd)
+				{
+					case 0:
+						for(var i = 0; i < savedShapes.length; i ++)
+						{
+							$('.visibleStatus').attr('data-visible','1').html('<i class="fa fa-eye"></i>');
+							savedShapes[i].visible = true;
+							$('#annotationList li').attr('class','inactiveAnnotation');
+							displayAnnotationShapes(false);
+						}
+					break;
+					
+					case 1:
+						for(var i = 0; i < savedShapes.length; i ++)
+						{
+							$('.visibleStatus').attr('data-visible','1').html('');
+							savedShapes[i].visible = false;
+							$('#annotationList li').attr('class','inactiveAnnotation');
+							displayAnnotationShapes(false);
+						}
+					break;
+					
+					case 2:
+						/* Magic! */
+					break;
+				}
+				
+			});
+
+         	/**
+         	 *  UI for heatmap generator.
+         	 *	When the user changes the Sliders range, either hue or saturation.
+         	 *  @return {void}.
+         	 */
+         	$('#heatmapPanel li input[type=range]').on('input',function(event)
+            {
+         		var hue = $('#hueLevel').val();
+				var sat = $('#satLevel').val();
+
+				// Change the current label text value for this slider.
+				$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
+
+				if(!isFirefox)
+					setSliderColor(hue, sat);
+         	});
+			
+			$('#heatmapPanel li input[type=range]').on('change', function(event) {
+                heatmapMain();
+            });
+			
+         	$('#heatmapPanel li input[type=number]').on('input',function(event)
+         	{
+         		var hue = $('#hueSection input[type=number]').val();
+				var sat = $('#satSection input[type=number]').val();
+				var opa = $('#opacity-of-marks input[type=number]').val();
+
+				var maxInputVal = 0;
+
+				// Set values as minimum or maximum if exaggerated:
+				if( $(this).attr('name') == 'satNumber' )
+				{
+					maxInputVal = parseInt( $('#satLevel').attr('max') );
+				}
+				else if( $(this).attr('name') == 'hueNumber' )
+				{
+					maxInputVal = parseInt( $('#hueLevel').attr('max') );
+				}
+				else
+				{
+					maxInputVal = parseInt( $('#opacity-slider').attr('max') );
+				}
+
+				if( $(this).val() > maxInputVal )
+					$(this).val(maxInputVal);
+
+				if( $(this).val() < 0 )
+					$(this).val(0);
+
+				// Set the value for the sliders
+				$('#hueLevel').val(hue);
+				$('#satLevel').val(sat);
+				$('#opacity-slider').val(sat);
+
+				setSliderColor(hue, sat);
+				
+				//if( $('#liveGen[type=checkbox]').is(':checked') )
+				heatmapMain();
+         	});
+
+           /*  $('#reverseScale[type=checkbox]').on('change',function() {
+                heatmapMain();
+         	}); */
+
+
+            // listen for changes to the opacity number input and update the
+            // matrix canvas with the new opacity value
+            $('#opacity-value').on('input', function() {
+         		$('#opacity-slider').val( $(this).val() ); // val()ception
+
+                var opacityLevel = $(this).val() / 100;
+         		changeOpacityOfMatrixCanvas(opacityLevel);
+         	});
+
+            // listen for changes to the opacity slider and update the
+            // matrix canvas with the new opacity value
+            $('#opacity-of-marks input[type="range"]').on('input', function() {
+                // Change current label text value for this slider.
+         		$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
+
+                var opacityLevel = $(this).val() / 100;
+         		changeOpacityOfMatrixCanvas(opacityLevel);
+         	});
+
+         	document.getElementById('downloadImage').addEventListener('click', function()
+         	{
+         		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
+         	}, false);
+			
+			/*------------------
+				Annotations UI
+			-------------------*/
+			
+			/**
+			 *  Select an annotation from the list.
+			 *  Shape will be highlighted in the image to the left.
+			 *  Possible to show/hide a shape by toggling the eye icon.
+			 */
+			$('#annotationList').delegate('li','click', function(event)
+			{	
+				var target = $(event.target);
+				var index = $('#annotationList li').index(this);
+				var curActive;
+				
+				// Turn off:
+				if( target.is('.visibleStatus[data-visible=1]') )
+				{
+					target.attr('data-visible','0').html('');
+					savedShapes[index].visible = false;
+					$(this).attr('class','');					// Reset all items.
+				}
+				// Turn off:
+				else if (target.is('.visibleStatus[data-visible=1] i') )
+				{
+					target.parent().attr('data-visible','0').html('');
+					savedShapes[index].visible = false;
+					$(this).attr('class','');					// Reset all items.
+
+				}
+				// Turn on:
+				else if( target.is('.visibleStatus[data-visible=0]') )
+				{
+					target.attr('data-visible','1').html('<i class="fa fa-eye"></i>');
+					savedShapes[index].visible = true;
+					
+					$('#annotationList li').attr('class','');	// Reset all items.
+					$(this).attr('class','activeAnnotation');
+				}
+				// Only selection:
+				else
+				{
+					$('#annotationList li').attr('class','');	// Reset all items.
+					$(this).attr('class','activeAnnotation');
+				}
+				
+				// Get index of element that is active:
+				$('#annotationList li').each(function()
+				{
+					if( $(this).hasClass('activeAnnotation') )
+						curActive = $('#annotationList li').index(this);
+					
+				});
+				
+				// Render shapes:
+				if(curActive != undefined )
+					displayAnnotationShapes(curActive);
+				else
+					displayAnnotationShapes(false);
+			});
+			
+        }); // End doc ready.
+		 
 		function selectTabContent(tab)
 		{
+		$('.tabSection').css({'opacity':.4, 'border-bottom':'2px solid #fff'});
+			
 			switch(tab)
 			{
 				case 0:			// Heatmap settings 
+					$('#heatmapTab').css({ 'opacity':1, 'border-bottom':'2px solid #0ac' });
 					$('#annotationSection').css('display','none');
-					$('#heatmapPanel').css('display','block');
-					
+					$('#heatmapSection').css('display','block');
 				break;
+				
 				case 1:			// Annotations
+					$('#annotationTab').css({ 'opacity':1, 'border-bottom':'2px solid #0ac' });
 					$('#annotationSection').css('display','block');
-					$('#heatmapPanel').css('display','none');
+					$('#heatmapSection').css('display','none');
 				break;
 			}
 		}
@@ -231,8 +577,9 @@
 					
 					imgMatrix.createMatrix();
 					imgMatrix.calcMaxValue();
-					
-					setScaleType();
+					imgMatrix.generateCSV();
+						
+					heatmapPreferencesObj.setScaleType(0);	
                     heatmapMain();
 					renderAnnotations();
                 }
@@ -274,171 +621,6 @@
             }
         };
 
-
-         $(document).ready(function()
-         {
-         	// Generate heatmap button.
-         	// $('#genHeatmap').on('click', heatmapMain);
-
-			$('.tabSection').on('click', function()
-			{
-				var index = $('.tabSection').index(this);
-				selectTabContent(index);
-			});
-
-         	/**
-         	 *  UI for heatmap generator.
-         	 *	When the user changes the Sliders range, either hue or saturation.
-         	 *  @return {void}.
-         	 */
-         	$('#heatmapPanel li input[type=range]').on('input',function(event)
-            {
-         		var hue = $('#hueLevel').val();
-				var sat = $('#satLevel').val();
-
-				// Change the current label text value for this slider.
-				$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
-
-				if(!isFirefox)
-					setSliderColor(hue, sat);
-
-				//if( $('#liveGen[type=checkbox]').is(':checked') )
-					heatmapMain();
-         	});
-
-         	$('#heatmapPanel li input[type=number]').on('input',function(event)
-         	{
-         		var hue = $('#hueSection input[type=number]').val();
-				var sat = $('#satSection input[type=number]').val();
-				var opa = $('#opacity-of-marks input[type=number]').val();
-
-				var maxInputVal = 0;
-
-				// Set values as minimum or maximum if exaggerated:
-				if( $(this).attr('name') == 'satNumber' )
-				{
-					maxInputVal = parseInt( $('#satLevel').attr('max') );
-				}
-				else if( $(this).attr('name') == 'hueNumber' )
-				{
-					maxInputVal = parseInt( $('#hueLevel').attr('max') );
-				}
-				else
-				{
-					maxInputVal = parseInt( $('#opacity-slider').attr('max') );
-				}
-
-				if( $(this).val() > maxInputVal )
-					$(this).val(maxInputVal);
-
-				if( $(this).val() < 0 )
-					$(this).val(0);
-
-				// Set the value for the sliders
-				$('#hueLevel').val(hue);
-				$('#satLevel').val(sat);
-				$('#opacity-slider').val(sat);
-
-				setSliderColor(hue, sat);
-
-				//if( $('#liveGen[type=checkbox]').is(':checked') )
-					heatmapMain();
-         	});
-
-
-			 $('#heatmapPanel li input[type=range]').on('change', function(event) {
-                heatmapMain();
-            });
-
-            $('#reverseScale[type=checkbox]').on('change',function() {
-                heatmapMain();
-         	});
-
-
-            // listen for changes to the opacity number input and update the
-            // matrix canvas with the new opacity value
-            $('#opacity-value').on('input', function() {
-         		$('#opacity-slider').val( $(this).val() ); // val()ception
-
-                var opacityLevel = $(this).val() / 100;
-         		changeOpacityOfMatrixCanvas(opacityLevel);
-         	});
-
-            // listen for changes to the opacity slider and update the
-            // matrix canvas with the new opacity value
-            $('#opacity-of-marks input[type="range"]').on('input', function() {
-                // Change current label text value for this slider.
-         		$(this).parent().parent().find('.sizeNumber').val( $(this).val() );
-
-                var opacityLevel = $(this).val() / 100;
-         		changeOpacityOfMatrixCanvas(opacityLevel);
-         	});
-
-         	document.getElementById('downloadImage').addEventListener('click', function()
-         	{
-         		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
-         	}, false);
-			
-			/*------------------
-				Annotations UI
-			-------------------*/
-			
-			$('#annotationList').delegate('li','click', function(event)
-			{	
-				var target = $(event.target);
-				var index = $('#annotationList li').index(this);
-				var curActive;
-				
-				
-				// Turn off:
-				if( target.is('.visibleStatus[data-visible=1]') )
-				{
-					target.attr('data-visible','0').html('');
-					savedShapes[index].visible = false;
-					$(this).attr('class','inactiveAnnotation');
-				}
-				// Turn off:
-				else if (target.is('.visibleStatus[data-visible=1] i') )
-				{
-					target.parent().attr('data-visible','0').html('');
-					savedShapes[index].visible = false;
-					$(this).attr('class','inactiveAnnotation');
-
-				}
-				// Turn on:
-				else if( target.is('.visibleStatus[data-visible=0]') )
-				{
-					target.attr('data-visible','1').html('<i class="fa fa-eye"></i>');
-					savedShapes[index].visible = true;
-					
-					$('#annotationList li').attr('class','inactiveAnnotation');
-					$(this).attr('class','activeAnnotation');
-				}
-				// Only selection:
-				else
-				{
-					$('#annotationList li').attr('class','inactiveAnnotation');
-					$(this).attr('class','activeAnnotation');
-				}
-				
-				// Get index of element that is active:
-				$('#annotationList li').each(function()
-				{
-					if( $(this).hasClass('activeAnnotation') )
-						curActive = $('#annotationList li').index(this);
-				});
-				
-				// Render shapes:
-				if(curActive != undefined )
-					displayAnnotationShapes(curActive);
-				else
-					displayAnnotationShapes(false);
-			});
-			
-			
-
-         });
-
          function downloadCanvas(link, canvasId, filename)
          {
          	var imageCanvasTemp = document.getElementById('heatmapCanvasImage');
@@ -454,38 +636,6 @@
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          }
 
-		function setScaleType()
-		{
-			var hueRange = document.getElementById("hueLevel");
-			var satRange = document.getElementById("satLevel");
-			var hueSection = $('#hueSection');
-			var satSection = $('#satSection');
-
-			var scaleType = $('#scaleType').find(":selected").index();
-
-			// Reset:
-			hueRange.disabled = false;
-			hueSection.attr('class','activeSection');
-
-			satRange.disabled = false;
-			satSection.attr('class','activeSection');
-
-			// Set preferences for this scale:
-			switch(scaleType)
-			{
-				case 0:									// Jet scale:
-					hueRange.disabled = true;
-					hueSection.attr('class','inactiveSection');
-				break;
-
-				case 1:									// Monochromatic scale:
-					/* Magic! */
-				break;
-			}
-
-			heatmapMain();
-		}
-
         /**
 		 *  Change the color of the slider thumb.
 		 *	@param  {Int}	The hue level.
@@ -494,9 +644,9 @@
 		 */
 		function setSliderColor(hue, sat)
 		{
-			for(var i = 0; i < document.styleSheets[1].rules.length; i++)
+			for(var i = 0; i < document.styleSheets[4].rules.length; i++)
 			{
-				var rule = document.styleSheets[1].rules[i];
+				var rule = document.styleSheets[4].rules[i];
 				if
 				(
 					rule.cssText.match('::-webkit-slider-thumb') ||
@@ -515,8 +665,6 @@
          function changeOpacityOfMatrixCanvas(value) {
              matrixCanvas.css({ opacity: value });
          }
-
-         
 
          /**
 		  * Generate Jet scale color for the heatmap.
@@ -556,6 +704,9 @@
 		  */
         function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 		{
+			if(max-1 == 0) 						// Avoid NaN when max-1 is 0.
+				max = 2;
+			
 			var value = (cur-1) / (max-1);		// Float value for generating the color.
 
 			if(reverse) 						// Reverse the scale if true.
@@ -693,7 +844,7 @@
          function drawMatrixCanvas(matrix, hue, sat, scaleType, reverse)
          {
          	//var t0 = performance.now();
-         	
+			
          	// Draw matrix with heatmap:
          	for(var i = 0; i < matrix.data.length; i++)
          	{
@@ -707,42 +858,12 @@
          			}
          		}
          	}
-
+			
          	renderHeatmapLegend(scaleType, matrix.maxVal, hue, sat, reverse);
 
          	//var t1 = performance.now();
          	//console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
-
-		/** 
-		 * Render matrix in html table,
-		 * (!) not finished.
-		 */
-		function generateMatrixCSV(matrixData)
-		{
-			var matrixText = "";
-
-			for(var i = 0; i < 80; i++ )
-			{
-				for(var j = 0; j < 80; j++ )
-				{
-					matrixText += matrixData[i][j].val;
-				}
-
-				matrixText += "\n";
-			}
-
-			$.ajax
-			({
-				url: 'matrix.php',
-				type: 'POST',
-				data: {matrix: matrixText}
-			})
-			.done(function(data)
-			{
-				//$('body').append('<a download href = "matrix.csv">download file</a>')
-			});
-		}
 
          /**
           * Calculate total pixel points for all polygons.
@@ -751,34 +872,41 @@
           */
          function heatmapMain()
          {
+			
+			 
          	//setImage();
          	matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
-
+			
          	if(savedShapes.length > 0 )
          	{
          		var hue = $('#hueLevel').val();
          		var sat = $('#satLevel').val();
-				var scaleType = $('#scaleType').find(":selected").index();
-         		var reverse = false;									// Reverse the color scale.
-
+				var scaleType = heatmapPreferencesObj.scaleType;
+         		var reverse   = heatmapPreferencesObj.reverse;
+				
+				if(scaleType == 0) 	// Jet scale has no hue. set defualt 0.
+					hue = 0;
+				
+				
+				
          		//var t0 = performance.now();
 
          		//console.log('Before removing dupes: ' + allMarkedPoints.length);
          		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
          		//console.log('After removing dupes: ' + allMarkedPoints.length);
 
-         		if( $('#reverseScale[type=checkbox]').is(':checked') )
-         			reverse = true;
+         		/* if( $('#reverseScale[type=checkbox]').is(':checked') )
+         			reverse = true; */
 
-         		drawMatrixCanvas(imgMatrix, hue, sat, scaleType, reverse);
-
-         		//generateMatrixCSV(matrix);
+         		drawMatrixCanvas(imgMatrix, 0, sat, scaleType, reverse);
 
          		//var t1 = performance.now();
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
 
          		//return allMarkedPoints;
+				
+				
          	}
          	else
          		alert('No data in database.');
@@ -798,16 +926,22 @@
 			
 			for(var i = 0; i < savedShapes.length; i++)
 			{
+				var annotation = "";
 				if(savedShapes[i].annotation != "")
-					htmlRender += '<li class = "inactiveAnnotation">'+
-									'<div class = "annotationColumn">' +
-										'<div class="visibleStatus" data-visible="1"><i class="fa fa-eye"></i></div>' +
-									'</div>'+	
-									'<div class = "annotationColumn">' +
-										'<div class="shapeIndex">Shape ' + (i+1) +'</div> '+
-										'<div class="annotationText"><i>"'+ savedShapes[i].annotation + '"</i></div>' +
-									'</div>'+	
-								  '</li>';
+					annotation = savedShapes[i].annotation;
+				else
+					annotation = "No comment";
+				
+				htmlRender += 
+				'<li class = "inactiveAnnotation" title = "Shape object">'+
+					'<div class = "annotationColumn">' +
+						'<div class="visibleStatus" data-visible="1" title="Visibility"><i class="fa fa-eye"></i></div>' +
+					'</div>'+	
+					'<div class="annotationColumn">' +
+						'<div class="shapeIndex" title = "Shape index">Shape ' + (i+1) +'</div> '+
+						'<div class="annotationText" title = "Comment"><i>"'+ annotation + '"</i></div>' +
+					'</div>'+	
+				'</li>';
 			}
 			annotationList.append(htmlRender);
 		}

@@ -80,6 +80,9 @@ function displayHeatmap() {
 
     /* run our plugin on the newly created canvas-container element
      * pass the ID and queue of the picture */
+	 
+	 console.log('hmm');
+	 
     $('.canvas-container').canvasHeatmap({
         experimentID: experimentID,
         pictureID: pictureID,
@@ -108,7 +111,7 @@ function getImages(experimentId) {
             var owner = data[1][0].person;
             // loop through each experiment image and create a dropdown list with the image names
             var output = '<div id="heatmap-options">';
-                output += '<select style="width: 200px; padding: 10px;">';
+                output += '<select id="displayHeatmapImage" style="width: 200px; padding: 10px;">';
                     output += '<option disabled>Choose image</option>';
                     data[0].forEach(function(image) {
                         output +=
@@ -132,7 +135,7 @@ function getImages(experimentId) {
             // display heatmap of clicked picture
             // $('.open-heatmap').on('click', displayHeatmap);
 
-            $('select').on('change', displayHeatmap);
+            $('#displayHeatmapImage').on('change', displayHeatmap);
 
             // bind a open/close event on heatmap settings button click
             $('.heatmap-settings-button').on('click', function() {
