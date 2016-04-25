@@ -67,6 +67,7 @@ function displayHeatmap() {
     var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
       var pictureURL = $("select").find(':selected').attr('data-image-url');
        var pictureID = $("select").find(':selected').attr('data-image-id');
+       var pictureName = $("select").find(':selected').attr('data-image-name');
 
     var output =
         '<div class="canvas-container" style="position: relative;"' +
@@ -83,7 +84,8 @@ function displayHeatmap() {
     $('.canvas-container').canvasHeatmap({
         experimentID: experimentID,
         pictureID: pictureID,
-        pictureQueue: pictureQueue
+        pictureQueue: pictureQueue,
+        pictureName: pictureName
     });
 
 }
