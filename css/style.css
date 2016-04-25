@@ -122,37 +122,109 @@ textarea    {
     z-index: 100;
     overflow-y: auto;
     background: #eee;
+	border-left: 1px solid #ddd;
 }
 
 .tabSection
 {
-	display:inline-block;
-	padding: 13px 0;
+	display:	inline-block;
+	padding: 	13px 0;
 	background: #fff;
-	width: 50%;
-	
+	width: 		50%;
 	text-align: center;
+	font-size: 	120%;
+	cursor:		pointer;
 }
+
+	.tabSection:hover
+	{
+		color: #0ac;
+	}
+	
+	
+
 	.tabSection:nth-child(2)
 	{
 		margin-left: -3.9px;
 		border-left: 1px solid #dfdfdf;
 	}
 
-#heatmapPanel,#annotationSection 
+/*--------------------
+    Toolbars
+--------------------*/	
+	
+.shapeToolbar	/* UL */
+{
+	background: #fff;
+	color:		#333 !important;
+	padding:	10px;
+	margin:		0 !important;
+	list-style: none;
+}
+
+	.shapeToolbar li
+	{
+		text-align:		center;
+		cursor:			pointer;
+		display: 		inline-block;
+	}	
+
+	.shapeToolbar li[data-type="icon"]
+	{
+		width: 			40px;
+		height: 		40px;
+		line-height:	40px !important;
+	}
+	
+		.shapeToolbar li["data-type=icon"]:hover
+		{
+			background: #ddd;
+		}
+		
+	.activeTool
+	{
+		background: 	#ddd;
+		border: 		1px solid #bbb;
+		margin-top:		-1px;
+	}
+		
+	.sectionBreak
+	{
+		width: 			1px;
+		height: 		30px;
+		background: 	#ddd;
+		display: 		inline-block;
+		vertical-align: middle;
+	}		
+	
+/*--------------
+	Sections
+-----------------*/	
+	
+	
+#heatmapSection,#annotationSection 
 {
     margin: 	0;
     list-style: none;
     color: 		#333;
     background: #eee;
-    padding: 	20px;
 	width:		400px;
 	max-width: 	500px;
+}
+
+#annotationSection 
+{
+	padding: 0;
 }
 
 /*--------------------------
     Heatmap Section
 --------------------------*/
+#heatmapPanel		/* UL */ 
+{
+	padding: 20px;
+}
+	
 #heatmapPanel li {
 	display: block;
 	vertical-align: top;
@@ -336,14 +408,12 @@ input[type="range"]:focus::-ms-fill-upper {
 /*----------------------
     Annotation Section
 ----------------------*/
-
+	
 #annotationList	/* UL */
 {
 	list-style:	none;
-	padding: 	10px 5px;
+	padding: 	10px 20px;
 	margin: 	10px 0;
-	background: #ddd;
-	border: 	1px solid #ccc;
 	overflow-y:	auto;
 	height:		720px;
 }
@@ -351,10 +421,15 @@ input[type="range"]:focus::-ms-fill-upper {
 	#annotationList li
 	{
 		display:		block;
-		margin:			4px 0;
+		margin:			12px 0;
+		border:			1px solid hsla(0, 0%, 75%, 0.75);
 		border-top:		1px solid hsla(0, 0%, 95%, 0.75);
 		border-bottom: 	3px solid hsla(0, 0%, 75%, 0.75);
-		padding: 		20px;
+		
+		background: 	#f5f5f5;
+		color:			#333;
+		padding: 		30px 20px;
+		border-radius:	5px;
 		cursor: 		pointer;
 	}
 	
@@ -362,23 +437,24 @@ input[type="range"]:focus::-ms-fill-upper {
 	{
 		display: inline-block;
 		vertical-align: middle;
-		padding-right: 15px;
+		padding-right: 20px;
 	}
 	
 		#annotationList li .visibleStatus
 		{
-			width: 30px;
-			height:30px;
-			border:1px solid #cfcfcf;
-			text-align: center;
-			line-height: 28px;
+			width: 			30px;
+			height:			30px;
+			border:			1px solid #cfcfcf;
+			text-align: 	center;
+			line-height: 	28px;
 		}
 	
 		#annotationList li .shapeIndex
 		{
 			font-size:		90%;
 			font-weight: 	bold;
-			margin-bottom:	2px;
+			margin-bottom:	8px;
+			color:			#666;
 		}
 		
 		#annotationList li .annotationText
@@ -393,14 +469,9 @@ input[type="range"]:focus::-ms-fill-upper {
 		
 	.activeAnnotation
 	{
-		background: #0ac !important;
-		color:		#fff !important;
-	}
-	
-	.inactiveAnnotation
-	{
-		background: #eee;
-		color:		#333;
+		border-radius:	5px;		
+		box-shadow:		-5px 0px #0ac inset;
+		background:		#fff !important;
 	}
 	
 	

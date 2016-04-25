@@ -128,54 +128,88 @@
 				<div id = "heatmapTab" class = "tabSection">Heatmap</div>
 				<div id = "annotationTab" class = "tabSection">Annotations</div>
 				
-                <ul id="heatmapPanel">
-					<li>
-						<select id = "scaleType">
-							<option>Jet scale</option>
-							<option>Monochromatic scale</option>
-						</select>
+				
+                <div id="heatmapSection">
+					<ul id = "heatmapToolbar" class = "shapeToolbar">
+						<li title = "Select a scale">
+							<select id = "scaleType">
+								<option>Jet scale</option>
+								<option>Monochromatic scale</option>
+							</select>
+						</li>
+						<li id = "reverseScale" title = "Reverse selected scale" data-type="icon">
+							<i class="fa fa-exchange"></i>
+						</li>
+						
+						<div class = "sectionBreak"></div>
 
-						<label for = "reverseScale">Reverse scale</label>
-						<input type = "checkbox" id = "reverseScale">
-					</li>
-                    <li id = "hueSection">
-						<h2>hue</h2>
-						<input type = "number" name = "hueNumber" class = "sizeNumber" value = "0">
-						<div class = "rangeSlider">
-							<div class = "rangeSliderLowValue">0</div>
-							<input id = "hueLevel" type="range" value = "0" min="0" max="360">
-							<div class = "rangeSliderMaxValue">360</div>
-						</div>
-					</li>
-					<li id = "satSection">
-						<h2>saturation</h2>
-						<input type = "number" name = "satNumber" class = "sizeNumber" value = "50">
-						<div class = "rangeSlider">
-							<div class = "rangeSliderLowValue">0</div>
-							<input id = "satLevel" type="range" value = "50" min="0" max="100">
-							<div class = "rangeSliderMaxValue">100</div>
-						</div>
-					</li>
-
-                    <!-- <li>
-                        <input type="checkbox" id="liveGen">
-                        <label for="liveGen">Enable live generating (CPU consuming)</label>
-                    </li> -->
-                    <li id="opacity-of-marks">
-                        <h2 style="font-family: Helvetica;">opacity of marks</h2>
-                        <input id="opacity-value" type="number" class="sizeNumber" value="100" min="0" max="100">
-                        <div class="rangeSlider">
-                            <div class="rangeSliderLowValue">0</div>
-                            <input id="opacity-slider" type="range" value="100" min="0" max="100">
-                            <div class="rangeSliderMaxValue">100%</div>
-                        </div>
-                    </li>
-                    <!-- <li>
-                        <button type="button" id="genHeatmap">Generate heatmap</button>
-                    </li> -->
-                </ul>
+						<li id = "exportHeatmapCSV" title = "Export the heatmap as a CSV file" data-type="icon">
+							<a id = "matrixCSV" download><i class="fa fa-download"></i></a>
+						</li>
+						
+						
+						
+					</ul>
+					<ul id = "heatmapPanel">	
+						<li id = "hueSection">
+							<h2>hue</h2>
+							<input type = "number" name = "hueNumber" class = "sizeNumber" value = "0">
+							<div class = "rangeSlider">
+								<div class = "rangeSliderLowValue">0</div>
+								<input id = "hueLevel" type="range" value = "0" min="0" max="360">
+								<div class = "rangeSliderMaxValue">360</div>
+							</div>
+						</li>
+						<li id = "satSection">
+							<h2>saturation</h2>
+							<input type = "number" name = "satNumber" class = "sizeNumber" value = "50">
+							<div class = "rangeSlider">
+								<div class = "rangeSliderLowValue">0</div>
+								<input id = "satLevel" type="range" value = "50" min="0" max="100">
+								<div class = "rangeSliderMaxValue">100</div>
+							</div>
+						</li>
+						<li id="opacity-of-marks">
+							<h2 style="font-family: Helvetica;">opacity of marks</h2>
+							<input id="opacity-value" type="number" class="sizeNumber" value="100" min="0" max="100">
+							<div class="rangeSlider">
+								<div class="rangeSliderLowValue">0</div>
+								<input id="opacity-slider" type="range" value="100" min="0" max="100">
+								<div class="rangeSliderMaxValue">100%</div>
+							</div>
+						</li>
+						<!-- <li>
+							<button type="button" id="genHeatmap">Generate heatmap</button>
+						</li> -->
+					</ul>
+                </div>
 				
 				<div id = "annotationSection">
+				
+					<ul id = "annotationToolbar" class = "shapeToolbar">
+						<li id = "showAllAnotations" data-section="0" data-cmd="0" data-type="icon" title = "Show all annotations">
+							<i class="fa fa-eye"></i>
+						</li>
+						<li id = "hideAllAnnotations" data-section="0" data-cmd="1" data-type="icon" title = "Hide all annotations">
+							<i class="fa fa-eye-slash"></i>
+						</li>
+						
+						<div class = "sectionBreak"></div>
+						
+						<!-- template for new item (added +1 to "data-section" for seperation) -->
+						<li id = "" data-section="1" data-cmd="2" data-type="icon" title = "">
+							<i class="fa fa-question-circle"></i>
+						</li>
+						<li id = "" data-section="1" data-cmd="3" data-type="icon" title = "">
+							<i class="fa fa-question-circle"></i>
+						</li>
+						<li id = "" data-section="1" data-cmd="4" data-type="icon" title = "">
+							<i class="fa fa-question-circle"></i>
+						</li>
+						
+						<div class = "sectionBreak"></div>
+					</ul>
+					
 					<ul id = "annotationList">
 						<!-- Annotation items goes here -->
 					</ul>
