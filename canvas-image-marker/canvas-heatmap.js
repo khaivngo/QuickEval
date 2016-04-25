@@ -21,6 +21,8 @@
 		// For heatmap lowest value in Jet scale.
         var HUE_LOW = 240;									
 		
+		console.log(settings);
+		
 		// Browser support:
 		var isFirefox = typeof InstallTrigger !== 'undefined';
 		
@@ -110,7 +112,9 @@
 			this.generateCSV = function()
 			{
 				var matrixText = "";
-
+				var fileName = settings.pictureName.toString() + '_heatmap_matrix';
+				
+				
 				for(var i = 0; i < image.width; i++ )
 				{
 					for(var j = 0; j < image.height; j++ )
@@ -129,12 +133,11 @@
 				({
 					url: 'canvas-image-marker/heatmapMatrixCSV.php',
 					type: 'POST',
-					data: {matrix: matrixText}
+					data: {matrix: matrixText, fileName: fileName}
 				})
 				.done(function(data)
 				{
-					alert(data);
-					$('#matrixCSV').attr('href','canvas-image-marker/matrix.csv')
+					$('#matrixCSV').attr('href','canvas-image-marker/' + fileName + '.csv')
 				});
 			}
         };
@@ -704,7 +707,7 @@
 		  */
         function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 		{
-			if(max-1 == 0) 						// Avoid NaN when max-1 is 0.
+			if(max-1 == 0) 						// Avoid NaN when max-1 equals 0.
 				max = 2;
 			
 			var value = (cur-1) / (max-1);		// Float value for generating the color.
@@ -868,12 +871,10 @@
          /**
           * Calculate total pixel points for all polygons.
           * Estimates from the current savedShapes.
-          * @return {Array} Array of every marked pixel.
+          * @return {Void}.
           */
          function heatmapMain()
          {
-			
-			 
          	//setImage();
          	matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
@@ -887,9 +888,7 @@
 				
 				if(scaleType == 0) 	// Jet scale has no hue. set defualt 0.
 					hue = 0;
-				
-				
-				
+
          		//var t0 = performance.now();
 
          		//console.log('Before removing dupes: ' + allMarkedPoints.length);
@@ -905,7 +904,6 @@
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
 
          		//return allMarkedPoints;
-				
 				
          	}
          	else

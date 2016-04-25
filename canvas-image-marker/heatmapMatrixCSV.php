@@ -1,9 +1,7 @@
 <?php
  
-$foo = $_POST['matrix'];
+$matrix = $_POST['matrix'];
+$filename = $_POST['fileName'] . '.csv';
+$file = fopen($filename, "w");
 
-$file = fopen("matrix.csv", "w");
-
-fwrite($file, $foo); 
-
-echo "matrix CSV written!";
+fwrite($file, $matrix); 
