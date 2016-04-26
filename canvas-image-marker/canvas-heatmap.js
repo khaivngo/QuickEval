@@ -930,7 +930,6 @@
 		/*------------------------
 			Annotations Functions
 		  ------------------------*/
-		
 		function renderAnnotations()
 		{
 			var annotationList = $('#annotationList');
@@ -960,26 +959,45 @@
 			annotationList.append(htmlRender);
 		}
 		
+		function moveArray(arr, fromIndex, toIndex) 
+		{
+			var element = arr[fromIndex];
+			arr.splice(fromIndex, 1);
+			arr.splice(toIndex, 0, element);
+			return arr;
+		}
+		
 		function displayAnnotationShapes(index)
 		{	
 			matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
-
+			
 			for(var i = 0; i < savedShapes.length; i ++)
-			{
+			{	
 				for(var j = 0; j < savedShapes[i].fill.length; j++)
 				{
 					if( savedShapes[i].visible )			
 					{
 						var point = [ savedShapes[i].fill[j].x, savedShapes[i].fill[j].y ];
 						
-						// Set selected annotation shape to blue:	
-						if(i === index)
-							matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';
-						else
-							matrixCtx.fillStyle = 'hsla(0,0%,0%,.1)';
-						
-						matrixCtx.fillRect( point[0], point[1], 1, 1 );
+							
+						if(i !== index)
+						{
+							matrixCtx.fillStyle = 'hsla(0,0%,0%,.25)';
+							matrixCtx.fillRect( point[0], point[1], 1, 1 );
+						}		
 					}
+				}	
+			}
+			
+			// Set selected annotation shape to blue:
+			if (( index != false || index === 0 ) && savedShapes[index].visible )
+			{
+				for(var i = 0; i < savedShapes[index].fill.length; i++)
+				{
+					var point = [ savedShapes[index].fill[i].x, savedShapes[index].fill[i].y ];
+					
+					matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';
+					matrixCtx.fillRect( point[0], point[1], 1, 1 );
 				}
 			}
 		}
