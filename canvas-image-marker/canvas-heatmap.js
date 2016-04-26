@@ -67,7 +67,7 @@
 						matrix[i][j] = {val: 0};
 					}
 				}
-				console.log(matrix);
+		
 				//var t1 = performance.now();
 				//console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
 
@@ -208,6 +208,13 @@
 
         $(document).ready(function()
 		{
+			
+			// This is so hacky..
+			$('#annotationList').undelegate('click');	// Reset delegate click event.
+			$('#annotationToolbar li').unbind();		// Reset click event.
+			$('#scaleType').unbind();					// Reset click event.
+			$('#reverseScale').unbind();				// Reset click event.
+			
             setCanvasImage();
             setImage();
 
@@ -239,6 +246,8 @@
 			 
 			$('#scaleType').on('change',function()
 			{
+				console.log('scaletype change');
+				
 				var scaleType = $('#scaleType').find(":selected").index();
 				heatmapPreferencesObj.setScaleType(scaleType);
 				heatmapMain();
@@ -246,6 +255,8 @@
 			
 			$('#reverseScale').on('click',function()
 			{
+				console.log('reverse click');
+				
 				var buttonStatus;
 				
 				// Reset button:
@@ -282,6 +293,8 @@
 			 */
 			$('#annotationToolbar li').on('click',function()
 			{
+				console.log('annotation toolbar li click')
+				
 				var buttonStatus = true;
 				
 				// Reset button:
@@ -453,6 +466,7 @@
 				// Turn on:
 				else if( target.is('.visibleStatus[data-visible=0]') )
 				{
+					console.log('turn on');
 					target.attr('data-visible','1').html('<i class="fa fa-eye"></i>');
 					savedShapes[index].visible = true;
 					
@@ -575,7 +589,7 @@
                     }
 					
 					savedShapes = shapes;
-					console.log(savedShapes);
+					
 					imgMatrix.createMatrix();
 					imgMatrix.calcMaxValue();
 					imgMatrix.generateCSV();
@@ -879,9 +893,7 @@
          	//setImage();
          	matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
-			
-			console.log(savedShapes);
-			console.log(savedShapes.length);
+
 			
          	if(savedShapes.length > 0 )
          	{
