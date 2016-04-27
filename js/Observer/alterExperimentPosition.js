@@ -77,6 +77,7 @@ function getCurrentPictureQueue(pictureID, pictureOrderID) {
     .done(function(response) {
         $('.canvas-container').attr('data-picture-queue', response[0].pictureQueue);
         $(document).trigger('data-attribute-changed');
+        
         // $(document).ready(function() {
         //     $('.canvas-container').canvasMarkingTool({
         //         annotation: true

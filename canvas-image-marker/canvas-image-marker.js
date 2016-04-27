@@ -22,10 +22,17 @@
         /* get the picture queue */
         var pictureQueue = $(this).attr('data-picture-queue');
 
+        /* save a reference to this canvas container element, so we can still manipulate it later */
+        var self = $(this);
+
         // listen for updates on the data-picture-queue attribute on the .canvas-container element
         // so we can update the variable in here
+        // also run the setCanvasImage function to update the image
         $(document).on('data-attribute-changed', function() {
-            pictureQueue = $('.canvas-container').attr('data-picture-queue');
+            pictureQueue = self.attr('data-picture-queue');
+            settings.imageUrl = self.attr('data-image-url');
+
+            setCanvasImage();
         });
 
         // canvas where the drawing will take place

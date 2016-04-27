@@ -475,6 +475,9 @@ function loadImageIntoPanner(pictureOrderId, imageUrl, picId, side) {
         $('#pan1').find('.canvas-container').attr('data-picture-id', picId);
 
         $('#left-reproduction-link').attr('href', imageUrl);
+
+        // tell our canvas plugin the image has chenged
+        $(document).trigger('data-attribute-changed');
     }
     else {
         $('#pan2').find('.canvas-container').attr('data-image-url', imageUrl);
@@ -483,6 +486,9 @@ function loadImageIntoPanner(pictureOrderId, imageUrl, picId, side) {
         $('#pan2').find('.canvas-container').attr('data-picture-id', picId);
 
         $('#right-reproduction-link').attr('href', imageUrl);
+
+        // tell our canvas plugin the image has chenged
+        $(document).trigger('data-attribute-changed');
     }
 }
 
