@@ -16,10 +16,7 @@
         // establish our default settings, override if any provided
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url')
-        }, options);
-		
-		// For heatmap lowest value in Jet scale.
-        var HUE_LOW = 240;									
+        }, options);						
 		
 		// Browser support:
 		var isFirefox = typeof InstallTrigger !== 'undefined';
@@ -45,27 +42,33 @@
 			  */
             this.createMatrix = function()
             {
-				var tempArray = [];		// Keeps all saved shapes in array format.
+				var shapesArray = [];									// Keeps all saved shapes in array format.
 				
-                for (var i = 0; i < savedShapes.length; i++)
+                for (var i = 0; i < savedShapes.length; i++)			// Loop all shapes.
          		{
-         			for(var j = 0; j < savedShapes[i].fill.length; j ++)
+         			for(var j = 0; j < savedShapes[i].fill.length; j++) // Loop all points for this shape.
          			{
-         				tempArray.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
+																		// Add shape coordinate to array.
+         				shapesArray.push
+						([
+							savedShapes[i].fill[j].x,
+							savedShapes[i].fill[j].y
+						]);
          			}
          		}
 				
 				//var t0 = performance.now();
-				var matrix = [];
+				
+				var matrix = [];							// Initialize matrix array.
 
-				// Init matrix: Very good performance:
-				for (var i = 0; i < image.width; i++)
+				// Create matrix dimensions:
+				for (var i = 0; i < image.width; i++) 		// Loop all rows:
 				{
-					matrix[i] = [];
-					for (var j = 0; j < image.height; j++)
+					matrix[i] = []; 						// Set matrix as a 2D matrix.
+					for (var j = 0; j < image.height; j++) 	// Loop all columns:
 					{
-						matrix[i][j] = {val: 0};
-					}
+						matrix[i][j] = {val: 0}; 			// Set matrix element to default value 0.
+					} 
 				}
 		
 				//var t1 = performance.now();
@@ -73,10 +76,10 @@
 
 				//var t2 = performance.now();
 
-				// Calc matrix: Very good Performance:
-				for(var i = 0; i < tempArray.length; i++)
+				// Set marking values to matrix elements:
+				for(var i = 0; i < shapesArray.length; i++)
 				{
-					matrix[ tempArray[i][0] ][ tempArray[i][1] ].val++;
+					matrix[ shapesArray[i][0] ][ shapesArray[i][1] ].val++;
 				}
 
 				//var t3 = performance.now();
@@ -255,30 +258,9 @@
 			
 			$('#reverseScale').on('click',function()
 			{
-				console.log('reverse click');
+				var status = setStatusToolbarButton( $(this) );
 				
-				var buttonStatus;
-				
-				// Reset button:
-				if( $(this).hasClass('activeTool') )
-				{
-					$(this).removeClass('activeTool');
-					buttonStatus = false;
-				}
-				else
-				{
-					$(this).addClass('activeTool');
-					buttonStatus = true;
-				}
-				
-				/* if( $(this).attr('data-section') && buttonStatus )
-				{
-					// Reset active class for this section.
-					var section = parseInt( $(this).attr('data-section') );	// Int value for tool section.
-					$('#heatmapToolbar li[data-section=' + section + ']').removeClass('activeTool');
-				} */
-				
-				heatmapPreferencesObj.setReverse(buttonStatus);
+				heatmapPreferencesObj.setReverse(status);
 				heatmapMain();
 			});	
 			
@@ -291,57 +273,32 @@
 			 *  Toolbar for the annotation settings
 			 *	
 			 */
-			$('#annotationToolbar li').on('click',function()
+			$('#hideAllAnnotations').on('click',function()
 			{
-				console.log('annotation toolbar li click')
-				
-				var buttonStatus = true;
-				
-				// Reset button:
-				if( $(this).hasClass('activeTool') )
+				var status = setStatusToolbarButton( $(this) );
+
+				for(var i = 0; i < savedShapes.length; i ++)
 				{
-					$(this).removeClass('activeTool');
-					buttonStatus = false;
-				}	
-				
-				var cmd = parseInt( $(this).attr('data-cmd') );			// Int value for tool command.
-				
-				if( $(this).attr('data-section') && buttonStatus )
-				{
-					// Reset active class for this section.
-					var section = parseInt( $(this).attr('data-section') );	// Int value for tool section.
-					$('#annotationToolbar li[data-section=' + section + ']').removeClass('activeTool');
+					savedShapes[i].visible = false;
 				}
 				
-				$(this).addClass('activeTool');
+				$('.visibleStatus').attr('data-visible','0').html('');
+				$('#annotationList li').attr('class','inactiveAnnotation');
+				displayAnnotationShapes(false);
+			});
+			
+			$('#showAllAnotations').on('click',function()
+			{
+				var status = setStatusToolbarButton( $(this) );
 				
-				switch(cmd)
+				for(var i = 0; i < savedShapes.length; i ++)
 				{
-					case 0:
-						for(var i = 0; i < savedShapes.length; i ++)
-						{
-							$('.visibleStatus').attr('data-visible','1').html('<i class="fa fa-eye"></i>');
-							savedShapes[i].visible = true;
-							$('#annotationList li').attr('class','inactiveAnnotation');
-							displayAnnotationShapes(false);
-						}
-					break;
-					
-					case 1:
-						for(var i = 0; i < savedShapes.length; i ++)
-						{
-							$('.visibleStatus').attr('data-visible','0').html('');
-							savedShapes[i].visible = false;
-							$('#annotationList li').attr('class','inactiveAnnotation');
-							displayAnnotationShapes(false);
-						}
-					break;
-					
-					case 2:
-						/* Magic! */
-					break;
+					savedShapes[i].visible = true;
 				}
 				
+				$('.visibleStatus').attr('data-visible','1').html('<i class="fa fa-eye"></i>');
+				$('#annotationList li').attr('class','inactiveAnnotation');
+				displayAnnotationShapes(false);
 			});
 
          	/**
@@ -454,6 +411,7 @@
 					target.attr('data-visible','0').html('');
 					savedShapes[index].visible = false;
 					$(this).attr('class','');					// Reset all items.
+					$('#annotationToolbar li[data-section=0]').removeClass('activeTool');
 				}
 				// Turn off:
 				else if (target.is('.visibleStatus[data-visible=1] i') )
@@ -461,7 +419,7 @@
 					target.parent().attr('data-visible','0').html('');
 					savedShapes[index].visible = false;
 					$(this).attr('class','');					// Reset all items.
-
+					$('#annotationToolbar li[data-section=0]').removeClass('activeTool');
 				}
 				// Turn on:
 				else if( target.is('.visibleStatus[data-visible=0]') )
@@ -472,6 +430,8 @@
 					
 					$('#annotationList li').attr('class','');	// Reset all items.
 					$(this).attr('class','activeAnnotation');
+					
+					$('#annotationToolbar li[data-section=0]').removeClass('activeTool');
 				}
 				// Only selection:
 				else
@@ -515,6 +475,36 @@
 					$('#heatmapSection').css('display','none');
 				break;
 			}
+		}
+		
+		/**
+		 * Reset toolbar buttons
+		 */
+		function setStatusToolbarButton(elem)
+		{
+			console.log(elem);
+			
+			var buttonStatus = true;
+			var parent = elem.parent();
+			
+			if( $(elem).hasClass('activeTool') )
+			{
+				$(elem).removeClass('activeTool');
+				buttonStatus = false;
+			}
+			
+			if( $(elem).attr('data-section') && buttonStatus )
+			{
+				// Reset active class for this section.
+				var section = parseInt( $(elem).attr('data-section') );	// Int value for tool section.
+				console.log(section);
+				$( parent.find('li[data-section=' + section + ']')).removeClass('activeTool');
+			}
+			
+			if(buttonStatus)
+				$(elem).addClass('activeTool');
+			
+			return buttonStatus;
 		}
 		
         /**
@@ -682,18 +672,19 @@
              matrixCanvas.css({ opacity: value });
          }
 
-         /**
-		  * Generate Jet scale color for the heatmap.
-		  *	@param  {Float}	  The percentage value for generating the hue level.
-		  *	@param  {Int}	  The saturation value.
-		  *	@return {String}  color in hsl format.
-		  */
-         function jetScale(valPerc, sat)
-         {
-         	var hue = HUE_LOW - (HUE_LOW * valPerc);
-         	var color = 'hsl(' + hue + ',' + sat + '%,50%)';
-         	return color;
-         }
+        /**
+		 * Generate Jet scale colour for the heatmap.
+		 *	@param  {Float}	  The percentage value for generating the hue level.
+		 *	@param  {Int}	  The saturation value.
+		 *	@return {String}  colour in HSL format.
+		 */
+        function jetScale(valPerc, sat)
+        {
+			var hue = 240 - (240 * valPerc);
+			var color = 'hsl(' + hue + ',' + sat + '%,50%)';
+			return color;
+        }
+		 
 		 /**
 		  * Generate grayscale color for the heatmap.
 		  *	@param  {Float}	  The percentage value for generating the light level.
@@ -708,33 +699,34 @@
          	return color;
          }
 
-         /**
-		  * Generate color for the heatmap.
-		  *	@param  {Int}	   The current intersection value for the pixel.
-		  *	@param  {Int}	   The highest value of intersections.
-		  *	@param	{Int}	   The type of scale that should be rendered in heatmap.
-		  *	@param	{Int}	   The hue value.
-		  *	@param	{Int}	   The saturation value.
-		  *	@param	{Boolean}  Whether the scale should be reversed or not.
-		  *	@return {String}   The color in HSL format.
-		  */
+        /**
+		 * Generate colour for the heatmap.
+		 *	@param  {Int}	   The current matrix element value.
+		 *	@param  {Int}	   The highest matrix element value.
+		 *	@param	{Int}	   The type of scale that should be rendered in heatmap.
+		 *	@param	{Int}	   The hue value.
+		 *	@param	{Int}	   The saturation value.
+		 *	@param	{Boolean}  Whether the scale should be reversed or not.
+		 *	@return {String}   The colour in HSL format.
+		 */
         function heatmapColor(cur, max, scaleType, hue, sat, reverse)
 		{
 			if(max-1 == 0) 						// Avoid NaN when max-1 equals 0.
 				max = 2;
 			
-			var value = (cur-1) / (max-1);		// Float value for generating the color.
+			var value = (cur-1) / (max-1);		// Float value for generating the colour.
 
 			if(reverse) 						// Reverse the scale if true.
 				value = 1 - value;
 
-			switch(scaleType) 					// Return the color in HSL format:
+			switch(scaleType) 					// Return the colour in HSL format:
 			{
 				case 0: return jetScale(value, sat);
 				case 1: return grayScale(value, hue, sat);
 
 			}
 		}
+		
          /**
           * Render the legend scale for the heatmap.
           *	@param  {Int}	  The scale type, 0: monochromatic, 1: jet.
@@ -759,7 +751,7 @@
          	switch (scaleType)
          	{
 				case 0:
-         			colorStep = HUE_LOW / (range-1);
+         			colorStep = 240 / (range-1);
 
          			if(!reverse)
          			{
@@ -852,35 +844,39 @@
          }
 
          /**
-          *  Draw the matrix in canvas as heatmap.
-          *	@param  {array}	  The matrix data to draw.
-          *	@param  {Int}	  The hue value for the heatmap.
-          *	@param  {Int}	  The saturation value for the heatmap.
-          *	@param  {Int}	  The scale type, 0: jet, 1: grayscale.
+          * Draw the heatmap in canvas.
+          *	@param  {Object}   The matrix data to draw.
+          *	@param  {Int}	   The hue value for the heatmap.
+          *	@param  {Int}	   The saturation value for the heatmap.
+          *	@param  {Int}	   The scale type, 0: jet, 1: grayscale.
+          *	@param	{Boolean}  Whether the scale should be reversed or not.
           *	@return {Void}.
           */
-         function drawMatrixCanvas(matrix, hue, sat, scaleType, reverse)
+         function drawHeatmap(matrix, hue, sat, scaleType, reverse)
          {
-         	//var t0 = performance.now();
+         	var t0 = performance.now();
 			
-         	// Draw matrix with heatmap:
+         	// Loop the matrix rows and columns:
          	for(var i = 0; i < matrix.data.length; i++)
          	{
          		for(var j = 0; j < matrix.data[i].length; j++)
          		{
-         			if(matrix.data[i][j].val > 0)
+					// The point is marked, draw this point:
+         			if(matrix.data[i][j].val > 0) 				
          			{
-         				var point = [i,j];
+						// Set background colour:
          				matrixCtx.fillStyle = heatmapColor(matrix.data[i][j].val, matrix.maxVal, scaleType, hue, sat, reverse);
-         				matrixCtx.fillRect( point[0], point[1], 1, 1 );
+         				
+						// Draw point in canvas, as 1 by 1 px:
+						matrixCtx.fillRect( i, j, 1, 1 );
          			}
          		}
          	}
 			
          	renderHeatmapLegend(scaleType, matrix.maxVal, hue, sat, reverse);
 
-         	//var t1 = performance.now();
-         	//console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+         	var t1 = performance.now();
+         	console.log('Render heatmap:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
 
          /**
@@ -914,7 +910,7 @@
          		/* if( $('#reverseScale[type=checkbox]').is(':checked') )
          			reverse = true; */
 
-         		drawMatrixCanvas(imgMatrix, hue, sat, scaleType, reverse);
+         		drawHeatmap(imgMatrix, hue, sat, scaleType, reverse);
 
          		//var t1 = performance.now();
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
