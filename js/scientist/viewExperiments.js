@@ -81,9 +81,6 @@ function displayHeatmap() {
 
     /* run our plugin on the newly created canvas-container element
      * pass the ID and queue of the picture */
-	 
-	 console.log('hmm');
-	 
     $('.canvas-container').canvasHeatmap({
         experimentID: experimentID,
         pictureID: pictureID,
