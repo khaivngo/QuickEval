@@ -145,9 +145,15 @@
 
                     <div id="pan1" class="panzoom">
                         <!-- <img id="pictureLeft" class="picture" src="flower.jpeg"/> -->
-                        <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+                        <div class="canvas-container"
+                            data-image-url="images/initiatePicture.png"
+                            data-picture-id=""
+                            data-picture-queue=""
+                            data-experiment-id="<?php echo $_SESSION['experimentId']; ?>"
+                            oncontextmenu="return false;">
         	                <!-- image canvas goes here -->
         	            </div>
+
                     </div>
                 </div>
             </section>
@@ -176,7 +182,12 @@
 
                     <div id="pan2" class="panzoom">
                         <!-- <img id="pictureRight" class="picture" src="images/initiatePicture.png"/> -->
-                        <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+                        <div class="canvas-container"
+                            data-image-url="images/initiatePicture.png"
+                            data-picture-id=""
+                            data-picture-queue=""
+                            data-experiment-id="<?php echo $_SESSION['experimentId']; ?>"
+                            oncontextmenu="return false;">
         	                <!-- image canvas goes here -->
         	            </div>
                     </div>

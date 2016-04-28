@@ -20,35 +20,11 @@ $(document).ready(function () {
         }).panzoom('zoom');
     })();
 
-
-    //Automatic panning reset
-    //$('#left-reproduction .panzoom, #right-reproduction .panzoom, #original .panzoom').mousedown(function () {
-    //    //console.log('Mousedown');
-    //    $('body').mouseup(function () {
-    //        //console.log('Mouseup');
-    //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-    //    });
-    //
-    //    $('body').mouseleave(function () {
-    //
-    //        // Create a new mouse up object with 'which' specified to be 1.
-    //        var e = $.Event("mouseup", {which: 1});
-    //        // Triggers it on the body.
-    //        $("body").trigger(e);
-    //        //console.log("leave")
-    //    });
-    //
-    //});
-
     $('#panzoom-reset').click(function()    {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
 
     });
 
-//
-//$('#pictureOriginal').panzoom({
-//    maxScale: this.naturalWidth / this.clientWidth
-//});
 
 //------------------------Based on http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/ ---------------------
 
@@ -143,7 +119,7 @@ $(document).ready(function () {
     $('#button-none').click(function () {
         nextComparison();
     });
-    
+
     $('#quit').click(function () {       //If user confirms cancel he is returned to main page
         window.location = 'index.php';
     });
@@ -432,13 +408,23 @@ function setPictures(object) {
     pictureOrderIdLeft = data[1].pictureOrderId;
     pictureOrderIdRight = data[2].pictureOrderId;
 
+    console.log(object);
+
     imageUrlLeft = data[1].url;
     imageUrlRight = data[2].url;
 
+    imageIDLeft = data[1].id;
+    imageIDRight = data[2].id;
+
     $('#left-reproduction').find('.canvas-container').attr('data-image-url', imageUrlLeft);
     $('#right-reproduction').find('.canvas-container').attr('data-image-url', imageUrlRight);
+
+    $('#left-reproduction').find('.canvas-container').attr('data-picture-id', imageIDLeft);
+    $('#right-reproduction').find('.canvas-container').attr('data-picture-id', imageIDRight);
+
     $('#left-reproduction-link').attr('href', imageUrlLeft);
     $('#right-reproduction-link').attr('href', imageUrlRight);
+
     $('#left-reproduction-link').attr('pictureOrderId', pictureOrderIdLeft);
     $('#right-reproduction-link').attr('pictureOrderId', pictureOrderIdRight);
 }

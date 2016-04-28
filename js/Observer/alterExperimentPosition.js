@@ -76,17 +76,13 @@ function getCurrentPictureQueue(pictureID, pictureOrderID) {
     })
     .done(function(response) {
         $('.canvas-container').attr('data-picture-queue', response[0].pictureQueue);
-        $(document).trigger('data-attribute-changed');
 
-        // $(document).ready(function() {
-        //     $('.canvas-container').canvasMarkingTool({
-        //         annotation: true
-        //     });
-        // });
-    })
-    .fail(function(response) {
+        // trigger an event, to let our canvas plugin know to update its picture
+        $(document).trigger('data-attribute-changed');
+    }).fail(function(response) {
         console.log(response.responseText);
     });
+
 }
 
 /**

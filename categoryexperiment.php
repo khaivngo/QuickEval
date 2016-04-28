@@ -170,7 +170,9 @@ if (isset($_GET["invite"])) {
 
                 <div id="pan2" class="panzoom">
                     <!-- <img class="picture" src="images/initiatePicture.png"/> -->
-                    <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+                    <div class="canvas-container"
+                        data-image-url="images/initiatePicture.png"
+                        oncontextmenu="return false;">
                         <!-- image canvas goes here -->
                     </div>
                 </div>

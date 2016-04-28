@@ -250,7 +250,6 @@ function getSpecificExperimentData(experimentId) {
         dataType: 'json',
         type: 'post',
         success: function (data) {
-            console.log(data);
 
             if (data[0]['isPublic'] == '1 = Public')
                 {}

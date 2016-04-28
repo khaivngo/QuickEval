@@ -245,7 +245,8 @@ function loadReproductionsSortable(data) {
     $('#rating-images').empty();                //empties div for the next pictures to be loaded
     length = Object.keys(data).length - 1;
 
-    numberArray = shuffleArray(Array.apply(null, {length: length}).map(Number.call, Number));   //Gets an shuffle array within the range of amount of pictures.
+    //Gets an shuffle array within the range of amount of pictures.
+    numberArray = shuffleArray(Array.apply(null, {length: length}).map(Number.call, Number));
 
     for (i = 1; i <= length; i++) {                         //goes through all objects getting their data.
         var reproductionImageUrl = data[i].url;                 //getting url
@@ -467,27 +468,28 @@ function loadOriginal(originalImageUrl) {
  * @returns {undefined}
  */
 function loadImageIntoPanner(pictureOrderId, imageUrl, picId, side) {
-
+    console.log(picId);
     if (side == "left") {
         $('#pan1').find('.canvas-container').attr('data-image-url', imageUrl);
 
         $('#pan1').find('.canvas-container').attr('pictureOrderId', pictureOrderId);
         $('#pan1').find('.canvas-container').attr('data-picture-id', picId);
+        $('#pan1').find('.canvas-container').attr('data-experiment-id', experimentId);
 
         $('#left-reproduction-link').attr('href', imageUrl);
 
-        // tell our canvas plugin the image has chenged
+        // tell our canvas plugin the image has changed
         $(document).trigger('data-attribute-changed');
     }
     else {
         $('#pan2').find('.canvas-container').attr('data-image-url', imageUrl);
 
-        $('#pan2').find('.canvas-container').attr('pictureOrderId', pictureOrderId);
+        $('#pan2').find('.canvas-container').attr('data-picture-order', pictureOrderId);
         $('#pan2').find('.canvas-container').attr('data-picture-id', picId);
 
         $('#right-reproduction-link').attr('href', imageUrl);
 
-        // tell our canvas plugin the image has chenged
+        // tell our canvas plugin the image has changed
         $(document).trigger('data-attribute-changed');
     }
 }

@@ -16,7 +16,7 @@
         }, options);
 
         /* get the current database id of the experiment */
-        var experimentID = $(this).attr('data-experimentId');
+        var experimentID = $(this).attr('data-experiment-id');
         /* get the current database id of the image */
         var pictureID = $(this).attr('data-picture-id');
         /* get the picture queue */
@@ -26,12 +26,13 @@
         var self = $(this);
 
         // listen for updates on the data-picture-queue attribute on the .canvas-container element
-        // so we can update the variable in here
-        // also run the setCanvasImage function to update the image
+        // whenever data-picture-queue has a new value, the user has gone to the next step in
+        // the experiment. So update all the values in this plugin to reflect the changes.
         $(document).on('data-attribute-changed', function() {
             pictureQueue = self.attr('data-picture-queue');
-            settings.imageUrl = self.attr('data-image-url');
+            pictureID = self.attr('data-picture-id');
 
+            settings.imageUrl = self.attr('data-image-url');
             setCanvasImage();
         });
 
@@ -109,6 +110,8 @@
             });
 
             $('#button-finished').on('click', sendMarkToDB);
+            $('#button-next').on('click', sendMarkToDB);
+            $('#button-next-category').on('click', sendMarkToDB);
         });
 
         var sendMarkToDB = function() {
