@@ -165,7 +165,7 @@ function addObserverInputFields(defaultFields, customFields, experimentId) {
  * @param experimentId the Id of the experiment to use.  Will use the last one
  * in the database if no experimentID is supplied.
  */
-function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, showOriginal, colorblind, hidden, timer, experimentId) {
+function addObserverParametersPair(backgroundColour, allowArtifactMarking, forcedPick, samePairTwice, showOriginal, colorblind, hidden, timer, experimentId) {
 
 
     if (experimentId == 0 || experimentId == null) {
@@ -182,6 +182,7 @@ function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, 
         data: {
             'option': 'addParametersPair',
             'backgroundColour': backgroundColour,
+            'allowArtifactMarking': allowArtifactMarking,
             'experimentId': experimentId,
             'forcedPick': forcedPick,
             'samePairTwice': samePairTwice,
@@ -443,4 +444,3 @@ function deleteExperiment(experimentId) {
         }
     });
 }
-

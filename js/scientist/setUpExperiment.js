@@ -1,4 +1,4 @@
-var loaded; //Sets to one if page is loaded, used in stepper, as stepper "clicks" last element. 
+var loaded; //Sets to one if page is loaded, used in stepper, as stepper "clicks" last element.
 // Has to be global.
 var imagePairCheck; //0 until user presses finish on setupexperiment with a custom queue, and all images aren't matched
 jQuery.fn.swap = function(b) {
@@ -282,7 +282,7 @@ function pictureOrder($element) {
 }
 
 /**
- * Removes step 5 
+ * Removes step 5
  */
 function removeLastStep() {
     $('.stepper > ul > li').eq(4).hide();
@@ -550,7 +550,7 @@ function setUpAddPairListener() {
             setUpDragNDrop(true);
         });
         $(this).before(d); //Adds loaded pair
-        $(this).parent().siblings('.existing-queue').children('select').hide(); //Hides select and 
+        $(this).parent().siblings('.existing-queue').children('select').hide(); //Hides select and
         $(this).parent().siblings('.input-control.text').fadeIn(); // displays inputfield
     });
 }
@@ -746,8 +746,8 @@ function addExperimentQueue(experimentId) {
                 }
                 addPictureQueueToExperiment(pictureQueueId, experimentId);
             } else { //If custom queue
-                
-                var imageSets = $('select > option:selected:not(:disabled)').closest('.image-set-div').parent(); //Gets all active imagesets 
+
+                var imageSets = $('select > option:selected:not(:disabled)').closest('.image-set-div').parent(); //Gets all active imagesets
                 var index = imageSets.index($(this)); //Index of current imageset and imagequeue element
                 var imageQueueElement = $('.image-set-queue').eq(index); //Gets the imagequeue element
 
@@ -763,16 +763,16 @@ function addExperimentQueue(experimentId) {
                         ], 0, pictureQueue, queueName);
                     });
                     addPictureQueueToExperiment(pictureQueue, experimentId);
-                } else { //If there is an existing queue 
+                } else { //If there is an existing queue
                     var queueId = imageQueueElement.find('option:selected:not(:disabled)').attr('imagequeue');
                     addPictureQueueToExperiment(queueId, experimentId);
                 }
             }
-            //If instruction    
+            //If instruction
         } else if ($(this).children('.instruction-field').length == 1) {
             var instruction = $(this).find('input').val();
             addInstruction(instruction, experimentQueueId);
-            //If instruction from history    
+            //If instruction from history
         } else if ($(this).children('.instruction-field-history').length == 1) {
             var instruction = $(this).find('option:selected:not(:disabled)').attr('instruction');
             addInstructionHistory(instruction, experimentQueueId);
@@ -1000,9 +1000,9 @@ function finishExperiment() {
         $.Notify({
             content: "Creating experiment...",
         });
-        
+
         var expName = $("#ex-name").val();
-        var expShortDesc = $("#ex-short-description").val(); 
+        var expShortDesc = $("#ex-short-description").val();
         var expLongDesc = $("#ex-long-description").val();
         var expType = $('#experiment-type').children(':selected:not(:disabled)').index();
         var expScreenWhitePoint =  $('#ex-screen-whitepoint').val();
@@ -1021,11 +1021,21 @@ function finishExperiment() {
             hidden = (hidden == 1) ? '0 = Hidden' : '1 = Public';
 
             //Sets up parameters for experiment
-            addObserverParametersPair($("#background-color").val(), +!$('#forced-pick').find('input').prop('checked'), +$('#same-pair').find('input').prop('checked'), +$('#display-original').find('input').prop('checked'), +$('#allow-colourblind').find('input').prop('checked'), hidden, +$('#display-clock').find('input').prop('checked'));
+            addObserverParametersPair(
+                $("#background-color").val(),
+                +$('#allow-artifact-marking').find('input').prop('checked'),
+                +!$('#forced-pick').find('input').prop('checked'),
+                +$('#same-pair').find('input').prop('checked'),
+                +$('#display-original').find('input').prop('checked'),
+                +$('#allow-colourblind').find('input').prop('checked'),
+                hidden,
+                +$('#display-clock').find('input').prop('checked')
+            );
 
             if (method == "Category judgement") {
                 addCategories(experimentId);
             }
+
             addInputFields();
             addExperimentQueue(experimentId);
             delay(function() {
@@ -1076,7 +1086,7 @@ function checkPairs() {
     //Check if there are queues without names, whom doesn't have a queue selected
     if (($('.queue-name:text').filter(function() {
         return $(this).val() == ""
-    }).closest('.ex-image-pair').not(queuesWithQueue).length > 0)) { //If there are queues without names 
+    }).closest('.ex-image-pair').not(queuesWithQueue).length > 0)) { //If there are queues without names
         $('#ex-image-sets').after('<div id="notify"><div class="span3" style="margin: 0 20px"></div>' + '<div class="bg-red notice marker-on-top span1">' + 'All custom picturequeues needs a name' + '</div></div>');
         return true;
     }
@@ -1115,7 +1125,7 @@ function checkMatchedPairs() {
                 i--;
             }
         }
-        //Get all instances 
+        //Get all instances
         instances = countImages(firstSet.concat(secondSet));
         //Checks if there are missing instances
         for (var i = 0; i < images.length; i++) {

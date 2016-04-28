@@ -49,6 +49,10 @@ if (isset($_GET["invite"])) {
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
+    <script src="canvas-image-marker/Helper.js"></script>
+    <script src="canvas-image-marker/Annotation.js"></script>
+    <script src="canvas-image-marker/canvas-image-marker.js"></script>
+
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
 
@@ -146,7 +150,7 @@ if (isset($_GET["invite"])) {
         <span id="original-tag" class="span-original-tag"><p>Original</p></span>
 
         <section id="set1">
-            <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
+            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width:100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
                 <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
                 <div id="pan1" class="panzoom">
@@ -161,7 +165,7 @@ if (isset($_GET["invite"])) {
 
     <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left: 2%; width:40%; height:70%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
@@ -190,17 +194,6 @@ if (isset($_GET["invite"])) {
     </div>
 
 </div>
-
-<script src="canvas-image-marker/Helper.js"></script>
-<script src="canvas-image-marker/Annotation.js"></script>
-<script src="canvas-image-marker/canvas-image-marker.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.canvas-container').canvasMarkingTool({
-            annotation: true
-        });
-    });
-</script>
 
 
 </body>

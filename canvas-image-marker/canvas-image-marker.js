@@ -39,7 +39,8 @@
         var canvas = $('<canvas>');
         var ctx = canvas[0].getContext('2d');
 
-        // put our savedShapes here, so we don't have to redraw them every time something changes
+        // put our savedShapes on another canvas,
+        // so we don't have to redraw them every time something changes
         var savedCanvas = $('<canvas>');
 		var savedCtx = savedCanvas[0].getContext('2d');
 
@@ -88,7 +89,10 @@
             $(canvasContainer).append(savedCanvas); // append the resized canvas to the DOM
             $(canvasContainer).append(canvas); // append the resized canvas to the DOM
 
-            $(canvasContainer).parent().parent().parent().prepend(toolPanel);
+            if (settings.showToolbar == true) {
+                $(canvasContainer).parent().parent().parent().prepend(toolPanel);
+            }
+
             toolPanel.find('.undo').on('click', undo);
             toolPanel.find('.marking-tool').on('click', setMarkingActiveTool);
             toolPanel.find('.draw-tool').on('click', setMarkingActiveTool);

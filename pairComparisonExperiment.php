@@ -46,6 +46,10 @@
     <script src="js/jquery/test/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
+    <script src="canvas-image-marker/Helper.js"></script>
+    <script src="canvas-image-marker/Annotation.js"></script>
+    <script src="canvas-image-marker/canvas-image-marker.js"></script>
+
     <!-- Other JS & plugins -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
@@ -136,7 +140,7 @@
 
         <div id="left-reproduction" class="" style=" display:inline-block; margin-left: 0; width:30%; height: 70%;">
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan1" class="panzoom">
@@ -152,7 +156,7 @@
 
         <div id="original" class="" style="margin-left: 2%; width:30%; height:70%; display:inline-block; ">
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                     <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan3" class="panzoom">
@@ -167,7 +171,7 @@
         <div id="right-reproduction" class="right pictureContainer"
              style="display:inline-block; margin-left: 2%; width:30%; height: 70%">
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan2" class="panzoom">
@@ -193,16 +197,6 @@
     </div>
 </div>
 
-<script src="canvas-image-marker/Helper.js"></script>
-<script src="canvas-image-marker/Annotation.js"></script>
-<script src="canvas-image-marker/canvas-image-marker.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.canvas-container').canvasMarkingTool({
-            annotation: true
-        });
-    });
-</script>
 
 </body>
 </html>

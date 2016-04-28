@@ -159,7 +159,7 @@ if (isset($_GET["invite"])) {
 
     <div id="drop-left" class="" style="margin-left: 0; display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                 <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan1" class="panzoom">
@@ -182,7 +182,7 @@ if (isset($_GET["invite"])) {
 
     <div id="original" style="margin-left:1%; margin-right:1%; display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
@@ -194,7 +194,7 @@ if (isset($_GET["invite"])) {
 
     <div id="drop-right" class="" style=" display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
                 <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
@@ -229,15 +229,6 @@ if (isset($_GET["invite"])) {
 </div>
 
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
-
-
-<script>
-    $(document).ready(function() {
-        $('.canvas-container').canvasMarkingTool({
-            annotation: true
-        });
-    });
-</script>
 
 
 

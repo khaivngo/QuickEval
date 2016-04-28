@@ -7,7 +7,7 @@ require_once('../../ChromePhp.php');
 
 
 try {                                   //gets whether the experiment is hidden
-    $stmt = $db->prepare("SELECT isPublic, backgroundColour, showOriginal, timer from experiment WHERE id = :id");
+    $stmt = $db->prepare("SELECT isPublic, backgroundColour, showOriginal, timer, allowArtifactMarking FROM experiment WHERE id = :id");
 
     $stmt->execute(array(':id' => $_POST['experimentId']));
 	$res = $stmt->fetchAll();

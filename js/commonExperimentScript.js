@@ -250,11 +250,35 @@ function getSpecificExperimentData(experimentId) {
         dataType: 'json',
         type: 'post',
         success: function (data) {
+            console.log(data);
 
-            if (data[0]['isPublic'] == '1 = Public') {
-            }
-            else {
-                //console.log("Experiment is NOT public");
+            if (data[0]['isPublic'] == '1 = Public')
+                {}
+            else
+                {}
+
+            // enable or disable the marking tool be hiding/showing the toolbar
+            if (data[0]['allowArtifactMarking'] == '0') {
+                $(document).ready(function() {
+                    $('.canvas-container').canvasMarkingTool({
+                        annotation: false,
+                        showToolbar: false
+                    });
+                });
+            } else if (data[0]['allowArtifactMarking'] == '1') {
+                $(document).ready(function() {
+                    $('.canvas-container').canvasMarkingTool({
+                        annotation: true,
+                        showToolbar: true
+                    });
+                });
+            } else {
+                $(document).ready(function() {
+                    $('.canvas-container').canvasMarkingTool({
+                        annotation: false,
+                        showToolbar: false
+                    });
+                });
             }
 
             if (data[0].timer == 0) {
