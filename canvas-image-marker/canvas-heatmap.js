@@ -29,17 +29,21 @@
         heatmapLegend.marginLeft = 75;						// Remember to consider the image.width value when assigning new value.
         heatmapLegend.paddingLeft = 4;						// Padding left for each square box.
 		
-		// Matrix
-		var ImageMatrix = function()
+		/**
+		 *  Class Shape_matrix.
+		 *  Creates a matrix based on the shapes for this particular image.
+		 *  Used in heatmap.
+		 */
+		var Shape_matrix = function()
         {
-            this.data;
-			this.maxVal;				//
-			this.csv;					// Matrix in plaintext.
+            this.data;					// The matrix in a 2D array format.
+			this.maxVal;				// The matrix element with highest value.
+			this.csv;					// The matrix in CSV format (String).
 			
 			/**
-			  * Create a matrix of the experiment image with marked points as data.
-			  *	@return {array}	 The matrix.
-			  */
+			 *  Create a matrix of the experiment image with marked points as data.
+			 *	Sets value to property this.data.
+			 */
             this.createMatrix = function()
             {
 				var shapesArray = [];									// Keeps all saved shapes in array format.
@@ -56,23 +60,41 @@
 						]);
          			}
          		}
-				
-				//var t0 = performance.now();
+				//console.log('Number of markings: ' + shapesArray.length);
+				var t0 = performance.now();
 				
 				var matrix = [];							// Initialize matrix array.
-
-				// Create matrix dimensions:
+															// Create matrix dimensions:
 				for (var i = 0; i < image.width; i++) 		// Loop all rows:
 				{
-					matrix[i] = []; 						// Set matrix as a 2D matrix.
+					matrix[i] = []; 						// Set matrix as a 2D array.
 					for (var j = 0; j < image.height; j++) 	// Loop all columns:
 					{
 						matrix[i][j] = {val: 0}; 			// Set matrix element to default value 0.
 					} 
 				}
+				
+				
+				/*
+				for(var i = 0; i < image.width; i++) 			
+				{
+					for (var j = 0; j < image.height; j++) 		
+					{
+						matrix.push({ x:j, y:i, val:0 }); 		
+					}
+				}
+				for(var i = 0; i < shapesArray.length; i++) 	
+				{
+					for (var j = 0; j < matrix.length; j++) 	
+					{
+															
+						if( matrix[j].x == shapesArray[i][0] &&
+						    matrix[j].y == shapesArray[i][1] )
+							matrix[j].val++
+					}
+				} */
 		
-				//var t1 = performance.now();
-				//console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+				
 
 				//var t2 = performance.now();
 
@@ -81,13 +103,19 @@
 				{
 					matrix[ shapesArray[i][0] ][ shapesArray[i][1] ].val++;
 				}
+				
+				var t1 = performance.now();
+				//console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
 
 				//var t3 = performance.now();
 				//console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
 
 				this.data = matrix;
             }
-			
+			/**
+			 *  Calculate the matrix element with the highest value.
+			 *	Sets value to property this.maxVal (max value).
+			 */
 			this.calcMaxValue = function()
 			{
 				var maxVal = 0;
@@ -109,12 +137,13 @@
 				
 				this.maxVal = maxVal;
 			}
-			
+			/**
+			 *  Convert the matrix to CSV format.
+			 *  Sets value to property this.csv.
+			 */
 			this.generateCSV = function()
 			{
 				var matrixText = "";
-				var fileName = settings.pictureName.toString() + '_heatmap_matrix';
-				
 				
 				for(var i = 0; i < image.width; i++ )
 				{
@@ -129,12 +158,20 @@
 				}
 				
 				this.csv = matrixText;
+			}
+			/**
+			 *  Send CSV to PHP via ajax, where PHP will
+			 *  generate a CSV file on the server, ready to download.
+			 */
+			this.saveCSVtoServer = function()
+			{
+				var fileName = settings.pictureName.toString() + '_heatmap_matrix';
 				
 				$.ajax
 				({
 					url: 'canvas-image-marker/heatmapMatrixCSV.php',
 					type: 'POST',
-					data: {matrix: matrixText, fileName: fileName}
+					data: {matrix: this.csv, fileName: fileName}
 				})
 				.done(function(data)
 				{
@@ -142,6 +179,7 @@
 				});
 			}
         };
+		// End class Shape_matrix.
 		
 		var heatmapPreferences = function()
 		{
@@ -175,6 +213,13 @@
 					case 1:									// Monochromatic scale:
 						/* Magic! */
 					break;
+					
+					case 2:									// Gray scale:
+						hueRange.disabled = true;
+						hueSection.attr('class','inactiveSection');
+						satRange.disabled = true;
+						satSection.attr('class','inactiveSection');
+					break;
 				}
 				
 				this.scaleType = scaleType;
@@ -199,39 +244,39 @@
         var mergedCtx = mergedCanvas[0].getContext('2d');
 
         var canvasContainer = element;
-        var image;
+        var image;											
 
-        var savedShapes;
+        var savedShapes;									// Array, stores all shapes objects.
 		
-		// Heatmap Preferences object:
-		var heatmapPreferencesObj = new heatmapPreferences(); 
+		
+		var heatmapPreferencesObj = new heatmapPreferences(); // Heatmap Preferences object:
 					
-		// Matrix object:
-		var imgMatrix = new ImageMatrix();
+		var shapeMatrix = new Shape_matrix();				// Shape_matrix object.
 
         $(document).ready(function()
 		{
 			
-			// This is so hacky..
-			$('#annotationList').undelegate('click');	// Reset delegate click event.
-			$('#annotationToolbar li').unbind();		// Reset click event.
-			$('#scaleType').unbind();					// Reset click event.
-			$('#reverseScale').unbind();				// Reset click event.
+															// This is so hacky..
+			$('#annotationList').undelegate('click');		// Reset delegate click event.
+			$('#annotationToolbar li').unbind();			// Reset click event.
+			$('#scaleType').unbind();						// Reset click event.
+			$('#reverseScale').unbind();					// Reset click event.
+			$('.advancedOptionsButton').unbind();			// Reset click event.
 			
             setCanvasImage();
             setImage();
 
-            $(canvasContainer).append(imageCanvas); 	// Append the resized canvas to the DOM
-            $(canvasContainer).append(matrixCanvas); 	// Append the resized canvas to the DOM
-            $(canvasContainer).append(mergedCanvas); 	// Append the resized canvas to the DOM
+            $(canvasContainer).append(imageCanvas); 		// Append the resized canvas to the DOM
+            $(canvasContainer).append(matrixCanvas); 		// Append the resized canvas to the DOM
+            $(canvasContainer).append(mergedCanvas); 		// Append the resized canvas to the DOM
 
             getArtifactMarks(settings.experimentID, settings.pictureQueue, settings.pictureID);
 			
-			selectTabContent(0);	// Default tab heatmap-settings.
+			selectTabContent(0);							// Default tab heatmap-settings.
 			
 			
-         	// Generate heatmap button.
-         	// $('#genHeatmap').on('click', heatmapMain);
+         	
+         	// $('#genHeatmap').on('click', heatmapMain);	// Generate heatmap button.
 
 			$('.tabSection').on('click', function()
 			{
@@ -249,8 +294,6 @@
 			 
 			$('#scaleType').on('change',function()
 			{
-				console.log('scaletype change');
-				
 				var scaleType = $('#scaleType').find(":selected").index();
 				heatmapPreferencesObj.setScaleType(scaleType);
 				heatmapMain();
@@ -258,7 +301,9 @@
 			
 			$('#reverseScale').on('click',function()
 			{
-				var status = setStatusToolbarButton( $(this) );
+				//var status = setStatusToolbarButton( $(this) );
+				
+				var status = ( $(this).is(':checked') ) ? true : false;
 				
 				heatmapPreferencesObj.setReverse(status);
 				heatmapMain();
@@ -306,7 +351,7 @@
          	 *	When the user changes the Sliders range, either hue or saturation.
          	 *  @return {void}.
          	 */
-         	$('#heatmapPanel li input[type=range]').on('input',function(event)
+         	$('#scaleColorSettings li input[type=range]').on('input',function(event)
             {
          		var hue = $('#hueLevel').val();
 				var sat = $('#satLevel').val();
@@ -318,11 +363,11 @@
 					setSliderColor(hue, sat);
          	});
 			
-			$('#heatmapPanel li input[type=range]').on('change', function(event) {
+			$('#scaleColorSettings li input[type=range]').on('change', function(event) {
                 heatmapMain();
             });
 			
-         	$('#heatmapPanel li input[type=number]').on('input',function(event)
+         	$('#scaleColorSettings li input[type=number]').on('input',function(event)
          	{
          		var hue = $('#hueSection input[type=number]').val();
 				var sat = $('#satSection input[type=number]').val();
@@ -385,10 +430,10 @@
          		changeOpacityOfMatrixCanvas(opacityLevel);
          	});
 
-         	document.getElementById('downloadImage').addEventListener('click', function()
+         	/* document.getElementById('downloadImage').addEventListener('click', function()
          	{
          		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
-         	}, false);
+         	}, false); */
 			
 			/*------------------
 				Annotations UI
@@ -455,22 +500,45 @@
 					displayAnnotationShapes(false);
 			});
 			
+			$('.advancedOptionsButton').on('click',function()
+			{
+				console.log('click!!');
+				
+				var section = $(this).attr('data-target');
+				var textStatus = "";
+				if( $('#' + section).is(':hidden') )
+				{
+					$('#' + section).slideDown();
+					textStatus = "Hide";
+				}
+				else
+				{
+					$('#' + section).slideUp();
+					textStatus = "Show";
+				}	
+				
+				$(this).find('span').text(textStatus);
+			});
+			
         }); // End doc ready.
 		 
 		function selectTabContent(tab)
 		{
-		$('.tabSection').css({'opacity':.4, 'border-bottom':'2px solid #fff'});
+			// Reset:
+			$('.tabSection').removeClass('activeTab');
 			
 			switch(tab)
 			{
 				case 0:			// Heatmap settings 
-					$('#heatmapTab').css({ 'opacity':1, 'border-bottom':'2px solid #0ac' });
+					$('#heatmapTab').addClass('activeTab');
+					
 					$('#annotationSection').css('display','none');
 					$('#heatmapSection').css('display','block');
 				break;
 				
 				case 1:			// Annotations
-					$('#annotationTab').css({ 'opacity':1, 'border-bottom':'2px solid #0ac' });
+					$('#annotationTab').addClass('activeTab');
+					
 					$('#annotationSection').css('display','block');
 					$('#heatmapSection').css('display','none');
 				break;
@@ -478,7 +546,7 @@
 		}
 		
 		/**
-		 * Reset toolbar buttons
+		 * Set status for toolbar button
 		 */
 		function setStatusToolbarButton(elem)
 		{
@@ -580,9 +648,10 @@
 					
 					savedShapes = shapes;
 					
-					imgMatrix.createMatrix();
-					imgMatrix.calcMaxValue();
-					imgMatrix.generateCSV();
+					shapeMatrix.createMatrix();
+					shapeMatrix.calcMaxValue();
+					shapeMatrix.generateCSV();
+					shapeMatrix.saveCSVtoServer();
 						
 					heatmapPreferencesObj.setScaleType(0);	
                     heatmapMain();
@@ -692,7 +761,7 @@
 		  *	@param  {Int}	  The saturation value.
 		  *	@return {String}  color in grayscale format.
 		  */
-         function grayScale(valPerc, hue, sat)
+         function monochromaticScale(valPerc, hue, sat)
          {
          	var light = valPerc * 100;
          	var color = 'hsl(' + hue + ',' + sat + '%,' + light + '%)';
@@ -722,7 +791,8 @@
 			switch(scaleType) 					// Return the colour in HSL format:
 			{
 				case 0: return jetScale(value, sat);
-				case 1: return grayScale(value, hue, sat);
+				case 1: return monochromaticScale(value, hue, sat);
+				case 2: return monochromaticScale(value, hue, sat);		// Grayscale.
 
 			}
 		}
@@ -786,6 +856,7 @@
          		break;
 				
          		case 1:
+				case 2:
          			colorStep = 100 / (range-1);
 
          			if(!reverse)
@@ -874,9 +945,9 @@
          	}
 			
          	renderHeatmapLegend(scaleType, matrix.maxVal, hue, sat, reverse);
-
+			
          	var t1 = performance.now();
-         	console.log('Render heatmap:' + Math.round(t1 - t0) / 1000 + ' seconds.');
+         	//console.log('Render heatmap:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
 
          /**
@@ -900,6 +971,12 @@
 				
 				if(scaleType == 0) 	// Jet scale has no hue. set defualt 0.
 					hue = 0;
+				
+				else if(scaleType == 2)
+				{
+					hue = 0;
+					sat = 0;
+				}
 
          		//var t0 = performance.now();
 
@@ -910,7 +987,7 @@
          		/* if( $('#reverseScale[type=checkbox]').is(':checked') )
          			reverse = true; */
 
-         		drawHeatmap(imgMatrix, hue, sat, scaleType, reverse);
+         		drawHeatmap(shapeMatrix, hue, sat, scaleType, reverse);
 
          		//var t1 = performance.now();
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");

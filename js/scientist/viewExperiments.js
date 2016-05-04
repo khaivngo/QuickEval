@@ -119,16 +119,16 @@ function getImages(experimentId) {
                     });
                 output += "</select>";
 
-                // output += '<button style="padding: 10px 15px;" class="primary heatmap-button open-heatmap">Show heatmap</button>';
-                output += '<a id="downloadImage">';
-                    output += '<button style="margin-left: 10px; padding: 10px 15px;" class="primary" type="button">Download image</button>';
-                output += '</a>';
-                output += '<button style="padding: 10px 15px;" id="export-heatmap" class="primary heatmap-button">Export heatmap</button>';
+                output += ' <button style="padding: 10px 15px;" class="primary heatmap-settings-button open-heatmap">Heatmap settings <i class="fa fa-cog"></i></button>';
+               // output += '<a id="downloadImage">';
+                    //output += '<button style="margin-left: 10px; padding: 10px 15px;" class="primary" type="button">Download image</button>';
+                //output += '</a>';
+                //output += '<button style="padding: 10px 15px;" id="export-heatmap" class="primary heatmap-button">Export heatmap</button>';
             output += '</div>';
 
             $('#heatmap-results h3').after(output);
 
-            $('#pan').parent().append('<button style="padding-top: 5px; z-index: 900;margin: 5px; position: absolute; top: 0;right:0;" class="heatmap-settings-button"><i class="fa fa-2x fa-cog"></i></button>');
+            //$('#pan').parent().append('<button style="padding-top: 5px; z-index: 900;margin: 5px; position: absolute; top: 0;right:0;" class="heatmap-settings-button"><i class="fa fa-2x fa-cog"></i></button>');
 
 
             // display heatmap of clicked picture
@@ -138,17 +138,41 @@ function getImages(experimentId) {
 
             // bind a open/close event on heatmap settings button click
             $('.heatmap-settings-button').on('click', function() {
-                $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+				
+				// Have to do this manually because the toggle slider has a delay,
+				// which means the heatmap panel uses 200 ms to show/hide.
+				var status =  ( $('#heatmap-panel-container').attr('data-status') == 'true') ? false : true;
+				
+				$('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+				setHeatmapScrollPos(status);
             });
 
             $('#close-heatmap-panel').on('click', function() {
                 $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+				setHeatmapScrollPos(false);
             });
         }
     })
 	.error(function(request, status, error) {
 		console.log(request.responseText);
 	});
+}
+
+function setHeatmapScrollPos(status)
+{
+	if( status )
+	{
+		$('body,html').animate({ scrollTop: $('#heatmap-results h3').position().top - 20}, 500)
+		$('body').css('overflow-y','hidden');
+		$('#heatmap-panel-container').attr('data-status','true');
+		return false;
+	}
+	else
+	{
+		console.log('else');
+		$('body').css('overflow-y','scroll');
+		$('#heatmap-panel-container').attr('data-status','false');
+	}
 }
 
 function getFileExtension(filename) {

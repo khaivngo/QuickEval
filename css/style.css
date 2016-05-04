@@ -121,24 +121,43 @@ textarea    {
     bottom: 0;
     z-index: 100;
     overflow-y: auto;
-    background: #eee;
+    background: #f5f5f5;
 	border-left: 1px solid #ddd;
+	width:		400px;
+	max-width:	500px;
+}
+
+	#heatmap-panel-container select
+	{
+		padding: 2px 20px;
+	}
+
+.heatmapPanelHeader
+{
+	padding: 20px;
+	color: #000;
+	font-size: 175%;
+	margin-bottom:10px;
+	
 }
 
 .tabSection
 {
 	display:	inline-block;
 	padding: 	13px 0;
-	background: #fff;
+	background: #f5f5f5;
 	width: 		50%;
 	text-align: center;
 	font-size: 	120%;
 	cursor:		pointer;
+	color:		#555;
+	border-top: 2px solid #ddd;
+	margin-bottom: 20px;
 }
 
-	.tabSection:hover
+	.tabSection[class='tabSection']:hover	/* Only for elements without class: active tab */
 	{
-		color: #0ac;
+		border-top: 4px solid #aaa;
 	}
 	
 	
@@ -148,14 +167,22 @@ textarea    {
 		margin-left: -3.9px;
 		border-left: 1px solid #dfdfdf;
 	}
+	
+	.activeTab
+	{
+		border-top: 4px solid #0ac;
+		font-weight: bold !important;
+	}
 
 /*--------------------
     Toolbars
 --------------------*/	
 	
+/* Annotation */	
+	
 .shapeToolbar	/* UL */
 {
-	background: #fff;
+	background: #f5f5f5;
 	color:		#333 !important;
 	padding:	10px;
 	margin:		0 !important;
@@ -169,17 +196,17 @@ textarea    {
 		display: 		inline-block;
 	}	
 
-	.shapeToolbar li[data-type="icon"]
-	{
-		width: 			40px;
-		height: 		40px;
-		line-height:	40px !important;
-	}
-	
-		.shapeToolbar li["data-type=icon"]:hover
+		.shapeToolbar li[data-type="icon"]
 		{
-			background: #ddd;
+			width: 			40px;
+			height: 		40px;
+			line-height:	40px !important;
 		}
+		
+			.shapeToolbar li["data-type=icon"]:hover
+			{
+				background: #ddd;
+			}
 		
 	.activeTool
 	{
@@ -195,7 +222,57 @@ textarea    {
 		background: 	#ddd;
 		display: 		inline-block;
 		vertical-align: middle;
-	}		
+	}	
+
+
+/* Heatmap */	
+
+.heatmapSectionItem		/* UL */
+{
+	border-top:		1px solid #ddd;
+	padding: 		20px;
+}
+
+.heatmapSectionItem:nth-child(1)
+{
+	border-top: none;
+}
+
+	.heatmapSectionItem li
+	{
+		display: 		block;
+		margin-left: 	15px;
+		padding: 		10px 0;
+		color:			#333;
+	}
+	
+		.heatmapSectionItem li[type='header']
+		{
+			font-size: 	125%;
+			color:		#111;
+			margin-left: 0px;
+		}
+		
+		.heatmapSectionItem li label
+		{
+			display: inline;
+			margin-right: 10px;
+		}
+		
+	
+.advancedOptionsButton
+{
+	color: #08d !important;
+	cursor: pointer;
+	padding: 20px 0 10px 0;
+	margin-left: 10px;
+}	
+
+	.advancedOptionsButton:hover
+	{
+		color: #08f !important;
+		text-decoration: underline;
+	}
 	
 /*--------------
 	Sections
@@ -207,36 +284,49 @@ textarea    {
     margin: 	0;
     list-style: none;
     color: 		#333;
-    background: #eee;
-	width:		400px;
-	max-width: 	500px;
+    background: #f5f5f5;
+	width:		100%;
 }
 
 #annotationSection 
 {
 	padding: 0;
+	background: #eee;
+	border-left: 10px solid #f5f5f5;
+	border-right: 10px solid #f5f5f5;
 }
 
 /*--------------------------
     Heatmap Section
 --------------------------*/
-#heatmapPanel		/* UL */ 
+#scaleColorSettings		/* UL */ 
 {
-	padding: 20px;
+	padding: 20px 0;
+	display: none;
+	border-top: none;
+	width: 95%;
+	padding-top: 0;
+	margin: 0;
+	margin-top: -30px;		/* Hacky hack :D */
 }
 	
-#heatmapPanel li {
+#scaleColorSettings li {
 	display: block;
 	vertical-align: top;
 	padding: 5% 0;
-	border-bottom: 1px solid #d4d4d4;
-	box-shadow: 0 1px #fafafa;
+	border-top: 1px solid #fff;
+	box-shadow: 0 -1px #d4d4d4;
 }
+
+	#scaleColorSettings li:nth-child(1) {
+		border-top: none;
+		box-shadow: none;
+	}	
 
 .activeSection { opacity: 1; }
 .inactiveSection { opacity: .25; } /* fade out disabled range slider */
 
-#heatmapPanel li h2 {
+#scaleColorSettings li h2 {
 	font-variant: small-caps;
 	text-align: center;
 	font-size: 125%;
@@ -244,7 +334,7 @@ textarea    {
 	letter-spacing: 1px;
 }
 
-#heatmapPanel li .sizeNumber {
+#scaleColorSettings li .sizeNumber {
 	display: block;
 	margin: 0 auto;
 	padding: 10px;
@@ -276,14 +366,14 @@ input[type="range"] {
 	margin: 10px;
 }
 
-#heatmapPanel input[type="checkbox"] {
+#scaleColorSettings input[type="checkbox"] {
     transform: scale(1.5); /* increase the size of checkboxes by 50% */
     display: inline-block;
     background-color: green;
     margin-right: 5px;
 }
 
-#heatmapPanel label {
+#scaleColorSettings label {
     display: inline-block;
 }
 

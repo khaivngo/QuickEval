@@ -122,35 +122,43 @@
                 </div>
             </div>
 
-            <div id="heatmap-panel-container">
+            <div id="heatmap-panel-container" data-status ="false">
 			 <!--  <i style="position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i> -->
+				
+				<div class = "heatmapPanelHeader">Heatmap settings</div>
 				
 				<div id = "heatmapTab" class = "tabSection">Heatmap</div>
 				<div id = "annotationTab" class = "tabSection">Annotations</div>
 				
 				
+				<!-- Heatmap Section -->
+				
                 <div id="heatmapSection">
-					<ul id = "heatmapToolbar" class = "shapeToolbar">
+				
+					<ul class = "heatmapSectionItem">
+						<li type = "header">Scale options</li>
 						<li title = "Select a scale">
+							<label>Heatmap scale</label>
 							<select id = "scaleType">
 								<option>Jet scale</option>
 								<option>Monochromatic scale</option>
+								<option>Grayscale</option>
 							</select>
 						</li>
-						<li id = "reverseScale" title = "Reverse selected scale" data-type="icon">
-							<i class="fa fa-exchange"></i>
+						<li title = "Reverse selected scale" data-type="icon">
+							<label for = "reverseScale">Reverse scale</label> <input id = "reverseScale" type = "checkbox">
 						</li>
 						
-						<div class = "sectionBreak"></div>
-
-						<li id = "exportHeatmapCSV" title = "Export the heatmap as a CSV file" data-type="icon">
-							<a id = "matrixCSV" download><i class="fa fa-download"></i></a>
+						<!-- <div class = "sectionBreak"></div> -->
+						
+						<li class = "advancedOptionsButton" data-target = "scaleColorSettings">
+							<span>Show</span> colour settings...
 						</li>
-						
-						
-						
 					</ul>
-					<ul id = "heatmapPanel">	
+					
+					
+					
+					<ul class = "heatmapSectionItem" id = "scaleColorSettings">	
 						<li id = "hueSection">
 							<h2>hue</h2>
 							<input type = "number" name = "hueNumber" class = "sizeNumber" value = "0">
@@ -170,7 +178,7 @@
 							</div>
 						</li>
 						<li id="opacity-of-marks">
-							<h2 style="font-family: Helvetica;">opacity of marks</h2>
+							<h2>opacity of marks</h2>
 							<input id="opacity-value" type="number" class="sizeNumber" value="100" min="0" max="100">
 							<div class="rangeSlider">
 								<div class="rangeSliderLowValue">0</div>
@@ -178,11 +186,28 @@
 								<div class="rangeSliderMaxValue">100%</div>
 							</div>
 						</li>
-						<!-- <li>
-							<button type="button" id="genHeatmap">Generate heatmap</button>
+					</ul>
+					
+					<ul class = "heatmapSectionItem" id = "exportOptions">
+						<!-- <li id = "exportHeatmapCSV" title = "Export the heatmap as a CSV file" data-type="icon">
+							<a id = "matrixCSV" download><i class="fa fa-download"></i></a>
 						</li> -->
+						<li type = "header">Export options</li>
+						<li>
+							<label>Type of file</label>
+							<select>
+								<option>heatmap matrix CSV file</option>
+								<option>heatmap image PNG file</option>
+							</select>
+						</li>
+						<li>
+							<button>Download file</button>
+						</li>
 					</ul>
                 </div>
+				
+				
+				<!-- Annotation Section -->
 				
 				<div id = "annotationSection">
 				
