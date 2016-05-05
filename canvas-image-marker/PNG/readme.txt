@@ -1,0 +1,1 @@
+Folder for canvas images, PNG format

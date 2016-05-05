@@ -142,7 +142,7 @@
 							<select id = "scaleType">
 								<option>Jet scale</option>
 								<option>Monochromatic scale</option>
-								<option>Grayscale</option>
+								<option>Gray scale</option>
 							</select>
 						</li>
 						<li title = "Reverse selected scale" data-type="icon">
@@ -152,7 +152,7 @@
 						<!-- <div class = "sectionBreak"></div> -->
 						
 						<li class = "advancedOptionsButton" data-target = "scaleColorSettings">
-							<span>Show</span> colour settings...
+							<span>Show</span> advanced options...
 						</li>
 					</ul>
 					
@@ -178,7 +178,7 @@
 							</div>
 						</li>
 						<li id="opacity-of-marks">
-							<h2>opacity of marks</h2>
+							<h2>opacity</h2>
 							<input id="opacity-value" type="number" class="sizeNumber" value="100" min="0" max="100">
 							<div class="rangeSlider">
 								<div class="rangeSliderLowValue">0</div>
@@ -195,13 +195,14 @@
 						<li type = "header">Export options</li>
 						<li>
 							<label>Type of file</label>
-							<select>
-								<option>heatmap matrix CSV file</option>
-								<option>heatmap image PNG file</option>
+							<select id = "exportHeatmapFileSelect">
+								<option selected disabled>Choose here</option>
+								<option name = "matrixCSV" >Heatmap matrix - CSV file</option>
+								<option name = "imagePNG" >Heatmap image - PNG file</option>
 							</select>
 						</li>
 						<li>
-							<button>Download file</button>
+							<a id = "downloadHeatmapFile" download><button disabled>Download file</button></a>
 						</li>
 					</ul>
                 </div>
@@ -236,7 +237,7 @@
 					</ul>
 					
 					<ul id = "annotationList">
-						<!-- Annotation items goes here -->
+						<!-- Annotation items goes here, JS generated  -->
 					</ul>
 				</div>
             </div>

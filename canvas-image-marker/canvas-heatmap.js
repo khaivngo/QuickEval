@@ -167,15 +167,17 @@
 			{
 				var fileName = settings.pictureName.toString() + '_heatmap_matrix';
 				
+				console.log(fileName);
+				
 				$.ajax
 				({
-					url: 'canvas-image-marker/heatmapMatrixCSV.php',
+					url: 'canvas-image-marker/CSV/heatmapMatrixCSV.php',
 					type: 'POST',
 					data: {matrix: this.csv, fileName: fileName}
 				})
 				.done(function(data)
 				{
-					$('#matrixCSV').attr('href','canvas-image-marker/' + fileName + '.csv')
+					$('#downloadHeatmapFile').attr('href','canvas-image-marker/CSV/' + fileName + '.csv');
 				});
 			}
         };
@@ -255,7 +257,6 @@
 
         $(document).ready(function()
 		{
-			
 															// This is so hacky..
 			$('#annotationList').undelegate('click');		// Reset delegate click event.
 			$('#annotationToolbar li').unbind();			// Reset click event.
@@ -314,6 +315,37 @@
 				alert('sdfsd');
 			}); */
 			
+			$('#exportHeatmapFileSelect').on('change',function()
+			{
+				var selectedFile = $(this).find(":selected").attr('name');	// Get selected file.
+				var downloadLink = $('#downloadHeatmapFile');
+				
+				downloadLink.attr('href','').attr('download','');			// Reset download link button.
+				
+				switch( selectedFile ) 										// Assign download link, based on the selected file.
+				{
+					case "matrixCSV":
+						shapeMatrix.saveCSVtoServer();
+					break;
+					
+					case "imagePNG":
+						var fileName = settings.pictureName.toString() + '_heatmap_image';
+						var link = document.getElementById('downloadHeatmapFile');
+						
+						downloadCanvas(link, 'heatmapCanvasMerged', fileName + '.png');
+						
+					break;
+					
+					case "gibberish":
+						/* Magic! */
+					break;
+				}
+				
+				downloadLink.find('button').prop("disabled", false);
+				
+			});
+			
+			
 			/**
 			 *  Toolbar for the annotation settings
 			 *	
@@ -348,7 +380,7 @@
 
          	/**
          	 *  UI for heatmap generator.
-         	 *	When the user changes the Sliders range, either hue or saturation.
+         	 *	When the user changes the Sliders range, either hue, saturation or opacity.
          	 *  @return {void}.
          	 */
          	$('#scaleColorSettings li input[type=range]').on('input',function(event)
@@ -406,10 +438,6 @@
 				heatmapMain();
          	});
 
-           /*  $('#reverseScale[type=checkbox]').on('change',function() {
-                heatmapMain();
-         	}); */
-
 
             // listen for changes to the opacity number input and update the
             // matrix canvas with the new opacity value
@@ -430,7 +458,7 @@
          		changeOpacityOfMatrixCanvas(opacityLevel);
          	});
 
-         	/* document.getElementById('downloadImage').addEventListener('click', function()
+         	/* document.getElementById('downloadHeatmapFile').addEventListener('click', function()
          	{
          		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
          	}, false); */
@@ -651,7 +679,6 @@
 					shapeMatrix.createMatrix();
 					shapeMatrix.calcMaxValue();
 					shapeMatrix.generateCSV();
-					shapeMatrix.saveCSVtoServer();
 						
 					heatmapPreferencesObj.setScaleType(0);	
                     heatmapMain();
@@ -755,11 +782,11 @@
         }
 		 
 		 /**
-		  * Generate grayscale color for the heatmap.
+		  * Generate monochromatic colour for the heatmap.
 		  *	@param  {Float}	  The percentage value for generating the light level.
 		  *	@param  {Int}	  The hue value.
 		  *	@param  {Int}	  The saturation value.
-		  *	@return {String}  color in grayscale format.
+		  *	@return {String}  colour in monochromatic format.
 		  */
          function monochromaticScale(valPerc, hue, sat)
          {
@@ -1051,7 +1078,6 @@
 					if( savedShapes[i].visible )			
 					{
 						var point = [ savedShapes[i].fill[j].x, savedShapes[i].fill[j].y ];
-						
 							
 						if(i !== index)
 						{
