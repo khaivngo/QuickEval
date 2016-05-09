@@ -120,7 +120,6 @@ textarea    {
     top: 0;
     bottom: 0;
     z-index: 100;
-    overflow-y: auto;
     background: #f5f5f5;
 	border-left: 1px solid #ddd;
 	width:		400px;
@@ -144,9 +143,9 @@ textarea    {
 .tabSection
 {
 	display:	inline-block;
-	padding: 	13px 0;
+	padding: 	10px 0;
 	background: #f5f5f5;
-	width: 		50%;
+	width: 		49%;
 	text-align: center;
 	font-size: 	120%;
 	cursor:		pointer;
@@ -158,14 +157,6 @@ textarea    {
 	.tabSection[class='tabSection']:hover	/* Only for elements without class: active tab */
 	{
 		border-top: 4px solid #aaa;
-	}
-	
-	
-
-	.tabSection:nth-child(2)
-	{
-		margin-left: -3.9px;
-		border-left: 1px solid #dfdfdf;
 	}
 	
 	.activeTab
@@ -227,18 +218,18 @@ textarea    {
 
 /* Heatmap */	
 
-.heatmapSectionItem		/* UL */
+.sectionItem		/* UL */
 {
 	border-top:		1px solid #ddd;
 	padding: 		20px;
 }
 
-.heatmapSectionItem:nth-child(1)
+.sectionItem:nth-child(1)
 {
 	border-top: none;
 }
 
-	.heatmapSectionItem li
+	.sectionItem li
 	{
 		display: 		block;
 		margin-left: 	15px;
@@ -246,19 +237,19 @@ textarea    {
 		color:			#333;
 	}
 	
-		.heatmapSectionItem li[type='header']
+		.sectionItem li[type='header']
 		{
 			font-size: 	125%;
 			color:		#111;
 			margin-left: 0px;
 		}
 		
-		.heatmapSectionItem input[type="checkbox"]
+		.sectionItem input[type="checkbox"]
 		{
 
 		}
 		
-		.heatmapSectionItem li label
+		.sectionItem li label
 		{
 			display: inline-block;
 			width:	110px;
@@ -314,6 +305,12 @@ textarea    {
     color: 		#333;
     background: #f5f5f5;
 	width:		100%;
+}
+
+#heatmapSection
+{
+	overflow-y: auto;
+	height: 0px;
 }
 
 #annotationSection 
@@ -435,7 +432,7 @@ input[type="range"]::-webkit-slider-thumb {
     height: 32px;
     width: 32px;
     border-radius: 50%;
-    background-color: #f88;
+    background-color: hsl(0,50%,50%);
     cursor: pointer;
     margin-top: -10px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
 }
@@ -534,7 +531,7 @@ input[type="range"]:focus::-ms-fill-upper {
 	margin: 	0px 0;
 	overflow-y:	auto;
 	height:		720px;
-	border-top:	2px solid #e6e6e6;
+	border-top:	2px solid #e4e4e4;
 	border-bottom:	2px solid #fbfbfb;
 }
 
@@ -595,7 +592,31 @@ input[type="range"]:focus::-ms-fill-upper {
 	}
 	
 	
+/* ScrollBars */
 
+#heatmapSection::-webkit-scrollbar,
+#annotationList::-webkit-scrollbar 
+{
+  width: 8px;
+}
+
+#heatmapSection::-webkit-scrollbar-track,
+#annotationList::-webkit-scrollbar-track 
+{
+  background:	#eee;
+}
+
+#heatmapSection::-webkit-scrollbar-thumb,
+#annotationList::-webkit-scrollbar-thumb
+{
+  background: 	#555;
+  border:		1px solid #888;
+}
+	#heatmapSection::-webkit-scrollbar-thumb:hover,
+	#annotationList::-webkit-scrollbar-thumb:hover
+	{
+		background:	#0ac;
+	}
 
 
 

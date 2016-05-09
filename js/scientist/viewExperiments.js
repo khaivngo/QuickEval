@@ -151,6 +151,15 @@ function getImages(experimentId) {
                 $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
 				setHeatmapScrollPos(false);
             });
+			
+			$(document).keyup(function(e) 						// User keyboard listener:
+			{
+				if (e.keyCode == 27 ) 							// Escape button:
+				{	
+					$('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+					setHeatmapScrollPos(false);
+				}
+			});
         }
     })
 	.error(function(request, status, error) {
@@ -169,7 +178,6 @@ function setHeatmapScrollPos(status)
 	}
 	else
 	{
-		console.log('else');
 		$('body').css('overflow-y','scroll');
 		$('#heatmap-panel-container').attr('data-status','false');
 	}

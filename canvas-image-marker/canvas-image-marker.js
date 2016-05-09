@@ -807,6 +807,8 @@
 		 */
 		function calcFill(shape)
         {
+			var t0 = performance.now();
+			
 			var polygonRect = [];									// Keeps the polygon rectangle vertices.
 			var tempPolygonArr  = [];								// Keeps a polygon's coordinates in a 2D array.
 
@@ -818,7 +820,7 @@
                 rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
 
                                                                         // Find all the points that are inside the polygon:
-            for(var i = rect_p1; i < rect_p3; i ++ )
+            /* for(var i = rect_p1; i < rect_p3; i ++ )
             {
                 for(var j = rect_p2; j < rect_p4; j++)
                 {
@@ -828,8 +830,23 @@
                         fillArray.push( {x:i, y:j} );
                     }
                 }
-            }
+            } */
+			
+			for(var i = 0; i <= 800; i ++ )
+            {
+                for(var j = 0; j <= 800; j++)
+                {
+                    var point = [i,j];          						// Check this point.
 
+                    if( pointInsidePolygon(point, tempPolygonArr) ) {	// The point is inside the polygon:
+                        fillArray.push( {x:i, y:j} );
+                    }
+                }
+            }
+			
+			var t1 = performance.now();
+			console.log("Fill polygon took " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
+			
             return fillArray;
         }
 

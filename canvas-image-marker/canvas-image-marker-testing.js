@@ -878,64 +878,111 @@ function saveShapeToDB()
 		 */
 		function calcFill(shape)
         {
-			var polygonRect = [];									// Keeps the polygon rectangle vertices.
-			var tempPolygonArr  = [];								// Keeps a polygon's coordinates in a 2D array.
+			var timeA = [];
+			var timeB = [];
+			
+			var ratio = 100;
+			
+			var imageR = 800;
+			
+			for(var t = 0; t < 100; t++ )
+			{
+				var polygonRect = [];									// Keeps the polygon rectangle vertices.
+				var tempPolygonArr  = [];								// Keeps a polygon's coordinates in a 2D array.
+				var fillArray = [];
+				
+				var tempShape = {points: []};
+				
+				for(var i = 0; i < 4; i++)
+				{
+					switch(i)
+					{
+						case 0:	tempShape.points[i] = {x:0, y:0}; break;
+						case 1: tempShape.points[i] = {x:ratio, y:0}; break;
+						case 2: tempShape.points[i] = {x:ratio, y:ratio}; break;
+						case 3: tempShape.points[i] = {x:0, y:ratio}; break;
+					}
+				}
+				
+				//console.log(tempShape);
+				
+				//tempPolygonArr = convertPolygonCoordToArray(shape); 	// Convert to array.
+				tempPolygonArr = convertPolygonCoordToArray(tempShape); 	// Convert to array.
+				
+				var A1 = performance.now();
+				polygonRect = polygonToRectangle(tempPolygonArr);		// Return array of vertices from the polygon's rectangle.
+																		// All 4 vertices of the rectangle:
+				var rect_p1 = polygonRect[0], rect_p2 = polygonRect[1],
+					rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
 
-			var fillArray = [];
-            tempPolygonArr = convertPolygonCoordToArray(shape); 	// Convert to array.
-            polygonRect = polygonToRectangle(tempPolygonArr);		// Return array of vertices from the polygon's rectangle.
-                                                                    // All 4 vertices of the rectangle:
-            var rect_p1 = polygonRect[0], rect_p2 = polygonRect[1],
-                rect_p3 = polygonRect[2], rect_p4 = polygonRect[3];
+																		// Find all the points that are inside the polygon:
+				
+				for(var i = rect_p1; i < rect_p3; i ++ )
+				{
+					for(var j = rect_p2; j < rect_p4; j++)
+					{
+						var point = [i,j];          					// Check this point.
 
-                                                                    // Find all the points that are inside the polygon:
-            var A1 = performance.now();
-			for(var i = rect_p1; i < rect_p3; i ++ )
-            {
-                for(var j = rect_p2; j < rect_p4; j++)
-                {
-                    var point = [i,j];          					// Check this point.
+						if( pointInsidePolygon(point, tempPolygonArr) )	// The point is inside the polygon:
+							fillArray.push( {x:i, y:j} );
+					}
+				}
+				var A2 = performance.now();
+				var B1 = performance.now();
+				
+				for(var i = 0; i < imageR; i ++ )
+				{
+					for(var j = 0; j < imageR; j++)
+					{
+						var point = [i,j];          					// Check this point.
 
-                    if( pointInsidePolygon(point, tempPolygonArr) )	// The point is inside the polygon:
-                        fillArray.push( {x:i, y:j} );
-                }
-            }
-			var A2 = performance.now();
-			var B1 = performance.now();
+						if( pointInsidePolygon(point, tempPolygonArr) )	// The point is inside the polygon:
+							fillArray.push( {x:i, y:j} );
+					}
+				}
+				var B2 = performance.now();
+				
+				var aTime = (A2-A1);
+				var bTime = (B2-B1);
+				
+				/* var aTime = aTime.toFixed(3); 
+				var bTime = bTime.toFixed(3); */ 
 			
-			for(var i = 0; i < 800; i ++ )
-            {
-                for(var j = 0; j < 800; j++)
-                {
-                    var point = [i,j];          					// Check this point.
+				//console.log('Optimized fill algorithm took: ' + aTime + ' seconds');
+				//console.log('Regular fill algorithm took: ' + bTime + ' seconds');
+				
+				//console.log('Percentage decrease: ' + pctDiff + '%');
+				
+				//console.log('Number of points: ' + fillArray.length / 2 + '\n\n');
+				
+				timeA.push( aTime );
+				timeB.push( bTime );
+			
+			} // End test loop.
+			
+			var sumA = 0;
+			var sumB = 0;
+			
+			for(var i = 0; i < timeA.length; i++)
+			{
+				sumA += timeA[i];
+				sumB += timeB[i];
+			}
+			
+			var avgA = sumA / timeA.length;
+			var avgB = sumB / timeA.length;
+			
+			console.log('time A: ' + avgA);
+			console.log('time B: ' + avgB);
 
-                    if( pointInsidePolygon(point, tempPolygonArr) )	// The point is inside the polygon:
-                        fillArray.push( {x:i, y:j} );
-                }
-            }
-			var B2 = performance.now();
-			
-			var aTime = (A2-A1) / 1000;
-			var bTime = (B2-B1) / 1000;
-			
-			/* var aTime = aTime.toFixed(3); 
-			var bTime = bTime.toFixed(3); */ 
-			
-			var pctDiff =  (( bTime - aTime) / bTime ) * 100;
-			pctDiff = pctDiff.toFixed(2);
-			
-			console.log('Optimized fill algorithm took: ' + aTime + ' seconds');
-			console.log('Regular fill algorithm took: ' + bTime + ' seconds');
+			var pctDiff =  (( avgB - avgA) / avgB ) * 100;
+				pctDiff = pctDiff.toFixed(2);
+				
 			console.log('Percentage decrease: ' + pctDiff + '%');
-			
-			console.log('Number of points: ' + fillArray.length / 2 + '\n\n');
-			
-			
-			
 			
             return fillArray;
 			
-			
+		
         }
 
 

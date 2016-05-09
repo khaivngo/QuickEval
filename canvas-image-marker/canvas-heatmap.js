@@ -46,19 +46,22 @@
 			 */
             this.createMatrix = function()
             {
-				var shapesArray = [];									// Keeps all saved shapes in array format.
+				var shapesArray = [];										// Keeps all saved shapes in array format.
 				
-                for (var i = 0; i < savedShapes.length; i++)			// Loop all shapes.
+                for (var i = 0; i < savedShapes.length; i++)				// Loop all shapes.
          		{
-         			for(var j = 0; j < savedShapes[i].fill.length; j++) // Loop all points for this shape.
-         			{
-																		// Add shape coordinate to array.
-         				shapesArray.push
-						([
-							savedShapes[i].fill[j].x,
-							savedShapes[i].fill[j].y
-						]);
-         			}
+					if(savedShapes[i].eyeVisible && !savedShapes[i].hidden) // The shape is active.
+					{
+						for(var j = 0; j < savedShapes[i].fill.length; j++) // Loop all coordinates for this shape.
+						{
+																			// Add shape coordinate to array.
+							shapesArray.push
+							([
+								savedShapes[i].fill[j].x,
+								savedShapes[i].fill[j].y
+							]);
+						}
+					}
          		}
 				//console.log('Number of markings: ' + shapesArray.length);
 				var t0 = performance.now();
@@ -75,6 +78,7 @@
 				}
 				
 				
+				// Testing purposes:
 				/*
 				for(var i = 0; i < image.width; i++) 			
 				{
@@ -183,11 +187,18 @@
         };
 		// End class Shape_matrix.
 		
-		var heatmapPreferences = function()
+		/**
+		 *  Class Heatmap_preferences.
+		 *  Sets the heatmap properties for the choosen scale.
+		 *  Used in heatmap.
+		 */
+		var Heatmap_settings = function()
 		{
 			// Properties:
-			this.scaleType = 0; 			// Int.
-			this.reverse = false;			// Boolean.
+			
+			this.scaleType = 0; 			// {Int} 	 - Scale type for heatmap.
+			this.reverse = false;			// {Boolean} - Whether the scale should be reversed or not.
+			
 			
 			// Set functions:
 			
@@ -232,6 +243,114 @@
 				this.reverse = status;
 			}
 		};
+		// End class Heatmap_preferences.
+		
+		/**
+		 *  Class Heatmap_preferences.
+		 *  Sets the heatmap properties for the chosen scale.
+		 *  Used in heatmap.
+		 */
+		var Annotation = function()
+		{
+			// Properties:
+			this.onlyComments = false;			// {Boolean} Display only shapes with a comment.
+			
+			// Set functions:
+			this.setOnlyComments = function(status)
+			{
+				// Show only shapes with a comment:
+				if(status) 			
+				{
+					for(var i = 0; i < savedShapes.length; i ++)
+					{
+						if(savedShapes[i].annotation != " ") 	// Has comment:
+							savedShapes[i].hidden = false;
+						else
+							savedShapes[i].hidden = true;
+					}
+				}
+				// Reset to show all shapes:
+				else
+				{
+					for(var i = 0; i < savedShapes.length; i ++)
+					{
+						savedShapes[i].hidden = false;
+					}
+				}
+				
+				this.onlyComments = status;
+			}
+			
+			this.displayShapes = function(index)
+			{	
+				// Reset matrix canvas:
+				matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
+				
+				// Loop all shapes and display shape with a background to a transparent blackish colour:
+				for(var i = 0; i < savedShapes.length; i ++)
+				{	
+					for(var j = 0; j < savedShapes[i].fill.length; j++)
+					{
+						if( savedShapes[i].eyeVisible && !savedShapes[i].hidden )			
+						{
+							var point = [ savedShapes[i].fill[j].x, savedShapes[i].fill[j].y ];
+								
+							/*  Draw the shape unless the shape  
+								is selected, aka index value: 	*/
+							if(i !== index)
+							{
+								matrixCtx.fillStyle = 'hsla(0,0%,0%,.25)';
+								matrixCtx.fillRect( point[0], point[1], 1, 1 );
+							}		
+						}
+					}	
+				}
+				
+				// Set selected annotation shape to blue:
+				if (( index != false || index === 0 ) && savedShapes[index].eyeVisible )
+				{
+					for(var i = 0; i < savedShapes[index].fill.length; i++)
+					{
+						var point = [ savedShapes[index].fill[i].x, savedShapes[index].fill[i].y ];
+						
+						matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';
+						matrixCtx.fillRect( point[0], point[1], 1, 1 );
+					}
+				}
+			}
+			
+			this.renderAnnotations = function()
+			{
+				var annotationList = $('#annotationList');
+				var htmlRender = "";
+				
+				annotationList.empty();
+				
+				for(var i = 0; i < savedShapes.length; i++)
+				{
+					if(!savedShapes[i].hidden)
+					{
+						var annotation = "";
+						if(savedShapes[i].annotation != " ")
+							annotation = savedShapes[i].annotation;
+						else
+							annotation = "No comment";
+						
+						htmlRender += 
+						'<li class = "inactiveAnnotation" title = "Shape object">'+
+							'<div class = "annotationColumn">' +
+								'<div class="visibleStatus" data-visible="1" title="Visibility"><i class="fa fa-eye"></i></div>' +
+							'</div>'+	
+							'<div class="annotationColumn">' +
+								'<div class="shapeIndex" title = "Shape index">Shape ' + (i+1) +'</div> '+
+								'<div class="annotationText" title = "Comment"><i>"'+ annotation + '"</i></div>' +
+							'</div>'+	
+						'</li>';
+					}
+				}
+				annotationList.append(htmlRender);
+			}
+		};
 		
         // Canvas base image:
         var imageCanvas = $('<canvas>');
@@ -248,13 +367,13 @@
         var canvasContainer = element;
         var image;											
 
-        var savedShapes;									// Array, stores all shapes objects.
+        var savedShapes;										// Array, stores all shapes objects.
 		
+		var heatmapSettingsObj 	  = new Heatmap_settings(); 	// Heatmap_preferences object.
+				
+		var shapeMatrixObj	  	  = new Shape_matrix();			// Shape_matrix object.
+		var annotationObj		  = new Annotation();			// Annotations_preferences object.
 		
-		var heatmapPreferencesObj = new heatmapPreferences(); // Heatmap Preferences object:
-					
-		var shapeMatrix = new Shape_matrix();				// Shape_matrix object.
-
         $(document).ready(function()
 		{
 															// This is so hacky..
@@ -275,7 +394,6 @@
 			
 			selectTabContent(0);							// Default tab heatmap-settings.
 			
-			
          	
          	// $('#genHeatmap').on('click', heatmapMain);	// Generate heatmap button.
 
@@ -285,9 +403,7 @@
 				selectTabContent(index);
 			});
 			
-			/*------------------
-				Toolbar panel
-			-------------------*/
+
 			/**
 			 *  Toolbar for the heatmap settings
 			 *	
@@ -296,7 +412,7 @@
 			$('#scaleType').on('change',function()
 			{
 				var scaleType = $('#scaleType').find(":selected").index();
-				heatmapPreferencesObj.setScaleType(scaleType);
+				heatmapSettingsObj.setScaleType(scaleType);
 				heatmapMain();
 			});
 			
@@ -306,80 +422,35 @@
 				
 				var status = ( $(this).is(':checked') ) ? true : false;
 				
-				heatmapPreferencesObj.setReverse(status);
+				heatmapSettingsObj.setReverse(status);
 				heatmapMain();
 			});	
 			
-			/* $('#exportHeatmapCSV').on('click',function()
+			// Toggle heatmap scale colour sliders:
+			$('.advancedOptionsButton').on('click',function()
 			{
-				alert('sdfsd');
-			}); */
-			
-			$('#exportHeatmapFileSelect').on('change',function()
-			{
-				var selectedFile = $(this).find(":selected").attr('name');	// Get selected file.
-				var downloadLink = $('#downloadHeatmapFile');
+				console.log('click!!');
 				
-				downloadLink.attr('href','').attr('download','');			// Reset download link button.
-				
-				switch( selectedFile ) 										// Assign download link, based on the selected file.
+				var section = $(this).attr('data-target');
+				var textStatus = "";
+				if( $('#' + section).is(':hidden') )
 				{
-					case "matrixCSV":
-						shapeMatrix.saveCSVtoServer();
-					break;
-					
-					case "imagePNG":
-						var fileName = settings.pictureName.toString() + '_heatmap_image';
-						var link = document.getElementById('downloadHeatmapFile');
-						
-						downloadCanvas(link, 'heatmapCanvasMerged', fileName + '.png');
-						
-					break;
-					
-					case "gibberish":
-						/* Magic! */
-					break;
+					$('#' + section).slideDown();
+					textStatus = "Hide";
 				}
+				else
+				{
+					$('#' + section).slideUp();
+					textStatus = "Show";
+				}	
 				
-				downloadLink.find('button').prop("disabled", false);
+				$(this).find('span').text(textStatus);
 				
+				setHeatmapSettingsHeight();
 			});
 			
-			
-			/**
-			 *  Toolbar for the annotation settings
-			 *	
-			 */
-			$('#hideAllAnnotations').on('click',function()
-			{
-				var status = setStatusToolbarButton( $(this) );
-
-				for(var i = 0; i < savedShapes.length; i ++)
-				{
-					savedShapes[i].visible = false;
-				}
-				
-				$('.visibleStatus').attr('data-visible','0').html('');
-				$('#annotationList li').attr('class','inactiveAnnotation');
-				displayAnnotationShapes(false);
-			});
-			
-			$('#showAllAnotations').on('click',function()
-			{
-				var status = setStatusToolbarButton( $(this) );
-				
-				for(var i = 0; i < savedShapes.length; i ++)
-				{
-					savedShapes[i].visible = true;
-				}
-				
-				$('.visibleStatus').attr('data-visible','1').html('<i class="fa fa-eye"></i>');
-				$('#annotationList li').attr('class','inactiveAnnotation');
-				displayAnnotationShapes(false);
-			});
-
          	/**
-         	 *  UI for heatmap generator.
+         	 *  UI for heatmap colour generator.
          	 *	When the user changes the Sliders range, either hue, saturation or opacity.
          	 *  @return {void}.
          	 */
@@ -457,15 +528,84 @@
                 var opacityLevel = $(this).val() / 100;
          		changeOpacityOfMatrixCanvas(opacityLevel);
          	});
-
-         	/* document.getElementById('downloadHeatmapFile').addEventListener('click', function()
-         	{
-         		downloadCanvas(this, 'heatmapCanvasMerged', 'test.png');
-         	}, false); */
+			
+			$('#exportHeatmapFileSelect').on('change',function()
+			{
+				var selectedFile = $(this).find(":selected").attr('name');	// Get selected file.
+				var downloadLink = $('#downloadHeatmapFile');
+				
+				downloadLink.attr('href','').attr('download','');			// Reset download link button.
+				
+				switch( selectedFile ) 										// Assign download link, based on the selected file.
+				{
+					case "matrixCSV":
+						shapeMatrixObj.saveCSVtoServer();
+					break;
+					
+					case "imagePNG":
+						var fileName = settings.pictureName.toString() + '_heatmap_image';
+						var link = document.getElementById('downloadHeatmapFile');
+						
+						downloadCanvas(link, 'heatmapCanvasMerged', fileName + '.png');
+						
+					break;
+					
+					case "gibberish":
+						/* Magic! */
+					break;
+				}
+				
+				downloadLink.find('button').prop("disabled", false);
+				
+			});
 			
 			/*------------------
 				Annotations UI
 			-------------------*/
+			
+			/**
+			 *  Toolbar for the annotation settings
+			 *	
+			 */
+			$('#hideAllAnnotations').on('click',function()
+			{
+				var status = setStatusToolbarButton( $(this) );
+
+				for(var i = 0; i < savedShapes.length; i ++)
+				{
+					savedShapes[i].eyeVisible = false;
+				}
+				
+				$('.visibleStatus').attr('data-visible','0').html('');
+				$('#annotationList li').attr('class','inactiveAnnotation');
+				annotationObj.displayShapes(false);
+			});
+			
+			$('#showAllAnotations').on('click',function()
+			{
+				var status = setStatusToolbarButton( $(this) );
+				
+				for(var i = 0; i < savedShapes.length; i ++)
+				{
+					savedShapes[i].eyeVisible = true;
+				}
+				
+				$('.visibleStatus').attr('data-visible','1').html('<i class="fa fa-eye"></i>');
+				$('#annotationList li').attr('class','inactiveAnnotation');
+				annotationObj.displayShapes(false);
+			});
+			
+			$('#onlyAnnotations').on('click',function()
+			{
+				var status = setStatusToolbarButton( $(this) );
+				
+				annotationObj.setOnlyComments(status);
+				annotationObj.renderAnnotations();
+				annotationObj.displayShapes(false);
+				
+			});
+			
+			// End annotation toolbar.
 			
 			/**
 			 *  Select an annotation from the list.
@@ -474,6 +614,8 @@
 			 */
 			$('#annotationList').delegate('li','click', function(event)
 			{	
+				console.log('clicked');
+			
 				var target = $(event.target);
 				var index = $('#annotationList li').index(this);
 				var curActive;
@@ -482,7 +624,7 @@
 				if( target.is('.visibleStatus[data-visible=1]') )
 				{
 					target.attr('data-visible','0').html('');
-					savedShapes[index].visible = false;
+					savedShapes[index].eyeVisible = false;
 					$(this).attr('class','');					// Reset all items.
 					$('#annotationToolbar li[data-section=0]').removeClass('activeTool');
 				}
@@ -490,7 +632,7 @@
 				else if (target.is('.visibleStatus[data-visible=1] i') )
 				{
 					target.parent().attr('data-visible','0').html('');
-					savedShapes[index].visible = false;
+					savedShapes[index].eyeVisible = false;
 					$(this).attr('class','');					// Reset all items.
 					$('#annotationToolbar li[data-section=0]').removeClass('activeTool');
 				}
@@ -499,7 +641,7 @@
 				{
 					console.log('turn on');
 					target.attr('data-visible','1').html('<i class="fa fa-eye"></i>');
-					savedShapes[index].visible = true;
+					savedShapes[index].eyeVisible = true;
 					
 					$('#annotationList li').attr('class','');	// Reset all items.
 					$(this).attr('class','activeAnnotation');
@@ -523,32 +665,35 @@
 				
 				// Render shapes:
 				if(curActive != undefined )
-					displayAnnotationShapes(curActive);
+					annotationObj.displayShapes(curActive);
 				else
-					displayAnnotationShapes(false);
+					annotationObj.displayShapes(false);
 			});
 			
-			$('.advancedOptionsButton').on('click',function()
+			
+			/*---
+				Window listeners
+								---*/
+			$(window).resize(function()
 			{
-				console.log('click!!');
-				
-				var section = $(this).attr('data-target');
-				var textStatus = "";
-				if( $('#' + section).is(':hidden') )
-				{
-					$('#' + section).slideDown();
-					textStatus = "Hide";
-				}
-				else
-				{
-					$('#' + section).slideUp();
-					textStatus = "Show";
-				}	
-				
-				$(this).find('span').text(textStatus);
+				setHeatmapSettingsHeight();
 			});
 			
         }); // End doc ready.
+		 
+		 
+		/* Window Functions */
+		
+		function setHeatmapSettingsHeight()
+		{
+			var headerHeight = parseInt( $('.heatmapPanelHeader').outerHeight(true) + $('.tabSection').outerHeight(true) );
+			
+			console.log($(window).height() - headerHeight);
+			
+			$('#heatmapSection').css('height', $(window).height() - headerHeight );
+		}
+		
+		/* End window functions */
 		 
 		function selectTabContent(tab)
 		{
@@ -670,19 +815,22 @@
                         shapes.push({
 							fill: JSON.parse(data[i].marked_pixels),
 							annotation: data[i].remark,
-							visible: true
+							eyeVisible: true,
+							hidden: false
 						});
                     }
 					
 					savedShapes = shapes;
 					
-					shapeMatrix.createMatrix();
-					shapeMatrix.calcMaxValue();
-					shapeMatrix.generateCSV();
+					shapeMatrixObj.createMatrix();
+					shapeMatrixObj.calcMaxValue();
+					shapeMatrixObj.generateCSV();
 						
-					heatmapPreferencesObj.setScaleType(0);	
+					heatmapSettingsObj.setScaleType(0);	
                     heatmapMain();
-					renderAnnotations();
+					annotationObj.renderAnnotations();
+					
+					setHeatmapSettingsHeight();
 					
                 }
 
@@ -938,7 +1086,7 @@
          	textPosX_MAX = range * heatmapLegend.square + textPaddingleft + heatmapLegend.marginLeft + textPadding;
 
          	mergedCtx.fillText("MIN 1", textPadding, textPosY);						// Set label for minimum value.
-         	mergedCtx.fillText('MAX(' + maxVal + ')',textPosX_MAX + 20, textPosY );	// Set label for maximum value.
+         	mergedCtx.fillText('MAX ' + maxVal, textPosX_MAX + 20, textPosY );	// Set label for maximum value.
          }
 
          /**
@@ -993,8 +1141,8 @@
          	{
          		var hue = $('#hueLevel').val();
          		var sat = $('#satLevel').val();
-				var scaleType = heatmapPreferencesObj.scaleType;
-         		var reverse   = heatmapPreferencesObj.reverse;
+				var scaleType = heatmapSettingsObj.scaleType;
+         		var reverse   = heatmapSettingsObj.reverse;
 				
 				if(scaleType == 0) 	// Jet scale has no hue. set defualt 0.
 					hue = 0;
@@ -1014,7 +1162,7 @@
          		/* if( $('#reverseScale[type=checkbox]').is(':checked') )
          			reverse = true; */
 
-         		drawHeatmap(shapeMatrix, hue, sat, scaleType, reverse);
+         		drawHeatmap(shapeMatrixObj, hue, sat, scaleType, reverse);
 
          		//var t1 = performance.now();
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
@@ -1030,36 +1178,9 @@
 		/*------------------------
 			Annotations Functions
 		  ------------------------*/
-		function renderAnnotations()
-		{
-			var annotationList = $('#annotationList');
-			var htmlRender = "";
-			
-			annotationList.empty();
-			
-			for(var i = 0; i < savedShapes.length; i++)
-			{
-				var annotation = "";
-				if(savedShapes[i].annotation != " ")
-					annotation = savedShapes[i].annotation;
-				else
-					annotation = "No comment";
-				
-				htmlRender += 
-				'<li class = "inactiveAnnotation" title = "Shape object">'+
-					'<div class = "annotationColumn">' +
-						'<div class="visibleStatus" data-visible="1" title="Visibility"><i class="fa fa-eye"></i></div>' +
-					'</div>'+	
-					'<div class="annotationColumn">' +
-						'<div class="shapeIndex" title = "Shape index">Shape ' + (i+1) +'</div> '+
-						'<div class="annotationText" title = "Comment"><i>"'+ annotation + '"</i></div>' +
-					'</div>'+	
-				'</li>';
-			}
-			annotationList.append(htmlRender);
-		}
 		
-		function moveArray(arr, fromIndex, toIndex) 
+		
+		function manualSort(arr, fromIndex, toIndex) 
 		{
 			var element = arr[fromIndex];
 			arr.splice(fromIndex, 1);
@@ -1067,39 +1188,16 @@
 			return arr;
 		}
 		
-		function displayAnnotationShapes(index)
-		{	
-			matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
-			
-			for(var i = 0; i < savedShapes.length; i ++)
-			{	
-				for(var j = 0; j < savedShapes[i].fill.length; j++)
-				{
-					if( savedShapes[i].visible )			
-					{
-						var point = [ savedShapes[i].fill[j].x, savedShapes[i].fill[j].y ];
-							
-						if(i !== index)
-						{
-							matrixCtx.fillStyle = 'hsla(0,0%,0%,.25)';
-							matrixCtx.fillRect( point[0], point[1], 1, 1 );
-						}		
-					}
-				}	
-			}
-			
-			// Set selected annotation shape to blue:
-			if (( index != false || index === 0 ) && savedShapes[index].visible )
-			{
-				for(var i = 0; i < savedShapes[index].fill.length; i++)
-				{
-					var point = [ savedShapes[index].fill[i].x, savedShapes[index].fill[i].y ];
-					
-					matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';
-					matrixCtx.fillRect( point[0], point[1], 1, 1 );
-				}
-			}
+		function sortByObject()
+		{
+			/* Magic! */
 		}
+		
+		//function filter
+		
+		
+		
+		
 
 
 

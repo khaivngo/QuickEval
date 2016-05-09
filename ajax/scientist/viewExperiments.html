@@ -125,7 +125,7 @@
             <div id="heatmap-panel-container" data-status ="false">
 			 <!--  <i style="position: absolute; left: 0; top: 0; padding: 20px; cursor: pointer; color: #bbb;" id="close-heatmap-panel" class="fa fa-2x fa-close"></i> -->
 				
-				<div class = "heatmapPanelHeader">Heatmap settings</div>
+				<div class = "heatmapPanelHeader">Heatmap settings <span id = "close-heatmap-panel" title = "Close heatmap settings" style = "float: right; font-family: helvetica; cursor: pointer;">X</span></div>
 				
 				<div id = "heatmapTab" class = "tabSection">Heatmap</div>
 				<div id = "annotationTab" class = "tabSection">Annotations</div>
@@ -135,7 +135,7 @@
 				
                 <div id="heatmapSection">
 				
-					<ul class = "heatmapSectionItem">
+					<ul class = "sectionItem">
 						<li type = "header">Scale options</li>
 						<li title = "Select a scale">
 							<label>Heatmap scale</label>
@@ -146,7 +146,8 @@
 							</select>
 						</li>
 						<li title = "Reverse selected scale" data-type="icon">
-							<label for = "reverseScale">Reverse scale</label> <input id = "reverseScale" type = "checkbox">
+							<label for = "reverseScale">Reverse scale</label> 
+							<input id = "reverseScale" type = "checkbox">
 						</li>
 						
 						<!-- <div class = "sectionBreak"></div> -->
@@ -158,7 +159,7 @@
 					
 					
 					
-					<ul class = "heatmapSectionItem" id = "scaleColorSettings">	
+					<ul class = "sectionItem" id = "scaleColorSettings">	
 						<li id = "hueSection">
 							<h2>hue</h2>
 							<input type = "number" name = "hueNumber" class = "sizeNumber" value = "0">
@@ -188,11 +189,11 @@
 						</li>
 					</ul>
 					
-					<ul class = "heatmapSectionItem" id = "exportOptions">
+					<ul class = "sectionItem" id = "exportOptions">
 						<!-- <li id = "exportHeatmapCSV" title = "Export the heatmap as a CSV file" data-type="icon">
 							<a id = "matrixCSV" download><i class="fa fa-download"></i></a>
 						</li> -->
-						<li type = "header">Export options</li>
+						<li type = "header">Export options
 						<li>
 							<label>Type of file</label>
 							<select id = "exportHeatmapFileSelect">
@@ -223,18 +224,21 @@
 						<div class = "sectionBreak"></div>
 						
 						<!-- template for new item (added +1 to "data-section" for seperation) -->
-						<li id = "" data-section="1" data-cmd="2" data-type="icon" title = "">
-							<i class="fa fa-question-circle"></i>
-						</li>
-						<li id = "" data-section="1" data-cmd="3" data-type="icon" title = "">
-							<i class="fa fa-question-circle"></i>
-						</li>
-						<li id = "" data-section="1" data-cmd="4" data-type="icon" title = "">
-							<i class="fa fa-question-circle"></i>
+						<li id = "onlyAnnotations" data-section="1" data-cmd="2" data-type="icon" title = "Show only annotation shapes.">
+							<i class="fa fa-comments-o"></i>
 						</li>
 						
 						<div class = "sectionBreak"></div>
+						
+						
 					</ul>
+					
+					<!-- <ul class = "sectionItem">
+						<li>
+							<label for = "onlyAnnotations">Show only shapes with an annotation</label> 
+							<input id = "onlyAnnotations" type = "checkbox">
+						</li>
+					</ul> -->
 					
 					<ul id = "annotationList">
 						<!-- Annotation items goes here, JS generated  -->
