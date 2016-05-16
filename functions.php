@@ -1,21 +1,21 @@
 <?php
 
 /**
- * General functions to use between files. This file does nothing on its own except including 
+ * General functions to use between files. This file does nothing on its own except including
  * db.php.
  */
 
 include_once('db.php');
 require_once('ChromePhp.php');
 /**
- * Forces a session update for user and returns the users userType 
+ * Forces a session update for user and returns the users userType
  * @return null If there is an error, or userType if not
  */
 function checkLogin($db) {
 	try {
         if (isset($_SESSION['user'])) {     //Checks for existing session
 
-        	$stmt = $db->prepare("SELECT * FROM person WHERE id=:id");  
+        	$stmt = $db->prepare("SELECT * FROM person WHERE id=:id");
 
             $stmt->execute(array(':id' => $_SESSION['user']['id']));    //Gets userdata
         } else {        //If user isn't in database
@@ -32,14 +32,14 @@ function checkLogin($db) {
     }
 
         return $_SESSION['user']['userType'];   //Returns userlevel
-        
+
     } catch (PDOException $excpt) {
         return null;    //If SQL error
     }
 }
 
 /**
- * Redirects from an experiment to login, and after logging in the user 
+ * Redirects from an experiment to login, and after logging in the user
  * will be takes to the correct experiment
  * @param  string $url URL of *experiment.php file, containing the hash as GET data. For example "ratingexperiment.php?hash=asdfginoadfsnio"
  */
@@ -50,27 +50,27 @@ function redirectAfterLogin($url) {
 function checkOwnerForPicture($pictures, $personId, $db) {
 	foreach($pictures as $pictureId) {
 		$sql = "SELECT * FROM picture
-		JOIN pictureSet 
+		JOIN pictureSet
 		ON picture.pictureSet=pictureSet.id
 		WHERE picture.id = ?;";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(1,$pictureId);
 		$sth->execute();
-		
+
 		$result = $sth->fetch();
 		if($personId != $result['person']) {
 			return false;
 		}
 	}
 	return true;
-	
+
 }
 
 function generateUrl($picture){
 	$index = strripos($picture[1],".");
 	$fileType = substr($picture[1],$index, strlen($picture[1]));
-	$url = array();			
-	$url['url'] = "uploads/" . $picture['person'] . "/" . $picture[4] . "/" . $picture['url'] . $fileType; 	
+	$url = array();
+	$url['url'] = "uploads/" . $picture['person'] . "/" . $picture[4] . "/" . $picture['url'] . $fileType;
 	$url['id'] = $picture[0];
 	return $url;
 }
@@ -83,7 +83,7 @@ function getUrlForPicture($pictureId, $db) {
 	$sth->execute();
 	$row = $sth->fetch();
 	$url = generateUrl($row);
-	
+
 	/*var_dump($_SESSION['activeObserverExperiment']);
 	if(isset($_SESSION['activeObserverExperiment'])) {	//This will get the current active pictureOrder which are done in experiment
 		foreach($_SESSION['activeObserverExperiment']['activePictureOrder'] as $index) {
@@ -93,7 +93,7 @@ function getUrlForPicture($pictureId, $db) {
 		}
 	}*/
 	$url['pictureOrderId'] = $pictureId['pictureOrderId'];
-	
+
 	$sql = "SELECT * FROM picture
 	JOIN pictureset ON picture.pictureset=pictureset.id
 	WHERE picture.isOriginal = 1 AND picture.pictureSet = ?;";
@@ -107,7 +107,7 @@ function getUrlForPicture($pictureId, $db) {
 }
 
 function getExperimentById($id, $db) {
-	
+
 
 	$sql = "SELECT *, experimenttype.name AS experimentTypeName, experiment.title AS experimentName, experiment.longDescription AS experimentDescription "
 	. " FROM experiment "
@@ -141,10 +141,10 @@ if(isset($_GET['option'])) {
  * @return array               Array of rows with result data
  */
 function getExperimentRawData($experimentId, $db, $type, $complete) {
-	
+
 	$result = 0;
 
-	if($type == 3) {
+	if($type == 3 || $type ==) {
 
 		//Magic be here, DO NOT TOUCH OR GOD BE WITH YOU
 		$sql = "SELECT result.*, picture.*, experimentorder.eOrder as experimentOrder, person.firstName, person.lastName, categoryname.name AS categoryName"
@@ -156,7 +156,7 @@ function getExperimentRawData($experimentId, $db, $type, $complete) {
 		. " JOIN person ON result.personId = person.id"
 		. " JOIN categoryname ON result.category = categoryname.id"
 		. (($complete == 1) ?  " JOIN experimentresult ON result.experimentId = experimentresult.experiment " : '')
-		. " WHERE result.experimentId = ? ". (($complete == 1) ? "AND experimentresult.complete != 1 AND experimentresult.person = person.id " : "");	
+		. " WHERE result.experimentId = ? ". (($complete == 1) ? "AND experimentresult.complete != 1 AND experimentresult.person = person.id " : "");
 		$sth = $db->prepare($sql);
 		$sth->bindParam(1, $experimentId);
 		$sth->execute();
@@ -228,8 +228,6 @@ function getExperimentResults($experimentId, $db, $complete) {
 
 	foreach ($experimentOrders as $experimentOrder) {
 		$sql = "SELECT picture.name, picture.id, picture.pictureset FROM picture "
-		  
-		 
 		. " JOIN pictureorder ON picture.id = pictureorder.picture "
         . " JOIN picturequeue ON pictureorder.pictureQueue = picturequeue.id "
 		. " JOIN experimentorder ON experimentorder.picturequeue = picturequeue.id "
@@ -312,8 +310,8 @@ function getExperimentResults($experimentId, $db, $complete) {
 
             		$tempArray[$j - $k] = $imageIndex + 1;
 
-                    // $resultRow = array('pictureName' 	=> $tmp['name'], 
-                    //                    'person' 		=> ($tmp['lastName'].", ".$tmp['firstName']), 
+                    // $resultRow = array('pictureName' 	=> $tmp['name'],
+                    //                    'person' 		=> ($tmp['lastName'].", ".$tmp['firstName']),
                     //                    'pictureId' 		=> $tmp['pictureId']);
                     // $currentResult[] = $resultRow;
             	}
@@ -426,7 +424,7 @@ function getExperimentResults($experimentId, $db, $complete) {
 				. " JOIN experimentorder ON picturequeue.id = experimentorder.pictureQueue "
 				. " JOIN picture ON pictureorder.picture = picture.id "
 				. (($complete == 1) ?  " JOIN experimentresult ON result.experimentId = experimentresult.id AND experimentresult.person = result.personId " : ' ')
-				. " WHERE experimenttype.id = 3 AND experiment.id = ? AND experiment.person = ? AND experimentorder.eOrder = ? " 
+				. " WHERE experimenttype.id = 3 AND experiment.id = ? AND experiment.person = ? AND experimentorder.eOrder = ? "
 				. (($complete == 1) ? " AND experimentresult.complete != 1" : " ")
 				. " GROUP BY picture.id, result.category ";
 

@@ -358,6 +358,7 @@ function getExperimentResults($experimentId) {
  */
 function printResults($experimentId) {
     var data = getExperimentResults($experimentId);
+    console.log(data + "awdadd");
     var experimentType = data[0];
     var experimentResults = data[1];
 
@@ -1048,7 +1049,7 @@ function getAllIndexes(arr, val) {
 }
 
 
-//Function to include a JS file (needed for math.js) 
+//Function to include a JS file (needed for math.js)
 function includeJs(jsFilePath) {
     var js = document.createElement("script");
 
@@ -1299,7 +1300,7 @@ function calculateSlope(y, x) {
     var sum_xx = 0;
     var sum_yy = 0;
 
-	
+
 		for (var i = 0; i < y.length; i++) {
 			if(y[i]<3 && y[i] > -3)
 			{
@@ -1310,7 +1311,7 @@ function calculateSlope(y, x) {
 			sum_yy += (y[i] * y[i]);
 			}
 		}
-	
+
     lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
     lr['intercept'] = (sum_y - lr.slope * sum_x) / n;
     lr['r2'] = Math.pow((n * sum_xy - sum_x * sum_y) / Math.sqrt((n * sum_xx - sum_x * sum_x) * (n * sum_yy - sum_y * sum_y)), 2);
@@ -1500,7 +1501,7 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
 
     for (var i = 0; i < zScoreArray[2].length; i++) {
         meanValues.push(zScoreArray[1][i]);  //Mean value
-        highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart. 
+        highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart.
     }
 
     chart.addSeries(
@@ -1508,7 +1509,7 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
             name: imageSetTitle,
             color: Highcharts.getOptions().colors['0'],
             type: 'scatter',
-            //NYTT DATA FELT. 
+            //NYTT DATA FELT.
 
             data: meanValues,
             marker: {

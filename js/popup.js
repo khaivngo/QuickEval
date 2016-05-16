@@ -2,7 +2,7 @@
 //@Author: Adrian "yEnS" Mato Gondelle
 //@website: www.yensdesign.com
 //@email: yensamg@gmail.com
-//@license: Feel free to use it, but keep this credits please!					
+//@license: Feel free to use it, but keep this credits please!
         /***************************/
 
 //SETTING UP OUR POPUP
@@ -331,7 +331,7 @@ $(document).ready(function() {
     $("#continue4, #button-next-rating").click(function() {       //Added
         disablePopup4();
     });
-    
+
 //    //Click out event!
 //    $("#backgroundPopup3").click(function() {
 //        disablePopup3();

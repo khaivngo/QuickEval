@@ -12,10 +12,10 @@
         <button class="btn-clear" tabindex="-1"></button>
     </div>
     <button id="start-upload-button" class="primary">Start Upload</button>
-    </br>
-    </br>
+    <br/>
+    <br/>
 
-    <table style="width:100%">
+    <table style="width:100%" id="upload-info">
         <tr>
             <td><i class="icon-info on-left"></i></td>
             <td>Supported image formats: <strong>.JPEG/.JPG/.PNG/.GIF</strong></td>
@@ -23,6 +23,13 @@
         <tr>
             <td><i class="icon-flag on-left"></i></td>
             <td>Uploaded image sets needs to contain of now, an original or have a picture that can be set as a dummy original.</td>
+        </tr>
+        <tr>
+            <td><i class="icon-flag on-left"></i></td>
+            <td>
+                Notice: Triplet comparison experiments only works with image sets containing<br>
+                7, 9, 13, 15, 19, 21, 25 or 27 images (excluding the original image).
+            </td>
         </tr>
         <tr>
             <td>&reg;</td>

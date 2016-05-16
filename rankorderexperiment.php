@@ -56,17 +56,9 @@ if (isset($_GET["invite"])) {
     <script src="js/ratingExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
-
-
-    <?php
-    //    if (!isset($_SESSION['user'])) {
-    //      header("Location: login.php");
-    // }
-    ?>
-
 </head>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------->
 
 <!--Starts timer-->
 <body class="metro" style="background-color:#808080; overflow:hidden;" onload="show();
@@ -128,14 +120,14 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons4" class="popupButtons">
-        <button id="continue4" class="button size2" style="">Continue</button>
+        <button id="continue4" class="button size2">Continue</button>
         <button id="button-next-rating" class="button size2">Next</button>
     </div>
 </div>
 <div id="backgroundPopup4"></div>
 
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!---------------------------------------------------------------->
 
 <div id="header-div">
     <div class="inner-header">

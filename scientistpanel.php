@@ -52,14 +52,14 @@ if (isset($_SESSION['user'])) {
 
         <script src="js/scientist/scientistPanelScripts.js"></script>
         <script src="js/scientist/pictureAlgorithm.js"></script>
-        <script src="js/scientist/setUpExperiment.js"></script>  
+        <script src="js/scientist/setUpExperiment.js"></script>
         <script src="js/scientist/manageImageSets.js"></script>
         <script src="js/scientist/fileUploadScripts.js"></script>
         <script src="js/scientist/viewExperiments.js"></script>
         <script src="js/scientist/experimentResults.js"></script>
         <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
-		
+
 		<script src="js/scientist/math.js" ></script>
 
         <script type="text/javascript">
@@ -100,11 +100,6 @@ if (isset($_SESSION['user'])) {
                 thumbnailId: 'thumb1'
             }
         </script>
-
-
-
-
-
 
     </head>
     <body class="metro" style="overflow-y:scroll">

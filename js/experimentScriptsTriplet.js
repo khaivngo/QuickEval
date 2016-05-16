@@ -1,4 +1,4 @@
-//global variables
+// global variables
 var originalDivClone;
 var leftDivClone;
 var rightDivClone;
@@ -20,31 +20,23 @@ $(document).ready(function () {
     })();
 
 
-    $('#panzoom-reset').click(function()    {
+    $('#panzoom-reset').click(function() {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
     });
 
 
-    //-------Based on http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/ -------
+    //-------Based on http://www.learningjquery.com/2009/02/slide-elements-in-different-directions/ ------
 
     $('#toggle-button').click(function () {
         toggleSlide();
     });
 
-    //--------------------------------------------------------------------
+    //----------------------------------------------------
 
-    //shows which reproduction is selected
-    $('#left-reproduction, #right-reproduction').click(function () {
-        $('#left-reproduction,#right-reproduction').not(this).removeClass('main');
-        $(this).toggleClass('main');
-
-        reproductionSelected();
-    });
 
     //Listeners for arrow-keys and enter for finishing:
     $(document).keydown(function (e) {
-        console.log(e.keyCode)
-        if (e.keyCode == 38) {                      //Selects none of the reproductions.
+        if (e.keyCode == 38) {                          //Selects none of the reproductions.
             $('#button-none').trigger('click');
         }
         else if (e.keyCode == 37) {                     //Selects the left reproduction.
@@ -55,38 +47,45 @@ $(document).ready(function () {
             $('#right-reproduction').trigger('click');
             $('#button-next').trigger('click');
         }
-        else if(e.keyCode == 13) {               //Allows user to exit the experiment with enter-key when experiment is performed.
+        else if(e.keyCode == 13)    {                   //Allows user to exit the experiment with enter-key when experiment is performed.
             var check = $('#popupButtons #quit').is(":visible");
-            if(check)   {                                   //Checks if buttons is activated and visible to user.
+            if (check) {                                   //Checks if buttons is activated and visible to user.
                 $('#popupButtons #quit').trigger('click');  //Quits finished experiment.
             }
         }
     });
 
-//---------------------------------------------------------------------------------------------------------------------------------------
+    //-------------------------------------------
+
+    $('#original-link').on('click', function () {                //sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");        //opening new document
+        var url = $('#original-link').attr('href');              //fetching url of picture
+        newWindow.data = url;
+        newWindow.colour = $('body').css("background-color");
+    });
 
     $('#left-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
+        var newWindow = window.open("pictureViewer.php");         //opening new document
         var url = $('#left-reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#original-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#original-link').attr('href');      //fetching url of picture
+    $('#middle-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");           //opening new document
+        var url = $('#middle-reproduction-link').attr('href');      //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-    $('#right-reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
-        var newWindow = window.open("pictureViewer.php");        //opening new document
-        var url = $('#right-reproduction-link').attr('href');      //fetching url of picture
+    $('#right-reproduction-link').on('click', function () {         //sends user to new tab where picture may be seen in full
+        var newWindow = window.open("pictureViewer.php");           //opening new document
+        var url = $('#right-reproduction-link').attr('href');       //fetching url of picture
         newWindow.data = url;
         newWindow.colour = $('body').css("background-color");
     });
 
-//---------------------------------------------------------------------------------------------------------------------------------------
+    //---------------------------------------------
 
     $('#instruction-continue').hide();
     getExperimentIdPost();
@@ -94,17 +93,12 @@ $(document).ready(function () {
     deleteOldResults(experimentId);
     startNewExperimentForObserver(experimentId);
     nextComparison();
-    disableNextButton();
+    // disableNextButton();
     IESpecific();
     allowTies();
     getSpecificExperimentData(experimentId);
 
-//---------------------------------------------------------------------------------------------------------------------------------------
-
-    $('#button-next').click(function () {
-        nextComparison();
-        resetSelected();
-    });
+    //----------------------------------------------
 
 
     $('#continue2').click(function () {
@@ -112,7 +106,6 @@ $(document).ready(function () {
             nextComparison();
             firstInstruction = 1;
         }
-
     });
 
     $('#button-none').click(function () {
@@ -130,7 +123,8 @@ $(document).ready(function () {
     });
 
 });
-//----------------------------------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------
 
 
 /**
@@ -138,17 +132,19 @@ $(document).ready(function () {
  * @returns {undefined}
  */
 function reproductionSelected() {
-    if (!$('#left-reproduction').hasClass("main") && !$('#right-reproduction').hasClass("main")) {
+    if (!$('#left-reproduction').hasClass("main")
+    && !$('#right-reproduction').hasClass("main")
+    && !$('#middle-reproduction').hasClass("main")) {
         activateNoneButton();
-    }
-    else {
+    } else {
         disableNoneButton();
     }
 
-    if ($('#left-reproduction').hasClass("main") || $('#right-reproduction').hasClass("main")) {
+    if ($('#left-reproduction').hasClass("main")
+    || $('#right-reproduction').hasClass("main")
+    || $('#middle-reproduction').hasClass("main")) {
         activateNextButton();
-    }
-    else {
+    } else {
         disableNextButton();
     }
 }
@@ -171,8 +167,7 @@ function resetSelected() {
  * @returns {undefined}
  */
 function allowTies() {
-    $.ajax
-    ({
+    $.ajax({
         url: 'ajax/observer/getIfAllowTies.php',
         async: false,
         data: {'experimentId': experimentId},
@@ -182,8 +177,7 @@ function allowTies() {
             if (data[0].allowTies == 0) {       //ties not allowed, therefore hides none button.
                 $('#button-none').hide();
             }
-        }
-        ,
+        },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log("Error");
             console.log(xhr.status);
@@ -197,8 +191,8 @@ function allowTies() {
  * @returns {undefined}
  */
 function disableNextButton() {
-    $('#button-next').addClass('greyout');
-    $('#button-next').attr('disabled', 'disabled');
+    $('#button-next-triplet').addClass('greyout');
+    $('#button-next-triplet').attr('disabled', 'disabled');
 }
 
 /**
@@ -206,9 +200,10 @@ function disableNextButton() {
  * @returns {undefined}
  */
 function activateNextButton() {
-    $('#button-next').removeClass('greyout');
-    $('#button-next').removeAttr('disabled');
+    $('#button-next-triplet').removeClass('greyout');
+    $('#button-next-triplet').removeAttr('disabled');
 }
+
 /**
  * Disables 'choose none' button.
  * @returns {undefined}
@@ -240,6 +235,7 @@ function toggleSlider() {
         slider.classList.add('opened');
     }
 }
+
 var runned = 0;
 
 /**
@@ -247,13 +243,19 @@ var runned = 0;
  * @returns {undefined}
  */
 function nextComparison() {
-
     var choose;
     var pictureOrderId;
 
     if ($('#left-reproduction').hasClass('main')) {         //user choose left
         choose = "null";
         pictureOrderId = $('#left-reproduction-link').attr('pictureOrderId');
+
+        postResults("pair", pictureOrderId, choose);
+    }
+
+    if ($('#middle-reproduction').hasClass('main')) {        //user choose middle
+        choose = "null";
+        pictureOrderId = $('#middle-reproduction-link').attr('pictureOrderId');
 
         postResults("pair", pictureOrderId, choose);
     }
@@ -265,7 +267,7 @@ function nextComparison() {
         postResults("pair", pictureOrderId, choose);
     }
 
-    if (!$('#left-reproduction').hasClass('main') && !$('#right-reproduction').hasClass('main') && runned == 1) {      //user chose none
+    if (!$('#left-reproduction').hasClass('main') && !$('#right-reproduction').hasClass('main') && !$('#middle-reproduction').hasClass('main') && runned == 1) {      //user chose none
         choose = "1";
         pictureOrderId = $('#left-reproduction-link').attr('pictureorderid');
         postResults("pair", pictureOrderId, choose);
@@ -284,9 +286,8 @@ function nextComparison() {
  * @param {type} choose whether user chose none, 1 i none
  * @returns {undefined}
  */
-function postResults(type, pictureOrderId, choose) {
-    $.ajax
-    ({
+function postResults(exType, pictureOrderId, choose) {
+    $.ajax({
         url: 'ajax/observer/insertChosenIntoResult.php',
         async: false,
         data: {
@@ -308,23 +309,21 @@ function postResults(type, pictureOrderId, choose) {
 }
 
 /**
- * Sets original (middle) picture.
+ * Sets original picture.
  * @param {type} $imageUrlOriginal original picture.
  * @returns {undefined}
  */
 function setOriginal(originalImageUrl) {               //mangler hent original
-    $.ajax
-    ({
+    $.ajax({
         url: 'ajax/observer/getShowOriginal.php',
         async: false,
-        data: {'experimentId': experimentId},
+        data: { 'experimentId': experimentId },
         type: 'post',
         dataType: 'json',
         success: function (data) {
             if (data[0].showOriginal == 0) {
                 removeOriginal();
             }
-
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log("Error");
@@ -360,15 +359,13 @@ function nextStep(receivedObject) {
     var instruction;
     var data = receivedObject;
 
-    //console.log(receivedObject);
-
     if (data['type'] == "experimentinstruction") {     //object contains and instruction
         instruction = data['experimentinstruction'];
         setInstruction(instruction);
         onlyInstruction();
     }
 
-    if (data['type'] == "pictureQueue") {               //received array contains data about the reproduction
+    if (data['type'] == "pictureQueue") {             //received array contains data about the reproduction
         var originalUrl = data[1]['originalUrl'].url; //getting url of original image
 
         panningCheck(originalUrl);
@@ -400,21 +397,26 @@ function nextStep(receivedObject) {
  * @returns {undefined}
  */
 function setPictures(object) {
-    var imageUrlLeft;
-    var imageUrlRight;
     var data = object;
 
-    pictureOrderIdLeft = data[1].pictureOrderId;
-    pictureOrderIdRight = data[2].pictureOrderId;
+    var pictureOrderIdLeft = data[1].pictureOrderId;
+    var pictureOrderIdMiddle = data[2].pictureOrderId;
+    var pictureOrderIdRight = data[3].pictureOrderId;
 
-    imageUrlLeft = data[1].url;
-    imageUrlRight = data[2].url;
+    var imageUrlLeft = data[1].url;
+    var imageUrlMiddle = data[2].url;
+    var imageUrlRight = data[3].url;
 
-    $('#left-reproduction').find('.canvas-container').attr('data-image-url', imageUrlLeft);
-    $('#right-reproduction').find('.canvas-container').attr('data-image-url', imageUrlRight);
+    $('#left-reproduction').find('img').attr('src', imageUrlLeft);
+    $('#middle-reproduction').find('img').attr('src', imageUrlMiddle);
+    $('#right-reproduction').find('img').attr('src', imageUrlRight);
+
     $('#left-reproduction-link').attr('href', imageUrlLeft);
+    $('#middle-reproduction-link').attr('href', imageUrlMiddle);
     $('#right-reproduction-link').attr('href', imageUrlRight);
+
     $('#left-reproduction-link').attr('pictureOrderId', pictureOrderIdLeft);
+    $('#middle-reproduction-link').attr('pictureOrderId', pictureOrderIdMiddle);
     $('#right-reproduction-link').attr('pictureOrderId', pictureOrderIdRight);
 }
 

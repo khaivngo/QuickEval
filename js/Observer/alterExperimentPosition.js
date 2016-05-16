@@ -4,8 +4,7 @@
  * @param  experimentId is the ID of the experiment to start.
  */
 function startNewExperimentForObserver(experimentId) {
-    $.ajax
-    ({
+    $.ajax({
         url: 'ajax/observer/experimentQueue.php',
         async: false,
         data: {
@@ -22,12 +21,10 @@ function startNewExperimentForObserver(experimentId) {
  * Gets the next position in the experiment for a observer.
  * @return instruction with text, the pictures which are to be shown,
  * or a text with "finished" that indicates that an experiment is over.
- * 
  */
 function getNextInExperimentForObserver() {
 	var returnData = new Array();
-    $.ajax
-    ({
+    $.ajax({
         url: 'ajax/observer/experimentQueue.php',
         async: false,
         data: {
@@ -51,6 +48,7 @@ function getNextInExperimentForObserver() {
             alert(request.responseText);
         }
     });
+    console.log(returnData);
     return returnData;
 }
 

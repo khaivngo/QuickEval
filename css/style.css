@@ -89,3 +89,7 @@ textarea    {
 .confirmon-box p {
     color: white !important;
 }
+
+#upload-info td {
+    padding: 5px 0;
+}

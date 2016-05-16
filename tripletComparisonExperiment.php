@@ -12,8 +12,8 @@ if (!isset($_SESSION['user']['id'])) {
         header("Location: login.php");
         exit;
     }
-
 }
+
 if (isset($_GET["invite"])) {
     $hash = $_GET["invite"];
     $url = "tripletComparisonExperiment.php?invite=";
@@ -54,10 +54,10 @@ if (isset($_GET["invite"])) {
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/scientist/scientistScripts.js"></script>
     <script src="js/Observer/alterExperimentPosition.js"></script>
-    <script src="js/experimentScripts.js"></script>
+    <script src="js/experimentScriptsTriplet.js"></script>
+    <script src="js/tripletExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
 </head>
-
 <body class="metro" style="background-color:#808080;" onload="show();
             start();">
 
@@ -102,7 +102,7 @@ if (isset($_GET["invite"])) {
 </div>
 <div id="backgroundPopup3"></div>
 
-<!---------------->
+<!----------------------------->
 
 <div id="paircomparison">
 
@@ -113,7 +113,7 @@ if (isset($_GET["invite"])) {
             </button>
 
             <button id="enter-fullscreen" class="button fullscreen top-buttons" style="margin-left:10px; ">
-                <i class="icon-fullscreen"></i>Enter fullscreen
+                <i class="icon-fullscreen"></i> Enter fullscreen
             </button>
 
             <button id="exit-fullscreen" class="button fullscreenExit top-buttons" style="margin-left:1px; ">Exit
@@ -132,24 +132,11 @@ if (isset($_GET["invite"])) {
     </div>
 
     <div id="pair-container">
-        <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
 
-        <div id="left-reproduction" class="" style=" display:inline-block; margin-left: 0; width:30%; height: 70%;">
-            <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
-                    <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
-
-                    <div id="pan1" class="panzoom">
-                        <img id="pictureLeft" class="picture" src="flower.jpeg"/>
-                    </div>
-                </div>
-            </section>
-            <br>
-        </div>
-
-        <div id="original" class="" style="margin-left: 2%; width:30%; height:70%; display:inline-block; ">
-            <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+        <div id="original" style="margin-left: 0; width:22%; height:70%; display:inline-block;">
+            <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
+            <section id="set2">
+                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
                     <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan3" class="panzoom">
@@ -158,13 +145,59 @@ if (isset($_GET["invite"])) {
                 </div>
             </section>
             <br>
+        </div>
 
+        <div id="left-reproduction" style=" display:inline-block; margin-left: 2%; width:22%; height: 70%;">
+            <div class="category-button-container">
+                <div class="input-control select size3" style="text-align:center;">
+                    <select id="categories1" class="categories" style="background-color:#C8C8C8;">
+                        <option value="null" disabled>Select category</option>
+                    </select>
+                </div>
+            </div>
+            <section id="set2">
+                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
+                    <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
+
+                    <div id="pan1" class="panzoom">
+                        <img id="pictureLeft" class="picture" src="flower.jpeg">
+                    </div>
+                </div>
+            </section>
+            <br>
+        </div>
+
+        <div id="middle-reproduction" class="" style=" display:inline-block; margin-left: 2%; width:22%; height: 70%;">
+            <div class="category-button-container">
+                <div class="input-control select size3" style="text-align:center;">
+                    <select id="categories2" class="categories" style="background-color:#C8C8C8;">
+                        <option value="null" disabled>Select category</option>
+                    </select>
+                </div>
+            </div>
+            <section id="set2">
+                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
+                    <a href="" id="middle-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
+
+                    <div id="pan4" class="panzoom">
+                        <img id="pictureMiddle" class="picture" src="flower.jpeg"/>
+                    </div>
+                </div>
+            </section>
+            <br>
         </div>
 
         <div id="right-reproduction" class="right pictureContainer"
-             style="display:inline-block; margin-left: 2%; width:30%; height: 70%">
+             style="display:inline-block; margin-left: 2%; width:22%; height: 70%">
+             <div class="category-button-container">
+                 <div class="input-control select size3" style="text-align:center;">
+                     <select id="categories3" class="categories" style="background-color: #C8C8C8;">
+                         <option value="null" disabled>Select category</option>
+                     </select>
+                 </div>
+             </div>
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan2" class="panzoom">
@@ -173,7 +206,6 @@ if (isset($_GET["invite"])) {
                 </div>
             </section>
             <br>
-
         </div>
 
         <div style="width:100%;">
@@ -181,9 +213,9 @@ if (isset($_GET["invite"])) {
         </div>
     </div>
 
-    <div id="bottom-buttons" class="page-bottom" style="position:absolute;">
+    <div id="bottom-buttons" class="page-bottom" style="position: absolute;">
         <button class="button" id="button-none" style="width: 100%; height:25px; margin-bottom: 10px;">None</button>
-        <button class="button" id="button-next" style="width: 100%; height:25px;  ">Next</button>
+        <button class="button" id="button-next-triplet" style="width: 100%; height:25px;">Next</button>
     </div>
 </div>
 

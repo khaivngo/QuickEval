@@ -3,8 +3,8 @@ var experimentId;
 $(document).ready(function () {
     $(".fullscreen").on('click', function () {
         goFullscreen();
-
     });
+
     $(".fullscreenExit").on('click', function () {
         exitFullscreen();
     });
@@ -13,11 +13,9 @@ $(document).ready(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
     });
 
-
     $('#panzoom-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-
-    })
+    });
 });
 
 /**
@@ -28,8 +26,7 @@ $(document).ready(function () {
 function experimentComplete(experimentId) {
     var buffer = getDateTime();
 
-    $.ajax
-    ({
+    $.ajax({
         url: 'ajax/observer/updateExperimentResultData.php',
         async: false,
         type: 'POST',
@@ -55,8 +52,7 @@ function experimentComplete(experimentId) {
 function postStartData(experimentId) {
     var dimension = viewport();
 
-    $.ajax
-    ({
+    $.ajax({
         url: 'ajax/observer/insertExperimentResultData.php',
         async: false,
         data: {
@@ -67,11 +63,8 @@ function postStartData(experimentId) {
             'experimentId': experimentId
         },
         type: 'post',
-        success: function (data) {
-
-        },
-        error: function (request, status, error) {
-        }
+        success: function (data) {},
+        error: function (request, status, error) {}
     });
 }
 
@@ -394,7 +387,7 @@ function automaticPanningReset() {
 function adjustScaling() {
     var $elem;
 
-    $elem = $('#pan1, #pan2, #pan3');
+    $elem = $('#pan1, #pan2, #pan3, #pan4');
 
     $elem.panzoom("option", {
         increment: 0.4,
@@ -422,7 +415,6 @@ function panningCheck(originalUrl) {
 
             disablePanning();
             return;
-
         }
         else if (this.width < 500 || this.height < 450) {
             panningControl = true;
@@ -433,7 +425,6 @@ function panningCheck(originalUrl) {
 
         console.log("false")
         panningControl = false;
-
 
     };
     img.src = originalUrl;

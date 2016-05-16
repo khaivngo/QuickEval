@@ -1,37 +1,36 @@
 <?php
-require_once('db.php');
-require_once('functions.php');
+    require_once('db.php');
+    require_once('functions.php');
 
-if (!isset($_SESSION['user']['id'])) {
+    if (!isset($_SESSION['user']['id'])) {
+        if (isset($_GET["invite"])) {
+            $hash = $_GET["invite"];
+            $url = "pairComparisonExperiment.php?invite=";
+
+            redirectAfterLogin($url . $hash);
+        } else {
+            header("Location: login.php");
+            exit;
+        }
+    }
+
     if (isset($_GET["invite"])) {
         $hash = $_GET["invite"];
         $url = "pairComparisonExperiment.php?invite=";
 
-        redirectAfterLogin($url . $hash);
+        try {
+            $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
+
+            $res = $stmt->fetchAll();
+            $_SESSION['experimentId'] = $res[0]['id'];
+        } catch (Exception $ex) {}
+
     } else {
-        header("Location: login.php");
+        $_SESSION['experimentId'] = $_POST['experimentId'];
     }
-
-}
-if (isset($_GET["invite"])) {
-    $hash = $_GET["invite"];
-    $url = "pairComparisonExperiment.php?invite=";
-
-
-    try {
-        $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
-
-        $res = $stmt->fetchAll();
-        $_SESSION['experimentId'] = $res[0]['id'];
-    } catch (Exception $ex) {
-
-    }
-} else {
-    $_SESSION['experimentId'] = $_POST['experimentId'];
-}
 ?>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -50,12 +49,19 @@ if (isset($_GET["invite"])) {
     <!-- Other JS & plugins -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
+    <script src="canvas-image-marker/Helper.js"></script>
+    <script src="canvas-image-marker/Annotation.js"></script>
+    <script src="canvas-image-marker/canvas-image-marker.js"></script>
+
     <script src="js/popup.js"></script>
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/scientist/scientistScripts.js"></script>
     <script src="js/Observer/alterExperimentPosition.js"></script>
     <script src="js/experimentScripts.js"></script>
     <script src="js/stopwatch.js"></script>
+
+    <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 </head>
 
 <body class="metro" style="background-color:#808080;" onload="show();
@@ -102,7 +108,7 @@ if (isset($_GET["invite"])) {
 </div>
 <div id="backgroundPopup3"></div>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!----------------------------------------------------------------------------------------->
 
 
 <div id="paircomparison">
@@ -138,7 +144,10 @@ if (isset($_GET["invite"])) {
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan1" class="panzoom">
-                        <img id="pictureLeft" class="picture" src="flower.jpeg"/>
+                        <!-- <img id="pictureLeft" class="picture" src="flower.jpeg"/> -->
+                        <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+        	                <!-- image canvas goes here -->
+        	            </div>
                     </div>
                 </div>
             </section>
@@ -166,7 +175,10 @@ if (isset($_GET["invite"])) {
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan2" class="panzoom">
-                        <img id="pictureRight" class="picture" src="images/initiatePicture.png"/>
+                        <!-- <img id="pictureRight" class="picture" src="images/initiatePicture.png"/> -->
+                        <div class="canvas-container" data-image-url="images/initiatePicture.png" oncontextmenu="return false;">
+        	                <!-- image canvas goes here -->
+        	            </div>
                     </div>
                 </div>
             </section>
@@ -184,6 +196,14 @@ if (isset($_GET["invite"])) {
         <button class="button" id="button-next" style="width: 100%; height:25px;  ">Next</button>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('.canvas-container').canvasMarkingTool({
+            annotation: true
+        });
+    });
+</script>
 
 </body>
 </html>

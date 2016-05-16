@@ -31,7 +31,7 @@
 
         <script src="js/scientist/exportExperiment.js"></script>
         <script src="js/indexScripts.js"></script>
-        <script src="js/scripts.js"></script>	
+        <script src="js/scripts.js"></script>
         <script src="js/Observer/alterExperimentPosition.js"></script>
 
 
@@ -40,7 +40,7 @@
     </head>
     <body class="metro" style="overflow-y:scroll">
         <div id="wrapper">
-            <?php include_once("includes/header.html"); ?>    
+            <?php include_once("includes/header.html"); ?>
             <div id="panels" style="width:1000px; margin:auto">
                 <div id="top-panels" style="max-height: 500px; width: 100%">
                     <h1>Select Experiment</h1>
@@ -114,7 +114,7 @@
                         <div class="input-control text" data-role="input-control">
                             <input id="experiment-search" type="text">
                             <button class="btn-search"></button>
-                        </div>	
+                        </div>
 
                         <div class="listview-outlook" data-role="listview">
                             <div id="experiment-list" class="list-group ">
@@ -126,23 +126,23 @@
                     </div>
                 </div>
                 <div style="clear: both"></div>
-                <div id="bottom-panels" style="max-height: 300px; width: 100%; margin: 20px 0;">
-                    <div id="bottom-left-panel" style="float: left; width: 49%">
-                        <h2 id="experiment-title"></h2>
-                        <p id="experiment-info"></p>
-                        <p id="experiment-text"></p>
-                    </div>
-                    <div id="bottom-right-panel" style="width: 49%; float: right; bottom: 0; padding: 10px 0">
 
-                        <div id="input-fields" style="margin: 15px 0">
+                <div id="start-experiment-container"
+                style="padding-bottom: 20px; display: flex; justify-content: center; position: fixed;
+                bottom: 0; left: 0; right: 0; z-index: 500;">
+                    <div id="bottom-panels" style="width: 1000px; margin: 20px 0; overflow: auto;">
+                        <div id="bottom-left-panel" style="float: left; width: 49%">
+                            <h2 id="experiment-title"></h2>
+                            <p id="experiment-info"></p>
+                            <p id="experiment-text"></p>
                         </div>
-                        <div id="experiment-buttons" style="margin: 0 5%">
+                        <div id="bottom-right-panel" style="width: 49%; float: right; bottom: 0; padding: 10px 0">
+                            <div id="input-fields" style="margin: 15px 0"></div>
+                            <div id="experiment-buttons" style="margin: 0 5%"></div>
                         </div>
-                    
-                        
-
                     </div>
                 </div>
+
             </div>
             <?php include_once("includes/footer.html"); ?>
         </div>

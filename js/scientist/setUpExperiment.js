@@ -11,6 +11,7 @@ jQuery.fn.swap = function(b) {
     t.parentNode.removeChild(t);
     return this;
 }
+
 $(document).ready(function() {
 
     //Adds listener to menu
@@ -193,7 +194,8 @@ $(document).ready(function() {
             }
             activeImageSet.remove(); //Removes imageset
         });
-        /---------------- STEP 5 --------------------/ / $(document.body).off('click', '.finish');
+        //---------------- STEP 5 --------------------//
+        $(document.body).off('click', '.finish');
         $(document.body).on('click', '.finish', function() {
             finishExperiment();
         });
@@ -235,7 +237,13 @@ function step1Check() {
     $('.notice').parent().remove();
     if ($('#ex-name').val() == "") { //Check experimentname
         check = 0;
-        $('#ex-name').after('<div id="notify"><div class="span3" style="margin: 20px 20px"></div>' + '<div class="bg-red notice marker-on-top span1">' + 'Name of experiment is required' + '</div></div>');
+        $('#ex-name').after(
+            '<div id="notify">' +
+                '<div class="span3" style="margin: 20px 20px"></div>'+
+                    '<div class="bg-red notice marker-on-top span1">' +
+                    'Name of experiment is required' +
+                '</div>' +
+            '</div>');
     }
     if ($('#ex-long-description').val() == "") { //Check experiment description
         check = 0;
@@ -371,8 +379,12 @@ function populateExperimentSelect() {
             $('#algorithm-type').append('<option>' + t + '</option>');
         });
         $('#algorithm-type').prop('disabled', true);
-        // addLastStep();
-        removeLastStep();
+        addLastStep();
+
+        // add text explaining how many images is allowed in a triplet comparison image set
+        $('#ex-step4 form fieldset legend').after(
+            'This experiment only works with image sets containing<br> 7, 9, 13, 15, 19, 21, 25 or 27 images (excluding the original image).'
+        );
     }
 
     /**
@@ -383,7 +395,7 @@ function populateExperimentSelect() {
         type == "Paired comparison" ? $('#forced-pick').show() : $('#forced-pick').hide();
         type == "Paired comparison" ? $('#same-pair').show() : $('#same-pair').hide();
 
-        // type == "Triplet Comparison" ? $('#forced-pick').show() : $('#forced-pick').hide();
+        type == "Triplet Comparison" ? $('#forced-pick').show() : $('#forced-pick').hide();
         // type == "Triplet Comparison" ? $('#same-pair').show() : $('#same-pair').hide();
     }
 
@@ -395,14 +407,23 @@ function populateExperimentSelect() {
         if (type == "Category judgement") {
             $('#ex-image-queues').hide();
             $('#ex-setup-categories').show();
+        } else if (type == "Triplet Comparison") {
+            $('#ex-image-queues').hide();
+            $('#ex-setup-categories').show();
+            $('#ex-setup-categories legend').after(
+                'The ISO standard recommends 3, 5 or 7 categories ' +
+                '(ex: favorable, acceptable, just acceptable, unacceptable, poor).'
+            );
         } else {
             $('#ex-image-queues').show();
             $('#ex-setup-categories').hide()
         }
     }
+
     $('#ex-step4').find('div').children('div').remove();
     $('.ex-image-pair').remove();
-}
+
+} /* /populateExperimentSelect() */
 
 /**
  * Removes steps based on experimenttype
@@ -638,6 +659,7 @@ function imageSetChange($a) {
     }
     $a.data('firstSelect', false); //Sets firstselect to false as user has selected an imageset
 }
+
 /**
  * Loads an imageset into element $a
  * @param {type} $a element for imageset to be loaded into
@@ -744,6 +766,7 @@ function swapImageSetAndElement($a, $b) {
 function addExperimentQueue(experimentId) {
     var experimentQueueId = getExperimentQueueId();
     $('#ex-step4').find('div:eq(0)').children('div').each(function() {
+
         //If imageset
         if ($(this).find('.image-set').length == 1) {
             var imageSet = $(this).find('option:selected').attr('image-set');
@@ -956,6 +979,7 @@ function addCategories($experimentId) {
  * @param {type} $b non imageset, either instruction or inactive imageset
  * @returns {undefined}
  */
+ // index = which step in the setup process
 function setUpFinishButton(index) {
     var method = $('#experiment-type').val();
     var algorithm = $('#algorithm-type').val();
@@ -970,8 +994,8 @@ function setUpFinishButton(index) {
         $('.next-button').hide();
         $('.finish').show();
     } else if (index == 4 && (method == "Rank order" || (method == "Triplet Comparison" && algorithm == "Random Queue"))) {
-        $('.next-button').hide();
-        $('.finish').show();
+        $('.next-button').show();
+        $('.finish').hide();
     } else {
         $('.previous-button').show()
         $('.next-button').show();
@@ -988,11 +1012,13 @@ function finishExperiment() {
     var check = 1;
     $('.notice').parent().remove();
     check = step4Check();
-    if (method == "Category judgement") {
+
+    if (method == "Category judgement" || method == "Triplet Comparison") {
         if (!checkCategories()) {
             check = 0;
         }
     }
+
     if (method == "Paired comparison") {
         if ($('#algorithm-type').val() == "Custom Queue") {
             //Check if all queues got either a pair or selected queue
@@ -1007,6 +1033,7 @@ function finishExperiment() {
             }
         }
     }
+
     if (check == 1) { //Ready to create experiment
 
         //Makes sure user doesn't doubleclick finish
@@ -1030,7 +1057,17 @@ function finishExperiment() {
         //Adding viewing distance as meta data
         var expViewingDistance = $('#ex-viewing-distance').val();
 
-        var experimentId = startNewExperiment(expName,expShortDesc,expLongDesc,expType,expScreenWhitePoint,expLuminance,expRoomWhitepoint,expAmbientIllumination, expViewingDistance);
+        var experimentId = startNewExperiment(
+            expName,
+            expShortDesc,
+            expLongDesc,
+            expType,
+            expScreenWhitePoint,
+            expLuminance,
+            expRoomWhitepoint,
+            expAmbientIllumination,
+            expViewingDistance
+        );
 
         //var experimentId = startNewExperiment($('#ex-name').val(), $('#ex-short-description').val(), $('#ex-long-description').val(), $('#experiment-type').children(':selected:not(:disabled)').index(), $('#ex-screen-whitepoint').val(), $('#ex-luminance-screen').val(), $('#ex-room-whitepoint').val(), $('#ex-ambient-illumination').val(),expViewingDistance);
         if (experimentId > 0) { //Got an id, successfully created experiment
@@ -1040,9 +1077,10 @@ function finishExperiment() {
             //Sets up parameters for experiment
             addObserverParametersPair($("#background-color").val(), +!$('#forced-pick').find('input').prop('checked'), +$('#same-pair').find('input').prop('checked'), +$('#display-original').find('input').prop('checked'), +$('#allow-colourblind').find('input').prop('checked'), hidden, +$('#display-clock').find('input').prop('checked'));
 
-            if (method == "Category judgement") {
+            if (method == "Category judgement" || method == "Triplet Comparison") {
                 addCategories(experimentId);
             }
+
             addInputFields();
             addExperimentQueue(experimentId);
             delay(function() {
