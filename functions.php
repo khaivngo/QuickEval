@@ -144,7 +144,7 @@ function getExperimentRawData($experimentId, $db, $type, $complete) {
 
 	$result = 0;
 
-	if($type == 3 || $type ==) {
+	if($type == 3 || $type == 4) {
 
 		//Magic be here, DO NOT TOUCH OR GOD BE WITH YOU
 		$sql = "SELECT result.*, picture.*, experimentorder.eOrder as experimentOrder, person.firstName, person.lastName, categoryname.name AS categoryName"
