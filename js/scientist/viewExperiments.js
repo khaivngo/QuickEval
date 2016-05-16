@@ -518,6 +518,7 @@ function getExperimentResults($experimentId) {
  */
 function printResults($experimentId) {
     var data = getExperimentResults($experimentId);
+    console.log(data + "awdadd");
     var experimentType = data[0];
     var experimentResults = data[1];
 

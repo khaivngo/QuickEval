@@ -388,6 +388,11 @@ function getExperimentData($eId, $type, $invite) {
                     $('#experiment-info').append(data[0]['shortDescription']);
                     $('#experiment-text').append(data[0]['longDescription']);
 
+                    $('#start-experiment-container').css({
+                        background: "#fff",
+                        borderTop: "1px solid #ccc"
+                    });
+
                     if (data[1] !== 0) {
                         setUpCustomFields(data[1]);
                     }
@@ -437,6 +442,11 @@ function emptyExperimentData() {
     $('#experiment-text').empty();
     $('#experiment-buttons').empty();
     $('#input-fields').empty();
+
+    $('#start-experiment-container').css({
+        background: "none",
+        borderTop: 0
+    });
 }
 
 /**
@@ -524,6 +534,10 @@ function startExperiment() {
         case '3':
             url = 'categoryexperiment.php';
             break;
+
+        case '4':
+            url = 'tripletComparisonExperiment.php';
+            break;
     }
 
     url += invite;    //adds invite hash if set
@@ -560,7 +574,6 @@ function checkAlreadyExperiment(experimentId) {
     });
 
     return check;
-
 }
 
 

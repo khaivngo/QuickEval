@@ -8,7 +8,7 @@ require_once('../../ChromePhp.php');
 $userId = $_SESSION['user']['id'];             //fetching user id from session
 
 try {
-    
+
     $stmt = $db->prepare("INSERT INTO result (type, experimentId, pictureOrderId, personId, category) "
             . "VALUES (:type, :experimentId, :pictureOrderId, :personId, :category)");
 
@@ -18,9 +18,9 @@ try {
         ':personId' => $userId,
         ':category' => $_POST['category'],
     ));
-    
-  //echo ($_POST['category']);  
+
 } catch (Exception $ex) {
    // ChromePhp::log($ex->getMessage());
 }
+
 ?>

@@ -45,16 +45,6 @@ function checkLogin($db) {
  */
 function redirectAfterLogin($url) {
 	header('Location: login.php?redirect=' . $url);
-	exit;
-}
-
-/**
- * The purpose of this function is to simplify the syntax a bit.
- * And it also makes sure we never forget to call exit;
- */
-function redirect($page) {
-	header("Location: " . $page);
-	exit;
 }
 
 function checkOwnerForPicture($pictures, $personId, $db) {
@@ -154,7 +144,7 @@ function getExperimentRawData($experimentId, $db, $type, $complete) {
 
 	$result = 0;
 
-	if($type == 3) {
+	if($type == 3 || $type == 4) {
 
 		//Magic be here, DO NOT TOUCH OR GOD BE WITH YOU
 		$sql = "SELECT result.*, picture.*, experimentorder.eOrder as experimentOrder, person.firstName, person.lastName, categoryname.name AS categoryName"
@@ -238,8 +228,6 @@ function getExperimentResults($experimentId, $db, $complete) {
 
 	foreach ($experimentOrders as $experimentOrder) {
 		$sql = "SELECT picture.name, picture.id, picture.pictureset FROM picture "
-
-
 		. " JOIN pictureorder ON picture.id = pictureorder.picture "
         . " JOIN picturequeue ON pictureorder.pictureQueue = picturequeue.id "
 		. " JOIN experimentorder ON experimentorder.picturequeue = picturequeue.id "

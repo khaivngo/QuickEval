@@ -137,7 +137,7 @@ textarea    {
 	color: #000;
 	font-size: 175%;
 	margin-bottom:10px;
-	
+
 }
 
 .tabSection
@@ -158,7 +158,7 @@ textarea    {
 	{
 		border-top: 4px solid #aaa;
 	}
-	
+
 	.activeTab
 	{
 		border-top: 4px solid #0ac;
@@ -167,10 +167,10 @@ textarea    {
 
 /*--------------------
     Toolbars
---------------------*/	
-	
-/* Annotation */	
-	
+--------------------*/
+
+/* Annotation */
+
 .shapeToolbar	/* UL */
 {
 	background: #f5f5f5;
@@ -185,7 +185,7 @@ textarea    {
 		text-align:		center;
 		cursor:			pointer;
 		display: 		inline-block;
-	}	
+	}
 
 		.shapeToolbar li[data-type="icon"]
 		{
@@ -193,19 +193,19 @@ textarea    {
 			height: 		40px;
 			line-height:	40px !important;
 		}
-		
+
 			.shapeToolbar li["data-type=icon"]:hover
 			{
 				background: #ddd;
 			}
-		
+
 	.activeTool
 	{
 		background: 	#ddd;
 		border: 		1px solid #bbb;
 		margin-top:		-1px;
 	}
-		
+
 	.sectionBreak
 	{
 		width: 			1px;
@@ -213,10 +213,10 @@ textarea    {
 		background: 	#ddd;
 		display: 		inline-block;
 		vertical-align: middle;
-	}	
+	}
 
 
-/* Heatmap */	
+/* Heatmap */
 
 .sectionItem		/* UL */
 {
@@ -236,69 +236,69 @@ textarea    {
 		padding: 		10px 0;
 		color:			#333;
 	}
-	
+
 		.sectionItem li[type='header']
 		{
 			font-size: 	125%;
 			color:		#111;
 			margin-left: 0px;
 		}
-		
+
 		.sectionItem input[type="checkbox"]
 		{
 
 		}
-		
+
 		.sectionItem li label
 		{
 			display: inline-block;
 			width:	110px;
 		}
-		
-	
+
+
 .advancedOptionsButton
 {
 	color: #08d !important;
 	cursor: pointer;
 	padding: 20px 0 10px 0;
 	margin-left: 10px;
-}	
+}
 
 	.advancedOptionsButton:hover
 	{
 		color: #08f !important;
 		text-decoration: underline;
 	}
-	
-	
-#downloadHeatmapFile button	
+
+
+#downloadHeatmapFile button
 {
 	background: 	#0a6 !important;
 	color: 			#fff !important;
-	font-family:	arial !important; 
+	font-family:	arial !important;
 	padding:		10px 0px;
 	width:			100%;
 	font-size:		125%;
 }
 
-	#downloadHeatmapFile button:hover	
+	#downloadHeatmapFile button:hover
 	{
 		background: #0b7 !important;
 	}
-	
+
 	/* .disabledButton
 	{
 		background: #aaa !important;
 		color:		#333 !important;
 	} */
-	
-	
+
+
 /*--------------
 	Sections
------------------*/	
-	
-	
-#heatmapSection,#annotationSection 
+-----------------*/
+
+
+#heatmapSection,#annotationSection
 {
     margin: 	0;
     list-style: none;
@@ -313,7 +313,7 @@ textarea    {
 	height: 0px;
 }
 
-#annotationSection 
+#annotationSection
 {
 	padding: 0;
 	background: #eee;
@@ -324,7 +324,7 @@ textarea    {
 /*--------------------------
     Heatmap Section
 --------------------------*/
-#scaleColorSettings		/* UL */ 
+#scaleColorSettings		/* UL */
 {
 	padding: 20px 0;
 	display: none;
@@ -334,7 +334,7 @@ textarea    {
 	margin: 0;
 	margin-top: -30px;		/* Hacky hack :D */
 }
-	
+
 #scaleColorSettings li {
 	display: block;
 	vertical-align: top;
@@ -346,7 +346,7 @@ textarea    {
 	#scaleColorSettings li:nth-child(1) {
 		border-top: none;
 		box-shadow: none;
-	}	
+	}
 
 .activeSection { opacity: 1; }
 .inactiveSection { opacity: .25; } /* fade out disabled range slider */
@@ -448,7 +448,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* All the same stuff for IE */
-input[type="range"]::-ms-thumb {  
+input[type="range"]::-ms-thumb {
     border: 6px solid #fff;
     height: 32px;
     width: 32px;
@@ -523,7 +523,7 @@ input[type="range"]:focus::-ms-fill-upper {
 /*----------------------
     Annotation Section
 ----------------------*/
-	
+
 #annotationList	/* UL */
 {
 	list-style:	none;
@@ -542,21 +542,21 @@ input[type="range"]:focus::-ms-fill-upper {
 		border:			1px solid hsla(0, 0%, 75%, 0.75);
 		border-top:		1px solid hsla(0, 0%, 95%, 0.75);
 		border-bottom: 	3px solid hsla(0, 0%, 75%, 0.75);
-		
+
 		background: 	#f5f5f5;
 		color:			#333;
 		padding: 		30px 20px;
 		border-radius:	5px;
 		cursor: 		pointer;
 	}
-	
+
 	.annotationColumn
 	{
 		display: inline-block;
 		vertical-align: middle;
 		padding-right: 20px;
 	}
-	
+
 		#annotationList li .visibleStatus
 		{
 			width: 			30px;
@@ -565,7 +565,7 @@ input[type="range"]:focus::-ms-fill-upper {
 			text-align: 	center;
 			line-height: 	28px;
 		}
-	
+
 		#annotationList li .shapeIndex
 		{
 			font-size:		90%;
@@ -573,35 +573,35 @@ input[type="range"]:focus::-ms-fill-upper {
 			margin-bottom:	8px;
 			color:			#666;
 		}
-		
+
 		#annotationList li .annotationText
 		{
 			font-size:	100%;
-		}		
-		
+		}
+
 		#annotationList li:hover
 		{
 			background: #fff;
 		}
-		
+
 	.activeAnnotation
 	{
-		border-radius:	5px;		
+		border-radius:	5px;
 		box-shadow:		-5px 0px #0ac inset;
 		background:		#fff !important;
 	}
-	
-	
+
+
 /* ScrollBars */
 
 #heatmapSection::-webkit-scrollbar,
-#annotationList::-webkit-scrollbar 
+#annotationList::-webkit-scrollbar
 {
   width: 8px;
 }
 
 #heatmapSection::-webkit-scrollbar-track,
-#annotationList::-webkit-scrollbar-track 
+#annotationList::-webkit-scrollbar-track
 {
   background:	#eee;
 }
@@ -619,10 +619,6 @@ input[type="range"]:focus::-ms-fill-upper {
 	}
 
 
-
-
-
-
-
-
-
+#upload-info td {
+    padding: 5px 0;
+}

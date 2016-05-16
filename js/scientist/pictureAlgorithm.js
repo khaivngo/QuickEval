@@ -4,20 +4,22 @@
  * @param rightAndLeft 0/1 if you want to show the queue twice, but changed positions.
  * @return ID of the newly created pictureuQueue.
  */
-function generateRandomPictureQueue(imagesetId, rightAndLeft) {
+function generateRandomPictureQueue(experimentType, imagesetId, rightAndLeft) {
 	var pictureQueueId;
     $.ajax
     ({
         url: 'ajax/scientist/setPictureQueue.php',
         async: false,
         data: {
-        	'imagesetId'  :imagesetId,
-        	'rightAndLeft':rightAndLeft,
-        	'option':'generateRandom'
+        	'imagesetId'  : imagesetId,
+        	'rightAndLeft' : rightAndLeft,
+        	'option' : 'generateRandom',
+			'experimentType' : experimentType
         },
         dataType: 'json',
         success: function(data) {
         	pictureQueueId = data;
+			console.log(data);
         },
         error: function(request, status, error) {
             alert(request.responseText);
@@ -33,7 +35,7 @@ function generateRandomPictureQueue(imagesetId, rightAndLeft) {
  * @param pictureQueueId is the queue which to add pictures to. if it is 0 then a new queue is begun.
  * @param name = name of the queue.
  * @return pictureQueueId of the active Queue which pictures was added to
- * 
+ *
  */
 function setPictureQueue(imagesArray, rightAndLeft, pictureQueueId, name) {
 	var pictureQueueId;
