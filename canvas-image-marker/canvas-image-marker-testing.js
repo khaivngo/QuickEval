@@ -881,11 +881,11 @@ function saveShapeToDB()
 			var timeA = [];
 			var timeB = [];
 			
-			var ratio = 100;
+			var ratio = 800;
 			
 			var imageR = 800;
 			
-			for(var t = 0; t < 100; t++ )
+			for(var t = 0; t < 15; t++ )
 			{
 				var polygonRect = [];									// Keeps the polygon rectangle vertices.
 				var tempPolygonArr  = [];								// Keeps a polygon's coordinates in a 2D array.
@@ -893,7 +893,7 @@ function saveShapeToDB()
 				
 				var tempShape = {points: []};
 				
-				for(var i = 0; i < 4; i++)
+				for(var i = 0; i < ratio / 7.5; i++)
 				{
 					switch(i)
 					{
@@ -902,6 +902,9 @@ function saveShapeToDB()
 						case 2: tempShape.points[i] = {x:ratio, y:ratio}; break;
 						case 3: tempShape.points[i] = {x:0, y:ratio}; break;
 					}
+					
+					if(i > 3)
+						tempShape.points[i] = { x: i, y: i+1};
 				}
 				
 				//console.log(tempShape);

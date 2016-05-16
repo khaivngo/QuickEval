@@ -20,6 +20,8 @@
 		
 		// Browser support:
 		var isFirefox = typeof InstallTrigger !== 'undefined';
+
+/*---------------------------------------------------------------------------*/	
 		
 		// Position of heatmap legend:
         var heatmapLegend = new Object();
@@ -243,7 +245,7 @@
 				this.reverse = status;
 			}
 		};
-		// End class Heatmap_preferences.
+		// End class Heatmap_settings.
 		
 		/**
 		 *  Class Heatmap_preferences.
@@ -252,13 +254,16 @@
 		 */
 		var Annotation = function()
 		{
-			// Properties:
-			this.onlyComments = false;			// {Boolean} Display only shapes with a comment.
 			
 			// Set functions:
+			
+			/**
+			 *  Display only shapes with a comment.
+			 *  @param {Boolean} Whether the shapes without a comment is visible or not.
+			 */
 			this.setOnlyComments = function(status)
 			{
-				// Show only shapes with a comment:
+				// Display only shapes with a comment:
 				if(status) 			
 				{
 					for(var i = 0; i < savedShapes.length; i ++)
@@ -269,7 +274,7 @@
 							savedShapes[i].hidden = true;
 					}
 				}
-				// Reset to show all shapes:
+				// Reset to display all shapes:
 				else
 				{
 					for(var i = 0; i < savedShapes.length; i ++)
@@ -277,8 +282,6 @@
 						savedShapes[i].hidden = false;
 					}
 				}
-				
-				this.onlyComments = status;
 			}
 			
 			this.displayShapes = function(index)
@@ -309,12 +312,15 @@
 				// Set selected annotation shape to blue:
 				if (( index != false || index === 0 ) && savedShapes[index].eyeVisible )
 				{
+					var x,y = 0;
+					
 					for(var i = 0; i < savedShapes[index].fill.length; i++)
 					{
-						var point = [ savedShapes[index].fill[i].x, savedShapes[index].fill[i].y ];
+						x = savedShapes[index].fill[i].x;
+						y = savedShapes[index].fill[i].y;
 						
-						matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';
-						matrixCtx.fillRect( point[0], point[1], 1, 1 );
+						matrixCtx.fillStyle = 'hsla(190,75%,50%,.9)';			// Blue color.
+						matrixCtx.fillRect( x, y, 1, 1 );
 					}
 				}
 			}
@@ -351,6 +357,11 @@
 				annotationList.append(htmlRender);
 			}
 		};
+		// End class Annotation.
+		
+/*---------------------------------------------------------------------------*/		
+		
+		/*--- Global variables: ---*/
 		
         // Canvas base image:
         var imageCanvas = $('<canvas>');
@@ -369,8 +380,8 @@
 
         var savedShapes;										// Array, stores all shapes objects.
 		
+		// Init objects:
 		var heatmapSettingsObj 	  = new Heatmap_settings(); 	// Heatmap_preferences object.
-				
 		var shapeMatrixObj	  	  = new Shape_matrix();			// Shape_matrix object.
 		var annotationObj		  = new Annotation();			// Annotations_preferences object.
 		
@@ -609,7 +620,7 @@
 			
 			/**
 			 *  Select an annotation from the list.
-			 *  Shape will be highlighted in the image to the left.
+			 *  Shape will be highlighted in the canvas.
 			 *  Possible to show/hide a shape by toggling the eye icon.
 			 */
 			$('#annotationList').delegate('li','click', function(event)
@@ -1085,7 +1096,7 @@
 
          	textPosX_MAX = range * heatmapLegend.square + textPaddingleft + heatmapLegend.marginLeft + textPadding;
 
-         	mergedCtx.fillText("MIN 1", textPadding, textPosY);						// Set label for minimum value.
+         	mergedCtx.fillText("MIN 1", textPadding, textPosY);					// Set label for minimum value.
          	mergedCtx.fillText('MAX ' + maxVal, textPosX_MAX + 20, textPosY );	// Set label for maximum value.
          }
 
@@ -1100,7 +1111,7 @@
           */
          function drawHeatmap(matrix, hue, sat, scaleType, reverse)
          {
-         	var t0 = performance.now();
+         	//var t0 = performance.now();
 			
          	// Loop the matrix rows and columns:
          	for(var i = 0; i < matrix.data.length; i++)
@@ -1121,7 +1132,7 @@
 			
          	renderHeatmapLegend(scaleType, matrix.maxVal, hue, sat, reverse);
 			
-         	var t1 = performance.now();
+         	//var t1 = performance.now();
          	//console.log('Render heatmap:' + Math.round(t1 - t0) / 1000 + ' seconds.');
          }
 
@@ -1136,7 +1147,6 @@
          	matrixCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
          	mergedCtx.clearRect(0, 0, image.width, image.height + heatmapLegend.height);
 
-			
          	if(savedShapes.length > 0 )
          	{
          		var hue = $('#hueLevel').val();
@@ -1147,7 +1157,7 @@
 				if(scaleType == 0) 	// Jet scale has no hue. set defualt 0.
 					hue = 0;
 				
-				else if(scaleType == 2)
+				else if(scaleType == 2) // Grayscale.
 				{
 					hue = 0;
 					sat = 0;
@@ -1159,16 +1169,10 @@
          		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
          		//console.log('After removing dupes: ' + allMarkedPoints.length);
 
-         		/* if( $('#reverseScale[type=checkbox]').is(':checked') )
-         			reverse = true; */
-
          		drawHeatmap(shapeMatrixObj, hue, sat, scaleType, reverse);
 
          		//var t1 = performance.now();
          		//console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
-
-         		//return allMarkedPoints;
-				
          	}
          	else
          		alert('No data in database.');
