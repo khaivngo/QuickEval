@@ -111,7 +111,7 @@ function getImages(experimentId) {
             // loop through each experiment image and create a dropdown list with the image names
             var output = '<div id="heatmap-options">';
                 output += '<select id="displayHeatmapImage" style="width: 200px; padding: 10px;">';
-                    output += '<option disabled>Choose image</option>';
+                    output += '<option selected="true" disabled>Choose image</option>';
                     data[0].forEach(function(image) {
                         output +=
                             '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
@@ -138,11 +138,11 @@ function getImages(experimentId) {
 
             // bind a open/close event on heatmap settings button click
             $('.heatmap-settings-button').on('click', function() {
-				
+
 				// Have to do this manually because the toggle slider has a delay,
 				// which means the heatmap panel uses 200 ms to show/hide.
 				var status =  ( $('#heatmap-panel-container').attr('data-status') == 'true') ? false : true;
-				
+
 				$('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
 				setHeatmapScrollPos(status);
             });
@@ -151,11 +151,11 @@ function getImages(experimentId) {
                 $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
 				setHeatmapScrollPos(false);
             });
-			
+
 			$(document).keyup(function(e) 						// User keyboard listener:
 			{
 				if (e.keyCode == 27 ) 							// Escape button:
-				{	
+				{
 					$('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
 					setHeatmapScrollPos(false);
 				}
