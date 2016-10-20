@@ -11,15 +11,14 @@ function generateRandomPictureQueue(experimentType, imagesetId, rightAndLeft) {
         url: 'ajax/scientist/setPictureQueue.php',
         async: false,
         data: {
-        	'imagesetId'  : imagesetId,
-        	'rightAndLeft' : rightAndLeft,
-        	'option' : 'generateRandom',
+        	'imagesetId'  :imagesetId,
+        	'rightAndLeft':rightAndLeft,
+        	'option':'generateRandom',
 			'experimentType' : experimentType
         },
         dataType: 'json',
         success: function(data) {
         	pictureQueueId = data;
-			console.log(data);
         },
         error: function(request, status, error) {
             alert(request.responseText);

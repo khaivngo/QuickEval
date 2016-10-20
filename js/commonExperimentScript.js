@@ -3,8 +3,8 @@ var experimentId;
 $(document).ready(function () {
     $(".fullscreen").on('click', function () {
         goFullscreen();
-    });
 
+    });
     $(".fullscreenExit").on('click', function () {
         exitFullscreen();
     });
@@ -13,9 +13,11 @@ $(document).ready(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
     });
 
+
     $('#panzoom-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-    });
+
+    })
 });
 
 /**
@@ -26,7 +28,8 @@ $(document).ready(function () {
 function experimentComplete(experimentId) {
     var buffer = getDateTime();
 
-    $.ajax({
+    $.ajax
+    ({
         url: 'ajax/observer/updateExperimentResultData.php',
         async: false,
         type: 'POST',
@@ -52,7 +55,8 @@ function experimentComplete(experimentId) {
 function postStartData(experimentId) {
     var dimension = viewport();
 
-    $.ajax({
+    $.ajax
+    ({
         url: 'ajax/observer/insertExperimentResultData.php',
         async: false,
         data: {
@@ -63,8 +67,11 @@ function postStartData(experimentId) {
             'experimentId': experimentId
         },
         type: 'post',
-        success: function (data) {},
-        error: function (request, status, error) {}
+        success: function (data) {
+
+        },
+        error: function (request, status, error) {
+        }
     });
 }
 
@@ -105,7 +112,6 @@ function formatTime(time) {
     var min = parseInt(time / 6000),
         sec = parseInt(time / 100) - (min * 60),
         hundredths = pad(time - (sec * 100) - (min * 6000), 2);
-
     return (min > 0 ? pad(min, 2) : "00") + ":" + pad(sec, 2) + ":" + hundredths;
 }
 
@@ -244,33 +250,10 @@ function getSpecificExperimentData(experimentId) {
         type: 'post',
         success: function (data) {
 
-            if (data[0]['isPublic'] == '1 = Public')
-                {}
-            else
-                {}
-
-            // enable or disable the marking tool be hiding/showing the toolbar
-            if (data[0]['allowArtifactMarking'] == '0') {
-                $(document).ready(function() {
-                    $('.canvas-container').canvasMarkingTool({
-                        annotation: false,
-                        showToolbar: false
-                    });
-                });
-            } else if (data[0]['allowArtifactMarking'] == '1') {
-                $(document).ready(function() {
-                    $('.canvas-container').canvasMarkingTool({
-                        annotation: true,
-                        showToolbar: true
-                    });
-                });
-            } else {
-                $(document).ready(function() {
-                    $('.canvas-container').canvasMarkingTool({
-                        annotation: false,
-                        showToolbar: false
-                    });
-                });
+            if (data[0]['isPublic'] == '1 = Public') {
+            }
+            else {
+                //console.log("Experiment is NOT public");
             }
 
             if (data[0].timer == 0) {
@@ -325,7 +308,7 @@ function exitFullscreen() {
     }
 }
 
-/*------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------------------------------------*/
 
 
 /**
@@ -336,6 +319,7 @@ function exitFullscreen() {
 function setBackgroundColour(colour) {
     $('body').css('background-color', '' + colour + '!important');
     $('#rating').css('background-color', '' + colorLuminance(colour, -0.2) + '!important');
+
 }
 
 /**
@@ -364,6 +348,14 @@ function checkIfExperimentTaken() {
  * Disables panning.
  */
 function disablePanning() {
+   // automaticPanningReset();
+    //console.log("Disable panning");
+    var elem;
+
+    //elem = $('#pan1, #pan2, #pan3');
+    //elem.panzoom("disable");
+
+    //$('.panning-reset').remove();
     $('#drop-left').css("height", "40%");
     $('#drop-left').css("width", "30%");
 
@@ -402,7 +394,7 @@ function automaticPanningReset() {
 function adjustScaling() {
     var $elem;
 
-    $elem = $('#pan1, #pan2, #pan3, #pan4');
+    $elem = $('#pan1, #pan2, #pan3');
 
     $elem.panzoom("option", {
         increment: 0.4,
@@ -430,6 +422,7 @@ function panningCheck(originalUrl) {
 
             disablePanning();
             return;
+
         }
         else if (this.width < 500 || this.height < 450) {
             panningControl = true;
@@ -440,6 +433,7 @@ function panningCheck(originalUrl) {
 
         console.log("false")
         panningControl = false;
+
 
     };
     img.src = originalUrl;

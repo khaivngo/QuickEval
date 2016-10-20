@@ -153,7 +153,7 @@ function startUploader(imagesetId, target) {
                             displayImageSet(imagesetId);
                         }, 4000);
 
-                        /*var imageSet = new Array();
+                        /*var imageSet = new Array();			
                          imageSet = getAllImagesInSet(imagesetId);
                          showPictureSet(imageSet);*/
                         $.Notify({
@@ -165,7 +165,7 @@ function startUploader(imagesetId, target) {
 
                 }
                 //Hent siste bildesett som bruker opplastet. Det burde jo g� greit?
-                //Ta s� bruker videre til en skjerm der han f�r sett alle bilder opplastet samt muligheten til � velge en original.
+                //Ta s� bruker videre til en skjerm der han f�r sett alle bilder opplastet samt muligheten til � velge en original. 
                 //Bilde nr 1 blir standard original om ikke noe annet blir valgt.  bruk radiobuttons
             },
             QueueChanged: function (up) {
@@ -355,7 +355,8 @@ function alterImagesetName(imagesetId, name) {
 }
 
 function alterImagesetText(imagesetId, text) {
-    $.ajax ({
+    $.ajax
+    ({
         url: 'ajax/scientist/alterImageSet.php',
         async: false,
         type: 'POST',
@@ -442,17 +443,17 @@ function alterOriginalInSet(idOfOriginal) {
         }
     });
 }
-
 function checkRadioButtons() {
+    //console.log("Checking radio buttons");
     var elements = document.getElementsByTagName("input");
     var checkedElements = 0;
-    for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1
+    for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1 
         if (elements[i].checked == true)			//Radiobutton is checked.
             checkedElements++;
     }
 
     if (checkedElements == 1) {
-        for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1
+        for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1 
             if (elements[i].checked == true) {			//Radiobutton is checked.
                 alterOriginalInSet(elements[i].id);
                 //console.log("Changed original!");
@@ -465,7 +466,7 @@ function checkRadioButtons() {
     } else {
         alert("Something went wrong. Resetting radiobuttons now" +
         "<br/>Try again!");
-        for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1
+        for (var i = 0; i < elements.length; i++) {	//SecurityCheck to make sure only 1 
             elements[i].checked = false;			//Radiobutton is checked.
         }
     }
@@ -492,6 +493,8 @@ function addOriginalButtonListener() {
         $('#image-set-description').val("");
     });
 
+
+
 }
 
 /**
@@ -510,3 +513,23 @@ function getOriginal($hash) {
         return 0;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

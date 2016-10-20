@@ -23,7 +23,7 @@
                     <label>Short Description</label>
                     <input id="ex-short-description" type="text" placeholder="Short Description">
                 </div>
-
+                
                 <div class="input-control textarea" data-role="input-control" style="margin:15px 0">
                     <label>Description</label>
                     <textarea id="ex-long-description" placeholder="Long Description"></textarea>
@@ -80,12 +80,12 @@
             </fieldset>
         </form>
     </div>
-    <div id="ex-step2">
+    <div id="ex-step2"> 
         <form>
             <fieldset>
                 <legend>Parameters</legend>
                 <div  class="input-control text" data-role="input-control">
-                    <label class="hint-trigger" data-hint="Background colour of the experiment as a observer.
+                    <label class="hint-trigger" data-hint="Background colour of the experiment as a observer. 
                     Use RGB hex values in the format 'xxxxxx', for example the default value #808080, which is gray." data-hint-position="right">Background Colour</label>
                     <input id="background-color" type="text" placeholder="#808080"  style="margin-bottom: 30px">
                 </div><br/>
@@ -96,19 +96,11 @@
                         <span class="hint-trigger" data-hint="Displays the original image as well as the reproductions." data-hint-position="right">Display Original</span>
                     </label>
                 </div> <br/>
-                <div id="allow-artifact-marking" class="input-control checkbox" data-role="input-control">
-                    <label>
-                        <input type="checkbox"/>
-                        <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Allows observers to mark artifacts on the images."
-                        data-hint-position="right">Allow Artifact Marking</span>
-                    </label>
-                </div> <br/>
                 <div id="allow-colourblind" class="input-control checkbox" data-role="input-control">
                     <label>
                         <input type="checkbox"/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Allows observers to participate in this experiment without passing the Ishihara Test on beforehand."
+                        <span class="hint-trigger" data-hint="Allows observers to participate in this experiment without passing the Ishihara Test on beforehand." 
                         data-hint-position="right">Allow Colourblind</span>
                     </label>
                 </div> <br/>
@@ -138,7 +130,7 @@
                     <label>
                         <input type="checkbox"/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Each pair of images will have their position flipped in the queue, leading to double the comparisons for the user."
+                        <span class="hint-trigger" data-hint="Each pair of images will have their position flipped in the queue, leading to double the comparisons for the user." 
                         data-hint-position="right">Same Pair Twice (Flipped)</span>
                     </label>
                 </div> <br/>
@@ -167,8 +159,8 @@
                 <div style="margin:20px 0px">
 					<button id="ex-add-instruction" onclick="return false;">Add Instruction</button>
 				 <button id="ex-add-image-set" onclick="return false;">Add Image Set</button>
-
-
+				
+                   
                     <button id="ex-add-instruction-history" onclick="return false;">Add Instruction From History</button>
                 </div>
             </fieldset>

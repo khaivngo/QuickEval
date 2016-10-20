@@ -5,14 +5,11 @@
 
 require_once('../../db.php');
 if (!isset($_SESSION['user'])) {
-    header("Location: ../../login.php");
-    exit;
+               header("Location: ../../login.php"); 
 }
-
 if($_SESSION['user']['userType'] > 2) {
 	return;
 }
-
 	$option = $_GET['option'];
 	if($option == "generateExperiment") {
    	try {
@@ -25,7 +22,7 @@ if($_SESSION['user']['userType'] > 2) {
 			if (!file_exists($targetDir . "/" . $fileName)) {
 				@mkdir($targetDir . "/" . $fileName ,0777, true);
 			}
-
+			
 			$zip->extractTo($targetDir . "/" . $fileName);
 			$zip->close();
 		} else {
@@ -35,52 +32,52 @@ if($_SESSION['user']['userType'] > 2) {
 		$data = file_get_contents($targetDir . "/".$fileName. "/experiment.txt");
 		$experiment = json_decode($data, true);
 		unlink($targetDir . "/".$fileName. "/experiment.txt");
-
+		
 		$data = file_get_contents($targetDir."/".$fileName. "/picture.txt");
 		$picture = json_decode($data, true);
 		unlink($targetDir."/".$fileName. "/picture.txt");
-
+		
 		$data = file_get_contents($targetDir."/".$fileName. "/experimentorder.txt");
 		$experimentorder = json_decode($data, true);
 		unlink($targetDir."/".$fileName. "/experimentorder.txt");
-
+		
 		$data = file_get_contents($targetDir."/".$fileName. "/infotype.txt");
 		$infotype = json_decode($data, true);
 		unlink($targetDir."/".$fileName. "/infotype.txt");
-
+		
 		$data = file_get_contents($targetDir."/".$fileName. "/instruction.txt");
 		$instruction = json_decode($data, true);
 		unlink($targetDir."/".$fileName. "/instruction.txt");
-
+		
 		$data = file_get_contents($targetDir."/". $fileName."/pictureorder.txt");
 		$pictureorder = json_decode($data, true);
 		unlink($targetDir."/". $fileName."/pictureorder.txt");
-
+		
 		$data = file_get_contents($targetDir."/".$fileName. "/pictureQueue.txt");
 		$picturequeue = json_decode($data, true);
 		unlink($targetDir."/".$fileName. "/pictureQueue.txt");
-
+		
 		$data = file_get_contents($targetDir."/".$fileName. "/pictureset.txt");
 		$pitureset = json_decode($data, true);
 		unlink($targetDir."/".$fileName. "/pictureset.txt");
-
-		$db->beginTransaction();
-		$sql = "INSERT INTO `experiment`
+		
+		$db->beginTransaction();	
+		$sql = "INSERT INTO `experiment` 
 		(`id`, `title`, `shortDescription`, `longDescription`,
-		 `date`, `isPublic`, `allowColourBlind`, `backgroundColour`,
-		 `allowTies`, `showOriginal`, `samePair`, `horizontalFlip`,
-		 `monitorDistance`, `lightType`, `naturalLighting`,
-		 `screenLuminance`, `whitePoint`, `whitePointRoom`,
-		 `ambientIllumination`, `person`, `experimentType`,
-		 `timer`, `inviteHash`)
-
+		 `date`, `isPublic`, `allowColourBlind`, `backgroundColour`, 
+		 `allowTies`, `showOriginal`, `samePair`, `horizontalFlip`, 
+		 `monitorDistance`, `lightType`, `naturalLighting`, 
+		 `screenLuminance`, `whitePoint`, `whitePointRoom`, 
+		 `ambientIllumination`, `person`, `experimentType`, 
+		 `timer`, `inviteHash`) 
+		 
 		 VALUES (
-		 NULL, :title, :shortdesc, :longdesc,
-		 CURRENT_TIMESTAMP,:public, :colorblind, :bgcolor,
-		 :allowties, :showOriginal, :samePair, :horizontalflip,
-		 :monitordistance, :lighttype, :naturallighting,
-		 :screenluminance, :whitepoint, :whitepointroom,
-		 :ambientIllumination, :person, :exType,
+		 NULL, :title, :shortdesc, :longdesc, 
+		 CURRENT_TIMESTAMP,:public, :colorblind, :bgcolor, 
+		 :allowties, :showOriginal, :samePair, :horizontalflip, 
+		 :monitordistance, :lighttype, :naturallighting, 
+		 :screenluminance, :whitepoint, :whitepointroom, 
+		 :ambientIllumination, :person, :exType, 
 		 :timer, :invHash);";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(':title',$experiment['title']);
@@ -106,7 +103,7 @@ if($_SESSION['user']['userType'] > 2) {
 		$sth->bindParam(':invHash', $experiment['inviteHash']);
 		$sth->execute();
 		$newExperimentId = $db->lastInsertId();
-
+		
 		//CategoryExperiment
 		if($experiment['experimentType'] == 3) {
 			$data = file_get_contents($experimentId. "/categoryname.txt");
@@ -119,7 +116,7 @@ if($_SESSION['user']['userType'] > 2) {
 				$sth->bindParam(':standardFlag', $cn['standardFlag']);
 				$sth->execute();
 				$newCategoryNameId = $db->lastInsertId();
-
+				
 				$sql = "INSERT INTO `experimentcategory` (`id`, `category`, `experiment`) VALUES (NULL, :categoryId, :experiment);";
 				$sth = $db->prepare($sql);
 				$sth->bindParam(':categoryId', $newCategoryNameId);
@@ -127,13 +124,13 @@ if($_SESSION['user']['userType'] > 2) {
 				$sth->execute();
 			}
 		}
-
+		
 		$sql = "INSERT INTO `experimentqueue` (`id`, `experiment`) VALUES (NULL, :experiment);";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(':experiment',$newExperimentId);
 		$sth->execute();
 		$NewExperimentQueue = $db->lastInsertId();
-
+		
 		foreach($infotype as $it) {
 			$newInfotypeId = null;
 			if($it['standardFlag'] == 1) {
@@ -145,7 +142,7 @@ if($_SESSION['user']['userType'] > 2) {
 					$result = $sth->fetch();
 					$newInfotypeId = $result['id'];
 				}
-			}
+			} 
 			if($newInfotypeId == null) {
 				$sql = "INSERT INTO `infotype` (`id`, `standardFlag`, `info`, `person`) VALUES (NULL, :standardFlag, :info, :person);";
 				$sth = $db->prepare($sql);
@@ -155,32 +152,32 @@ if($_SESSION['user']['userType'] > 2) {
 				$sth->execute();
 				$newInfotypeId = $db->lastInsertId();
 			}
-
+			
 			$sql = "INSERT INTO `experimentinfotype` (`id`, `experiment`, `infoType`) VALUES (NULL, :experiment, :infotype);";
 			$sth = $db->prepare($sql);
 			$sth->bindParam(':experiment', $newExperimentId);
 			$sth->bindParam(':infotype',$newInfotypeId);
 			$sth->execute();
 		}
-
-		$sortedPictures = sortPicturesToDatabase($picture, $pitureset, $db);
-
+		
+		$sortedPictures = sortPicturesToDatabase($picture, $pitureset, $db);		
+		
 		foreach($experimentorder as $exOrder) {
 			$newExOrder = $exOrder;
 			$newExOrder['experimentQueue'] = $NewExperimentQueue;
-
+			
 			if($exOrder['pictureQueue'] != null) {
 
 
 				$newPictureQueueId = insertPictureQueueToDatabase($picturequeue, $newExOrder['pictureQueue'], $db);
 				foreach($pictureorder as $po) {
-					//Prï¿½ver ï¿½ finne matchendes bilde til loopet pictureQueue
-					//Dersom $po matcher, sï¿½ skal den inn i databasen.
-					if($po['picturequeue'] == $exOrder['pictureQueue']) {
+					//Prøver å finne matchendes bilde til loopet pictureQueue
+					//Dersom $po matcher, så skal den inn i databasen.
+					if($po['picturequeue'] == $exOrder['pictureQueue']) {	
 						$newPictureId = findNewIdForPicture($sortedPictures, $po['picture']);	//Gets new ID for pictureOrder.picture
-
-						$sql = "INSERT INTO `pictureorder`
-								(`id`, `pOrder`, `picture`, `pictureQueue`)
+						
+						$sql = "INSERT INTO `pictureorder` 
+								(`id`, `pOrder`, `picture`, `pictureQueue`) 
 								VALUES (NULL, :pOrder, :picture, :pictureQueue);";
 						$sth = $db->prepare($sql);
 						$sth->bindParam(':pOrder', $po['pOrder']);
@@ -189,17 +186,17 @@ if($_SESSION['user']['userType'] > 2) {
 						$sth->execute();
 					}
 				}
-				//Finn all pictureOrder som hï¿½rer til pictureQueue
+				//Finn all pictureOrder som hører til pictureQueue
 				//Sett disse inn i database med ny pictureQueue og ny pictureId.
 				$newExOrder['pictureQueue'] = $newPictureQueueId;
 			} else if($exOrder['instruction'] != null) {
-
+				
 				$newInstructionId = insertInstructionToDatabase($instruction, $newExOrder['instruction'], $db);
 				$newExOrder['instruction'] = $newInstructionId;
 			}
 		insertExperimentOrderToDatabase($newExOrder, $db);
 		}
-
+		
 		$db->commit();
 		copyPicturesToCorrectFolder($sortedPictures, $targetDir, $db, $picture, $experiment);
 		echo json_encode(1);
@@ -207,13 +204,13 @@ if($_SESSION['user']['userType'] > 2) {
    		echo json_encode(0);
    		$db->rollBack();
    	}
-
+		
 }
 	else if($option == "cleanDirectory") {
 		$path = "../../uploads/zipfiles/" . $_SESSION['user']['id']. "/";
 		SureRemoveDir($path, true);
 	}
-
+	
 	/**
 	 * Will copy all pictures to their correct folder.
 	 * This is done LAST, after we know that the database is ok, in case something
@@ -228,7 +225,7 @@ if($_SESSION['user']['userType'] > 2) {
 				foreach($oldPictures as $picture) {
 					if($pictureId['oldId'] == $picture['id']) {
 						$picture['person'] = $oldExperiment['person'];
-						$oldTargetPath = "../../uploads/zipfiles/" . $_SESSION['user']['id'] .
+						$oldTargetPath = "../../uploads/zipfiles/" . $_SESSION['user']['id'] . 
 						"/randomName/uploads/" . $oldExperiment['person'] . "/" . $pictureSet['oldPictureset']
 						. "/" . $picture['name'];
 					}
@@ -236,7 +233,7 @@ if($_SESSION['user']['userType'] > 2) {
 				copy($oldTargetPath, $newTargetPath);
 			}
 		}
-
+	
 	$path = "../../uploads/zipfiles/" . $_SESSION['user']['id']. "/";
 	SureRemoveDir($path, true);
 }
@@ -258,7 +255,7 @@ if($_SESSION['user']['userType'] > 2) {
         closedir($dh);
         @rmdir($dir);
     }
-}
+}	
 /**
  * Will generate URL to a given picture.
  * @param $picture = All information about a picture from the database in an array.
@@ -267,11 +264,11 @@ if($_SESSION['user']['userType'] > 2) {
 function generateUrl($picture){
 		$index = strripos($picture[1],".");
 		$fileType = substr($picture[1],$index, strlen($picture[1]));
-		$url = "../../uploads/" . $picture['person'] . "/" . $picture[4] . "/" . $picture['url'] . $fileType;
+		$url = "../../uploads/" . $picture['person'] . "/" . $picture[4] . "/" . $picture['url'] . $fileType; 	
 		return $url;
 	}
-
-
+	
+	
 /**
  * Will get URL for a given pictureId.
  * @param $pictureId = ID from the database for the picture you want the URL from.
@@ -307,7 +304,7 @@ function getUrlForPicture($pictureId, $db) {
 		}
 		return $newId;
 	}
-
+	
 	/**
 	 * Function will match pictureSets with the according pictures.
 	 * @param $picturesArray Array containing pictures.
@@ -328,9 +325,9 @@ function getUrlForPicture($pictureId, $db) {
 			$sth->bindParam(':person', $_SESSION['user']['id']);
 			$sth->execute();
 			$newPictureSetId = $db->lastInsertId();
-
+			
 			$arr[$index]['newPictureset'] = $newPictureSetId;
-
+			
 			foreach($picturesArray as $picture) {		//Will find all pictures for the looped set.
 				if($picture['pictureSet'] == $pictureSet['id']) {
 					$sql = "INSERT INTO `picture` (`id`, `name`, `url`, `isOriginal`, `pictureSet`) VALUES (NULL, :name, :url, :isOriginal, :pictureSet);";
@@ -340,11 +337,11 @@ function getUrlForPicture($pictureId, $db) {
 					$sth->bindParam(':isOriginal', $picture['isOriginal']);
 					$sth->bindParam(':pictureSet', $newPictureSetId);
 					$sth->execute();
-
+					
 				    $p['oldId'] = $picture['id'];
 					$p['newId'] = $db->lastInsertId();
 					$arr[$index]['picture'][] = $p;
-
+					
 				    $sql = "UPDATE `pictureset` SET `pictureAmount` = pictureAmount+1 WHERE `pictureset`.`id` = :id;";
 				    $sth = $db->prepare($sql);
 				    $sth->bindParam(':id', $newPictureSetId);
@@ -369,7 +366,7 @@ function getUrlForPicture($pictureId, $db) {
 			}
 		}
 	}
-
+	
 	/**
 	 *  Will insert a given instruction into the database.
 	 *  @param $instructionArray an array containing all instructions for an experiment.
@@ -399,7 +396,7 @@ function getUrlForPicture($pictureId, $db) {
 	 * @return Newly inserted ID of the pictureQueue.
 	 */
 	function insertPictureQueueToDatabase($pictureQueueArray, $id, $db) {
-			foreach($pictureQueueArray as $pictureQueue) {
+			foreach($pictureQueueArray as $pictureQueue) {	
 				if($pictureQueue['id'] == $id) {
  					$sql = "INSERT INTO `picturequeue` (`id`, `title`) VALUES (NULL, :title);";
 					$sth = $db->prepare($sql);
@@ -416,7 +413,7 @@ function getUrlForPicture($pictureId, $db) {
 	 * @param $db PDO connection to the database.
 	 */
 	function insertExperimentOrderToDatabase($experimentOrder, $db) {
-		$sql = "INSERT INTO `experimentorder` (`eOrder`, `pictureSet`, `experimentQueue`, `pictureQueue`, `instruction`)
+		$sql = "INSERT INTO `experimentorder` (`eOrder`, `pictureSet`, `experimentQueue`, `pictureQueue`, `instruction`) 
 				VALUES (NULL, NULL, :experimentQueue, :pictureQueue, :instruction);";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(':experimentQueue', $experimentOrder['experimentQueue']);

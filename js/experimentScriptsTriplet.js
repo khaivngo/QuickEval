@@ -387,8 +387,6 @@ function nextStep(receivedObject) {
         $('#popupButtons').css("margin-left", "46%");
         $('#cancel-experiment').trigger('click');
     }
-
-    console.log("Next step ok");
 }
 
 /**

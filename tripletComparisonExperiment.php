@@ -53,13 +53,12 @@ if (isset($_GET["invite"])) {
     <script src="js/popup.js"></script>
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/scientist/scientistScripts.js"></script>
-    <script src="js/Observer/alterExperimentPositionTriplet.js"></script>
+    <script src="js/Observer/alterExperimentPosition.js"></script>
     <script src="js/experimentScriptsTriplet.js"></script>
     <script src="js/tripletExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
 </head>
-<body class="metro" style="background-color:#808080;" onload="show();
-            start();">
+<body class="metro" style="background-color:#808080;" onload="show(); start();">
 
 <div id="popupContact" style="">
     <p id="contactArea" class="contactArea-center" style="font-size:18px;">
@@ -136,7 +135,7 @@ if (isset($_GET["invite"])) {
         <div id="original" style="margin-left: 0; width:22%; height:70%; display:inline-block;">
             <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
             <section id="set2">
-                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
                     <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan3" class="panzoom">
@@ -156,7 +155,7 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
             <section id="set2">
-                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan1" class="panzoom">
@@ -176,7 +175,7 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
             <section id="set2">
-                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
                     <a href="" id="middle-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan4" class="panzoom">
@@ -197,7 +196,7 @@ if (isset($_GET["invite"])) {
                  </div>
              </div>
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan2" class="panzoom">

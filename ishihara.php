@@ -64,7 +64,7 @@
                                                                         </div>
                                                                     </div>
                                                                      <div class ="offset3">
-                                                                    <div class="span2">
+                                                                    <div class="span2" ">
                                                                         <div class="input-control text">
                                                                             <input id="picture2" type="text" value="" placeholder="Palet number"/>
                                                                             <button class="btn-clear"></button>
@@ -122,12 +122,12 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
                     </div>
                 </div>
 
-                <div class="offset5">
+                <div class="offset5"> 
                     <div id="submit-div" style="margin-top: 20px">
                         <button id="submit" class="button primary" style="margin:20px ">Submit</submit>
                     </div>

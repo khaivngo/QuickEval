@@ -1,36 +1,37 @@
 <?php
-    require_once('db.php');
-    require_once('functions.php');
+require_once('db.php');
+require_once('functions.php');
 
-    if (!isset($_SESSION['user']['id'])) {
-        if (isset($_GET["invite"])) {
-            $hash = $_GET["invite"];
-            $url = "pairComparisonExperiment.php?invite=";
-
-            redirectAfterLogin($url . $hash);
-        } else {
-            header("Location: login.php");
-            exit;
-        }
-    }
-
+if (!isset($_SESSION['user']['id'])) {
     if (isset($_GET["invite"])) {
         $hash = $_GET["invite"];
         $url = "pairComparisonExperiment.php?invite=";
 
-        try {
-            $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
-
-            $res = $stmt->fetchAll();
-            $_SESSION['experimentId'] = $res[0]['id'];
-        } catch (Exception $ex) {}
-
+        redirectAfterLogin($url . $hash);
     } else {
-        $_SESSION['experimentId'] = $_POST['experimentId'];
+        header("Location: login.php");
     }
+
+}
+if (isset($_GET["invite"])) {
+    $hash = $_GET["invite"];
+    $url = "pairComparisonExperiment.php?invite=";
+
+
+    try {
+        $stmt = $db->query("SELECT id FROM experiment WHERE inviteHash = '" . $hash . "'");
+
+        $res = $stmt->fetchAll();
+        $_SESSION['experimentId'] = $res[0]['id'];
+    } catch (Exception $ex) {
+
+    }
+} else {
+    $_SESSION['experimentId'] = $_POST['experimentId'];
+}
 ?>
-<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -46,10 +47,6 @@
     <script src="js/jquery/test/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
-    <script src="canvas-image-marker/Helper.js"></script>
-    <script src="canvas-image-marker/Annotation.js"></script>
-    <script src="canvas-image-marker/canvas-image-marker.js"></script>
-
     <!-- Other JS & plugins -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
@@ -59,9 +56,6 @@
     <script src="js/Observer/alterExperimentPosition.js"></script>
     <script src="js/experimentScripts.js"></script>
     <script src="js/stopwatch.js"></script>
-
-    <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
 </head>
 
 <body class="metro" style="background-color:#808080;" onload="show();
@@ -108,7 +102,7 @@
 </div>
 <div id="backgroundPopup3"></div>
 
-<!----------------------------------------------------------------------------------------->
+<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 
 <div id="paircomparison">
@@ -140,20 +134,11 @@
 
         <div id="left-reproduction" class="" style=" display:inline-block; margin-left: 0; width:30%; height: 70%;">
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan1" class="panzoom">
-                        <!-- <img id="pictureLeft" class="picture" src="flower.jpeg"/> -->
-                        <div class="canvas-container"
-                            data-image-url="images/initiatePicture.png"
-                            data-picture-id=""
-                            data-picture-queue=""
-                            data-experiment-id="<?php echo $_SESSION['experimentId']; ?>"
-                            oncontextmenu="return false;">
-        	                <!-- image canvas goes here -->
-        	            </div>
-
+                        <img id="pictureLeft" class="picture" src="flower.jpeg"/>
                     </div>
                 </div>
             </section>
@@ -162,7 +147,7 @@
 
         <div id="original" class="" style="margin-left: 2%; width:30%; height:70%; display:inline-block; ">
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan3" class="panzoom">
@@ -177,19 +162,11 @@
         <div id="right-reproduction" class="right pictureContainer"
              style="display:inline-block; margin-left: 2%; width:30%; height: 70%">
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan2" class="panzoom">
-                        <!-- <img id="pictureRight" class="picture" src="images/initiatePicture.png"/> -->
-                        <div class="canvas-container"
-                            data-image-url="images/initiatePicture.png"
-                            data-picture-id=""
-                            data-picture-queue=""
-                            data-experiment-id="<?php echo $_SESSION['experimentId']; ?>"
-                            oncontextmenu="return false;">
-        	                <!-- image canvas goes here -->
-        	            </div>
+                        <img id="pictureRight" class="picture" src="images/initiatePicture.png"/>
                     </div>
                 </div>
             </section>
@@ -207,7 +184,6 @@
         <button class="button" id="button-next" style="width: 100%; height:25px;  ">Next</button>
     </div>
 </div>
-
 
 </body>
 </html>

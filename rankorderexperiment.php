@@ -10,7 +10,6 @@ if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
-        exit;
     }
 }
 
@@ -22,12 +21,14 @@ if (isset($_GET["invite"])) {
 
         $res = $stmt->fetchAll();
         $_SESSION['experimentId'] = $res[0]['id'];
-    } catch (Exception $ex) {}
+    } catch (Exception $ex) {
+
+    }
 } else {
+
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -44,10 +45,6 @@ if (isset($_GET["invite"])) {
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
-    <script src="canvas-image-marker/Helper.js"></script>
-    <script src="canvas-image-marker/Annotation.js"></script>
-    <script src="canvas-image-marker/canvas-image-marker.js"></script>
-
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
 
@@ -60,14 +57,22 @@ if (isset($_GET["invite"])) {
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
 
-    <link rel="stylesheet" href="canvas-image-marker/libs/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/marking-tool.css" media="screen" title="no title" charset="utf-8">
+
+    <?php
+    //    if (!isset($_SESSION['user'])) {
+    //      header("Location: login.php");
+    // }
+    ?>
+
 </head>
 
-<!-- Starts timer -->
-<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show(); start();">
+<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
-<div id="popupContact">
+<!--Starts timer-->
+<body class="metro" style="background-color:#808080; overflow:hidden;" onload="show();
+            start();">
+
+<div id="popupContact" style="">
     <p id="contactArea" style="font-size:18px;">
         Press ESC, Continue or anywhere else to close and continue.
         <br/><br/>
@@ -130,7 +135,7 @@ if (isset($_GET["invite"])) {
 <div id="backgroundPopup4"></div>
 
 
-<!------------------------------->
+<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 <div id="header-div">
     <div class="inner-header">
@@ -159,21 +164,11 @@ if (isset($_GET["invite"])) {
 
     <div id="drop-left" class="" style="margin-left: 0; display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan1" class="panzoom">
-                    <!-- <img class="picture" src="images/initiatePicture.png"/> -->
-
-                    <div class="canvas-container picture"
-                        data-experimentId="<?php echo $_SESSION['experimentId']; ?>"
-                        data-image-url="images/initiatePicture.png"
-                        data-picture-id=""
-                        data-picture-queue=""
-                        oncontextmenu="return false;">
-    	                <!-- image canvas goes here -->
-    	            </div>
-
+                    <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
         </section>
@@ -182,7 +177,7 @@ if (isset($_GET["invite"])) {
 
     <div id="original" style="margin-left:1%; margin-right:1%; display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
                 <div id="pan3" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
@@ -194,21 +189,11 @@ if (isset($_GET["invite"])) {
 
     <div id="drop-right" class="" style=" display:inline-block; height: 50%; width: 30%;">
         <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; max-height: 600px; width: 100%;">
+            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                 <div id="pan2" class="panzoom">
-                    <!-- <img class="picture" src="images/initiatePicture.png"/> -->
-
-                    <div data-experimentId="<?php echo $_SESSION['experimentId']; ?>"
-                        class="canvas-container"
-                        data-image-url="images/initiatePicture.png"
-                        data-picture-id=""
-                        data-picture-queue=""
-                        oncontextmenu="return false;">
-    	                <!-- image canvas goes here -->
-    	            </div>
-
+                    <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
         </section>
@@ -229,8 +214,6 @@ if (isset($_GET["invite"])) {
 </div>
 
 <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
-
-
 
 </body>
 </html>

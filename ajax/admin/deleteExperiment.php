@@ -12,22 +12,13 @@ try {
     $stmt = $db->exec("DELETE FROM experiment WHERE id = '" . $experimentId . "' AND person = '" . $userId . "'");
 
    // $stmt->execute(array(':id' => $_POST['experimentId'],
+
 	//));
-
-    require_once "../../classes/DB.php";
-
-    DB::run_query(
-        "DELETE FROM artifactmark WHERE experiment_id = ?", [
-            $experimentId
-        ]
-    );
-
+	
 	echo json_encode($stmt);
-    exit;
 
 } catch (Exception $ex) {
    // ChromePhp::log($ex->getMessage());
 }
-
 
 ?>

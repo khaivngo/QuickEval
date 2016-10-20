@@ -23,7 +23,7 @@ function generateRandomPictureQueue(imagesetId, rightAndLeft) {
 
 /**
  * @param pictureQueueId is the queue which to add pictures to. if it is 0 then a new queue is begun.
- * 
+ *
  */
 function setPictureQueue(imagesArray, rightAndLeft, pictureQueueId) {
 	var pictureQueueId;

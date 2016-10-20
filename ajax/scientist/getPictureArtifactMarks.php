@@ -3,22 +3,15 @@
 /*****
  * Get all artifact marks associated with a specific picture.
  */
+require_once "../../db.php";
 
-require_once "../../classes/Request.php";
-require_once "../../classes/DB.php";
+$experiment_id = isset($_POST['experiment_id']) ? $_POST['experiment_id'] : 0;
+$picture_queue = isset($_POST['picture_queue']) ? $_POST['picture_queue'] : 0;
 
-# Get the values from the AJAX request
-$experiment_id = Request::post('experiment_id');
-$picture_queue = Request::post('picture_queue');
-$picture_id =    Request::post('picture_id');
-
-# Get all the artifact marks for a specific picture
-$artifact_marks = DB::run(
-    "SELECT * FROM artifactmark WHERE picture_id = ? AND picture_queue = ?", [
-        $picture_id,
-        $picture_queue
-    ]
-);
+$stmt = $db->prepare("SELECT * FROM artifactmark WHERE picture_queue = ?");
+$stmt->bindParam(1, $picture_queue);
+$stmt->execute();
+$artifact_marks = $stmt->fetchAll(PDO::FETCH_OBJ);
 
 # Return a json encoded database response
 echo json_encode($artifact_marks);

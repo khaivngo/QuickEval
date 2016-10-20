@@ -14,8 +14,29 @@ $(document).ready(function () {
     })();
 
 
+
+
+    ////Automatic panning reset
+    //$('#reproduction .panzoom, #original .panzoom').mousedown(function () {
+    //    console.log('Mousedown');
+    //    $('body').mouseup(function () {
+    //        console.log('Mouseup');
+    //        $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+    //    });
+    //
+    //    $('body').mouseleave(function () {
+    //        // Create a new mouse up object with 'which' specified to be 1.
+    //        var e = $.Event("mouseup", {which: 1});
+    //        // Triggers it on the body.
+    //        $("body").trigger(e);
+    //        console.log("leave")
+    //    });
+    //
+    //});
+
     $('#panzoom-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
+
     });
 
     $('#reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full
@@ -50,6 +71,7 @@ $(document).ready(function () {
     startNewExperimentForObserver(experimentId);
     loadExperiment2();
     fillCategories();
+
 });
 
 /**
@@ -146,8 +168,8 @@ function loadOriginal(originalImageUrl) {
  * @returns {undefined}
  */
 function loadCategoryReproduction(pictureOrderId, reproductionImageUrl) {
-    $('#reproduction').find('.canvas-container').attr('data-image-url', reproductionImageUrl);
-    $('#reproduction').find('.canvas-container').attr('id', pictureOrderId);
+    $('#reproduction').find('img').attr('src', reproductionImageUrl);
+    $('#reproduction').find('img').attr('id', pictureOrderId);
     $('#reproduction-link').attr('href', reproductionImageUrl);
 }
 

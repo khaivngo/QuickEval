@@ -5,9 +5,8 @@
 require_once('../../db.php');
 include_once('../../functions.php');
 if (!isset($_SESSION['user'])) {
-   header("Location: ../../login.php");
-   exit;
-}
+               header("Location: ../../login.php"); 
+            }
 if($_SESSION['user']['userType'] > 2) {
 	return;
 }
@@ -37,6 +36,6 @@ if(count($pictureQueue) == 0) {
 	echo json_encode(0);
 } else {
 	echo json_encode($pictureQueue);
-
+	
 }
 ?>

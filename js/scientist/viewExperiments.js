@@ -14,10 +14,6 @@ function viewExperiment($experimentId) {
     //Gets experimentdata
     var data = getExperimentById($experimentId);
 
-    // get all marks for heatmap
-    // getArtifactMarks($experimentId);
-    getImages($experimentId);
-
     //Removes lists to display experiment
     $('.listview-outlook').siblings(':eq(0)').remove();
     $('.listview-outlook').remove();
@@ -42,7 +38,7 @@ function viewExperiment($experimentId) {
     getExperimentStatisticsOneExperiment($experimentId);
 
     //Generated invite url based on hash
-    var fullPath = path + url + '?invite=' + data['inviteHash']
+    var fullPath = path + url + '?invite=' + data['inviteHash'];
 
     $('#experiment-url').html('Invite URL: <a href="' + fullPath + '" target = "_blank">' + fullPath + '</a>');
 
@@ -57,136 +53,12 @@ function viewExperiment($experimentId) {
         $('#set-public').show();
         $('#set-hidden').hide();
     }
+
+    // Experiment Type Artifact Marking
+    if (type == 4) {
+        injectHeatmaps($experimentId);
+    }
 }
-
-function displayHeatmap() {
-    /* remove any previously added images, if this is the second time we call this function */
-    $('.canvas-container').remove();
-
-    var experimentID = $('select').find(':selected').attr('data-experiment-id');
-    var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
-      var pictureURL = $("select").find(':selected').attr('data-image-url');
-       var pictureID = $("select").find(':selected').attr('data-image-id');
-       var pictureName = $("select").find(':selected').attr('data-image-name');
-
-    var output =
-        '<div class="canvas-container" style="position: relative;"' +
-            ' data-image-url="' + pictureURL + '"' +
-            ' oncontextmenu="return false;"' +
-            ' data-experiment-id="' + experimentID + '">' +
-        '</div>';
-
-    $('#pan').append(output);
-    $('#pan').panzoom();
-
-    /* run our plugin on the newly created canvas-container element
-     * pass the ID and queue of the picture */
-    $('.canvas-container').canvasHeatmap({
-        experimentID: experimentID,
-        pictureID: pictureID,
-        pictureQueue: pictureQueue,
-        pictureName: pictureName
-    });
-
-}
-
-/**
- * Get all images for a experiment and create a drowdown list of them.
- */
-function getImages(experimentId) {
-    $.ajax({
-        url: 'ajax/scientist/getAllExperimentPictures.php',
-        type: 'POST',
-        data: {
-            experiment_id: experimentId
-        },
-        dataType: 'json',
-        encode: true,
-        cache: false
-    })
-    .done(function(data) {
-        if (data.length > 0) {
-            // id of person who owns/created experiment, needed in the path to the image
-            var owner = data[1][0].person;
-            // loop through each experiment image and create a dropdown list with the image names
-            var output = '<div id="heatmap-options">';
-                output += '<select id="displayHeatmapImage" style="width: 200px; padding: 10px;">';
-                    output += '<option selected="true" disabled>Choose image</option>';
-                    data[0].forEach(function(image) {
-                        output +=
-                            '<option data-image-url="uploads/' + owner + '/' + image.pictureSet + '/' + image.url + '.' + getFileExtension(image.name) + '"' +
-                            ' data-image-name=' + image.name + ' data-image-id= "' + image.id + '" data-picture-queue="' + image.pictureQueue + '" data-experiment-id="' + experimentId + '" class="open-heatmap">' + image.name + '</option>';
-                    });
-                output += "</select>";
-
-                output += ' <button style="padding: 10px 15px;" class="primary heatmap-settings-button open-heatmap">Heatmap settings <i class="fa fa-cog"></i></button>';
-               // output += '<a id="downloadImage">';
-                    //output += '<button style="margin-left: 10px; padding: 10px 15px;" class="primary" type="button">Download image</button>';
-                //output += '</a>';
-                //output += '<button style="padding: 10px 15px;" id="export-heatmap" class="primary heatmap-button">Export heatmap</button>';
-            output += '</div>';
-
-            $('#heatmap-results h3').after(output);
-
-            //$('#pan').parent().append('<button style="padding-top: 5px; z-index: 900;margin: 5px; position: absolute; top: 0;right:0;" class="heatmap-settings-button"><i class="fa fa-2x fa-cog"></i></button>');
-
-
-            // display heatmap of clicked picture
-            // $('.open-heatmap').on('click', displayHeatmap);
-
-            $('#displayHeatmapImage').on('change', displayHeatmap);
-
-            // bind a open/close event on heatmap settings button click
-            $('.heatmap-settings-button').on('click', function() {
-
-				// Have to do this manually because the toggle slider has a delay,
-				// which means the heatmap panel uses 200 ms to show/hide.
-				var status =  ( $('#heatmap-panel-container').attr('data-status') == 'true') ? false : true;
-
-				$('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
-				setHeatmapScrollPos(status);
-            });
-
-            $('#close-heatmap-panel').on('click', function() {
-                $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
-				setHeatmapScrollPos(false);
-            });
-
-			$(document).keyup(function(e) 						// User keyboard listener:
-			{
-				if (e.keyCode == 27 ) 							// Escape button:
-				{
-					$('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
-					setHeatmapScrollPos(false);
-				}
-			});
-        }
-    })
-	.error(function(request, status, error) {
-		console.log(request.responseText);
-	});
-}
-
-function setHeatmapScrollPos(status)
-{
-	if( status )
-	{
-		$('body,html').animate({ scrollTop: $('#heatmap-results h3').position().top - 20}, 500)
-		$('body').css('overflow-y','hidden');
-		$('#heatmap-panel-container').attr('data-status','true');
-		return false;
-	}
-	else
-	{
-		$('body').css('overflow-y','scroll');
-		$('#heatmap-panel-container').attr('data-status','false');
-	}
-}
-
-function getFileExtension(filename) {
-    return filename.split('.').pop();
-}
-
 
 /**
  * Sets up click listeners for list
@@ -250,7 +122,6 @@ function setUpExperimentList() {
 
     getExperiments().forEach(function (t) {
         element = $('<a href="#" class="list" experimentid="' + t['id'] + '"><div class="list-content">' + t['title'] + '</div></a>');
-
         t['isPublic'] == "1 = Public" ? $('.public-experiments').append(element) : $('.hidden-experiments').append(element);
     });
 }
@@ -297,31 +168,6 @@ function setUpListeners() {
         var experimentId = $('#experiment-name').attr('experimentid');
         generateSQLForExperiment(experimentId);
     });
-
-    var experimentId = $('#experiment-name').attr('experimentid');
-
-
-    $(document.body).off('click', '#export-heatmap');
-    $(document.body).on('click', '#export-heatmap', function () {
-        var experimentID = $('select').find(':selected').attr('data-experiment-id');
-        var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
-         var pictureName = $("select").find(':selected').attr('data-image-name');
-           var pictureID = $("select").find(':selected').attr('data-image-id');
-    //     var pictureWidth = $("select").find(':selected').attr('data-image-id');
-    //    var pictureHeight = $("select").find(':selected').attr('data-image-id');
-
-        // check that an image has been selected
-        if (pictureQueue != 'undefined') {
-            window.open(
-                'exportHeatmap.php?id=' + experimentID +
-                '&pictureQueue=' + pictureQueue +
-                '&pictureID=' + pictureID +
-                '&pictureName=' + pictureName,
-                '_blank'
-            );
-        }
-    });
-
     $(document.body).off('click', '#confirm-delete');
     $(document.body).on('click', '#confirm-delete', function () {
         var experimentId = $('#experiment-name').attr('experimentid');
@@ -377,7 +223,6 @@ function clearResultsConfirm() {
  * @param experimentId
  */
 function clearResultsForExperiment(experimentId) {
-    console.log(experimentId);
     $.ajax({
         url: 'ajax/observer/deleteOldResults.php',
         data: {
@@ -511,14 +356,12 @@ function getExperimentResults($experimentId) {
 
     return result;
 }
-
 /**
  * Displays all results on screen based on experiment type
  * @param  {int} $experimentId id of experiment
  */
 function printResults($experimentId) {
     var data = getExperimentResults($experimentId);
-    console.log(data + "awdadd");
     var experimentType = data[0];
     var experimentResults = data[1];
 
@@ -2007,247 +1850,158 @@ function getExperimentStatisticsOneExperiment($experimentId) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*-------------------------------------
+            Heatmap
+--------------------------------------*/
+function injectHeatmaps($experimentId) {
+    $.ajax({
+        url: 'ajax/scientist/heatmapResults.html',
+        type: 'POST',
+        cache: false
+    })
+    .done(function(html) {
+        $('#experiment-results').before(html);
+        $('#no-results-warning').empty();
+        setupHeatmapImages($experimentId);
+    });
+}
 
 
 /**
- *  Create a matrix of the experiment image with marked points as data.
- *	@param  {array}  The array with marked points.
- *	@return {array}	 The matrix.
+ * Get all images for a experiment and create a drowdown list of them.
  */
-function createMatrix(data)
-{
-	var t0 = performance.now();
-	var matrix = [];
+function setupHeatmapImages(experimentId) {
+    $.ajax({
+        url: 'ajax/scientist/getAllExperimentPictures.php',
+        type: 'POST',
+        data: {
+            experiment_id: experimentId
+        },
+        dataType: 'json',
+        encode: true,
+        cache: false
+    })
+    .done(function(experimentImages) {
+        var dropdownList = createDropdownMarkup(experimentImages, experimentId);
+        $('#heatmap-image-select').append(dropdownList);
 
-	// Init matrix: Very good performance:
-	for (var i = 0; i < image.width; i++)
-	{
-		matrix[i] = [];
-		for (var j = 0; j < image.height; j++)
-		{
-			matrix[i][j] = {val: 0};
-		}
-	}
+        $('#displayHeatmapImage').on('change', displayHeatmap);
 
-	var t1 = performance.now();
-	console.log('Init matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
-
-	var t2 = performance.now();
-
-	// Calc matrix: Very good Performance:
-	for(var i = 0; i < data.length; i++)
-	{
-		matrix[ data[i][0] ][ data[i][1] ].val++;
-	}
-
-	var t3 = performance.now();
-	console.log('Calc matrix:' + Math.round(t3 - t2) / 1000 + ' seconds.');
-
-	return matrix;
+        setupHeatmapEventListeners();
+    });
 }
 
 /**
- *  Generate color for the heatmap.
- *	@param  {Int}	  The current intersection value for the pixel.
- *	@param  {Int}	  The highest value of intersections.
- *	@return {String}  color in hsl format.
+ *
  */
-function heatmapColor(cur, max, scaleType, huePassed, satPassed)
+function setHeatmapScrollPos(status)
 {
-	var valPerc = ( (cur-1) / (max-1) );
-	var color;
-
-	function hueScale()
+	if( status )
 	{
-		var hueLow = 125;						// Green value in hue scale
-		var hue = hueLow - (hueLow * valPerc);
-		color = 'hsl(' + hue + ',50%,50%)';
-
-		return color;
-	}
-
-	function grayScale(hue, sat)
-	{
-		var light = valPerc * 100;
-		var hueStd = 0;
-
-		var color = 'hsl(' + hue + ',' + sat + '%,' + light + '%)';
-
-		return color;
-	}
-
-	switch(scaleType)
-	{
-		case 0: return grayScale(huePassed, satPassed);
-		case 1: return hueScale();
-	}
-
-}
-/**
- * Render the legend scale for the heatmap.
- *	@param  {Int}	  The scale type, 0: monochromatic, 1: hsl.
- *	@param  {Int}	  The hue value.
- *	@param  {Int}	  The saturation value.
- *  @return {Void}
- */
-function renderHeatmapLegend(scaleType, hue, sat)
-{
-	var colorStep = 0;
-	var RANGE = 10;
-
-	var htmlScale = "";
-
-	$('#heatmapLegend').remove();
-
-	switch (scaleType)
-	{
-		case 0:
-			colorStep = 100 / RANGE;
-
-			htmlScale += '<div id = "heatmapLegend">';
-
-			for(var i = 0; i < RANGE; i++)
-			{
-				var color = 'hsl(' + hue + ',' + sat + '%,' + colorStep * i + '%)';
-				htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';
-			}
-
-			htmlScale += '</div>'
-			$('#heatmap-panel-container').prepend(htmlScale);
-			break;
-
-		case 1:
-			colorStep = 125 / RANGE;
-
-			htmlScale += '<div id = "heatmapLegend">';
-
-			for(var i = RANGE-1; i >= 0; i--)
-			{
-				var color = 'hsl(' + colorStep * i + ',50%, 50%)';
-				htmlScale += '<div class = "scaleItem" style = "background-color:'+color+'"></div>';
-			}
-
-			htmlScale += '</div>'
-			$('body').append(htmlScale);
-			break;
-	}
-}
-
-/**
- *  Draw the matrix in canvas as heatmap.
- *	@param  {array}	  The matrix data to draw.
- *	@param  {Int}	  The hue value for the heatmap.
- *	@param  {Int}	  The saturation value for the heatmap.
- *	@param  {Int}	  The scale type, 0: grayscale, 1: hsl.
- *	@return {Void}.
- */
-function drawMatrixCanvas(data, hue, sat, scaleType)
-{
-	var t0 = performance.now();
-	var maxVal = 0;
-
-	// Get max intersection value:
-	for(var i = 0; i < data.length; i ++)
-	{
-		for(var j= 0; j < data[i].length; j ++)
-		{
-			if(i == 0)
-				maxVal = data[i][j].val;
-			else
-			{
-				if(data[i][j].val > maxVal)
-					maxVal = data[i][j].val;
-			}
-		}
-	}
-
-	// Draw matrix with heatmap:
-	for(var i = 0; i < data.length; i++)
-	{
-		for(var j= 0; j < data[i].length; j ++)
-		{
-			if(data[i][j].val > 0)
-			{
-				var point = [i,j];
-				matrixCtx.fillStyle = heatmapColor(data[i][j].val, maxVal, scaleType, hue, sat);
-				matrixCtx.fillRect( point[0], point[1], 1, 1 );
-			}
-		}
-	}
-
-	renderHeatmapLegend(scaleType, hue, sat);
-
-	var t1 = performance.now();
-	console.log('Render matrix:' + Math.round(t1 - t0) / 1000 + ' seconds.');
-}
-
-/**
- * Calculate total pixel points for all polygons.
- * Estimates from the current savedShapes.
- * @return {Array} Array of every marked pixel.
- */
-function calcPolygonPoints()
-{
-	if(savedShapes.length > 0 )
-	{
-		//console.log(savedShapes);
-		var hue = $('#hueLevel').val();
-		var sat = $('#satLevel').val();
-		var scale = 0;
-
-		var t0 = performance.now();
-		var allMarkedPoints = [];											// Store all marked pixels.
-
-		for (var i = 0; i < savedShapes.length; i++)
-		{
-			for(var j = 0; j < savedShapes[i].fill.length; j ++)
-			{
-				allMarkedPoints.push([savedShapes[i].fill[j].x, savedShapes[i].fill[j].y] );
-			}
-		}
-
-		//console.log('Before removing dupes: ' + allMarkedPoints.length);
-		//allMarkedPoints = removeDupeVerts(allMarkedPoints);					// Remove duplicated vertices.
-		//console.log('After removing dupes: ' + allMarkedPoints.length);
-
-		if( $('#hueScale[type=checkbox]').is(':checked') )
-			scale = 1;
-
-
-		var matrix = createMatrix(allMarkedPoints);							// Array with all matrixes and intersect value.
-		drawMatrixCanvas(matrix, hue, sat, scale);
-
-		//drawMatrixTable(matrix);
-
-		var t1 = performance.now();
-		console.log("Render Heatmap took total " + Math.round(t1 - t0) / 1000 + " seconds. \n\n");
-
-		//return allMarkedPoints;
+		$('body,html').animate({ scrollTop: $('#heatmap-results h3').position().top - 20}, 500)
+		$('body').css('overflow-y','hidden');
+		$('#heatmap-panel-container').attr('data-status','true');
+		return false;
 	}
 	else
-		alert('No data in database.');
+	{
+		$('body').css('overflow-y','scroll');
+		$('#heatmap-panel-container').attr('data-status','false');
+	}
+}
 
+/**
+ *
+ */
+function setupHeatmapEventListeners() {
+    $('.heatmap-settings-button').on('click', function() {
+        // Have to do this manually because the toggle slider has a delay,
+        // which means the heatmap panel uses 200 ms to show/hide.
+        var status =  ( $('#heatmap-panel-container').attr('data-status') == 'true') ? false : true;
+
+        $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+        setHeatmapScrollPos(status);
+    });
+
+    $('#close-heatmap-panel').on('click', function() {
+        $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+        setHeatmapScrollPos(false);
+    });
+
+    // User keyboard listener
+    $(document).keyup(function(e) {
+        // Escape button
+        if (e.keyCode == 27) {
+            $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+            setHeatmapScrollPos(false);
+        }
+    });
+}
+
+/**
+ * Append the selected image with the heatmap overlay.
+ */
+function displayHeatmap() {
+    /* remove any previously added images, if this is the second time we call this function */
+    $('.canvas-container').empty();
+
+    var experimentID = $('select').find(':selected').attr('data-experiment-id');
+    var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
+      var pictureURL = $("select").find(':selected').attr('data-image-url');
+       var pictureID = $("select").find(':selected').attr('data-image-id');
+     var pictureName = $("select").find(':selected').attr('data-image-name'); // used in the generation of the CSV file
+
+    $('#pan').panzoom();
+
+    /* run our plugin on the newly created canvas-container element
+     * pass the ID and queue of the picture */
+    $('.canvas-container').canvasHeatmap({
+        experimentID: experimentID,
+        pictureID: pictureID,
+        pictureQueue: pictureQueue,
+        pictureName: pictureName,
+        imageUrl: pictureURL
+    });
+
+}
+
+/**
+ * Create the HTML for a select dropdown of all experiment pictures.
+ *
+ * @return {string}
+ */
+function createDropdownMarkup(images, experimentId) {
+    // loop through each experiment image and create a dropdown list with the image names
+    var output = '<div id="heatmap-options">';
+        output += '<select id="displayHeatmapImage" style="width: 200px; padding: 10px;">';
+            output += '<option selected="true" disabled>Choose image</option>';
+
+            images[0].forEach(function(image) {
+                output +=
+                    '<option data-image-url="uploads/' + images[1][0].person + '/' + image.pictureSet + '/' + image.pictureurl + '.' + getFileExtension(image.picturename) + '"' +
+                        ' data-image-name=' + image.picturename +
+                        ' data-image-id= "' + image.pictureid +
+                        '" data-picture-queue="' + image.pictureorder +
+                        '" data-experiment-id="' + experimentId +
+                    '" class="open-heatmap">' +
+                        image.picturename +
+                    '</option>';
+            });
+        output += "</select>";
+
+        output +=' <button style="padding: 10px 15px;" class="primary heatmap-settings-button open-heatmap">' +
+                        'Heatmap settings <i class="fa fa-cog"></i>' +
+                  '</button>';
+    output += '</div>';
+
+    return output;
+}
+
+/**
+ * Returns the extension from a filename.
+ *
+ * @return {string}
+ */
+function getFileExtension(filename) {
+    return filename.split('.').pop();
 }

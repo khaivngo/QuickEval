@@ -29,14 +29,14 @@ $(document).ready(function() {
         inject("ajax/scientist/viewExperiments.html");
         setActive($(this));
     });
-
+    
     $("#import-experiment").click(function() {
     	$('#right-panel').empty();
         generateUploaderImportExperiment();
         setActive($(this));
     });
-
-
+    
+    
 
 
     //------------------------- OTHER --------------------------------//
@@ -90,3 +90,12 @@ function setActive($target) {
     $target.siblings().removeClass("active");
     $target.addClass("active");
 }
+
+function getUsername() {
+    var username = "Christopher Dokkeberg";
+    return username;
+}
+
+
+
+

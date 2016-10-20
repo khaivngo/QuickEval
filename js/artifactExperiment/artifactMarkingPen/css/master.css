@@ -1,0 +1,216 @@
+body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+::-webkit-input-placeholder { font-style: italic; font-size: 14px; }
+         ::-moz-placeholder { font-style: italic; font-size: 14px; }
+     :-ms-input-placeholder { font-style: italic; font-size: 14px; }
+          :-moz-placeholder { font-style: italic; font-size: 14px; }
+ textarea:placeholder-shown { font-style: italic; font-size: 14px; }
+
+.canvas-container {
+    margin: 0;
+    padding: 0;
+    /* make sure our absolute positioned annotations
+     * are placed relative to the canvas */
+    position: relative;
+    /*left: -50%;*/
+}
+
+.marking-tool-panel {
+    z-index: 200;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.mode {
+    display: flex;
+    justify-content: center;
+}
+
+.mode:nth-child(1) {
+    margin-bottom: 10px;
+}
+
+.marking-tool-panel button {
+    padding: 5px 10px;
+}
+
+.marking-tool-panel button:nth-last-child(n+2) {
+    margin-right: 6px;
+}
+
+.marking-tools {
+    display: none;
+    align-items: center;
+    background: #aaa;
+    padding: 0 5px;
+}
+
+.marking-tools button {
+    font-size: 20px;
+    font-family: Calibri;
+    padding: 5px;
+    margin-bottom: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.tool-button {
+    padding: 10px 20px;
+    background-color: #ccc;
+    border: 0;
+    font-size: 25px;
+}
+
+/*----------------------
+    annotation box
+----------------------*/
+
+.annotation {
+    display: none;
+    position: absolute;
+    width: 250px;
+    padding: 0;
+    margin: 0;
+    background: #fff;
+    z-index: 100;
+}
+
+.annotation:after, .annotation:before {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.annotation:after {
+    border-color: rgba(255, 255, 255, 0);
+    border-top-color: #fff;
+    border-width: 8px;
+    margin-left: -8px;
+}
+.annotation:before {
+    border-color: rgba(221, 221, 221, 0);
+    border-top-color: #888;
+    border-width: 10px;
+    margin-left: -10px;
+}
+
+.annotationText {
+    display: block;
+    padding: 6px 12px;
+    width: 225px;
+    height: 80px;
+    overflow: auto; /* remove that pesky ass scrollbar in IE yo */
+    border: 0;
+    outline: 0;
+    font-size: 16px;
+    font-family: Helvetica;
+}
+
+/*------------------------
+    annotation buttons
+------------------------*/
+
+.annotationButtons {
+    display: flex;
+    background-color: #ddd;
+    padding: 2px;
+}
+
+/* the area which is grabable on the annotation box */
+.dragHandle {
+    flex-grow: 1;
+    cursor: move;
+}
+
+.saveAnnotation, .closeAnnotation  {
+    padding: 5px 10px;
+    font-size: 18px;
+    margin: 0;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    color: #fff;
+}
+
+.saveAnnotation { color: #579640; }
+.closeAnnotation { color: #666; }
+
+/*-------------------
+    down arrow
+-------------------*/
+
+.down-arrow {
+    position: relative;
+    background: #eee;
+}
+
+/* .down-arrow:before */
+.down-arrow:after {
+    top: 100%;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.down-arrow:after {
+    border-color: rgba(255, 255, 255, 0);
+    border-top-color: #eee;
+    border-width: 8px;
+    margin-left: -8px;
+}
+
+.down-arrow:before {
+    border-color: rgba(221, 221, 221, 0);
+    border-top-color: #888;
+    border-width: 10px;
+    margin-left: -10px;
+}
+
+/*------------------
+    right arrow
+------------------*/
+
+.right-arrow {
+    position: relative;
+    background: #eee;
+}
+
+.right-arrow:after, .right-arrow:before {
+    left: 100%;
+    top: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+.right-arrow:after {
+    border-color: rgba(136, 183, 213, 0);
+    border-left-color: #eee;
+    border-width: 8px;
+    margin-top: -8px;
+}
+.right-arrow:before {
+    border-color: rgba(194, 225, 245, 0);
+    border-left-color: #888;
+    border-width: 10px;
+    margin-top: -10px;
+}

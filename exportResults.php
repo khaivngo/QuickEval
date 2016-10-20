@@ -1,4 +1,4 @@
-<?php
+<?php 
 header('Content-Type: application/excel');
 header('Content-Disposition: attachment; filename="experiment.csv"');
 
@@ -20,7 +20,6 @@ $resultRows;
 //If no results/user didn't own experiment, redirects to index
 if($ex == 0) {
 	header('Location: index.php');
-	exit;
 }
 
 //Gets results for experiment
@@ -29,15 +28,15 @@ $results = getExperimentResults($id, $db, ((isset($_GET['complete'])) ? 1 : 0));
 //Saves experimentOrders
 $experimentOrders = $results[1];
 
-//Stuff which are different on methods
-switch($ex['experimentType']) {
-	case '1':
+//Stuff which are different on methods 
+switch($ex['experimentType']) { 
+	case '1': 
 	$resultRows = $results[3];
 	break;
-	case '2':
+	case '2': 
 	$resultRows = $results[3];
 	break;
-	case '3':
+	case '3': 
 	$resultRows = splitToExperimentOrder(getExperimentRawData($id, $db, 3, (isset($_GET['complete'])) ? 1 : 0), $results['experimentOrders']);
 
 	break;
@@ -49,11 +48,11 @@ foreach($results[2] as $experimentOrder) {
 }
 
 //Gets all observers
-$sql = "SELECT person.*, usertype.title AS userTypeName, experimentresult.* FROM result  "
+$sql = "SELECT person.*, usertype.title AS userTypeName, experimentresult.* FROM result  " 
 . "JOIN person ON result.personId = person.id "
 . "JOIN usertype ON person.userType = usertype.id "
 . "JOIN experimentresult ON result.experimentId = experimentresult.experiment AND person.id = experimentresult.person "
-. "WHERE result.experimentId = ? " .  ((isset($_GET['complete'])) ? ' AND experimentresult.complete  != 1 ' : ' ')
+. "WHERE result.experimentId = ? " .  ((isset($_GET['complete'])) ? ' AND experimentresult.complete  != 1 ' : ' ') 
 . "GROUP BY person.id ";
 $sth = $db->prepare($sql);
 $sth->bindParam(1, $id);
@@ -62,7 +61,7 @@ $sth->execute();
 $observers = $sth->fetchAll();
 
 //Gets all instructions
-$sql = "SELECT instruction.* FROM instruction  "
+$sql = "SELECT instruction.* FROM instruction  " 
 . "JOIN experimentorder ON instruction.id = experimentorder.instruction "
 . "JOIN experimentqueue ON experimentorder.experimentQueue = experimentqueue.id "
 . "JOIN experiment ON experimentqueue.experiment = experiment.id "
@@ -165,9 +164,9 @@ if(isset($_GET['observer-data'])) {
 	$data[] = PHP_EOL.'***Observer data***';
 	for($i = 0; $i < count($observers); $i++) {
 		$o = $observers[$i];
-		$data[] = 'Observer' . ($i+1) . ',' . $o['firstName'] . ' ' . $o['lastName'] . ',' .
-		$o['email'] . ',' . $o['nationality'] . ',' . $o['sex'] . ',' . $o['age'] . ',' .
-		$o['colourBlindFlag'] . ',' . $o['userTypeName'] . ',' . $o['os'] . ',' . $o['xDimension'] . ',' .
+		$data[] = 'Observer' . ($i+1) . ',' . $o['firstName'] . ' ' . $o['lastName'] . ',' . 
+		$o['email'] . ',' . $o['nationality'] . ',' . $o['sex'] . ',' . $o['age'] . ',' . 
+		$o['colourBlindFlag'] . ',' . $o['userTypeName'] . ',' . $o['os'] . ',' . $o['xDimension'] . ',' . 
 		$o['yDimension'] . ',' . $o['startTime'] . ',' . $o['endTime'];
 	}
 }
@@ -185,7 +184,7 @@ if(isset($_GET['input-field-data'])) {
 	$data[] = PHP_EOL.'***Input field results***';
 	for($i = 0; $i < count($infoTypeResults); $i++) {
 		$t = $infoTypeResults[$i];
-		$data[] = 'InputField' . (arrayObjectIndexOf($infoTypes, $t['infoType'], 'id') + 1) . ',' .
+		$data[] = 'InputField' . (arrayObjectIndexOf($infoTypes, $t['infoType'], 'id') + 1) . ',' . 
 		'Observer' . (arrayObjectIndexOf($observers, $t['person'], 'person') + 1) . ',' . $t['text'];
 	}
 }
@@ -198,7 +197,7 @@ if(isset($_GET['results'])) {
 	if($ex['experimentType'] == 1) {
 		foreach($resultRows as $experimentOrder) {
 			foreach($experimentOrder as $result) {
-				$row = 'Imageset' . (arrayObjectIndexOf($results['experimentOrders'], $result['eOrderId'], 'eOrder') + 1) . ',' .
+				$row = 'Imageset' . (arrayObjectIndexOf($results['experimentOrders'], $result['eOrderId'], 'eOrder') + 1) . ',' . 
 					$result['person'] . ',' . $result['timeStamp'];
 
 				for($j = 0; $j < count($result) - 3; $j++) {
@@ -209,12 +208,12 @@ if(isset($_GET['results'])) {
 			}
 		}
 	} elseif($ex['experimentType'] == 2) {	//IF PAIRING
-
+		
 		foreach($resultRows as $experimentOrder) {
 			for($i = 0; $i < count($experimentOrder); $i++) {
 				$result = $experimentOrder[$i];
-				$data[] = 'Imageset' . (arrayObjectIndexOf($results['experimentOrders'], $result['eOrderId'], 'eOrder') + 1) . ',' .
-				'Observer' . (arrayObjectIndexOf($observers, $result['personId'], 'person') + 1) . ',' .
+				$data[] = 'Imageset' . (arrayObjectIndexOf($results['experimentOrders'], $result['eOrderId'], 'eOrder') + 1) . ',' . 
+				'Observer' . (arrayObjectIndexOf($observers, $result['personId'], 'person') + 1) . ',' . 
 				$result['created'] . ',' . $result['name'] . ',' .
 				$result['wonAgainstName'] . ',' . (($result['chooseNone'] == null) ? ($result['name']) : '0');
 
@@ -225,8 +224,8 @@ if(isset($_GET['results'])) {
 
 		foreach($resultRows as $experimentOrder) {
 			foreach($experimentOrder as $result) {
-				$data[] = ('Imageset' . (arrayObjectIndexOf($results['experimentOrders'], $result['experimentOrder'], 'eOrder') + 1)) . ',' .
-				'Observer' . (arrayObjectIndexOf($observers, $result['personId'], 'person') + 1) . ',' . $result['created'] . ',' . $result['name'] . ',' .
+				$data[] = ('Imageset' . (arrayObjectIndexOf($results['experimentOrders'], $result['experimentOrder'], 'eOrder') + 1)) . ',' . 
+				'Observer' . (arrayObjectIndexOf($observers, $result['personId'], 'person') + 1) . ',' . $result['created'] . ',' . $result['name'] . ',' . 
 				'Category' . (arrayObjectIndexOf($results[3], $result['category'], 'category') + 1);
 			}
 		}
@@ -251,7 +250,7 @@ fclose($fp);
  * @return array                   array with results indexed by experimentorders
  */
 function splitToExperimentOrder($array, $experimentOrders) {
-	$experimentOrderArrays = array();
+	$experimentOrderArrays = array();	
 	foreach($experimentOrders as $experimentOrder) {
 		$experimentOrderRow = array();
 		$id = $experimentOrder['eOrder'];

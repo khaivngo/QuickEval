@@ -11,7 +11,6 @@ jQuery.fn.swap = function(b) {
     t.parentNode.removeChild(t);
     return this;
 }
-
 $(document).ready(function() {
 
     //Adds listener to menu
@@ -194,8 +193,7 @@ $(document).ready(function() {
             }
             activeImageSet.remove(); //Removes imageset
         });
-        //---------------- STEP 5 --------------------//
-        $(document.body).off('click', '.finish');
+        /---------------- STEP 5 --------------------/ / $(document.body).off('click', '.finish');
         $(document.body).on('click', '.finish', function() {
             finishExperiment();
         });
@@ -237,13 +235,7 @@ function step1Check() {
     $('.notice').parent().remove();
     if ($('#ex-name').val() == "") { //Check experimentname
         check = 0;
-        $('#ex-name').after(
-            '<div id="notify">' +
-                '<div class="span3" style="margin: 20px 20px"></div>'+
-                    '<div class="bg-red notice marker-on-top span1">' +
-                    'Name of experiment is required' +
-                '</div>' +
-            '</div>');
+        $('#ex-name').after('<div id="notify"><div class="span3" style="margin: 20px 20px"></div>' + '<div class="bg-red notice marker-on-top span1">' + 'Name of experiment is required' + '</div></div>');
     }
     if ($('#ex-long-description').val() == "") { //Check experiment description
         check = 0;
@@ -373,7 +365,15 @@ function populateExperimentSelect() {
         $('#algorithm-type').prop('disabled', true);
         addLastStep();
     }
-    if (method == 'Triplet Comparison') {
+    if (method == 'Artifact marking') {
+        $('#algorithm-type').empty();
+        other.forEach(function(t) {
+            $('#algorithm-type').append('<option>' + t + '</option>');
+        });
+        $('#algorithm-type').prop('disabled', true);
+        removeLastStep();
+    }
+    if (method == 'Triplet comparison') {
         $('#algorithm-type').empty();
         other.forEach(function(t) {
             $('#algorithm-type').append('<option>' + t + '</option>');
@@ -382,9 +382,9 @@ function populateExperimentSelect() {
         addLastStep();
 
         // add text explaining how many images is allowed in a triplet comparison image set
-        $('#ex-step4 form fieldset legend').after(
-            'This experiment only works with image sets containing<br> 7, 9, 13, 15, 19, 21, 25 or 27 images (excluding the original image).'
-        );
+        // $('#ex-step4 form fieldset legend').after(
+        //     'This experiment only works with image sets containing<br> 7, 9, 13, 15, 19, 21, 25 or 27 images (excluding the original image).'
+        // );
     }
 
     /**
@@ -395,8 +395,8 @@ function populateExperimentSelect() {
         type == "Paired comparison" ? $('#forced-pick').show() : $('#forced-pick').hide();
         type == "Paired comparison" ? $('#same-pair').show() : $('#same-pair').hide();
 
-        type == "Triplet Comparison" ? $('#forced-pick').show() : $('#forced-pick').hide();
-        // type == "Triplet Comparison" ? $('#same-pair').show() : $('#same-pair').hide();
+        type == "Triplet comparison" ? $('#forced-pick').show() : $('#forced-pick').hide();
+        // type == "Triplet comparison" ? $('#same-pair').show() : $('#same-pair').hide()
     }
 
     /**
@@ -407,85 +407,21 @@ function populateExperimentSelect() {
         if (type == "Category judgement") {
             $('#ex-image-queues').hide();
             $('#ex-setup-categories').show();
-        } else if (type == "Triplet Comparison") {
+        } else if (type == "Triplet comparison") {
             $('#ex-image-queues').hide();
             $('#ex-setup-categories').show();
             $('#ex-setup-categories legend').after(
                 'The ISO standard recommends 3, 5 or 7 categories ' +
                 '(ex: favorable, acceptable, just acceptable, unacceptable, poor).'
             );
-
-            $('#ex-add-category-history').after('<button id="ex-sort-into-categories" style="display: block; background-color: #1C2B77; color: #fff; padding: 10px; margin-top: 20px;">Sort images into category</button>');
-            $('#ex-sort-into-categories').click(function() {
-                createCategorySortingView();
-            });
-
         } else {
             $('#ex-image-queues').show();
             $('#ex-setup-categories').hide()
         }
     }
-
     $('#ex-step4').find('div').children('div').remove();
     $('.ex-image-pair').remove();
-
-} /* /populateExperimentSelect() */
-
-
-function getSetImages(imageSetID) {
-    return $.ajax({
-        type: 'POST',
-        url: 'ajax/scientist/getImagesetData.php',
-        data: {
-            'imagesetId': imageSetID,
-            'option': 'getUploadedPictures'
-        },
-        dataType: 'json'
-	});
 }
-
-function createCategorySortingView() {
-    var selectedCategories = [];
-
-    $('.ex-custom-category').each(function(index, category) {
-        selectedCategories.push(category.value);
-    });
-
-    $('.ex-category-history').each(function(index, category) {
-        selectedCategories.push( $('option:selected', category).val() );
-    });
-
-    // get the id of the selected image set
-    var imageSetID = $('option:selected', '#ex-step4 select').attr('image-set');
-
-    getSetImages(imageSetID).done(function(images) {
-        var categories = ['favorable', 'acceptable', 'just acceptable', 'unacceptable', 'poor'];
-        var h = '';
-        images.splice(0, 1); // remove the original image, no need to categorize that one
-        console.log(images);
-        images.forEach(function(image) {
-            h += '<div style="display: inline-block; margin-bottom: 20px; margin-right: 20px;">';
-                h += "<div style='padding: 10px 0;'>" + image.name + "</div>";
-                h += '<div style="display: inline-block; width: 100px; height: 100px; overflow-y: hidden;">';
-                    h += '<img style="width: 100%;" src="' + image.url + '">';
-                h += '</div>';
-
-                h += "<div style='display: inline-block; vertical-align: top; padding: 10px; padding-top: 0;'>";
-                    selectedCategories.forEach(function(category) {
-                        h += '<div><input type="radio" name="' + image.id + '" value="' + category + '"> ' + category + '</div>';
-                    });
-                h += "</div>";
-            h += '</div>';
-        });
-
-        $('.images-for-category-sorting').remove();
-        $('#ex-categories').after('<div class="images-for-category-sorting">' + h + '</div>');
-    });
-}
-
-
-
-
 
 /**
  * Removes steps based on experimenttype
@@ -721,7 +657,6 @@ function imageSetChange($a) {
     }
     $a.data('firstSelect', false); //Sets firstselect to false as user has selected an imageset
 }
-
 /**
  * Loads an imageset into element $a
  * @param {type} $a element for imageset to be loaded into
@@ -828,7 +763,6 @@ function swapImageSetAndElement($a, $b) {
 function addExperimentQueue(experimentId) {
     var experimentQueueId = getExperimentQueueId();
     $('#ex-step4').find('div:eq(0)').children('div').each(function() {
-
         //If imageset
         if ($(this).find('.image-set').length == 1) {
             var imageSet = $(this).find('option:selected').attr('image-set');
@@ -838,9 +772,11 @@ function addExperimentQueue(experimentId) {
                 //Creates and adds pairing queue if pairing, else the entire pictureset
                 if ($('#experiment-type').val() == "Paired comparison") {
                     pictureQueueId = generateRandomPictureQueue($('#experiment-type').val(), imageSet, +$('#same-pair').find('input').prop('checked'));
-                } else if ($('#experiment-type').val() == "Triplet Comparison") {
+                }
+                else if ($('#experiment-type').val() == "Triplet comparison") {
                     pictureQueueId = generateRandomPictureQueue($('#experiment-type').val(), imageSet, +$('#same-pair').find('input').prop('checked'));
-                } else {
+                }
+                else {
                     pictureQueueId = setPictureQueueRatingCategory(imageSet);
                 }
                 addPictureQueueToExperiment(pictureQueueId, experimentId);
@@ -1041,7 +977,6 @@ function addCategories($experimentId) {
  * @param {type} $b non imageset, either instruction or inactive imageset
  * @returns {undefined}
  */
- // index = which step in the setup process
 function setUpFinishButton(index) {
     var method = $('#experiment-type').val();
     var algorithm = $('#algorithm-type').val();
@@ -1052,13 +987,19 @@ function setUpFinishButton(index) {
         $('.next-button').show();
         $('.previous-button').hide();
         $('.finish').hide();
-    } else if (index == 4 && (method == "Rank order" || (method == "Paired comparison" && algorithm == "Random Queue"))) {
+    } else if (index == 4 &&
+        (method == "Rank order" ||
+            (method == "Paired comparison" && algorithm == "Random Queue") ||
+            (method == "Artifact marking" && algorithm == "Random Queue")
+        )
+    ) {
         $('.next-button').hide();
         $('.finish').show();
-    } else if (index == 4 && (method == "Rank order" || (method == "Triplet Comparison" && algorithm == "Random Queue"))) {
+    } else if (index == 4 && (method == "Rank order" || (method == "Triplet comparison" && algorithm == "Random Queue"))) {
         $('.next-button').show();
         $('.finish').hide();
-    } else {
+    }
+    else {
         $('.previous-button').show()
         $('.next-button').show();
         $('.finish').hide();
@@ -1074,13 +1015,11 @@ function finishExperiment() {
     var check = 1;
     $('.notice').parent().remove();
     check = step4Check();
-
-    if (method == "Category judgement" || method == "Triplet Comparison") {
+    if (method == "Category judgement" || method == "Triplet comparison") {
         if (!checkCategories()) {
             check = 0;
         }
     }
-
     if (method == "Paired comparison") {
         if ($('#algorithm-type').val() == "Custom Queue") {
             //Check if all queues got either a pair or selected queue
@@ -1095,7 +1034,6 @@ function finishExperiment() {
             }
         }
     }
-
     if (check == 1) { //Ready to create experiment
 
         //Makes sure user doesn't doubleclick finish
@@ -1119,17 +1057,7 @@ function finishExperiment() {
         //Adding viewing distance as meta data
         var expViewingDistance = $('#ex-viewing-distance').val();
 
-        var experimentId = startNewExperiment(
-            expName,
-            expShortDesc,
-            expLongDesc,
-            expType,
-            expScreenWhitePoint,
-            expLuminance,
-            expRoomWhitepoint,
-            expAmbientIllumination,
-            expViewingDistance
-        );
+        var experimentId = startNewExperiment(expName,expShortDesc,expLongDesc,expType,expScreenWhitePoint,expLuminance,expRoomWhitepoint,expAmbientIllumination, expViewingDistance);
 
         //var experimentId = startNewExperiment($('#ex-name').val(), $('#ex-short-description').val(), $('#ex-long-description').val(), $('#experiment-type').children(':selected:not(:disabled)').index(), $('#ex-screen-whitepoint').val(), $('#ex-luminance-screen').val(), $('#ex-room-whitepoint').val(), $('#ex-ambient-illumination').val(),expViewingDistance);
         if (experimentId > 0) { //Got an id, successfully created experiment
@@ -1137,21 +1065,11 @@ function finishExperiment() {
             hidden = (hidden == 1) ? '0 = Hidden' : '1 = Public';
 
             //Sets up parameters for experiment
-            addObserverParametersPair(
-                $("#background-color").val(),
-                +$('#allow-artifact-marking').find('input').prop('checked'),
-                +!$('#forced-pick').find('input').prop('checked'),
-                +$('#same-pair').find('input').prop('checked'),
-                +$('#display-original').find('input').prop('checked'),
-                +$('#allow-colourblind').find('input').prop('checked'),
-                hidden,
-                +$('#display-clock').find('input').prop('checked')
-            );
+            addObserverParametersPair($("#background-color").val(), +!$('#forced-pick').find('input').prop('checked'), +$('#same-pair').find('input').prop('checked'), +$('#display-original').find('input').prop('checked'), +$('#allow-colourblind').find('input').prop('checked'), hidden, +$('#display-clock').find('input').prop('checked'));
 
-            if (method == "Category judgement" || method == "Triplet Comparison") {
+            if (method == "Category judgement" || method == "Triplet comparison") {
                 addCategories(experimentId);
             }
-
             addInputFields();
             addExperimentQueue(experimentId);
             delay(function() {

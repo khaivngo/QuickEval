@@ -12,10 +12,8 @@ include_once("db.php");
 
 
 if (!isset($_SESSION['user'])) {
-   header("Location: login.php");
-   exit;
-}
-
+               header("Location: login.php"); 
+            }
 echo "swag";
 // Make sure file is not cached (as it happens for example on iOS devices)
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -32,9 +30,9 @@ $userid = $_SESSION['user']['id']; //$_POST['userName'];  Eller get session shit
 if($_GET['imagesetId'] > 0) {	//This only occurs when pictures are being uploaded to an existing imageset.
 	$imageSetId = $_GET['imagesetId'];
 	echo "</br>Henter imagesetId fra GET = $imageSetId";
-
+	
 } else if(isset($_SESSION['user']['imagesetId']) && ($_SESSION['user']['imagesetId'] > 0)) {		 //Checks if there is an active imageSet up.
-	$imageSetId = $_SESSION['user']['imagesetId'];
+	$imageSetId = $_SESSION['user']['imagesetId'];	
 	echo "</br>Henter imagesetId fra SESSION = $imagesetId";
 	  										 	     //And gets its id
 } else {		//Imageset is not active
@@ -68,7 +66,7 @@ $chunk = isset($_REQUEST["chunk"]) ? intval($_REQUEST["chunk"]) : 0;
 $chunks = isset($_REQUEST["chunks"]) ? intval($_REQUEST["chunks"]) : 0;
 
 
-// Remove old temp files
+// Remove old temp files	
 if ($cleanupTargetDir) {
 	if (!is_dir($targetDir) || !$dir = opendir($targetDir)) {
 		die('{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}');
@@ -88,7 +86,7 @@ if ($cleanupTargetDir) {
 		}
 	}
 	closedir($dir);
-}
+}	
 
 
 // Open temp file
@@ -105,7 +103,7 @@ if (!empty($_FILES)) {
 	if (!$in = @fopen($_FILES["file"]["tmp_name"], "rb")) {
 		die('{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}');
 	}
-} else {
+} else {	
 	if (!$in = @fopen("php://input", "rb")) {
 		die('{"jsonrpc" : "2.0", "error" : {"code": 101, "message": "Failed to open input stream."}, "id" : "id"}');
 	}
@@ -121,7 +119,7 @@ while ($buff = fread($in, 4096)) {
 // Check if file has been uploaded
 if (!$chunks || $chunk == $chunks - 1) {
 	echo "Succesfully uploaded";
-	// Strip the temp .part suffix off
+	// Strip the temp .part suffix off 
 	rename("{$filePath}.part", $filePath);
 }
 

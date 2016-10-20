@@ -24,7 +24,7 @@ $(document).ready(function () {
             postResultCategory(experimentId, pictureOrderId1, selected1);
             postResultCategory(experimentId, pictureOrderId2, selected2);
             postResultCategory(experimentId, pictureOrderId3, selected3);
-            
+
             // reset categories
             $(".categories").val('null');
             // go to next experiment
