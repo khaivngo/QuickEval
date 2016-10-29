@@ -157,12 +157,14 @@ if (isset($_GET["invite"])) {
     </div>
 </div>
 
+
+
 <div id="rating-container">
     <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
 
-    <div id="drop-left" class="" style="margin-left: 11%; float:left; height:25%; width: 25%;">
+    <div id="drop-left" class="" style="margin-left: 11%; float:left; width: 25%;">
         <section id="set2" style="">
-            <div class="parent">
+            <div class="parent" style="height:60%;">
                 <a href="" id="left-reproduction-link" target="_blank" class="new-tab"></a>
 
                 <div id="pan1" class="panzoom">
@@ -174,9 +176,9 @@ if (isset($_GET["invite"])) {
         <div id="picture-in-panner-left">Picture in panner: <span><strong></strong></span></div>
     </div>
 
-    <div id="original" style="margin-left:1%; margin-right:1%; float:left; height:25%; width: 25%;">
+    <div id="original" style="margin-left:1%; margin-right:1%; float:left; width: 25%;">
         <section id="set2" style="">
-            <div class="parent">
+            <div class="parent" style="height:60%;">
                 <a href="" id="original-link" target="_blank" class="new-tab"></a>
 
                 <div id="pan3" class="panzoom">
@@ -185,12 +187,16 @@ if (isset($_GET["invite"])) {
             </div>
             <br>
         </section>
-
+        <div style="width: 100%;">
+            <button id="panzoom-reset" class="size2"><strong>Reset panning</strong></button>
+        </div>
+        <br>
     </div>
 
-    <div id="drop-right" class="" style=" float:left; height:25%; width: 25%;">
-        <section id="set2" style="">
-            <div class="parent">
+    <!--    <div id="drop-right" class="" style=" float:left; height:25%; width: 25%;">-->
+    <div id="drop-right" class="" style=" float:left; width: 25%;">
+        <section id="set2">
+            <div class="parent" style="height:60%;">
                 <a href="" id="right-reproduction-link" target="_blank" class="new-tab"></a>
 
                 <div id="pan2" class="panzoom">
@@ -201,10 +207,9 @@ if (isset($_GET["invite"])) {
         <div id="picture-in-panner-right">Picture in panner right: <span><strong></strong></span></div>
     </div>
 
+
 </div>
 
-
-<button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 <!--<div id="rating" class="footer rating-collection center" style="">-->
 <!--    <div id="rating-images"></div>-->
@@ -221,11 +226,14 @@ if (isset($_GET["invite"])) {
 <!--    </div>-->
 <!--</div>-->
 
-<div id="rating" class="footer rating-collection center" style="">
+<div id="rating" class="footer rating-collection" style="">
+
     <div id="rating-images"></div>
 
 </div>
 
+
+<button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 
 </body>

@@ -139,24 +139,12 @@ if (isset($_GET["invite"])) {
 <div id="category-container" style="">
 <!--    <span id="original-tag" class="span-original-tag"><p>Original</p></span>-->
 <!--    <br>-->
-    <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">
-        <span id="original-tag" class="span-original-tag"><p>Original</p></span>
-
-        <section id="set1">
-            <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
-                <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
-                <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
-                <div id="pan1" class="panzoom">
-                    <img class="picture" src="images/initiatePicture.png"/>
-                </div>
-            </div>
-        </section>
-        <br>
-        <br>
-    </div>
-
-
-    <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left: 2%; width:40%; height:70%;">
+<!--    <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">-->
+    <br>
+    <br>
+    <br>
+    <!--    <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left: 2%; width:40%; height:70%;">-->
+    <div id="reproduction" class="reproduction panning-container" style="float:left; width:40%; height:70%; margin-left:130px;">
         <section id="set2" style="">
             <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
@@ -168,20 +156,56 @@ if (isset($_GET["invite"])) {
         </section>
         <br>
 
-        <div class="category-button-container">
-            <button style="float:left;" class="size2 panning-reset">Reset panning</button>
+        <div class="category-button-container" style="margin-left: 25%">
 
             <div class="input-control select size3" style="text-align:center;">
                 <select id="categories" style="background-color:#C8C8C8;">
                     <option value="null" disabled>Select category</option>
                 </select>
             </div>
-            <button class="size2" id="button-next-category" style="float:right; ">Next</button>
+
         </div>
+
     </div>
 
-    <div style="width:100%;">
+
+    <div id="original" class="panning-container" style="display:inline-block; position:absolute; margin-left: 50px; width:40%; height:70%;">
+        <span id="original-tag" class="span-original-tag" style="margin-left:50%;"><p>Original</p></span>
+
+        <section id="set1">
+
+            <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
+                <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
+                <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
+                <div id="pan1" class="panzoom">
+                    <img class="picture" src="images/initiatePicture.png"/>
+                </div>
+            </div>
+        </section>
+        <br>
+
+
+        <button class="size2" id="button-next-category" style="float:right; margin-right:20px;"><strong>Next</strong></button>
+
+        <button id="panzoom-reset" style="" class="size2"><strong>Reset panning</strong></button>
+
+
     </div>
+
+
+
+
+
+
+    <!--    <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>-->
+
+
+
+    <!--    <div style="width:100%;">-->
+<!--    </div>-->
+
+<!--    <button style="" class="size2 panning-reset">Reset panning</button>-->
+
 
 </div>
 

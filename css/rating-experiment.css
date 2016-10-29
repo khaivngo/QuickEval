@@ -137,7 +137,7 @@ html, body {
 }
 
 .touched {
-    opacity: 0.3;
+    opacity: 0.4 !important;
 }
 
 .remove-original {
@@ -340,7 +340,11 @@ margin-left : 60px; /*TWEAK*/
 #rating {
     overflow-x: scroll;
     white-space: nowrap;
-    width: 55%;
+    width: 50%;
+    margin-left:25%;
+    /*margin: 0 auto;*/
+    /*margin-top: 10px;*/
+    /*margin-left:50px;*/
 }
 
 .rating-IE {
@@ -351,10 +355,14 @@ margin-left : 60px; /*TWEAK*/
 
 .rating-collection {
 / / bottom : - 11 %; /*OBS OBS recheck compatibility*/
-    margin-top: 39%;
+    /*margin-top: 39%;*/
     height: 20%;
     background: #707070;
     padding-right: 25px;
+}
+
+.rating-collection .ui-state-disabled {
+    opacity: 1.0;
 }
 
 #rating-images {
@@ -415,7 +423,7 @@ margin-left : 60px; /*TWEAK*/
 
 .button-finished {
     float: right;
-    margin-top: 22%;
+    /*margin-top: 22%;*/
     margin-right: 7%;
 }
 
@@ -424,6 +432,7 @@ margin-left : 60px; /*TWEAK*/
     margin-top: 25%;
     margin-right: 5%;
 }
+
 
 /*-----------------------http://yensdesign.com/tutorials/popupjquery/ ------------------------------------------------------------------------------*/
 

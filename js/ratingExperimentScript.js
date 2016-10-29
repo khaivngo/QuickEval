@@ -1,6 +1,13 @@
 var type;
+var dragStarted = false;
+var dropRightCheck = false;
+var dropLeftCheck = false;
+var isDown = false;   // Tracks status of mouse button
+var draggingUrl = "";
+var draggingPosition;
 
 $(document).ready(function () {
+
 
     //var container = $('body');
     //$('#rating-images').sortable({
@@ -18,28 +25,165 @@ $(document).ready(function () {
     //        updateSortablePosition();
     //    }
     //});
-    $('#rating-images').disableSelection();
+    // $('#rating-images').disableSelection();
 
 
     // handle + event
     var container = document.getElementById("rating-images");
-    new Sortable(container, {
-        animation: 150, // ms, animation speed moving items when sorting, `0` — without animation
+    if (container) {
 
-        handle: ".tile-sortable", // css-selector, which can be used to drag
-        draggable: ".tile-sortable", // css-selector of elements, which can be sorted
-        onUpdate: function (/**Event*/evt) {
-            var item = evt.item; // a link to an element that was moved
+        new Sortable(container, {
+            animation: 150, // ms, animation speed moving items when sorting, `0` ï¿½ without animation
+            handle: ".tile-sortable", // css-selector, which can be used to drag
+            draggable: ".tile-sortable", // css-selector of elements, which can be sorted
+            onUpdate: function (/**Event*/evt) {
+                var item = evt.item; // a link to an element that was moved
 
-            console.log(item.id)
-            $("#rating-images #" + item.id + "").addClass('touched'); //passing id of element to be marked as visited.
+                // console.log(item.id)
+                $("#rating-images #" + item.id + "").addClass('touched'); //passing id of element to be marked as visited.
 
-            updateSortablePosition();
-        }
+                updateSortablePosition();
+
+                // console.log("sortable handler")
+            },
+            // Element dragging ended
+            // onEnd: function (/**Event*/evt) {
+            // onStart: function (/**Event*/evt) {
+            //     evt.oldIndex;  // element's old index within parent
+            //     evt.newIndex;  // element's new index within parent
+            //     dragStarted = true;
+            //     // console.log(evt)
+            //
+            //     // console.log(evt.item.children[1].attributes[0].value)
+            //
+            //     var imgUrl = evt.item.children[1].attributes[0].value;
+            //
+            //     if ($('#drop-right').is(':hover')) {
+            //         console.log("hovering drop right")
+            //     }
+            //
+            //
+            // },
+            // onEnd: function (/**Event*/evt) {
+            //     dragStarted = false;
+            //     console.log("Drag ended")
+            //
+            //     var draggableUrl = evt.item.children[1].attributes[0].value;
+            //     var draggableId = evt.item.children[3].textContent;
+            //
+            //     console.log(dropRightCheck, dropLeftCheck, isDown)
+            //
+            //     if (dropRightCheck && !dropLeftCheck && isDown) {
+            //         if (draggingUrl != "") {
+            //             console.log("swapping right")
+            //             $('#drop-right').find('img').attr('src', draggableUrl);
+            //             $('#drop-right').find('img').remove();
+            //             $('#pan2').prepend('<img class= "picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
+            //             pictureInPanner(draggableId, "right");
+            //         }
+            //     }
+            //     else if (!dropRightCheck && dropLeftCheck) {
+            //
+            //     }
+            //
+            // },
+
+        });
+
+    }
+
+
+    $(document).mousedown(function (event) {
+        isDown = true;      // When mo// use goes down, set isDown to true
+        // console.log("mouse down")
+        // console.log($(event.target).closest('.image-position').find('#initial-position').text())
+
+        draggingPosition = $(event.target).closest('.image-position').find('#initial-position').text();
+
+        // console.log($(event.target).parent().find(".initial-position").text())
+        draggingUrl = event.target.src
+
+    }).mouseup(function () {
+        setTimeout(function () {
+            isDown = false;    // When mouse goes up, set isDown to false
+            draggingUrl = "";
+
+
+        }, 1000);
+
+
     });
 
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------  
+    $("#drop-right").mouseover(function () {
+        // console.log("entering drop-right")
+        dropRightCheck = true;
+
+        if (dropRightCheck && !dropLeftCheck && isDown) {
+            if (draggingUrl != "" && draggingPosition != "") {
+                // var draggableId = "654654";
+
+                console.log("swapping right")
+                $('#drop-right').find('img').attr('src', draggingUrl);
+                $('#drop-right').find('img').remove();
+                $('#pan2').prepend('<img class= "picture" src=' + draggingUrl + ' pictureOrderId = ' + draggingPosition + ' />');
+                pictureInPanner(draggingPosition, "right");
+
+                draggingPosition = "";
+                draggingUrl = ""
+            }
+        }
+        // else if (!dropRightCheck && dropLeftCheck) {
+        //     if (draggingUrl != "" && draggingPosition != "") {
+        //         // var draggableId = "654654";
+        //
+        //         console.log("swapping left")
+        //         $('#drop-left').find('img').attr('src', draggingUrl);
+        //         $('#drop-left').find('img').remove();
+        //         $('#pan1').prepend('<img class= "picture" src=' + draggingUrl + ' pictureOrderId = ' + draggingPosition + ' />');
+        //         pictureInPanner(draggingPosition, "right");
+        //
+        //         draggingPosition = "";
+        //         draggingUrl = ""
+        //     }
+        //
+        // }
+
+    });
+
+    $("#drop-right").mouseleave(function () {
+        // console.log("leave drop-right")
+        dropRightCheck = false
+    });
+
+
+    $("#drop-left").mouseover(function () {
+        // console.log("entering drop-left")
+        dropLeftCheck = true;
+        if (!dropRightCheck && dropLeftCheck) {
+            if (draggingUrl && draggingUrl != "" && draggingPosition != "") {
+                // var draggableId = "654654";
+
+                console.log("swapping left")
+                $('#drop-left').find('img').attr('src', draggingUrl);
+                $('#drop-left').find('img').remove();
+                $('#pan1').prepend('<img class= "picture" src=' + draggingUrl + ' pictureOrderId = ' + draggingPosition + ' />');
+                pictureInPanner(draggingPosition, "left");
+
+                draggingPosition = "";
+                draggingUrl = ""
+            }
+
+        }
+
+    });
+
+    $("#drop-left").mouseleave(function () {
+        // console.log("leave drop-left")
+        dropLeftCheck = false;
+    });
+
+    //----------------------------------------------------------------------------------------------------------------------------------------------------
 
     (function () {
         var $section = $('#set1, #set2, #set3');
@@ -49,9 +193,10 @@ $(document).ready(function () {
             $zoomRange: $section.find(".zoom-range"),
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
-            contain: 'invert',
+            // contain: 'invert',
             minScale: 1,
-            maxScale: 1.30
+            // maxScale: 1.30
+            maxScale: 1
         }).panzoom('zoom');
     })();
 
@@ -59,8 +204,10 @@ $(document).ready(function () {
 
     //left drag panner/ drop area
     $(function () {
-        $(".draggable").draggable();
-        $("#drop-left").droppable({
+        // $(".image-position").draggable({
+        //     helper: 'clone'
+        // });
+        $("#drop-left .parent").droppable({
             drop: function (event, ui) {
                 var draggableId = ui.draggable.find('img').attr("id");
                 var aId = ui.draggable.find('a').attr("id");
@@ -68,7 +215,7 @@ $(document).ready(function () {
                 var draggableUrl = ui.draggable.find('img').attr("src");
                 var fetchedInitialPosition = ui.draggable.find('#initial-position').text();
 
-                // console.log(draggableUrl);
+                console.log(draggableUrl);
 
                 $('#drop-left').find('img').attr('src', draggableUrl);
                 $('#drop-left').find('img').remove();
@@ -81,9 +228,22 @@ $(document).ready(function () {
 
     //right drag panner/drop area
     $(function () {
-        $(".draggable").draggable();
-        $("#drop-right").droppable({
+        $(".image-position").draggable({
+
+            helper: 'clone',
+            revert: 'invalid',
+            appendTo: 'body',
+            // drag: function() {
+            //    console.log(this)
+            // },
+        });
+
+        $('.image-position').draggable("disable");
+
+        // $("#drop-right .parent").droppable({
+        $("#drop-right .parent").droppable({
             drop: function (event, ui) {
+                console.log("drop-right")
                 var draggableId = ui.draggable.find('img').attr("id");
                 var aId2 = ui.draggable.find('a').attr("id");
                 var droppableId = $(this).attr("id");
@@ -93,7 +253,6 @@ $(document).ready(function () {
                 $('#drop-right').find('img').attr('src', draggableUrl);
                 $('#drop-right').find('img').remove();
                 $('#pan2').prepend('<img class="picture" src=' + draggableUrl + ' pictureOrderId = ' + draggableId + ' />');
-
 
                 pictureInPanner(fetchedInitialPosition2, "right");
             }
@@ -197,6 +356,33 @@ $(document).ready(function () {
 });
 //----------------------------------------------------------------------------------------------------------------------------------------------------  
 
+// function allowDrop(ev) {
+//     ev.preventDefault();
+//
+// }
+//
+// function drop(ev) {
+//     ev.preventDefault();
+//     // var data = ev.dataTransfer.getData("text");
+//     // ev.target.appendChild(document.getElementById(data));
+//
+//     // console.log(ev)
+//     console.log(ev.dataTransfer.getData(this))
+//     // console.log(ev.srcElement.currentSrc)
+//
+//     // "http://localhost/quickeval/uploads/1/103/o_1b07i57et5i16vi1o0s11csf6i1j.jpeg"
+// }
+//
+// function drag(ev) {
+//     // ev.dataTransfer.setData("text", ev.target.id);
+//
+//     console.log(ev)
+//
+//     dragged = ev;
+// }
+//
+// var dragged;
+
 /**
  * Loops through all images in sortable and getting their id and position
  * @returns {undefined}
@@ -277,7 +463,7 @@ function loadReproductionsSortable(data) {
 
 
         initialPosition = String.fromCharCode('A'.charCodeAt(0) + letterCounter);
-        console.log(initialPosition);
+        // console.log(initialPosition);
         letterCounter++;
 
         //each picture is appended to the sortable
@@ -548,10 +734,10 @@ function updateType() {
 function retinaSpecific() {
     var retina = (window.retina || window.devicePixelRatio > 1);
     if (retina) {
-        console.log("Retina detected");
+        // console.log("Retina detected");
         $('body').addClass('retina'); // for example
         $(".image-position img").each(function () {
-            console.log(this);
+            // console.log(this);
             $(this).css({'height': '100px', 'width': '100px'});
         });
     }

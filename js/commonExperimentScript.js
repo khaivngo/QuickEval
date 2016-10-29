@@ -431,7 +431,6 @@ function panningCheck(originalUrl) {
             return;
         }
 
-        console.log("false")
         panningControl = false;
 
 

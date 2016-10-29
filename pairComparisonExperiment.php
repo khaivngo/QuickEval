@@ -175,13 +175,13 @@ if (isset($_GET["invite"])) {
         </div>
 
         <div style="width:100%;">
-            <button class="size2 panning-reset">Reset panning</button>
+            <button class="size2 panning-reset"><strong>Reset panning</strong></button>
         </div>
     </div>
 
     <div id="bottom-buttons" class="page-bottom" style="position:absolute;">
-        <button class="button" id="button-none" style="width: 100%; height:25px; margin-bottom: 10px;">None</button>
-        <button class="button" id="button-next" style="width: 100%; height:25px;  ">Next</button>
+        <button class="button" id="button-none" style="width: 100%; height:25px; margin-bottom: 10px;"><strong>None</strong></button>
+        <button class="button" id="button-next" style="width: 100%; height:25px;  "><strong>Next</strong></button>
     </div>
 </div>
 

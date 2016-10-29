@@ -997,9 +997,9 @@ function finishExperiment() {
         delay(function() {
             $('.finish').prop('disabled', false);
         }, 2000);
-        $.Notify({
-            content: "Creating experiment...",
-        });
+        // $.Notify({
+        //     content: "Creating experiment...",
+        // });
         
         var expName = $("#ex-name").val();
         var expShortDesc = $("#ex-short-description").val(); 
