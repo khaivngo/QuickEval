@@ -231,9 +231,11 @@ if (isset($_GET["invite"])) {
     <div id="rating-images"></div>
 
 </div>
+<div style="margin-top:-30px">
+    <button id="button-finished" class="size2 button-finished" style=""><strong>Next</strong></button>
+</div>
 
 
-<button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>
 
 
 </body>
