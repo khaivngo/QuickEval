@@ -63,7 +63,7 @@ textarea    {
 /*---------Table management view experiments-----------*/
 
 #experiment-results #zScores-container th, #zScores-container td	{
-	overflow-y:scroll;
+	/*overflow-y:scroll;*/
 	max-width:100px;
 }
 
