@@ -28,7 +28,7 @@ if (isset($_GET["invite"])) {
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -41,11 +41,13 @@ if (isset($_GET["invite"])) {
     <link href="css/metro-bootstrap.css" rel="stylesheet">
     <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
     <link href="css/rating-experiment.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
 
-    <script src="js/jquery/jquery.min.js"></script>
+<!--    <script src="js/jquery/jquery.min.js"></script>-->
+    <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
     <!-- Metro UI -->
@@ -63,7 +65,6 @@ if (isset($_GET["invite"])) {
 
 </head>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 
 <body class="metro" style="background-color:#808080;" onload="show();
@@ -111,7 +112,6 @@ if (isset($_GET["invite"])) {
 <div id="backgroundPopup3"></div>
 
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
 
 <div id="header-div" style="width:100%; height:50px; background-color: #282828;">
     <div class="inner-header">
@@ -130,21 +130,17 @@ if (isset($_GET["invite"])) {
         <button class="button cancel-experiment" id="cancel-experiment">Cancel experiment</button>
 
         <div id="info" class="center" style="color:white;">
-            <span id="progress">&nbsp<span id="time" onload="start();"></span></span>
+            <span id="progress">&nbsp;<span id="time" onload="start();"></span></span>
             <!--Comparison <span id="current-step"></span> of <span id="total-steps"></span> &nbsp |-->
         </div>
     </div>
 </div>
 
 <div id="category-container" style="">
-<!--    <span id="original-tag" class="span-original-tag"><p>Original</p></span>-->
-<!--    <br>-->
-<!--    <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">-->
     <br>
     <br>
     <br>
-    <!--    <div id="reproduction" class="reproduction panning-container" style="display:inline-block; margin-left: 2%; width:40%; height:70%;">-->
-    <div id="reproduction" class="reproduction panning-container" style="float:left; width:40%; height:70%; margin-left:130px;">
+    <div id="reproduction" class="reproduction panning-container no-original" style="float:left; width:40%; height:70%; margin-left:130px;">
         <section id="set2" style="">
             <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
@@ -163,6 +159,7 @@ if (isset($_GET["invite"])) {
                     <option value="null" disabled>Select category</option>
                 </select>
             </div>
+            <button id="panzoom-reset" style="float:right;" class="size2"><strong>Reset panning</strong></button>
 
         </div>
 
@@ -182,30 +179,16 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
         </section>
-        <br>
-
-
-        <button class="size2" id="button-next-category" style="float:right; margin-right:20px;"><strong>Next</strong></button>
-
-        <button id="panzoom-reset" style="" class="size2"><strong>Reset panning</strong></button>
-
 
     </div>
 
 
 
-
-
-
-    <!--    <button id="button-finished" class="size2 button-finished"><strong>Next</strong></button>-->
-
-
-
-    <!--    <div style="width:100%;">-->
-<!--    </div>-->
-
 <!--    <button style="" class="size2 panning-reset">Reset panning</button>-->
+    <div style="position:absolute; bottom: 100px; right: 100px;">
+        <button class="size2" id="button-next-category" style="margin-right:20px;"><strong>Next</strong></button>
 
+    </div>
 
 </div>
 

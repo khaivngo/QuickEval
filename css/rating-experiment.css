@@ -168,7 +168,7 @@ html, body {
     margin-top: -25px;
 }
 
-.reproduction {
+.rating-container .reproduction {
     float: left;
     margin-left: 2%;
     width: 40%;
@@ -341,10 +341,9 @@ margin-left : 60px; /*TWEAK*/
     overflow-x: scroll;
     white-space: nowrap;
     width: 50%;
-    margin-left:25%;
-    /*margin: 0 auto;*/
-    /*margin-top: 10px;*/
-    /*margin-left:50px;*/
+    /*margin-left:25%;*/
+    margin-left:auto;
+    margin-right:auto;
 }
 
 .rating-IE {

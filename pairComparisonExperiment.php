@@ -44,7 +44,8 @@ if (isset($_GET["invite"])) {
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="js/jquery/test/jquery.min.js"></script>
+<!--    <script src="js/jquery/test/jquery.min.js"></script>-->
+    <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
     <!-- Other JS & plugins -->

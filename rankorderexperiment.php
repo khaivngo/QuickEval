@@ -35,11 +35,13 @@ if (isset($_GET["invite"])) {
     <!-- CSS -->
     <link href="css/metro-bootstrap.css" rel="stylesheet">
     <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="js/jquery/jquery.min.js"></script>
+    <!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
+    <!--    <script src="js/jquery/jquery.min.js"></script>-->
+    <script src="js/jquery/jquery-3.1.1.min.js"></script>
+
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
     <!-- Metro UI -->
@@ -158,7 +160,6 @@ if (isset($_GET["invite"])) {
 </div>
 
 
-
 <div id="rating-container">
     <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
 
@@ -234,8 +235,6 @@ if (isset($_GET["invite"])) {
 <div style="margin-top:-30px">
     <button id="button-finished" class="size2 button-finished" style=""><strong>Next</strong></button>
 </div>
-
-
 
 
 </body>

@@ -8,7 +8,6 @@ $(document).ready(function () {
             $zoomRange: $section.find(".zoom-range"),
             $reset: $section.find(".reset"),
             $set: $section.find('.parent > div'),
-            // contain: 'invert',
             minScale: 1,
             maxScale: 1
         }).panzoom('zoom');
@@ -34,8 +33,8 @@ $(document).ready(function () {
     //});
 
     $('#panzoom-reset').click(function () {
+        console.log("reset")
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-
     });
 
     $('#reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full

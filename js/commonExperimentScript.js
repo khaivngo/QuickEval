@@ -266,7 +266,11 @@ function getSpecificExperimentData(experimentId) {
                 //$('#reproduction').css("margin-left", "20%");
                 //$('#left-reproduction').css("margin-left", "20%");
                 //$('#drop-left').css("margin-left", "23.5%");
-                $('#drop-right').css("margin-left", "3%");
+                // $('#drop-right').css("margin-left", "3%");
+                // $('#category-container #reproduction').addClass("no-original");
+                $('#category-container #reproduction').css("float", "none");
+                $('#category-container #reproduction').css("margin-left", "auto");
+                $('#category-container #reproduction').css("margin-right", "auto");
                 //$('#button-finished').css("margin-top", "30%");
             }
 
@@ -348,7 +352,7 @@ function checkIfExperimentTaken() {
  * Disables panning.
  */
 function disablePanning() {
-   // automaticPanningReset();
+    // automaticPanningReset();
     //console.log("Disable panning");
     var elem;
 
