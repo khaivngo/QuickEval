@@ -62,7 +62,6 @@
     <link rel="stylesheet" href="js/artifactExperiment/artifactMarkingPen/css/master.css">
 
     <script src="js/artifactExperiment/artifactMarkingPen/lodash.custom.min.js"></script>
-    <script src="js/artifactExperiment/artifactMarkingPen/Helper.js"></script>
     <script src="js/artifactExperiment/artifactMarkingPen/Annotation.js"></script>
     <script src="js/artifactExperiment/artifactMarkingPen/canvas-image-marker.js"></script>
 </head>
@@ -136,13 +135,21 @@
 </div>
 
 <div id="category-container">
-    <div id="original" class="panning-container" style="display:inline-block; margin-left: 0%; width:40%; height:70%;">
-        <span id="original-tag" class="span-original-tag"><p>Original</p></span>
+
+    <div style="width: 100%; margin-top: 20px;">
+        <div style="display: inline-block; margin-left: 0%; width:40%;">
+            <span id="original-tag" class="span-original-tag"><p>Original</p></span>
+        </div>
+
+        <div class="pen-menu" style="display: inline-block; margin-left: 2%; width:40%;"></div>
+    </div>
+
+    <div id="original" class="panning-container" style="vertical-align: top; display: inline-block; margin-left: 0%; width:40%; height:70%;">
 
         <section id="set1">
-            <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
+            <div class="parent" style="overflow: hidden; position: relative; height:100%; width:100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
-                <a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >
+                <a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a>
                 <div id="pan1" class="panzoom">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
@@ -152,7 +159,7 @@
 
 
     <div id="reproduction" class="reproduction panning-container"
-        style="display:inline-block; margin-left: 2%; margin-bottom: 50px; width:40%; height:70%;">
+        style="display: inline-block; margin-left: 2%; margin-bottom: 50px; width:40%; height:70%;">
         <section id="set2" style="">
             <div class="parent" style="overflow:hidden; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>

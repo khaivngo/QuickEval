@@ -520,9 +520,6 @@
 				var selectedFile = $(this).find(":selected").attr('name');	// Get selected file.
 				var downloadLink = $('#downloadHeatmapFile');
 
-                console.log(selectedFile);
-                console.log(downloadLink);
-
 				downloadLink.attr('href','').attr('download','');			// Reset download link button.
 
 				switch( selectedFile ) 										// Assign download link, based on the selected file.

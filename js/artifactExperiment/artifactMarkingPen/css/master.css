@@ -69,84 +69,6 @@ body {
     font-size: 25px;
 }
 
-/*----------------------
-    annotation box
-----------------------*/
-
-.annotation {
-    display: none;
-    position: absolute;
-    width: 250px;
-    padding: 0;
-    margin: 0;
-    background: #fff;
-    z-index: 100;
-}
-
-.annotation:after, .annotation:before {
-    top: 100%;
-    left: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-}
-
-.annotation:after {
-    border-color: rgba(255, 255, 255, 0);
-    border-top-color: #fff;
-    border-width: 8px;
-    margin-left: -8px;
-}
-.annotation:before {
-    border-color: rgba(221, 221, 221, 0);
-    border-top-color: #888;
-    border-width: 10px;
-    margin-left: -10px;
-}
-
-.annotationText {
-    display: block;
-    padding: 6px 12px;
-    width: 225px;
-    height: 80px;
-    overflow: auto; /* remove that pesky ass scrollbar in IE yo */
-    border: 0;
-    outline: 0;
-    font-size: 16px;
-    font-family: Helvetica;
-}
-
-/*------------------------
-    annotation buttons
-------------------------*/
-
-.annotationButtons {
-    display: flex;
-    background-color: #ddd;
-    padding: 2px;
-}
-
-/* the area which is grabable on the annotation box */
-.dragHandle {
-    flex-grow: 1;
-    cursor: move;
-}
-
-.saveAnnotation, .closeAnnotation  {
-    padding: 5px 10px;
-    font-size: 18px;
-    margin: 0;
-    background-color: #fff;
-    border: 1px solid #aaa;
-    color: #fff;
-}
-
-.saveAnnotation { color: #579640; }
-.closeAnnotation { color: #666; }
-
 /*-------------------
     down arrow
 -------------------*/
@@ -213,4 +135,168 @@ body {
     border-left-color: #888;
     border-width: 10px;
     margin-top: -10px;
+}
+
+/*-----------------
+    Annotation
+-----------------*/
+.annotation-modal-overlay {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+
+    opacity: 0;
+
+    width: 100%;
+    height: 100%;
+
+    -webkit-transition: 1ms opacity ease;
+       -moz-transition: 1ms opacity ease;
+        -ms-transition: 1ms opacity ease;
+         -o-transition: 1ms opacity ease;
+            transition: 1ms opacity ease;
+
+    background: rgba(0, 0, 0, .6);
+}
+
+.annotation-modal {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 50%;
+
+    opacity: 0;
+
+    width: 94%;
+    padding: 24px 20px;
+
+    -webkit-transition: 1ms opacity ease;
+       -moz-transition: 1ms opacity ease;
+        -ms-transition: 1ms opacity ease;
+         -o-transition: 1ms opacity ease;
+            transition: 1ms opacity ease;
+
+    -webkit-transform: translate(-50%, -50%);
+       -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+         -o-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+
+    /* gross fix for blurry element when using transform translate in chrome */
+    /*-webkit-filter: blur(0.000001px);
+    -webkit-font-smoothing: antialiased;*/
+
+    border-radius: 2px;
+    background: #fff;
+}
+
+.annotation-modal-form {
+    padding: 0;
+    margin: 0;
+}
+
+.annotation-modal-input {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+
+    margin: 0;
+    padding: 10px;
+    width: 100%;
+
+    border: 1px solid #444;
+
+    font-size: 16px;
+    font-family: Helvetica;
+}
+
+.annotation-modal-input::-webkit-input-placeholder { color: #333; font-style: italic; }
+.annotation-modal-input:-moz-placeholder { color: #333; font-style: italic; opacity: 1; }
+.annotation-modal-input::-moz-placeholder { color: #333; font-style: italic; opacity: 1; }
+.annotation-modal-input:-ms-input-placeholder { color: #333; font-style: italic; }
+.annotation-modal-input::placeholder { color: #333; font-style: italic; }
+
+.annotation-modal.annotation-modal-open.annotation-modal-anchored {
+    top: 20px;
+
+    -webkit-transform: translate(-50%, 0);
+       -moz-transform: translate(-50%, 0);
+        -ms-transform: translate(-50%, 0);
+         -o-transform: translate(-50%, 0);
+            transform: translate(-50%, 0);
+
+
+    /* gross fix for blurry element when using transform translate in chrome */
+    /*-webkit-filter: blur(0.000001px);
+    -webkit-font-smoothing: antialiased;*/
+}
+
+.annotation-modal.annotation-modal-open {
+    opacity: 1;
+}
+
+.annotation-modal-overlay.annotation-modal-open {
+    opacity: 1;
+}
+
+/*----------------------
+    Default Animation
+-----------------------*/
+
+.annotation-modal-overlay.fade-and-drop {
+    display: block;
+    opacity: 0;
+}
+
+.annotation-modal.fade-and-drop {
+    top: -300%;
+    opacity: 1;
+    display: block;
+}
+
+.annotation-modal.fade-and-drop.annotation-modal-open {
+    top: 100px;
+
+    -webkit-transition: 200ms top 200ms ease;
+       -moz-transition: 200ms top 200ms ease;
+        -ms-transition: 200ms top 200ms ease;
+         -o-transition: 200ms top 200ms ease;
+            transition: 200ms top 200ms ease;
+}
+
+.annotation-modal.fade-and-drop.annotation-modal-open.annotation-modal-anchored {
+    -webkit-transition: 500ms top 500ms ease;
+       -moz-transition: 500ms top 500ms ease;
+        -ms-transition: 500ms top 500ms ease;
+         -o-transition: 500ms top 500ms ease;
+            transition: 500ms top 500ms ease;
+}
+
+.annotation-modal-overlay.fade-and-drop.annotation-modal-open {
+    top: 0;
+
+    -webkit-transition: 200ms opacity ease;
+       -moz-transition: 200ms opacity ease;
+        -ms-transition: 200ms opacity ease;
+         -o-transition: 200ms opacity ease;
+            transition: 200ms opacity ease;
+
+    opacity: 1;
+}
+
+.annotation-modal.fade-and-drop {
+    -webkit-transition: 500ms top ease;
+       -moz-transition: 500ms top ease;
+        -ms-transition: 500ms top ease;
+         -o-transition: 500ms top ease;
+            transition: 500ms top ease;
+}
+
+.annotation-modal-overlay.fade-and-drop {
+    -webkit-transition: 500ms opacity 500ms ease;
+       -moz-transition: 500ms opacity 500ms ease;
+        -ms-transition: 500ms opacity 500ms ease;
+         -o-transition: 500ms opacity 500ms ease;
+            transition: 500ms opacity 500ms ease;
 }

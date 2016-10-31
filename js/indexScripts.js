@@ -388,10 +388,6 @@ function getExperimentData($eId, $type, $invite) {
                     $('#experiment-info').append(data[0]['shortDescription']);
                     $('#experiment-text').append(data[0]['longDescription']);
 
-                    // show the start experiment panel
-                    $('#start-experiment-panel').css("display", "block");
-                    $('#top-panels').css("margin-bottom", ($('#start-experiment-panel').height() + 900) + "px");
-
                     if (data[1] !== 0) {
                         setUpCustomFields(data[1]);
                     }

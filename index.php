@@ -122,20 +122,16 @@
                     </div>
                 </div>
 
-                <div style="clear: both;"></div>
-
-                <div id="start-experiment-panel">
-                    <div id="bottom-panels">
-                        <div id="bottom-left-panel">
-                            <h2 id="experiment-title"></h2>
-                            <p id="experiment-info"></p>
-                            <p id="experiment-text"></p>
-                        </div>
-
-                        <div id="bottom-right-panel">
-                            <div id="input-fields"></div>
-                            <div id="experiment-buttons"></div>
-                        </div>
+                <div style="clear: both"></div>
+                <div id="bottom-panels" style="overflow: auto; max-height: 300px; width: 100%; margin: 20px 0;">
+                    <div id="bottom-left-panel" style="float: left; width: 49%;">
+                        <h2 id="experiment-title"></h2>
+                        <p id="experiment-info"></p>
+                        <p id="experiment-text"></p>
+                    </div>
+                    <div id="bottom-right-panel" style="width: 49%; float: right; bottom: 0; padding: 10px 0">
+                        <div id="input-fields" style="margin: 15px 0"></div>
+                        <div id="experiment-buttons" style="margin: 0 5%"></div>
                     </div>
                 </div>
 

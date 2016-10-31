@@ -12,7 +12,8 @@
         // establish our default settings, override if any provided
         var settings = $.extend({
             imageUrl: $(this).attr('data-image-url'),
-            annotation: false
+            annotation: false,
+            placeholderText: "What do you see?"
         }, options);
 
         /* get the current database id of the experiment */
@@ -67,22 +68,6 @@
 
         var TOOL = "MARKER"; /* keeps track of whether the users is drawing or erasing */
 
-        if (settings.annotation) {
-            var Remark = new Annotation();
-            // append a annotationBox to the canvasContainer element
-            Remark.createAnnotation(canvasContainer, canvasIndex);
-
-            Remark.annotationSaveButton.on('click', function(e) {
-                var shapeID = Remark.annotationBox.attr('data-id'); // id of clicked shape
-                var annoText = $.trim(Remark.annotationTextarea.val()); // text of clicked shape
-
-                // update the annotation property of the shape
-                savedShapes[shapeID].annotation = annoText;
-
-                Remark.closeAnnotation(e);
-            });
-        }
-
         $(document).ready(function() {
             setCanvasImage();
             $(canvasContainer).append(savedCanvas); // append the resized canvas to the DOM
@@ -90,7 +75,8 @@
 
             if (settings.showToolbar == true) {
                 $('body').find('.marking-tool-panel').remove();
-                $(canvasContainer).parent().parent().parent().prepend(toolPanel);
+                // $(canvasContainer).parent().parent().parent().prepend(toolPanel);
+                $('.pen-menu').append(toolPanel);
             }
 
             toolPanel.find('.undo').on('click', undo);
@@ -274,12 +260,32 @@
                 }
 
                 if (ctx.isPointInPath(mouseX, mouseY)) {
-                    Remark.openAnnotation(mouseY, mouseX, k, canvasIndex, savedShapes[k].annotation);
+                    openAnnotationModal(k, savedShapes[k].annotation);
                     break; /* we found the clicked polygon, no need to loop through the rest */
                 }
                 ctx.closePath();
             }
         };
+
+        /**
+         * Create and open the annotation modal.
+         *
+         * @return void
+         */
+        function openAnnotationModal(id, text) {
+            var inputModal = new AnnotationModal({
+                /* display the text in the input field, if the selected shape already has a annotation saved */
+                inputValue: ( (text != '') ? text : '' ),
+                /* placholder="" attribute text of the input field */
+                placeholderText: settings.placeholderText,
+                /* save the annotation whenever the modal closes */
+                onClose: function(event) {
+                    savedShapes[id].annotation = inputModal.getInputValue();
+                }
+            });
+
+            inputModal.open();
+        }
 
         var stopdrag = function(e) {
             $(this).off('mousemove');
@@ -381,18 +387,22 @@
          * @return void
          */
         var saveShape = function(e) {
+            // $('#pan2').parent().append(
+            //     '<i style="margin: 20px; position: absolute; top: 0; left: 0;" class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom"></i>'
+            // );
+
             // only save the shape if we have atleast 3 points
             if (points.length > 2) {
                 if (TOOL == "MARKER") {
                     // save all the x and y coordinates as well as any comment
-                    savedShapes.push( new Shape(points, " ") );
+                    savedShapes.push( new Shape(points, "") );
                     savedShapes[savedShapes.length-1].setFill();
 
                     if (savedShapes.length > 1) {
                         mergePossibleOverlapping();
                     }
                 } else if (TOOL == "DELETE") {
-                    deleteArea.push( new Shape(points, " ") );
+                    deleteArea.push( new Shape(points, "") );
                     deleteArea[deleteArea.length-1].setFill();
 
                     // for each point in the delete shape look for a match in existing shapes
@@ -420,6 +430,8 @@
 
             draw();
             drawSavedShapes();
+
+            // $('.fa-spinner').remove();
         };
 
         /**
