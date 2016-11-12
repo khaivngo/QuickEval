@@ -39,8 +39,15 @@ $(document).ready(function () {
         setActive($(this));
 
         $('#password-submit').click(function () {	//when user submits new password
+
             if (checkValuesPassword()) {           // checks if it's valid
+                console.log("PASS PASS")
+
                 updatePassword();                  // if so, updates user's password
+            }
+            else {
+                console.log("not valid")
+
             }
         });
     });
@@ -238,26 +245,32 @@ function checkValuesPassword() {
     var confirmNewPassword = $('#password3').val();     //fetching value of confirm new password
 
     if (!(sessionPassword == oldPassword)) {     //assumed old password actually matches old passwor
-        $('#password').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-        '<div class="bg-red notice marker-on-top span1">' +
-        'Password does not match current password' +
-        '</div></div>');
+        $("#password-div .notify-no-match").remove();
+        $('#password').after('<div id="notify" class="notify-no-match">' +
+            '<div class="span3" style="margin: 0 20px"></div>' +
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Password does not match current password' +
+            '</div></div>');
         return false;
     }
 
     if (newPassword.length <= 4) {                  //checks if length of new password is valid
-        $('#password2').after('<div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-        '<div class="bg-red notice marker-on-top span1">' +
-        'Password needs to be longer than 4 characters' +
-        '</div></div>');
+        $("#password-div .notify-no-length").remove();
+        $('#password2').after('<div id="notify" class="notify-no-length">' +
+            '<div class="span3 notify-no-length" style="margin: 0 20px"></div>' +
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Password needs to be longer than 4 characters' +
+            '</div></div>');
         return false;
     }
 
     if (!(newPassword == confirmNewPassword)) {         //if new password and confirm new password matches.
-        $('#password3').after('<div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-        '<div class="bg-red notice marker-on-top span1">' +
-        'Passwords do not match' +
-        '</div></div>');
+        $("#password-div .notify-not-matching").remove();
+        $('#password3').after('<div id="notify" class="notify-not-matching">' +
+            '<div class="span3 notify-not-matching" style="margin: 0 20px"></div>' +
+            '<div class="bg-red notice marker-on-top span1">' +
+            'Passwords do not match' +
+            '</div></div>');
         console.log("Both passwords do not match");
         return false;
     }
@@ -269,21 +282,24 @@ function checkValuesPassword() {
  * Sends data to updatePassword.php for updating data in database
  */
 function updatePassword() {
-        $.ajax({
-            type: 'POST',
-            url: 'ajax/observer/updatePassword.php',
-            data: {'password': CryptoJS.SHA3($('#password2').val()).toString()}, //crypts new password
-            success: function (data) {
-                $.Notify({//notifies user about successfull password change
-                    content: "Password changed",
-                    style: {background: 'lime'},
-                });
-            },
-            error: function (request, status, error) {
-                alert(request.responseText);
-                console.log(request.responseText);
-            }
-        });
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/observer/updatePassword.php',
+        data: {
+            'password': CryptoJS.SHA3($('#password2').val()).toString(),
+            "check": "newPassword"
+        }, //crypts new password
+        success: function (data) {
+            $.Notify({//notifies user about successfull password change
+                content: "Password changed",
+                style: {background: 'lime'},
+            });
+        },
+        error: function (request, status, error) {
+            // alert(request.responseText);
+            console.log(request.responseText);
+        }
+    });
 }
 
 
@@ -315,9 +331,9 @@ function checkValuesUserInfo() {
     if (firstName != sessionFirstName) {
         if (firstName.length <= 1) {
             $('#first-name').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-            '<div class="bg-red notice marker-on-top span1">' +
-            'Too short' +
-            '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Too short' +
+                '</div></div>');
             return false;
         }
     }
@@ -325,9 +341,9 @@ function checkValuesUserInfo() {
     if (lastName != sessionLastName) {
         if (lastName.length <= 1) {
             $('#last-name').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-            '<div class="bg-red notice marker-on-top span1">' +
-            'Too short' +
-            '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Too short' +
+                '</div></div>');
             return false;
         }
     }
@@ -335,9 +351,9 @@ function checkValuesUserInfo() {
     if (nationality != sessionNationality) {
         if (nationality.length <= 3) {
             $('#nationality').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-            '<div class="bg-red notice marker-on-top span1">' +
-            'Too short' +
-            '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Too short' +
+                '</div></div>');
             return false;
         }
 
@@ -346,9 +362,9 @@ function checkValuesUserInfo() {
     if (title != sessionTitle) {
         if (firstName.length <= 1) {
             $('#title').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-            '<div class="bg-red notice marker-on-top span1">' +
-            'Too short' +
-            '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Too short' +
+                '</div></div>');
             return false;
         }
     }
@@ -356,9 +372,9 @@ function checkValuesUserInfo() {
     if (phoneNumber != sessionPhoneNumber) {
         if (firstName.length <= 3) {
             $('#phone-number').after('<br><div id="notify"><div class="span3" style="margin: 0 20px"></div>' +
-            '<div class="bg-red notice marker-on-top span1">' +
-            'Too short' +
-            '</div></div>');
+                '<div class="bg-red notice marker-on-top span1">' +
+                'Too short' +
+                '</div></div>');
             return false;
         }
     }
