@@ -305,7 +305,7 @@ $(document).ready(function () {
             loadExperiment();
         }
         else {
-            $('#popupButtons4').css({"margin-left": "-7.5%"});
+            $('#popupButtons4').css({"margin-left": "-150px"});
             $('#contactArea4').find('p').text("");
 
             centerPopup4();
@@ -542,7 +542,7 @@ function loadExperiment() {
         finished();
         $("#button-finished").text("Finish");
         $('#contactArea').empty();                              //changes content of popup
-        $('#continue').hide();
+        // $('#continue').hide();
         $('#contactArea').append("You have finished, thank you for your time <br><br> Click Quit to return to front page.");
         // $('#cancel-experiment').trigger('click');
     }
@@ -614,8 +614,9 @@ function finished() {
         $('#cancel-experiment').trigger('click');
     }
     else {
-        $('#popupButtons3').css({"margin-left": "-7.5%"});
-        $('#contactArea3').append("You sure you want to finish?, All pictures haven't been sorted <br><br> Click Quit to return to front page or Continue to keep sorting.");
+        $('#popupButtons3').css({"margin-left": "-150px"});
+
+        $('#contactArea3 .text-container').empty().append("You sure you want to finish? All pictures haven't been sorted <br><br> Click Quit to return to front page or Continue to keep sorting.");
 
         centerPopup3();
         loadPopup3();

@@ -44,9 +44,11 @@ if (isset($_GET["invite"])) {
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
-<!--    <script src="js/jquery/test/jquery.min.js"></script>-->
     <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
+
+    <!-- jQueryBrowserPlugin-->
+    <script src="js/plugins/jquery-browser-plugin-master/dist/jquery.browser.min.js"></script>
 
     <!-- Other JS & plugins -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>

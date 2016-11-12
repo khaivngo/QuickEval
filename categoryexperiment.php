@@ -50,6 +50,9 @@ if (isset($_GET["invite"])) {
     <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
+    <!-- jQueryBrowserPlugin-->
+    <script src="js/plugins/jquery-browser-plugin-master/dist/jquery.browser.min.js"></script>
+
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
 

@@ -17,7 +17,9 @@ $(document).ready(function () {
     $('#panzoom-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
 
-    })
+    });
+
+    // ma
 });
 
 /**
@@ -28,16 +30,20 @@ $(document).ready(function () {
 function experimentComplete(experimentId) {
     var buffer = getDateTime();
 
+    // console.warn("endTime", buffer)
+
     $.ajax
     ({
         url: 'ajax/observer/updateExperimentResultData.php',
         async: false,
         type: 'POST',
+        dataType: "JSON",
         data: {
             "endTime": buffer,
             "experimentId": experimentId
         },
         success: function (data) {
+            console.log(data)
         },
         error: function (xhr, ajaxOptions, thrownError) {
             console.log("Error");
@@ -54,17 +60,19 @@ function experimentComplete(experimentId) {
  */
 function postStartData(experimentId) {
     var dimension = viewport();
+    var browser = jQBrowser.uaMatch();
 
     $.ajax
     ({
         url: 'ajax/observer/insertExperimentResultData.php',
         async: false,
         data: {
+            'browser': browser.name + "(" + browser.version + ")",
             'os': getOs(),
             'xDimension': dimension['width'],
             'yDimension': dimension['height'],
             'startTime': getDateTime(),
-            'experimentId': experimentId
+            'experimentId': experimentId,
         },
         type: 'post',
         success: function (data) {

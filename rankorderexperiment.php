@@ -38,11 +38,11 @@ if (isset($_GET["invite"])) {
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
-    <!--    <script src="js/jquery/jquery.min.js"></script>-->
     <script src="js/jquery/jquery-3.1.1.min.js"></script>
-
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
+
+    <!-- jQueryBrowserPlugin-->
+    <script src="js/plugins/jquery-browser-plugin-master/dist/jquery.browser.min.js"></script>
 
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
@@ -81,8 +81,9 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons" class="popupButtons" style="">
-        <button id="quit" class="button size2">Quit</button>
         <button id="continue" class="button size2">Continue</button>
+        <button id="quit" class="button size2">Quit</button>
+
     </div>
 </div>
 
@@ -107,9 +108,11 @@ if (isset($_GET["invite"])) {
         <br/>
         <strong>FINISH</strong>
         <br/><br/>
+
+        <span class="text-container"></span>
     </p>
 
-    <div id="popupButtons3" class="popupButtons">
+    <div id="popupButtons3" class="popupButtons" style="margin-left:-150px">
         <button id="continue3" class="button size2">Continue</button>
         <button id="quit3" class="button size2" style="margin-right:10px;">Quit</button>
     </div>
@@ -127,7 +130,7 @@ if (isset($_GET["invite"])) {
         <br/><br/>
     </p>
 
-    <div id="popupButtons4" class="popupButtons">
+    <div id="popupButtons4" class="popupButtons" style="margin-left:-150px;">
         <button id="continue4" class="button size2" style="">Coninue</button>
         <button id="button-next-rating" class="button size2">Next</button>
     </div>
