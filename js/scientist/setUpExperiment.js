@@ -126,7 +126,7 @@ $(document).ready(function() {
         $(document.body).off('click', '.remove-parent');
         $(document.body).on('click', '.remove-parent', function(e) {
             e.preventDefault();
-            $(this).parent().parent().parent().remove();
+            $(this).closest('.custom-field-container').remove();
         });
         $('#ex-add-image-set').click(function() { //Adds a dropdown menu with image sets
             experimentQueueAmount++;
