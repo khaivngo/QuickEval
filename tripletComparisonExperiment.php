@@ -50,6 +50,8 @@ if (isset($_GET["invite"])) {
     <!-- Other JS & plugins -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
 
+    <script src="min/metro.min.js"></script>
+
     <script src="js/popup.js"></script>
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/scientist/scientistScripts.js"></script>
@@ -159,7 +161,7 @@ if (isset($_GET["invite"])) {
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan1" class="panzoom">
-                        <img id="pictureLeft" class="picture" src="flower.jpeg">
+                        <img id="pictureLeft" class="picture" src="">
                     </div>
                 </div>
             </section>
@@ -179,7 +181,7 @@ if (isset($_GET["invite"])) {
                     <a href="" id="middle-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
                     <div id="pan4" class="panzoom">
-                        <img id="pictureMiddle" class="picture" src="flower.jpeg"/>
+                        <img id="pictureMiddle" class="picture" src=""/>
                     </div>
                 </div>
             </section>
@@ -213,7 +215,7 @@ if (isset($_GET["invite"])) {
     </div>
 
     <div id="bottom-buttons" class="page-bottom" style="position: absolute;">
-        <button class="button" id="button-none" style="width: 100%; height:25px; margin-bottom: 10px;">None</button>
+        <!-- <button class="button" id="button-none" style="width: 100%; height:25px; margin-bottom: 10px;">None</button> -->
         <button class="button" id="button-next-triplet" style="width: 100%; height:25px;">Next</button>
     </div>
 </div>

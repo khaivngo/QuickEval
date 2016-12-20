@@ -250,27 +250,27 @@ function nextComparison() {
         choose = "null";
         pictureOrderId = $('#left-reproduction-link').attr('pictureOrderId');
 
-        postResults("pair", pictureOrderId, choose);
+        // postResults("pair", pictureOrderId, choose);
     }
 
     if ($('#middle-reproduction').hasClass('main')) {        //user choose middle
         choose = "null";
         pictureOrderId = $('#middle-reproduction-link').attr('pictureOrderId');
 
-        postResults("pair", pictureOrderId, choose);
+        // postResults("pair", pictureOrderId, choose);
     }
 
     if ($('#right-reproduction').hasClass('main')) {        //user choose right
         choose = "null";
         pictureOrderId = $('#right-reproduction-link').attr('pictureOrderId');
 
-        postResults("pair", pictureOrderId, choose);
+        // postResults("pair", pictureOrderId, choose);
     }
 
     if (!$('#left-reproduction').hasClass('main') && !$('#right-reproduction').hasClass('main') && !$('#middle-reproduction').hasClass('main') && runned == 1) {      //user chose none
         choose = "1";
         pictureOrderId = $('#left-reproduction-link').attr('pictureorderid');
-        postResults("pair", pictureOrderId, choose);
+        // postResults("pair", pictureOrderId, choose);
     }
 
     var data = getNextInExperimentForObserver();

@@ -7,13 +7,13 @@ $(document).ready(function () {
 
         // if the option is not a valid category = option is disabled
         if (selected1 == "null" || selected2 == "null" || selected3 == "null") {
-            // $.Notify({
-            //     content: "Please select a category...",
-            //     style: {
-            //         background: 'darkred',
-            //         color: 'white'
-            //     }
-            // });
+            $.Notify({
+                content: "Please select a category...",
+                style: {
+                    background: 'darkred',
+                    color: 'white'
+                }
+            });
         }
         // valid option goes next.
         else {
@@ -75,7 +75,6 @@ var test = 0;
  * @returns {undefined}
  */
 function postResultCategory(experimentId, pictureOrderId, category) {
-
     var ajaxSettings = {
         url: 'ajax/observer/insertIntoResultCategory.php',
         async: false,
