@@ -183,10 +183,6 @@ body {
          -o-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
 
-    /* gross fix for blurry element when using transform translate in chrome */
-    /*-webkit-filter: blur(0.000001px);
-    -webkit-font-smoothing: antialiased;*/
-
     border-radius: 2px;
     background: #fff;
 }
@@ -225,11 +221,6 @@ body {
         -ms-transform: translate(-50%, 0);
          -o-transform: translate(-50%, 0);
             transform: translate(-50%, 0);
-
-
-    /* gross fix for blurry element when using transform translate in chrome */
-    /*-webkit-filter: blur(0.000001px);
-    -webkit-font-smoothing: antialiased;*/
 }
 
 .annotation-modal.annotation-modal-open {

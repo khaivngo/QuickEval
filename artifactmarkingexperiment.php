@@ -65,7 +65,7 @@
     <script src="js/artifactExperiment/artifactMarkingPen/Annotation.js"></script>
     <script src="js/artifactExperiment/artifactMarkingPen/canvas-image-marker.js"></script>
 </head>
-<body class="metro" style="background-color:#808080;" onload="show(); start();">
+<body class="metro" style="overflow: hidden; background-color:#808080;" onload="show(); start();">
 
 <div id="popupContact">
     <p id="contactArea" class="contactArea-center" style="font-size:18px;">
@@ -108,9 +108,6 @@
 </div>
 <div id="backgroundPopup3"></div>
 
-
-<!------------------------------------------->
-
 <div id="header-div" style="width:100%; height:50px; background-color: #282828;">
     <div class="inner-header">
         <button id="button-instruction" class="button top-buttons" style="margin-left:15px; margin-right:20px">
@@ -134,7 +131,7 @@
     </div>
 </div>
 
-<div id="category-container">
+<div id="category-container" style="position: relative;">
 
     <div style="width: 100%; margin-top: 20px;">
         <div style="display: inline-block; margin-left: 0%; width:40%;">
@@ -179,18 +176,24 @@
         </section>
     </div>
 
-    <div style="width:100%; margin-top: 20px;">
-        <div class="" style="display:inline-block; margin-left: 0%; width:40%;"></div>
+</div>
 
-        <div class="" style="display:inline-block; margin-left: 2%; width:40%;">
-            <div class="category-button-container" style="overflow: auto; ">
-                <button style="float:left;" class="size2 panning-reset">Reset panning</button>
-                <button class="size2" id="button-next-category" style="float: right;">Next</button>
-            </div>
+<div style="width:100%; margin-top: 20px; position: absolute; bottom: 4%;">
+    <div class="category-button-container" style="overflow: auto;">
+        <div style="text-align: right; display: inline-block; width: 55%; margin: 0; padding: 0;">
+            <button class="size2 panning-reset">
+                <strong>Reset panning</strong>
+            </button>
+        </div>
+        
+        <div style="text-align: right; display: inline-block; width: 36%; margin: 0; padding: 0;">
+            <button class="size2" id="button-next-category">
+                <strong>Next</strong>
+            </button>
         </div>
     </div>
-
 </div>
+
 
 </body>
 </html>

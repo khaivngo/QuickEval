@@ -60,7 +60,7 @@ if (isset($_GET["invite"])) {
     <script src="js/tripletExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
 </head>
-<body class="metro" style="background-color:#808080;" onload="show(); start();">
+<body class="metro" style="padding: 0; margin: 0; background-color:#808080;" onload="show(); start();">
 
 <div id="popupContact" style="">
     <p id="contactArea" class="contactArea-center" style="font-size:18px;">
@@ -103,9 +103,7 @@ if (isset($_GET["invite"])) {
 </div>
 <div id="backgroundPopup3"></div>
 
-<!----------------------------->
-
-<div id="paircomparison">
+<div id="paircomparison" style="height: 95%; overflow: hidden; padding: 0; margin: 0;">
 
     <div id="header-div" style="width:100%; height:50px; background-color: #282828;">
         <div style="margin-top:5px;">
@@ -132,15 +130,16 @@ if (isset($_GET["invite"])) {
         </div>
     </div>
 
-    <div id="pair-container">
+    <div id="pair-container" style="height: 100%; padding-bottom: 0; margin-bottom: 0;">
 
-        <div id="original" style="margin-left: 0; width:22%; height:70%; display:inline-block;">
+        <div id="original" style="margin-left: 0; width: 22%; height: 100%; display: inline-block; overflow: hidden;">
             <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
             <section id="set2">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
+                <div class="parent" style="
+                overflow:hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
-                    <div id="pan3" class="panzoom">
+                    <div id="pan3" class="panzoom" style="height: 100%;">
                         <img id="pictureOriginal" class="picture" src="images/initiatePicture.png"/>
                     </div>
                 </div>
@@ -148,7 +147,8 @@ if (isset($_GET["invite"])) {
             <br>
         </div>
 
-        <div id="left-reproduction" style=" display:inline-block; margin-left: 2%; width:22%; height: 70%;">
+        <div id="left-reproduction" style=" display:inline-block; vertical-align: top; 
+        margin-left: 2%; width:22%; height: 100%; overflow: hidden;">
             <div class="category-button-container">
                 <div class="input-control select size3" style="text-align:center;">
                     <select id="categories1" class="categories" style="background-color:#C8C8C8;">
@@ -157,10 +157,10 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
             <section id="set2">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
+                <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="left-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
-                    <div id="pan1" class="panzoom">
+                    <div id="pan1" class="panzoom" style="height: 100%;">
                         <img id="pictureLeft" class="picture" src="">
                     </div>
                 </div>
@@ -168,7 +168,8 @@ if (isset($_GET["invite"])) {
             <br>
         </div>
 
-        <div id="middle-reproduction" class="" style=" display:inline-block; margin-left: 2%; width:22%; height: 70%;">
+        <div id="middle-reproduction" class="" style="display: inline-block; overflow: hidden;
+        vertical-align: top; margin-left: 2%; width:22%; height: 100%;">
             <div class="category-button-container">
                 <div class="input-control select size3" style="text-align:center;">
                     <select id="categories2" class="categories" style="background-color:#C8C8C8;">
@@ -177,10 +178,10 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
             <section id="set2">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
+                <div class="parent" style="overflow: hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="middle-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
-                    <div id="pan4" class="panzoom">
+                    <div id="pan4" class="panzoom" style="height: 100%;">
                         <img id="pictureMiddle" class="picture" src=""/>
                     </div>
                 </div>
@@ -189,19 +190,20 @@ if (isset($_GET["invite"])) {
         </div>
 
         <div id="right-reproduction" class="right pictureContainer"
-             style="display:inline-block; margin-left: 2%; width:22%; height: 70%">
+             style="display: inline-block; overflow: hidden; vertical-align: top;
+             margin-left: 2%; width:22%; height: 100%">
              <div class="category-button-container">
-                 <div class="input-control select size3" style="text-align:center;">
+                 <div class="input-control select size3" style="text-align: center;">
                      <select id="categories3" class="categories" style="background-color: #C8C8C8;">
                          <option value="null" disabled>Select category</option>
                      </select>
                  </div>
              </div>
             <section id="set2" style="">
-                <div class="parent" style="overflow:hidden; position: relative; max-height: 700px; width: 100%;">
+                <div class="parent" style="overflow: hidden; position: relative; height: 100%; width: 100%;">
                     <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
-                    <div id="pan2" class="panzoom">
+                    <div id="pan2" class="panzoom" style="height: 100%;">
                         <img id="pictureRight" class="picture" src="images/initiatePicture.png"/>
                     </div>
                 </div>
@@ -209,14 +211,19 @@ if (isset($_GET["invite"])) {
             <br>
         </div>
 
-        <div style="width:100%;">
-            <button class="size2 panning-reset">Reset panning</button>
+        <div style="width: 100%;">
+            <button class="size2 panning-reset">
+                <strong>Reset panning</strong>
+            </button>
         </div>
     </div>
 
     <div id="bottom-buttons" class="page-bottom" style="position: absolute;">
-        <!-- <button class="button" id="button-none" style="width: 100%; height:25px; margin-bottom: 10px;">None</button> -->
-        <button class="button" id="button-next-triplet" style="width: 100%; height:25px;">Next</button>
+        <!-- <button class="button" id="button-none" style="width: 100%; 
+        height:25px; margin-bottom: 10px;">None</button> -->
+        <button class="button" id="button-next-triplet" style="width: 100%; height: 25px;">
+            <strong>Next</strong>
+        </button>
     </div>
 </div>
 
