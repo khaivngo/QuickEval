@@ -41,14 +41,18 @@
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="js/jquery/jquery.min.js"></script>
+    <!-- <script src="js/jquery/jquery.min.js"></script> -->
+    <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
+
+    <!-- jQueryBrowserPlugin-->
+    <script src="js/plugins/jquery-browser-plugin-master/dist/jquery.browser.min.js"></script>
+
+     <!-- Other JS -->
+    <script src="js/plugins/jquery.panzoom.min.js"></script>
 
     <!-- Metro UI -->
     <script src="min/metro.min.js"></script>
-
-    <!-- Other JS -->
-    <script src="js/plugins/jquery.panzoom.min.js"></script>
 
     <script src="js/commonExperimentScript.js"></script>
     <script src="js/stopwatch.js"></script>
@@ -134,14 +138,14 @@
 <div id="category-container" style="position: relative;">
 
     <div style="width: 100%; margin-top: 20px;">
-        <div style="display: inline-block; margin-left: 0%; width:40%;">
-            <span id="original-tag" class="span-original-tag"><p>Original</p></span>
+        <div style="display: inline-block; margin-left: 4%; width: 45%; text-align: center;">
+            <span style="font-size: 150%;" id="original-tag">Original</span>
         </div>
 
-        <div class="pen-menu" style="display: inline-block; margin-left: 2%; width:40%;"></div>
+        <div class="pen-menu" style="display: inline-block; margin-left: 2%; width:45%;"></div>
     </div>
 
-    <div id="original" class="panning-container" style="vertical-align: top; display: inline-block; margin-left: 0%; width:40%; height:70%;">
+    <div id="original" class="panning-container" style="vertical-align: top; display: inline-block; margin-left: 4%; width:45%; height:70%;">
 
         <section id="set1">
             <div class="parent" style="overflow: hidden; position: relative; height:100%; width:100%;">
@@ -156,7 +160,7 @@
 
 
     <div id="reproduction" class="reproduction panning-container"
-        style="display: inline-block; margin-left: 2%; margin-bottom: 50px; width:40%; height:70%;">
+        style="display: inline-block; margin-left: 2%; margin-bottom: 50px; width:45%; height:70%;">
         <section id="set2" style="">
             <div class="parent" style="overflow:hidden; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>

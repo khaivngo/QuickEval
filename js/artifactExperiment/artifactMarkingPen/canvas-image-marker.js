@@ -137,35 +137,35 @@
          */
         var setCanvasImage = function() {
             image = new Image();
+            image.src = settings.imageUrl;
 
-            var resize = function() {
+            image.onload = function() {
                 // make all elements the same size as the image
                 $('.canvas-container').css({
                     height: image.height + 'px',
-                    width: image.width + 'px'
+                    width: image.width + 'px',
+                    /* make sure our absolute positioned canvases
+                     * are placed relative to the container */
+                    position: 'relative'
                 });
+
+                // make canvases the same size as the image
                 canvas.attr('height', image.height).attr('width', image.width);
                 savedCanvas.attr('height', image.height).attr('width', image.width);
+
+                savedCanvas.css({
+                    background: 'url(' + image.src + ')',
+                    position: "absolute",
+                    top: 0,
+                    right: 0
+                });
+
+                canvas.css({
+                    position: "absolute",
+                    top: 0,
+                    right: 0
+                });
             };
-
-            $(image).load(resize);
-            image.src = settings.imageUrl;
-
-            if (image.loaded)
-                resize();
-
-            savedCanvas.css({
-                background: 'url(' + image.src + ')',
-                position: "absolute",
-                top: 0,
-                right: 0
-            });
-
-            canvas.css({
-                position: "absolute",
-                top: 0,
-                right: 0
-            });
         };
 
         /**

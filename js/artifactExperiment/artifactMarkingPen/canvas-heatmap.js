@@ -733,38 +733,36 @@
          */
         function setCanvasImage() {
             image = new Image();
+            image.src = settings.imageUrl;
 
-            var resize = function() {
+            image.onload = function() {
                 // make all elements the same size as the image
                 $(canvasContainer).css({
                     height: image.height + heatmapLegend.height,
                     width: image.width,
-                    background: "#ddd"
+                    background: "#ddd",
+                    /* make sure our absolute positioned canvases
+                     * are placed relative to the container */
+                    position: 'relative'
                 });
 
                 imageCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasImage');
                 matrixCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasMatrix');
                 mergedCanvas.attr('height', image.height + heatmapLegend.height).attr('width', image.width).attr('id','heatmapCanvasMerged');
-            };
 
-            $(image).load(resize);
-            image.src = settings.imageUrl;
+	            imageCanvas.css({
+	                background: 'url(' + image.src + ') no-repeat',
+	                position: "absolute", top: 0, right: 0
+	            });
 
-            if (image.loaded)
-                resize();
+	            matrixCanvas.css({
+	                position: "absolute", top: 0, right: 0
+	            });
 
-            imageCanvas.css({
-                background: 'url(' + image.src + ') no-repeat',
-                position: "absolute", top: 0, right: 0
-            });
-
-            matrixCanvas.css({
-                position: "absolute", top: 0, right: 0
-            });
-
-            mergedCanvas.css({
-                position: "absolute", top: 0, right: 0
-            });
+	            mergedCanvas.css({
+	                position: "absolute", top: 0, right: 0
+	            });
+	    	};
         }
 
          /**

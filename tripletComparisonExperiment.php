@@ -44,8 +44,12 @@ if (isset($_GET["invite"])) {
     <link href="css/rating-experiment.css" rel="stylesheet">
 
     <!-- JQuery -->
-    <script src="js/jquery/test/jquery.min.js"></script>
+    <!-- <script src="js/jquery/test/jquery.min.js"></script> -->
+    <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
+
+    <!-- jQueryBrowserPlugin-->
+    <script src="js/plugins/jquery-browser-plugin-master/dist/jquery.browser.min.js"></script>
 
     <!-- Other JS & plugins -->
     <script src="js/plugins/jquery.panzoom.min.js"></script>
@@ -130,7 +134,7 @@ if (isset($_GET["invite"])) {
         </div>
     </div>
 
-    <div id="pair-container" style="height: 100%; padding-bottom: 0; margin-bottom: 0;">
+    <div id="pair-container" style="height: 100%; padding-bottom: 0; margin-bottom: 0; margin-top: 40px;">
 
         <div id="original" style="margin-left: 0; width: 22%; height: 100%; display: inline-block; overflow: hidden;">
             <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
@@ -211,7 +215,7 @@ if (isset($_GET["invite"])) {
             <br>
         </div>
 
-        <div style="width: 100%;">
+        <div style="width: 100%; position: absolute; bottom: 10px;">
             <button class="size2 panning-reset">
                 <strong>Reset panning</strong>
             </button>
