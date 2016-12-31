@@ -22,7 +22,7 @@ function startNewExperimentForObserver(experimentId) {
  * Gets the next position in the experiment for a observer.
  * @return instruction with text, the pictures which are to be shown,
  * or a text with "finished" that indicates that an experiment is over.
- * 
+ *
  */
 function getNextInExperimentForObserver() {
 	var returnData = new Array();

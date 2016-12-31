@@ -524,6 +524,14 @@ function startExperiment() {
         case '3':
             url = 'categoryexperiment.php';
             break;
+
+        case '4':
+            url = 'artifactMarkingExperiment.php';
+            break;
+
+        case '5':
+            url = 'tripletComparisonExperiment.php';
+            break;
     }
 
     url += invite;    //adds invite hash if set

@@ -38,7 +38,7 @@ function viewExperiment($experimentId) {
     getExperimentStatisticsOneExperiment($experimentId);
 
     //Generated invite url based on hash
-    var fullPath = path + url + '?invite=' + data['inviteHash']
+    var fullPath = path + url + '?invite=' + data['inviteHash'];
 
     $('#experiment-url').html('Invite URL: <a href="' + fullPath + '" target = "_blank">' + fullPath + '</a>');
 
@@ -52,6 +52,11 @@ function viewExperiment($experimentId) {
     } else {
         $('#set-public').show();
         $('#set-hidden').hide();
+    }
+
+    // Experiment Type Artifact Marking
+    if (type == 4) {
+        injectHeatmaps($experimentId);
     }
 }
 
@@ -218,7 +223,6 @@ function clearResultsConfirm() {
  * @param experimentId
  */
 function clearResultsForExperiment(experimentId) {
-    console.log(experimentId);
     $.ajax({
         url: 'ajax/observer/deleteOldResults.php',
         data: {
@@ -1048,7 +1052,7 @@ function getAllIndexes(arr, val) {
 }
 
 
-//Function to include a JS file (needed for math.js) 
+//Function to include a JS file (needed for math.js)
 function includeJs(jsFilePath) {
     var js = document.createElement("script");
 
@@ -1299,7 +1303,7 @@ function calculateSlope(y, x) {
     var sum_xx = 0;
     var sum_yy = 0;
 
-	
+
 		for (var i = 0; i < y.length; i++) {
 			if(y[i]<3 && y[i] > -3)
 			{
@@ -1310,7 +1314,7 @@ function calculateSlope(y, x) {
 			sum_yy += (y[i] * y[i]);
 			}
 		}
-	
+
     lr['slope'] = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
     lr['intercept'] = (sum_y - lr.slope * sum_x) / n;
     lr['r2'] = Math.pow((n * sum_xy - sum_x * sum_y) / Math.sqrt((n * sum_xx - sum_x * sum_x) * (n * sum_yy - sum_y * sum_y)), 2);
@@ -1500,7 +1504,7 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
 
     for (var i = 0; i < zScoreArray[2].length; i++) {
         meanValues.push(zScoreArray[1][i]);  //Mean value
-        highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart. 
+        highLows.push([zScoreArray[0][i], zScoreArray[2][i]]); //push high and low values. ready for th chart.
     }
 
     chart.addSeries(
@@ -1508,7 +1512,7 @@ function addSeries(imageTitleArray, zScoreArray, imageSetTitle) {
             name: imageSetTitle,
             color: Highcharts.getOptions().colors['0'],
             type: 'scatter',
-            //NYTT DATA FELT. 
+            //NYTT DATA FELT.
 
             data: meanValues,
             marker: {
@@ -1843,4 +1847,161 @@ function getExperimentStatisticsOneExperiment($experimentId) {
 
 
     });
+}
+
+
+/*-------------------------------------
+            Heatmap
+--------------------------------------*/
+function injectHeatmaps($experimentId) {
+    $.ajax({
+        url: 'ajax/scientist/heatmapResults.html',
+        type: 'POST',
+        cache: false
+    })
+    .done(function(html) {
+        $('#experiment-results').before(html);
+        $('#no-results-warning').empty();
+        setupHeatmapImages($experimentId);
+    });
+}
+
+
+/**
+ * Get all images for a experiment and create a drowdown list of them.
+ */
+function setupHeatmapImages(experimentId) {
+    $.ajax({
+        url: 'ajax/scientist/getAllExperimentPictures.php',
+        type: 'POST',
+        data: {
+            experiment_id: experimentId
+        },
+        dataType: 'json',
+        encode: true,
+        cache: false
+    })
+    .done(function(experimentImages) {
+        var dropdownList = createDropdownMarkup(experimentImages, experimentId);
+        $('#heatmap-image-select').append(dropdownList);
+
+        $('#displayHeatmapImage').on('change', displayHeatmap);
+
+        setupHeatmapEventListeners();
+    });
+}
+
+/**
+ *
+ */
+function setHeatmapScrollPos(status)
+{
+	if( status )
+	{
+		$('body,html').animate({ scrollTop: $('#heatmap-results h3').position().top - 20}, 500)
+		$('body').css('overflow-y','hidden');
+		$('#heatmap-panel-container').attr('data-status','true');
+		return false;
+	}
+	else
+	{
+		$('body').css('overflow-y','scroll');
+		$('#heatmap-panel-container').attr('data-status','false');
+	}
+}
+
+/**
+ *
+ */
+function setupHeatmapEventListeners() {
+    $('.heatmap-settings-button').on('click', function() {
+        // Have to do this manually because the toggle slider has a delay,
+        // which means the heatmap panel uses 200 ms to show/hide.
+        var status =  ( $('#heatmap-panel-container').attr('data-status') == 'true') ? false : true;
+
+        $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+        setHeatmapScrollPos(status);
+    });
+
+    $('#close-heatmap-panel').on('click', function() {
+        $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+        setHeatmapScrollPos(false);
+    });
+
+    // User keyboard listener
+    $(document).keyup(function(e) {
+        // Escape button
+        if (e.keyCode == 27) {
+            $('#heatmap-panel-container').toggle("slide", { direction: "right" }, 200);
+            setHeatmapScrollPos(false);
+        }
+    });
+}
+
+/**
+ * Append the selected image with the heatmap overlay.
+ */
+function displayHeatmap() {
+    /* remove any previously added images, if this is the second time we call this function */
+    $('.canvas-container').empty();
+
+    var experimentID = $('select').find(':selected').attr('data-experiment-id');
+    var pictureQueue = $("select").find(':selected').attr('data-picture-queue');
+      var pictureURL = $("select").find(':selected').attr('data-image-url');
+       var pictureID = $("select").find(':selected').attr('data-image-id');
+     var pictureName = $("select").find(':selected').attr('data-image-name'); // used in the generation of the CSV file
+
+    $('#pan').panzoom();
+
+    /* run our plugin on the newly created canvas-container element
+     * pass the ID and queue of the picture */
+    $('.canvas-container').canvasHeatmap({
+        experimentID: experimentID,
+        pictureID: pictureID,
+        pictureQueue: pictureQueue,
+        pictureName: pictureName,
+        imageUrl: pictureURL
+    });
+
+}
+
+/**
+ * Create the HTML for a select dropdown of all experiment pictures.
+ *
+ * @return {string}
+ */
+function createDropdownMarkup(images, experimentId) {
+    // loop through each experiment image and create a dropdown list with the image names
+    var output = '<div id="heatmap-options">';
+        output += '<select id="displayHeatmapImage" style="width: 200px; padding: 10px;">';
+            output += '<option selected="true" disabled>Choose image</option>';
+
+            images[0].forEach(function(image) {
+                output +=
+                    '<option data-image-url="uploads/' + images[1][0].person + '/' + image.pictureSet + '/' + image.pictureurl + '.' + getFileExtension(image.picturename) + '"' +
+                        ' data-image-name=' + image.picturename +
+                        ' data-image-id= "' + image.pictureid +
+                        '" data-picture-queue="' + image.pictureorder +
+                        '" data-experiment-id="' + experimentId +
+                    '" class="open-heatmap">' +
+                        image.picturename +
+                    '</option>';
+            });
+        output += "</select>";
+
+        output +=' <button style="padding: 10px 15px;" class="primary heatmap-settings-button open-heatmap">' +
+                        'Heatmap settings <i class="fa fa-cog"></i>' +
+                  '</button>';
+    output += '</div>';
+
+    return output;
+}
+
+/**
+ * Returns the extension from a filename.
+ *
+ * @return {string}
+ */
+function getFileExtension(filename) {
+    return filename.split('.').pop();
 }

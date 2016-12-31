@@ -1,5 +1,5 @@
 ﻿$(document).ready(function() {
-    
+
     setUpModeMenu('.observer-mode');
 
     //Sets up search bars, populates lists and sets up event handlers
@@ -55,7 +55,7 @@ function getInstitutions($institute) {
 /**
  * Populates organization-list based on organization search.
  * Adds random organizations if field is empty
- * @param {type} $organization The organization to be searched for 
+ * @param {type} $organization The organization to be searched for
  * @returns {undefined}
  */
 function getOrganizations($organization) {
@@ -136,7 +136,7 @@ function getScientists($scientist) {
 
 /**
  * Populates experiment list based on institute/organization/scientist and experiment search field.
- * Gets random experiments if no experiment is searched for 
+ * Gets random experiments if no experiment is searched for
  * @param {type} $experiment Experiment to be searched for
  * @returns {undefined}
  */

@@ -30,6 +30,10 @@ if (isset($_SESSION['user'])) {
         <script src="js/jquery/jquery.min.js"></script>
         <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="js/artifactExperiment/artifactMarkingPen/libs/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="js/artifactExperiment/artifactMarkingPen/css/heatmap.css">
+
         <!-- HighCharts -->
         <script src="highcharts/js/highcharts.js"></script>
         <script src="highcharts/js/highcharts-more.js"></script>
@@ -52,14 +56,13 @@ if (isset($_SESSION['user'])) {
 
         <script src="js/scientist/scientistPanelScripts.js"></script>
         <script src="js/scientist/pictureAlgorithm.js"></script>
-        <script src="js/scientist/setUpExperiment.js"></script>  
+        <script src="js/scientist/setUpExperiment.js"></script>
         <script src="js/scientist/manageImageSets.js"></script>
         <script src="js/scientist/fileUploadScripts.js"></script>
         <script src="js/scientist/viewExperiments.js"></script>
-        <script src="js/scientist/experimentResults.js"></script>
         <script src="js/scripts.js"></script>
         <script src="js/scientist/highslide-with-gallery.js"></script>
-		
+
 		<script src="js/scientist/math.js" ></script>
 
         <script type="text/javascript">
@@ -102,9 +105,8 @@ if (isset($_SESSION['user'])) {
         </script>
 
 
-
-
-
+        <!-- Used by the heatmap -->
+       <script src="js/plugins/jquery.panzoom.min.js"></script>
 
     </head>
     <body class="metro" style="overflow-y:scroll">
