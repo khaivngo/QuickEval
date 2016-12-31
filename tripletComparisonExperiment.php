@@ -137,7 +137,7 @@ if (isset($_GET["invite"])) {
     <div id="pair-container" style="height: 100%; padding-bottom: 0; margin-bottom: 0; margin-top: 40px;">
 
         <div id="original" style="margin-left: 0; width: 22%; height: 100%; display: inline-block; overflow: hidden;">
-            <span id="original-tag" style="text-align:center; width:100%;"><p>Original</p></span>
+            <span id="original-tag" style="text-align: center; width:100%;"><p>Original</p></span>
             <section id="set2">
                 <div class="parent" style="
                 overflow:hidden; position: relative; height: 100%; width: 100%;">

@@ -67,10 +67,7 @@ if (isset($_GET["invite"])) {
     <script src="js/categoryExperimentScript.js"></script>
 
 </head>
-
-
-
-<body class="metro" style="background-color:#808080;" onload="show();
+<body class="metro" style="padding: 0; margin: 0;background-color:#808080;" onload="show();
             start();">
 
 <div id="popupContact" style="">
@@ -139,37 +136,23 @@ if (isset($_GET["invite"])) {
     </div>
 </div>
 
-<div id="category-container" style="">
-    <br>
-    <br>
-    <br>
-    <div id="reproduction" class="reproduction panning-container no-original" style="float:left; width:40%; height:70%; margin-left:130px;">
-        <section id="set2" style="">
-            <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
+<div id="category-container" style="height: 80%; overflow: hidden; padding-top: 50px;">
+    <div id="reproduction" class="reproduction panning-container no-original" 
+    style="display: inline-block; width: 42%; height: 70%; margin-left: 5%; vertical-align: top;">
+        <section id="set2">
+            <div class="parent" style="overflow: hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
-                <div id="pan2" class="panzoom">
+                <div id="pan2" class="panzoom" style="">
                     <img class="picture" src="images/initiatePicture.png"/>
                 </div>
             </div>
         </section>
-        <br>
-
-        <div class="category-button-container" style="margin-left: 25%">
-
-            <div class="input-control select size3" style="text-align:center;">
-                <select id="categories" style="background-color:#C8C8C8;">
-                    <option value="null" disabled>Select category</option>
-                </select>
-            </div>
-            <button id="panzoom-reset" style="float:right;" class="size2"><strong>Reset panning</strong></button>
-
-        </div>
-
     </div>
 
 
-    <div id="original" class="panning-container" style="display:inline-block; position:absolute; margin-left: 50px; width:40%; height:70%;">
+    <div id="original" class="panning-container" style="display:inline-block; vertical-align: top;
+    margin-left: 5%; width:42%; height:70%;">
         <span id="original-tag" class="span-original-tag" style="margin-left:50%;"><p>Original</p></span>
 
         <section id="set1">
@@ -185,12 +168,28 @@ if (isset($_GET["invite"])) {
 
     </div>
 
+    <div class="category-button-container" style="width: 100%; padding: 0; position: absolute; bottom: 5%;">
 
+        <div style="margin-left: 5%; padding-left: 5%; width: 37%; display: inline-block; text-align: center;">
+            <div class="input-control select size3">
+                <select id="categories" style="background-color:#C8C8C8;">
+                    <option value="null" disabled>Select category</option>
+                </select>
+            </div>
+        </div>
+        
+        <div style="display: inline-block; width: 15%; text-align: center;">
+            <button id="panzoom-reset" class="size2">
+                <strong>Reset panning</strong>
+            </button>
+        </div>
 
-<!--    <button style="" class="size2 panning-reset">Reset panning</button>-->
-    <div style="position:absolute; bottom: 100px; right: 100px;">
-        <button class="size2" id="button-next-category" style="margin-right:20px;"><strong>Next</strong></button>
-
+        <div style="display: inline-block; width: 36%; text-align: right;">
+            <button class="size2" id="button-next-category">
+                <strong>Next</strong>
+            </button>
+        </div>
+    
     </div>
 
 </div>
