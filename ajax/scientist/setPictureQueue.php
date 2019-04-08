@@ -1,30 +1,31 @@
 <?php
 /**
  * This file will handle all the different pictureOrders for all experiments.
- *
  */
-require_once('../../db.php');
 
+require_once('../../db.php');
 include_once('../../functions.php');
+
 if (!isset($_SESSION['user'])) {
 	header("Location: ../../login.php");
 	exit;
 }
 
-if($_SESSION['user']['userType'] > 2) {
-	return;
+if ($_SESSION['user']['userType'] > 2) {
+	exit;
 }
 
 /**
  * A function that will create a pictureQueue.
- * @param $images an awway with imageId's of which to create a queue from.
- * @param $imagesShownRightAndLeft 1/0 of whether to show a picture on both sides.
+ * @param $images an array with imageId's of which to create a queue from.
+ * @param $images ShownRightAndLeft 1/0 of whether to show a picture on both sides.
  * @return $pairs, an array with the new queue.
  */
 function makeQueue($images, $imagesShownRightAndLeft) {
 	$pairs = array();
 	$index = 1;
 	$arrIndex = 0;
+
 	foreach($images as $image) {
 		for($i = $index;$i < count($images);$i++ ) {
 			$pairs[$arrIndex][0] = $image['id'];
@@ -179,25 +180,25 @@ function makeTripletQueue($images) {
 		$pairs[] = [ $images[18]['id'], $images[1]['id'], $images[9]['id'] ]; // (19, 2, 10)
 
 		// the next 19 triplets from the second equation
-		$pairs[] = [ $images[0]['id'], $images[3]['id'], $images[7]['id'] ]; // (1, 4, 8)
-		$pairs[] = [ $images[1]['id'], $images[4]['id'], $images[8]['id'] ]; // (2, 5, 9)
-		$pairs[] = [ $images[2]['id'], $images[5]['id'], $images[9]['id'] ]; // (3, 6, 10)
-		$pairs[] = [ $images[3]['id'], $images[6]['id'], $images[10]['id'] ]; // (4, 7, 11)
-		$pairs[] = [ $images[4]['id'], $images[7]['id'], $images[11]['id'] ]; // (5, 8, 12)
-		$pairs[] = [ $images[5]['id'], $images[8]['id'], $images[12]['id'] ]; // (6, 9, 13)
-		$pairs[] = [ $images[6]['id'], $images[9]['id'], $images[13]['id'] ]; // (7, 10, 14)
-		$pairs[] = [ $images[7]['id'], $images[10]['id'], $images[14]['id'] ]; // (8, 11, 15)
-		$pairs[] = [ $images[8]['id'], $images[11]['id'], $images[15]['id'] ]; // (9, 12, 16)
-		$pairs[] = [ $images[9]['id'], $images[12]['id'], $images[16]['id'] ]; // (10, 13, 17)
+		$pairs[] = [ $images[0]['id'],  $images[3]['id'],  $images[7]['id'] ];  // (1, 4, 8)
+		$pairs[] = [ $images[1]['id'],  $images[4]['id'],  $images[8]['id'] ];  // (2, 5, 9)
+		$pairs[] = [ $images[2]['id'],  $images[5]['id'],  $images[9]['id'] ];  // (3, 6, 10)
+		$pairs[] = [ $images[3]['id'],  $images[6]['id'],  $images[10]['id'] ]; // (4, 7, 11)
+		$pairs[] = [ $images[4]['id'],  $images[7]['id'],  $images[11]['id'] ]; // (5, 8, 12)
+		$pairs[] = [ $images[5]['id'],  $images[8]['id'],  $images[12]['id'] ]; // (6, 9, 13)
+		$pairs[] = [ $images[6]['id'],  $images[9]['id'],  $images[13]['id'] ]; // (7, 10, 14)
+		$pairs[] = [ $images[7]['id'],  $images[10]['id'], $images[14]['id'] ]; // (8, 11, 15)
+		$pairs[] = [ $images[8]['id'],  $images[11]['id'], $images[15]['id'] ]; // (9, 12, 16)
+		$pairs[] = [ $images[9]['id'],  $images[12]['id'], $images[16]['id'] ]; // (10, 13, 17)
 		$pairs[] = [ $images[10]['id'], $images[13]['id'], $images[17]['id'] ]; // (11, 14, 18)
 		$pairs[] = [ $images[11]['id'], $images[14]['id'], $images[18]['id'] ]; // (12, 15, 19)
-		$pairs[] = [ $images[12]['id'], $images[15]['id'], $images[0]['id'] ]; // (13, 16, 1)
-		$pairs[] = [ $images[13]['id'], $images[16]['id'], $images[1]['id'] ]; // (14, 17, 2)
-		$pairs[] = [ $images[14]['id'], $images[17]['id'], $images[2]['id'] ]; // (15, 18, 3)
-		$pairs[] = [ $images[15]['id'], $images[18]['id'], $images[3]['id'] ]; // (16, 19, 4)
-		$pairs[] = [ $images[16]['id'], $images[0]['id'], $images[4]['id'] ]; // (17, 1, 5)
-		$pairs[] = [ $images[17]['id'], $images[1]['id'], $images[5]['id'] ]; // (18, 2, 6)
-		$pairs[] = [ $images[18]['id'], $images[2]['id'], $images[6]['id'] ]; // (19, 3, 7)
+		$pairs[] = [ $images[12]['id'], $images[15]['id'], $images[0]['id'] ];  // (13, 16, 1)
+		$pairs[] = [ $images[13]['id'], $images[16]['id'], $images[1]['id'] ];  // (14, 17, 2)
+		$pairs[] = [ $images[14]['id'], $images[17]['id'], $images[2]['id'] ];  // (15, 18, 3)
+		$pairs[] = [ $images[15]['id'], $images[18]['id'], $images[3]['id'] ];  // (16, 19, 4)
+		$pairs[] = [ $images[16]['id'], $images[0]['id'],  $images[4]['id'] ];  // (17, 1, 5)
+		$pairs[] = [ $images[17]['id'], $images[1]['id'],  $images[5]['id'] ];  // (18, 2, 6)
+		$pairs[] = [ $images[18]['id'], $images[2]['id'],  $images[6]['id'] ];  // (19, 3, 7)
 
 		// the last 19 triplets from the third equation
 		$pairs[] = [ $images[0]['id'], $images[1]['id'], $images[6]['id'] ]; // (1, 2, 7)
@@ -411,6 +412,13 @@ function makeTripletQueue($images) {
 		$pairs[] = [ $images[24]['id'], $images[0]['id'], $images[6]['id'] ]; // (25, 1, 7)
 	}
 
+	// $order = [
+	// 	[0, 1, 13],
+	// 	[1, 2, 14],
+	// 	[2, 3, 15]
+	// 	....
+	// ]
+
 	if (count($images) == 27) {
 		// the 27 first triplets from the first equation
 		$pairs[] = [ $images[0]['id'], $images[1]['id'], $images[13]['id'] ]; // (1, 2, 14)
@@ -545,8 +553,8 @@ function makeTripletQueue($images) {
 
 $option = $_GET['option'];
 
-if($option == "generateRandom") {
-	$rightAndLeft = $_GET['rightAndLeft'];	//In case the scientist chooses to view pictures both right and left.
+if ($option == "generateRandom") {
+	$rightAndLeft = $_GET['rightAndLeft']; // In case the scientist chooses to view pictures both right and left.
 	$imagesetId = $_GET['imagesetId'];
 
 	$sql = "SELECT * FROM picture WHERE pictureSet = ? AND isOriginal = 0";
@@ -555,7 +563,7 @@ if($option == "generateRandom") {
 	$sth->execute();
 	$images = $sth->fetchAll();
 
-	$imagesToCheck = array();			//CheckOwnerForPicture expects simply id, not a whole class
+	$imagesToCheck = array(); // CheckOwnerForPicture expects simply id, not a whole class
 	foreach($images as $image) {
 		$imagesToCheck[] = $image['id'];
 	}
@@ -623,7 +631,7 @@ if($option == "generateRandom") {
 	echo json_encode($pictureQueueId);
 }
 
-else if($option == "notRandom") {
+else if ($option == "notRandom") {
 	/**
 	 * F�r medsendt en array med to bildeideer.  Disse skal inn i en kanskje eksisterendes pictureQueue OM DEN FINNES
 	 * Har ikke addet sikkerhetssjekker her.
@@ -634,8 +642,7 @@ else if($option == "notRandom") {
 	$pictureQueueId = $_GET['pictureQueueId'];	//This is 0 if it is for a new set.
 	$imagesArray = array();
 
-
-	foreach($images as $image) {
+	foreach ($images as $image) {
 		$sql = "SELECT * FROM picture WHERE id = ?;";
 		$sth = $db->prepare($sql);
 		$sth->bindParam(1,$image);
@@ -644,7 +651,7 @@ else if($option == "notRandom") {
 	}
 
 	$pairs = makeQueue($imagesArray, $rightAndLeft);
-	if(count($pairs > 1)) {
+	if (count($pairs > 1)) {
 		$db->beginTransaction();
 		$order;
 		if($pictureQueueId == 0) {	//Generate new pictureQueue
@@ -692,7 +699,7 @@ else if($option == "notRandom") {
 else if($option == "ratingCategory") {
 	$db->beginTransaction();
 	try {
-		//Trenger bare � lagre med eOrder 0
+		//Trenger bare å lagre med eOrder 0
 		$imagesetId = $_GET['imagesetId'];
 
 		$sql = "INSERT INTO `picturequeue` (`id`, `title`) VALUES (NULL, NULL);";
@@ -715,13 +722,13 @@ else if($option == "ratingCategory") {
 		}
 		$db->commit();
 		echo json_encode($pictureQueueId);
+		exit;
 	} catch(Exception $e) {
-	$db->rollBack();
-	echo json_encode(0);
+		$db->rollBack();
+		echo json_encode(0);
+		exit;
 	}
 
 }
-
-
 
 ?>

@@ -29,10 +29,6 @@ textarea {
     font-size: 14px;
 }
 
-#table1 {
-
-}
-
 .dashboard {
     margin-left: 2%;
     margin-top: 2%;
@@ -92,4 +88,19 @@ textarea {
 .no-original {
     margin-left: auto;
     margin-right: auto;
+}
+
+.start-experiment-panel {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    background-color: #F2F2F2;
+    border-top: 1px solid #ccc;
+    box-shadow: 5px;
+    left: 0;
+    bottom: 0;
+    z-index: 100;
+    width: 100%;
+    padding: 20px;
+    align-items: center;
 }

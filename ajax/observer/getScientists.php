@@ -27,10 +27,10 @@ try {
         $res = 0;
     } else {
         $res = $stmt->fetchAll();
-	
     }
 	
     echo json_encode($res);
+    exit;
 } catch (PDOException $excpt) {
    // ChromePhp::log($excpt->getMessage());
 }

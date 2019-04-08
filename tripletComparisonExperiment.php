@@ -1,3 +1,4 @@
+<!doctype html>
 <?php
 require_once('db.php');
 require_once('functions.php');
@@ -30,13 +31,14 @@ if (isset($_GET["invite"])) {
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
-<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    <title>QuickEval</title>
+
     <!-- CSS -->
     <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
     <link href="css/metro-bootstrap.css" rel="stylesheet">

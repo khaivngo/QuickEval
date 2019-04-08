@@ -7,7 +7,7 @@
 
 //SETTING UP OUR POPUP
 //0 means disabled; 1 means enabled;
-        var popupStatus = 0;
+var popupStatus = 0;
 var popupStatus2 = 0;
 var popupStatus3 = 0;
 var popupStatus4 = 0;

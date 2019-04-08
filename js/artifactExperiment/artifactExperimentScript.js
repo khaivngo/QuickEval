@@ -15,7 +15,6 @@ $(document).ready(function () {
 
     $('#panzoom-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
-
     });
 
     $('#reproduction-link').on('click', function () {        //sends user to new tab where picture may be seen in full

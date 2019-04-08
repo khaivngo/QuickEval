@@ -3,8 +3,8 @@ var experimentId;
 $(document).ready(function () {
     $(".fullscreen").on('click', function () {
         goFullscreen();
-
     });
+
     $(".fullscreenExit").on('click', function () {
         exitFullscreen();
     });
@@ -13,13 +13,10 @@ $(document).ready(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
     });
 
-
     $('#panzoom-reset').click(function () {
         $("#set1 .panzoom, #set2 .panzoom, #set3 .panzoom").panzoom("resetPan");
 
     });
-
-    // ma
 });
 
 /**
@@ -29,8 +26,6 @@ $(document).ready(function () {
  */
 function experimentComplete(experimentId) {
     var buffer = getDateTime();
-
-    // console.warn("endTime", buffer)
 
     $.ajax
     ({

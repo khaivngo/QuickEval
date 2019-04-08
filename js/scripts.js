@@ -473,27 +473,23 @@ function submitButtonCheck() {
     }
 }
 
-
 /**
  * Updates the localStorage.autoLoginCheck for use in whether to automatically login user as ano.
  * @param check used for controlling action of function.
  */
 function autoLogin(check) {
-    console.log("autoLogin activated");
-    if(typeof(Storage) !== "undefined") {
-        console.log("Web Storage is supported");
-
+    // is webstorage supported?
+    if (typeof(Storage) !== "undefined") {
         //Updates local storage so that next time the login window appears
         // it automatically login user as anonymous
-        if(check == 0 && localStorage.autoLoginCheck2 == "false"  )  {
+        if (check == 0 && localStorage.autoLoginCheck2 == "false"  )  {
             localStorage.autoLoginCheck1 = true;
             localStorage.autoLoginCheck2 = true;
         }
-        else if(check == 1 && localStorage.autoLoginCheck2 == "true")    {
+        else if (check == 1 && localStorage.autoLoginCheck2 == "true")    {
             //localStorage.autoLoginCheck1 = false;
             localStorage.autoLoginCheck2 = false;
         }
-
     } else {
         console.log("Sorry! No Web Storage support")
     }

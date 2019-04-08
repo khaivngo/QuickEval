@@ -5,13 +5,13 @@
         <div class="list-group">
             <a href="#" class="group-title">Public Experiments</a>
             <div class="group-content public-experiments">
-
+                <!--  -->
             </div>
         </div>
         <div class="list-group">
             <a href="#" class="group-title">Hidden Experiments</a>
             <div class="group-content hidden-experiments">
-
+                <!--  -->
             </div>
         </div>
     </div>
@@ -20,8 +20,11 @@
         <fieldset>
             <h2 id="experiment-name">Experiment Name</h2>
             <p id="experiment-type"></p>
-            <p id="experiment-description">Description yo. Shizzle fo nizzle no shizzle ka fizzle ya nizzle?</p>
-            <p id="experiment-url" style="position: absolute">Dis URL yo</p>
+            <p id="experiment-description">Description</p>
+            <div class="experiment-instructions-list" style="margin-bottom: 30px;">
+                <p>Instructions:</p>
+            </div>
+            <p id="experiment-url" style="position: absolute">URL</p>
             <button id="export-experiment" class="primary" style="margin-top: 30px; width:140px">Export Experiment</button> <br/>
             <button id="set-hidden" class="primary" style="margin: 10px 0; width:140px">Set Hidden</button>
             <button id="set-public" class="primary" style="margin: 10px 0; width:140px">Set Public</button><br/>
@@ -88,23 +91,26 @@
                 </div> <br/>
             </fieldset>
         </div>
-        <button id="export-results" class="primary" style="margin: 10px 0; width:140px">Export Results</button><br/>
-        <button id="clear-results" class="primary danger" title="Removes all results connected to the experiment" style="margin: 10px 0; width:140px">Clear experiment results</button><br/>
+        <button id="export-results" class="primary" style="margin: 10px 0; width:140px">
+            Export Results
+        </button><br/>
+        <button id="clear-results" class="danger" title="Removes all results connected to the experiment"
+            style="margin: 10px 0; width:140px">
+            Clear experiment results
+        </button><br/>
 
-
-    	<p>Experiment statistics</p>
-    	<div id="selected-experiment" class = "primary">
+    	<h3 style="margin-top: 50px;">Experiment statistics</h3>
+    	<div id="selected-experiment" class="primary">
             <table class="table bordered" id="table3">
                 <tbody id="statistics">
                 </tbody>
             </table>
     	</div>
 
-
-        <div id="experiment-results"> </div>
+        <div id="experiment-results">
+            <!--  -->
+        </div>
 
         <h3 id="no-results-warning">No results yet</h3>
-
-
     </div>
 </fieldset>

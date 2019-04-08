@@ -15,14 +15,12 @@ $(document).ready(function() {
         e.preventDefault();
     });
 
-
-    //Checks whether the user shall be logged in as anonymous automatically.
+    // checks whether the user shall be logged in as anonymous automatically
     autoLogin(1);
-    if(localStorage.autoLoginCheck1 == "true")    {
+    if (localStorage.autoLoginCheck1 == "true") {
         localStorage.autoLoginCheck1 = false;
         loginAnonymous();
     }
-
 });
 
 function loginAnonymous() {
@@ -36,7 +34,7 @@ function loginAnonymous() {
             $('#anonymous,#submit').prop('disabled', false);
 
             if ($('#redirect').val() != undefined) {
-                window.location = $('#redirect').val();
+                window.location = 'index.php?invite=' + $('#redirect').val();
             } else {
                 window.location = 'index.php';
             }
@@ -63,7 +61,6 @@ function loginUser() {
         type: 'post',
         dataType: 'json',
         success: function(data) {
-            console.log(data);
             if (data == "0") {
                 $('#password-div').after('<div id="notify" class="bg-red notice marker-on-top span1">' +
                     'Invalid email or password' +
@@ -74,21 +71,19 @@ function loginUser() {
                     resetPasswordListener();
                     resetCheck = true;
                 }
-
-
             } else {
                 if ($('#redirect').val() != undefined) {
-                    window.location = $('#redirect').val();
+                    window.location = 'index.php?invite=' + $('#redirect').val();
                 } else {
-
-                    window.location = 'login.php';
+                    window.location = 'index.php';
                 }
             }
+
             $('#anonymous,#submit').prop('disabled', false);
         },
         error: function(request, status, error) {
             console.log(request.responseText);
-            alert("Something went wront, please try again.");
+            alert("Something went wrong, please try again.");
             $('#anonymous,#submit').prop('disabled', false);
         }
     });
@@ -97,7 +92,7 @@ function loginUser() {
 /**
  * Sets a listener to the appended button for resetting password.
  */
-function resetPasswordListener()   {
+function resetPasswordListener() {
     $('#forgot-password').click(function() {
         console.log('reset password');
         sendNewPassword();
@@ -107,7 +102,7 @@ function resetPasswordListener()   {
 /**
  * Goes to the procedure of giving the user a new password.
  */
-function sendNewPassword()  {
+function sendNewPassword() {
     var string = Math.random().toString(36).slice(-8);
     var email = prompt("Enter your email registered with QuickEval", "Email");
 
@@ -137,25 +132,25 @@ function sendNewPassword()  {
  * @param string word.
  * @param email users mail.
  */
-function updatePassword(string, email)   {
-        $.ajax({
-            type: 'POST',
-            url: 'ajax/observer/updatePassword.php',
-            data: {
-                'password': CryptoJS.SHA3(string).toString(),
-                'check': "newPassword",
-                'email': email
-            }, //crypts new password
-            success: function (data) {
-                $.Notify({//notifies user about successfull password change
-                    content: "New password sent to mail",
-                    style: {background: 'lime'},
-                });
-                location.reload();
-            },
-            error: function (request, status, error) {
-                alert(request.responseText);
-                console.log(request.responseText);
-            }
-        });
+function updatePassword(string, email) {
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/observer/updatePassword.php',
+        data: {
+            'password': CryptoJS.SHA3(string).toString(),
+            'check': "newPassword",
+            'email': email
+        }, //crypts new password
+        success: function (data) {
+            $.Notify({//notifies user about successfull password change
+                content: "New password sent to mail",
+                style: {background: 'lime'},
+            });
+            location.reload();
+        },
+        error: function (request, status, error) {
+            alert(request.responseText);
+            console.log(request.responseText);
+        }
+    });
 }

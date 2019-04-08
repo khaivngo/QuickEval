@@ -17,6 +17,8 @@
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
 
+        <link rel="icon" href="images/favicon.png"/>
+
         <!-- CSS -->
         <link href="css/metro-bootstrap.css" rel="stylesheet">
         <link href="css/jquery/ui-lightness/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">

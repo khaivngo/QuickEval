@@ -4,23 +4,26 @@
  * General functions to use between files. This file does nothing on its own except including 
  * db.php.
  */
-
 include_once('db.php');
 require_once('ChromePhp.php');
+
 /**
  * Forces a session update for user and returns the users userType 
  * @return null If there is an error, or userType if not
  */
 function checkLogin($db) {
 	try {
-        if (isset($_SESSION['user'])) {     //Checks for existing session
+      // Check for existing session
+      if (isset($_SESSION['user'])) {
+      	$stmt = $db->prepare("SELECT * FROM person WHERE id=:id");  
 
-        	$stmt = $db->prepare("SELECT * FROM person WHERE id=:id");  
+        // Get userdata
+        $stmt->execute(array(':id' => $_SESSION['user']['id']));
 
-            $stmt->execute(array(':id' => $_SESSION['user']['id']));    //Gets userdata
-        } else {        //If user isn't in database
-        return null;
-    }
+      //If user isn't in database
+      } else {
+          return null;
+      }
 
     $rows = $stmt->rowCount();
 
@@ -45,6 +48,7 @@ function checkLogin($db) {
  */
 function redirectAfterLogin($url) {
 	header('Location: login.php?redirect=' . $url);
+  exit;
 }
 
 function checkOwnerForPicture($pictures, $personId, $db) {
@@ -58,12 +62,11 @@ function checkOwnerForPicture($pictures, $personId, $db) {
 		$sth->execute();
 		
 		$result = $sth->fetch();
-		if($personId != $result['person']) {
+		if ($personId != $result['person']) {
 			return false;
 		}
 	}
 	return true;
-	
 }
 
 function generateUrl($picture){
@@ -74,6 +77,7 @@ function generateUrl($picture){
 	$url['id'] = $picture[0];
 	return $url;
 }
+
 function getUrlForPicture($pictureId, $db) {
 	$sql = "SELECT * FROM picture
 	JOIN pictureset ON picture.pictureSet = pictureset.id
@@ -107,8 +111,6 @@ function getUrlForPicture($pictureId, $db) {
 }
 
 function getExperimentById($id, $db) {
-	
-
 	$sql = "SELECT *, experimenttype.name AS experimentTypeName, experiment.title AS experimentName, experiment.longDescription AS experimentDescription "
 	. " FROM experiment "
 	. " JOIN experimenttype ON experiment.experimentType = experimenttype.id "
@@ -119,7 +121,6 @@ function getExperimentById($id, $db) {
 	$sth->bindParam(2,$id);
 	$sth->execute();
 	$result = $sth->fetch();
-
 
 	return $result;
 }
@@ -135,16 +136,17 @@ if(isset($_GET['option'])) {
 
 /**
  * Returns results for category experiments
- * @param  int $experimentId Id of experiment
- * @param  object $db           Object of current database
- * @param  int $type         experimenttype id
- * @return array               Array of rows with result data
+ *
+ * @param  $experimentId  int     id of experiment
+ * @param  $db            object  object of current database
+ * @param  $type          int     experimenttype id
+ *
+ * @return array  array of rows with result data
  */
 function getExperimentRawData($experimentId, $db, $type, $complete) {
-	
 	$result = 0;
 
-	if($type == 3) {
+	if ($type == 3) {
 
 		//Magic be here, DO NOT TOUCH OR GOD BE WITH YOU
 		$sql = "SELECT result.*, picture.*, experimentorder.eOrder as experimentOrder, person.firstName, person.lastName, categoryname.name AS categoryName"
@@ -449,7 +451,6 @@ function getExperimentResults($experimentId, $db, $complete) {
 }
 
 function arrayObjectIndexOf($myArray, $searchTerm, $property) {
-
 	foreach ($myArray as $key => $subarray) {
 		if (in_array($searchTerm, $subarray)) {
 			return $key;

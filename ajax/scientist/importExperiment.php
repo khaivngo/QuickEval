@@ -1,211 +1,213 @@
 <?php
-/**
-* This file will import a complete experiment to the database using a uploaded zipfile.
-*/
+	/**
+	* This file will import a complete experiment to the database using a uploaded zipfile.
+	*/
+	require_once('../../db.php');
 
-require_once('../../db.php');
-if (!isset($_SESSION['user'])) {
-               header("Location: ../../login.php"); 
-}
-if($_SESSION['user']['userType'] > 2) {
-	return;
-}
+	if (!isset($_SESSION['user'])) {
+		header("Location: ../../login.php");
+		exit;
+	}
+
+	if ($_SESSION['user']['userType'] > 2) {
+		exit;
+	}
+
 	$option = $_GET['option'];
-	if($option == "generateExperiment") {
+	if ($option == "generateExperiment") {
    	try {
-		$zip = new ZipArchive;
-		$fileName = "randomName";
-		$targetDir = "../../uploads/zipfiles/" . $_SESSION['user']['id'];
-		$fileName = "randomName";
-		$res = $zip->open($targetDir . "/". $fileName . ".zip", ZIPARCHIVE::CREATE);
-		if($res === TRUE) {
-			if (!file_exists($targetDir . "/" . $fileName)) {
-				@mkdir($targetDir . "/" . $fileName ,0777, true);
-			}
-			
-			$zip->extractTo($targetDir . "/" . $fileName);
-			$zip->close();
-		} else {
-			return;
-		}
-
-		$data = file_get_contents($targetDir . "/".$fileName. "/experiment.txt");
-		$experiment = json_decode($data, true);
-		unlink($targetDir . "/".$fileName. "/experiment.txt");
-		
-		$data = file_get_contents($targetDir."/".$fileName. "/picture.txt");
-		$picture = json_decode($data, true);
-		unlink($targetDir."/".$fileName. "/picture.txt");
-		
-		$data = file_get_contents($targetDir."/".$fileName. "/experimentorder.txt");
-		$experimentorder = json_decode($data, true);
-		unlink($targetDir."/".$fileName. "/experimentorder.txt");
-		
-		$data = file_get_contents($targetDir."/".$fileName. "/infotype.txt");
-		$infotype = json_decode($data, true);
-		unlink($targetDir."/".$fileName. "/infotype.txt");
-		
-		$data = file_get_contents($targetDir."/".$fileName. "/instruction.txt");
-		$instruction = json_decode($data, true);
-		unlink($targetDir."/".$fileName. "/instruction.txt");
-		
-		$data = file_get_contents($targetDir."/". $fileName."/pictureorder.txt");
-		$pictureorder = json_decode($data, true);
-		unlink($targetDir."/". $fileName."/pictureorder.txt");
-		
-		$data = file_get_contents($targetDir."/".$fileName. "/pictureQueue.txt");
-		$picturequeue = json_decode($data, true);
-		unlink($targetDir."/".$fileName. "/pictureQueue.txt");
-		
-		$data = file_get_contents($targetDir."/".$fileName. "/pictureset.txt");
-		$pitureset = json_decode($data, true);
-		unlink($targetDir."/".$fileName. "/pictureset.txt");
-		
-		$db->beginTransaction();	
-		$sql = "INSERT INTO `experiment` 
-		(`id`, `title`, `shortDescription`, `longDescription`,
-		 `date`, `isPublic`, `allowColourBlind`, `backgroundColour`, 
-		 `allowTies`, `showOriginal`, `samePair`, `horizontalFlip`, 
-		 `monitorDistance`, `lightType`, `naturalLighting`, 
-		 `screenLuminance`, `whitePoint`, `whitePointRoom`, 
-		 `ambientIllumination`, `person`, `experimentType`, 
-		 `timer`, `inviteHash`) 
-		 
-		 VALUES (
-		 NULL, :title, :shortdesc, :longdesc, 
-		 CURRENT_TIMESTAMP,:public, :colorblind, :bgcolor, 
-		 :allowties, :showOriginal, :samePair, :horizontalflip, 
-		 :monitordistance, :lighttype, :naturallighting, 
-		 :screenluminance, :whitepoint, :whitepointroom, 
-		 :ambientIllumination, :person, :exType, 
-		 :timer, :invHash);";
-		$sth = $db->prepare($sql);
-		$sth->bindParam(':title',$experiment['title']);
-		$sth->bindParam(':shortdesc', $experiment['shortDescription']);
-		$sth->bindParam(':longdesc', $experiment['longDescription']);
-		$sth->bindParam(':public', $experiment['isPublic']);
-		$sth->bindParam(':colorblind', $experiment['allowColourBlind']);
-		$sth->bindParam(':bgcolor', $experiment['backgroundColour']);
-		$sth->bindParam(':allowties', $experiment['allowTies']);
-		$sth->bindParam(':showOriginal', $experiment['showOriginal']);
-		$sth->bindParam(':samePair', $experiment['samePair']);
-		$sth->bindParam(':horizontalflip', $experiment['horizontalFlip']);
-		$sth->bindParam(':monitordistance', $experiment['monitorDistance']);
-		$sth->bindParam(':lighttype', $experiment['lightType']);
-		$sth->bindParam(':naturallighting', $experiment['naturalLighting']);
-		$sth->bindParam(':screenluminance', $experiment['screenLuminance']);
-		$sth->bindParam(':whitepoint', $experiment['whitePoint']);
-		$sth->bindParam(':whitepointroom', $experiment['whitePointRoom']);
-		$sth->bindParam(':ambientIllumination', $experiment['ambientIllumination']);
-		$sth->bindParam(':person', $_SESSION['user']['id']);
-		$sth->bindParam(':exType', $experiment['experimentType']);
-		$sth->bindParam(':timer', $experiment['timer']);
-		$sth->bindParam(':invHash', $experiment['inviteHash']);
-		$sth->execute();
-		$newExperimentId = $db->lastInsertId();
-		
-		//CategoryExperiment
-		if($experiment['experimentType'] == 3) {
-			$data = file_get_contents($experimentId. "/categoryname.txt");
-			$categoryname = json_decode($data, true);
-			foreach($categoryname as $cn) {
-				$sql = "INSERT INTO `categoryname` (`id`, `name`, `personId`, `standardFlag`) VALUES (NULL, :name, :personId, :standardFlag);";
-				$sth = $db->prepare($sql);
-				$sth->bindParam(':name', $cn['name']);
-				$sth->bindParam(':personId', $_SESSION['user']['id']);
-				$sth->bindParam(':standardFlag', $cn['standardFlag']);
-				$sth->execute();
-				$newCategoryNameId = $db->lastInsertId();
-				
-				$sql = "INSERT INTO `experimentcategory` (`id`, `category`, `experiment`) VALUES (NULL, :categoryId, :experiment);";
-				$sth = $db->prepare($sql);
-				$sth->bindParam(':categoryId', $newCategoryNameId);
-				$sth->bindParam(':experiment', $newExperimentId);
-				$sth->execute();
-			}
-		}
-		
-		$sql = "INSERT INTO `experimentqueue` (`id`, `experiment`) VALUES (NULL, :experiment);";
-		$sth = $db->prepare($sql);
-		$sth->bindParam(':experiment',$newExperimentId);
-		$sth->execute();
-		$NewExperimentQueue = $db->lastInsertId();
-		
-		foreach($infotype as $it) {
-			$newInfotypeId = null;
-			if($it['standardFlag'] == 1) {
-				$sql = "SELECT * FROM infotype WHERE id = :id;";
-				$sth = $db->prepare($sql);
-				$sth->bindParam(':id', $it['id']);
-				$sth->execute();
-				if($sth->rowcount() == 1) {	//Already exists in database
-					$result = $sth->fetch();
-					$newInfotypeId = $result['id'];
+			$zip = new ZipArchive;
+			$fileName = "randomName";
+			$targetDir = "../../uploads/zipfiles/" . $_SESSION['user']['id'];
+			$fileName = "randomName";
+			$res = $zip->open($targetDir . "/". $fileName . ".zip", ZIPARCHIVE::CREATE);
+			if($res === TRUE) {
+				if (!file_exists($targetDir . "/" . $fileName)) {
+					@mkdir($targetDir . "/" . $fileName ,0777, true);
 				}
-			} 
-			if($newInfotypeId == null) {
-				$sql = "INSERT INTO `infotype` (`id`, `standardFlag`, `info`, `person`) VALUES (NULL, :standardFlag, :info, :person);";
-				$sth = $db->prepare($sql);
-				$sth->bindParam(':standardFlag',$it['standardFlag']);
-				$sth->bindParam(':info', $it['info']);
-				$sth->bindParam(':person', $_SESSION['user']['id']);
-				$sth->execute();
-				$newInfotypeId = $db->lastInsertId();
+				
+				$zip->extractTo($targetDir . "/" . $fileName);
+				$zip->close();
+			} else {
+				return;
 			}
+
+			$data = file_get_contents($targetDir . "/".$fileName. "/experiment.txt");
+			$experiment = json_decode($data, true);
+			unlink($targetDir . "/".$fileName. "/experiment.txt");
 			
-			$sql = "INSERT INTO `experimentinfotype` (`id`, `experiment`, `infoType`) VALUES (NULL, :experiment, :infotype);";
+			$data = file_get_contents($targetDir."/".$fileName. "/picture.txt");
+			$picture = json_decode($data, true);
+			unlink($targetDir."/".$fileName. "/picture.txt");
+			
+			$data = file_get_contents($targetDir."/".$fileName. "/experimentorder.txt");
+			$experimentorder = json_decode($data, true);
+			unlink($targetDir."/".$fileName. "/experimentorder.txt");
+			
+			$data = file_get_contents($targetDir."/".$fileName. "/infotype.txt");
+			$infotype = json_decode($data, true);
+			unlink($targetDir."/".$fileName. "/infotype.txt");
+			
+			$data = file_get_contents($targetDir."/".$fileName. "/instruction.txt");
+			$instruction = json_decode($data, true);
+			unlink($targetDir."/".$fileName. "/instruction.txt");
+			
+			$data = file_get_contents($targetDir."/". $fileName."/pictureorder.txt");
+			$pictureorder = json_decode($data, true);
+			unlink($targetDir."/". $fileName."/pictureorder.txt");
+			
+			$data = file_get_contents($targetDir."/".$fileName. "/pictureQueue.txt");
+			$picturequeue = json_decode($data, true);
+			unlink($targetDir."/".$fileName. "/pictureQueue.txt");
+			
+			$data = file_get_contents($targetDir."/".$fileName. "/pictureset.txt");
+			$pitureset = json_decode($data, true);
+			unlink($targetDir."/".$fileName. "/pictureset.txt");
+			
+			$db->beginTransaction();	
+			$sql = "INSERT INTO `experiment` 
+			(`id`, `title`, `shortDescription`, `longDescription`,
+			 `date`, `isPublic`, `allowColourBlind`, `backgroundColour`, 
+			 `allowTies`, `showOriginal`, `samePair`, `horizontalFlip`, 
+			 `monitorDistance`, `lightType`, `naturalLighting`, 
+			 `screenLuminance`, `whitePoint`, `whitePointRoom`, 
+			 `ambientIllumination`, `person`, `experimentType`, 
+			 `timer`, `inviteHash`) 
+			 
+			 VALUES (
+			 NULL, :title, :shortdesc, :longdesc, 
+			 CURRENT_TIMESTAMP,:public, :colorblind, :bgcolor, 
+			 :allowties, :showOriginal, :samePair, :horizontalflip, 
+			 :monitordistance, :lighttype, :naturallighting, 
+			 :screenluminance, :whitepoint, :whitepointroom, 
+			 :ambientIllumination, :person, :exType, 
+			 :timer, :invHash);";
 			$sth = $db->prepare($sql);
-			$sth->bindParam(':experiment', $newExperimentId);
-			$sth->bindParam(':infotype',$newInfotypeId);
+			$sth->bindParam(':title',$experiment['title']);
+			$sth->bindParam(':shortdesc', $experiment['shortDescription']);
+			$sth->bindParam(':longdesc', $experiment['longDescription']);
+			$sth->bindParam(':public', $experiment['isPublic']);
+			$sth->bindParam(':colorblind', $experiment['allowColourBlind']);
+			$sth->bindParam(':bgcolor', $experiment['backgroundColour']);
+			$sth->bindParam(':allowties', $experiment['allowTies']);
+			$sth->bindParam(':showOriginal', $experiment['showOriginal']);
+			$sth->bindParam(':samePair', $experiment['samePair']);
+			$sth->bindParam(':horizontalflip', $experiment['horizontalFlip']);
+			$sth->bindParam(':monitordistance', $experiment['monitorDistance']);
+			$sth->bindParam(':lighttype', $experiment['lightType']);
+			$sth->bindParam(':naturallighting', $experiment['naturalLighting']);
+			$sth->bindParam(':screenluminance', $experiment['screenLuminance']);
+			$sth->bindParam(':whitepoint', $experiment['whitePoint']);
+			$sth->bindParam(':whitepointroom', $experiment['whitePointRoom']);
+			$sth->bindParam(':ambientIllumination', $experiment['ambientIllumination']);
+			$sth->bindParam(':person', $_SESSION['user']['id']);
+			$sth->bindParam(':exType', $experiment['experimentType']);
+			$sth->bindParam(':timer', $experiment['timer']);
+			$sth->bindParam(':invHash', $experiment['inviteHash']);
 			$sth->execute();
-		}
-		
-		$sortedPictures = sortPicturesToDatabase($picture, $pitureset, $db);		
-		
-		foreach($experimentorder as $exOrder) {
-			$newExOrder = $exOrder;
-			$newExOrder['experimentQueue'] = $NewExperimentQueue;
+			$newExperimentId = $db->lastInsertId();
 			
-			if($exOrder['pictureQueue'] != null) {
-
-
-				$newPictureQueueId = insertPictureQueueToDatabase($picturequeue, $newExOrder['pictureQueue'], $db);
-				foreach($pictureorder as $po) {
-					//Prøver å finne matchendes bilde til loopet pictureQueue
-					//Dersom $po matcher, så skal den inn i databasen.
-					if($po['picturequeue'] == $exOrder['pictureQueue']) {	
-						$newPictureId = findNewIdForPicture($sortedPictures, $po['picture']);	//Gets new ID for pictureOrder.picture
-						
-						$sql = "INSERT INTO `pictureorder` 
-								(`id`, `pOrder`, `picture`, `pictureQueue`) 
-								VALUES (NULL, :pOrder, :picture, :pictureQueue);";
-						$sth = $db->prepare($sql);
-						$sth->bindParam(':pOrder', $po['pOrder']);
-						$sth->bindParam(':picture', $newPictureId);
-						$sth->bindParam(':pictureQueue', $newPictureQueueId);
-						$sth->execute();
-					}
+			//CategoryExperiment
+			if ($experiment['experimentType'] == 3) {
+				$data = file_get_contents($experimentId. "/categoryname.txt");
+				$categoryname = json_decode($data, true);
+				foreach($categoryname as $cn) {
+					$sql = "INSERT INTO `categoryname` (`id`, `name`, `personId`, `standardFlag`) VALUES (NULL, :name, :personId, :standardFlag);";
+					$sth = $db->prepare($sql);
+					$sth->bindParam(':name', $cn['name']);
+					$sth->bindParam(':personId', $_SESSION['user']['id']);
+					$sth->bindParam(':standardFlag', $cn['standardFlag']);
+					$sth->execute();
+					$newCategoryNameId = $db->lastInsertId();
+					
+					$sql = "INSERT INTO `experimentcategory` (`id`, `category`, `experiment`) VALUES (NULL, :categoryId, :experiment);";
+					$sth = $db->prepare($sql);
+					$sth->bindParam(':categoryId', $newCategoryNameId);
+					$sth->bindParam(':experiment', $newExperimentId);
+					$sth->execute();
 				}
-				//Finn all pictureOrder som hører til pictureQueue
-				//Sett disse inn i database med ny pictureQueue og ny pictureId.
-				$newExOrder['pictureQueue'] = $newPictureQueueId;
-			} else if($exOrder['instruction'] != null) {
-				
-				$newInstructionId = insertInstructionToDatabase($instruction, $newExOrder['instruction'], $db);
-				$newExOrder['instruction'] = $newInstructionId;
 			}
-		insertExperimentOrderToDatabase($newExOrder, $db);
-		}
-		
-		$db->commit();
-		copyPicturesToCorrectFolder($sortedPictures, $targetDir, $db, $picture, $experiment);
-		echo json_encode(1);
+			
+			$sql = "INSERT INTO `experimentqueue` (`id`, `experiment`) VALUES (NULL, :experiment);";
+			$sth = $db->prepare($sql);
+			$sth->bindParam(':experiment',$newExperimentId);
+			$sth->execute();
+			$NewExperimentQueue = $db->lastInsertId();
+			
+			foreach($infotype as $it) {
+				$newInfotypeId = null;
+				if($it['standardFlag'] == 1) {
+					$sql = "SELECT * FROM infotype WHERE id = :id;";
+					$sth = $db->prepare($sql);
+					$sth->bindParam(':id', $it['id']);
+					$sth->execute();
+					if($sth->rowcount() == 1) {	//Already exists in database
+						$result = $sth->fetch();
+						$newInfotypeId = $result['id'];
+					}
+				} 
+				if ($newInfotypeId == null) {
+					$sql = "INSERT INTO `infotype` (`id`, `standardFlag`, `info`, `person`) VALUES (NULL, :standardFlag, :info, :person);";
+					$sth = $db->prepare($sql);
+					$sth->bindParam(':standardFlag',$it['standardFlag']);
+					$sth->bindParam(':info', $it['info']);
+					$sth->bindParam(':person', $_SESSION['user']['id']);
+					$sth->execute();
+					$newInfotypeId = $db->lastInsertId();
+				}
+				
+				$sql = "INSERT INTO `experimentinfotype` (`id`, `experiment`, `infoType`) VALUES (NULL, :experiment, :infotype);";
+				$sth = $db->prepare($sql);
+				$sth->bindParam(':experiment', $newExperimentId);
+				$sth->bindParam(':infotype',$newInfotypeId);
+				$sth->execute();
+			}
+			
+			$sortedPictures = sortPicturesToDatabase($picture, $pitureset, $db);		
+			
+			foreach($experimentorder as $exOrder) {
+				$newExOrder = $exOrder;
+				$newExOrder['experimentQueue'] = $NewExperimentQueue;
+				
+				if ($exOrder['pictureQueue'] != null) {
+
+
+					$newPictureQueueId = insertPictureQueueToDatabase($picturequeue, $newExOrder['pictureQueue'], $db);
+					foreach($pictureorder as $po) {
+						//Prøver å finne matchendes bilde til loopet pictureQueue
+						//Dersom $po matcher, så skal den inn i databasen.
+						if($po['picturequeue'] == $exOrder['pictureQueue']) {	
+							$newPictureId = findNewIdForPicture($sortedPictures, $po['picture']);	//Gets new ID for pictureOrder.picture
+							
+							$sql = "INSERT INTO `pictureorder` 
+									(`id`, `pOrder`, `picture`, `pictureQueue`) 
+									VALUES (NULL, :pOrder, :picture, :pictureQueue);";
+							$sth = $db->prepare($sql);
+							$sth->bindParam(':pOrder', $po['pOrder']);
+							$sth->bindParam(':picture', $newPictureId);
+							$sth->bindParam(':pictureQueue', $newPictureQueueId);
+							$sth->execute();
+						}
+					}
+					//Finn all pictureOrder som hører til pictureQueue
+					//Sett disse inn i database med ny pictureQueue og ny pictureId.
+					$newExOrder['pictureQueue'] = $newPictureQueueId;
+				} else if ($exOrder['instruction'] != null) {
+					
+					$newInstructionId = insertInstructionToDatabase($instruction, $newExOrder['instruction'], $db);
+					$newExOrder['instruction'] = $newInstructionId;
+				}
+			insertExperimentOrderToDatabase($newExOrder, $db);
+			}
+			
+			$db->commit();
+			copyPicturesToCorrectFolder($sortedPictures, $targetDir, $db, $picture, $experiment);
+			echo json_encode(1);
    	} catch(exception $e) {
    		echo json_encode(0);
    		$db->rollBack();
    	}
-		
-}
+	}
 	else if($option == "cleanDirectory") {
 		$path = "../../uploads/zipfiles/" . $_SESSION['user']['id']. "/";
 		SureRemoveDir($path, true);
@@ -218,7 +220,8 @@ if($_SESSION['user']['userType'] > 2) {
 	 */
 	function copyPicturesToCorrectFolder($sortedPictureSet,$originalDir , $db, $oldPictures, $oldExperiment) {
 		foreach($sortedPictureSet as $pictureSet) {
-		mkdir("../../uploads/" . $_SESSION['user']['id'] ."/". $pictureSet['newPictureset'], 0777, true);
+			mkdir("../../uploads/" . $_SESSION['user']['id'] ."/". $pictureSet['newPictureset'], 0777, true);
+
 			foreach($pictureSet['picture'] as $pictureId) {
 				$newTargetPath = getUrlForPicture($pictureId['newId'], $db);
 				$oldTargetPath;
@@ -233,10 +236,10 @@ if($_SESSION['user']['userType'] > 2) {
 				copy($oldTargetPath, $newTargetPath);
 			}
 		}
-	
-	$path = "../../uploads/zipfiles/" . $_SESSION['user']['id']. "/";
-	SureRemoveDir($path, true);
-}
+
+		$path = "../../uploads/zipfiles/" . $_SESSION['user']['id']. "/";
+		SureRemoveDir($path, true);
+	}
 
 	/**
 	 * Deletes COMPLETE $dir
@@ -247,21 +250,24 @@ if($_SESSION['user']['userType'] > 2) {
 	 */
 	function SureRemoveDir($dir, $DeleteMe) {
     if(!$dh = @opendir($dir)) return;
+
     while (false !== ($obj = readdir($dh))) {
         if($obj=='.' || $obj=='..') continue;
         if (!@unlink($dir.'/'.$obj)) SureRemoveDir($dir.'/'.$obj, true);
     }
+
     if ($DeleteMe){
         closedir($dh);
         @rmdir($dir);
     }
-}	
-/**
- * Will generate URL to a given picture.
- * @param $picture = All information about a picture from the database in an array.
- * @return $url = path to the supplied picture.
- */
-function generateUrl($picture){
+	}
+
+	/**
+	 * Will generate URL to a given picture.
+	 * @param $picture = All information about a picture from the database in an array.
+	 * @return $url = path to the supplied picture.
+	 */
+	function generateUrl($picture){
 		$index = strripos($picture[1],".");
 		$fileType = substr($picture[1],$index, strlen($picture[1]));
 		$url = "../../uploads/" . $picture['person'] . "/" . $picture[4] . "/" . $picture['url'] . $fileType; 	
@@ -269,29 +275,30 @@ function generateUrl($picture){
 	}
 	
 	
-/**
- * Will get URL for a given pictureId.
- * @param $pictureId = ID from the database for the picture you want the URL from.
- * @param $db = PDO connection to the database.
- * @return $url complete URL for a pictureID.
- */
-function getUrlForPicture($pictureId, $db) {
-	$sql = "SELECT * FROM picture
-	JOIN pictureset ON picture.pictureSet = pictureset.id
-	WHERE picture.id = ?;";
-	$sth = $db->prepare($sql);
-	$sth->bindParam(1,$pictureId);
-	$sth->execute();
-	$row = $sth->fetch();
-	$url = generateUrl($row);
-	return $url;
-}
-/**
- * Will find the new ID from the database with the old supplied pictureId.
- * @param $sortedPictureSet = Array containing all pictures with both old and new id for pictures.
- * @param $oldPictureId = old ID for a given picture from the old database.
- * @return $newId int containing a new ID for the picture from the new database.
- */
+	/**
+	 * Will get URL for a given pictureId.
+	 * @param $pictureId = ID from the database for the picture you want the URL from.
+	 * @param $db = PDO connection to the database.
+	 * @return $url complete URL for a pictureID.
+	 */
+	function getUrlForPicture($pictureId, $db) {
+		$sql = "SELECT * FROM picture
+		JOIN pictureset ON picture.pictureSet = pictureset.id
+		WHERE picture.id = ?;";
+		$sth = $db->prepare($sql);
+		$sth->bindParam(1,$pictureId);
+		$sth->execute();
+		$row = $sth->fetch();
+		$url = generateUrl($row);
+		return $url;
+	}
+
+	/**
+	 * Will find the new ID from the database with the old supplied pictureId.
+	 * @param $sortedPictureSet = Array containing all pictures with both old and new id for pictures.
+	 * @param $oldPictureId = old ID for a given picture from the old database.
+	 * @return $newId int containing a new ID for the picture from the new database.
+	 */
 	function findNewIdForPicture($sortedPictureSet, $oldPictureId) {
 		$newId = 0;
 		foreach($sortedPictureSet as $pictureSet) {

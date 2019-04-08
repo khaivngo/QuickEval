@@ -257,7 +257,8 @@ function addInstructionToExperiment(instructionId, experimentId) {
  * @return array of the pictureQueues with ID and name.
  */
 function getEarlierPictureQueues(pictureSetId) {
-    var pictureQueues = new Array();
+    var pictureQueues = [];
+
     $.ajax({
         url: 'ajax/scientist/getEarlierPictureQueues.php',
         async: false,
@@ -272,6 +273,7 @@ function getEarlierPictureQueues(pictureSetId) {
             alert(request.responseText);
         }
     });
+
     return pictureQueues;
 }
 
@@ -390,18 +392,43 @@ function getExperiments() {
 
 /**
  * Gets experimentdata by id
- * @param  {int} $experimentId id of experiment
- * @return {array}               array with experimentdata
+ * @param  {int}    $experimentId   id of experiment
+ * @return {array}  array with experimentdata
  */
 function getExperimentById($experimentId) {
     var result;
 
     $.ajax({
-        type: "post",
+        type: "POST",
         url: 'ajax/scientist/getExperimentById.php',
         async: false,
         data: {
             'experimentId': $experimentId,
+        },
+        dataType: 'json',
+        success: function (data) {
+            result = data;
+        },
+        error: function (request, status, error) {
+            result = null;
+        }
+    });
+
+    return result;
+}
+
+/**
+ * Get all instructions for an experiment.
+ */
+function getExperimentsInstructionsById($experimentId) {
+    var result;
+
+    $.ajax({
+        type: "POST",
+        url: 'ajax/scientist/getExperimentInstructionsById.php',
+        async: false,
+        data: {
+            'experimentId': $experimentId
         },
         dataType: 'json',
         success: function (data) {

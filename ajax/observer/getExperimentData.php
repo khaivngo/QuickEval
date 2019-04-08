@@ -7,9 +7,11 @@ require_once('../../ChromePhp.php');
 
 try {
     if (isset($_POST['experiment'])) {  //Makes sure id is set
-        $stmt = $db->prepare("SELECT * FROM experiment e "
-                . " WHERE e.id = ? " . ((isset($_POST['invite'])) ? ' AND inviteHash = ? ' : ' ' )
-                . " AND isPublic = '1 = Public'");
+        $stmt = $db->prepare(
+            "SELECT * FROM experiment e " .
+            " WHERE e.id = ? " . ((isset($_POST['invite'])) ? ' AND inviteHash = ? ' : ' ' ) .
+            " AND isPublic = '1 = Public'"
+        );
 
         $stmt->bindParam(1, $_POST['experiment']);
         (isset($_POST['invite'])) ? $stmt->bindParam(2, $_POST['invite']) : '';

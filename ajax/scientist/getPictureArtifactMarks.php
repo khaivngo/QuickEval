@@ -13,6 +13,5 @@ $stmt->bindParam(1, $picture_queue);
 $stmt->execute();
 $artifact_marks = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-# Return a json encoded database response
 echo json_encode($artifact_marks);
 exit;

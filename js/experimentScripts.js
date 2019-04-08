@@ -17,7 +17,6 @@ $(document).ready(function () {
             // contain: 'invert',
             minScale: 1,
             maxScale: 1
-
         }).panzoom('zoom');
     })();
 

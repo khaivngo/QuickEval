@@ -3,7 +3,7 @@ $(document).ready(function() {
         $('.dropdown-menu').dropdown();
     });
     $('#nav-right-buttons').load("ajax/scientist/navRight.html", function() {
-        $('#nav-user').append(" " + getUsername());
+        $('#nav-user').append(" ");
     });
 
     //--------------------- ADMINPANEL -----------------------------//
@@ -42,8 +42,3 @@ $(document).ready(function() {
 
     });
 });
-
-function getUsername() {
-    var username = "Christopher Dokkeberg";
-    return username;
-}

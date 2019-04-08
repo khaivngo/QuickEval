@@ -14,6 +14,9 @@ function viewExperiment($experimentId) {
     //Gets experimentdata
     var data = getExperimentById($experimentId);
 
+    // get experiment instructions
+    var instructions = getExperimentsInstructionsById($experimentId);
+
     //Removes lists to display experiment
     $('.listview-outlook').siblings(':eq(0)').remove();
     $('.listview-outlook').remove();
@@ -24,6 +27,19 @@ function viewExperiment($experimentId) {
     $('#experiment-name').attr('experimentid', $experimentId);
     $('#experiment-type').html('Type: ' + data['experimentTypeName']);
     $('#experiment-description').html(data['longDescription']);
+
+
+    var instructionsList = '';
+    instructions.forEach(function (instruction) {
+        instructionsList += '<ul class="listview-outlook">';
+        // instructionsList +=     '<div class="">';
+        instructionsList +=         '<li class="list-content" data-id="' + instruction.id + '">';
+        instructionsList +=             instruction.text;
+        instructionsList +=         '</li>';
+        // instructionsList +=     '</div>';
+        instructionsList += '</ul>';
+    });
+    $('.experiment-instructions-list').append(instructionsList);
 
 
     //Gets URL
@@ -320,9 +336,7 @@ function exportResults($experimentId) {
             'experimentId': $experimentId
         },
         dataType: 'json',
-        success: function (data) {
-
-        },
+        success: function (data) {},
         error: function (request, status, error) {
             alert(request.responseText);
         }
@@ -331,8 +345,9 @@ function exportResults($experimentId) {
 
 /**
  * Gets and returns results for experiment
- * @param  {int} $experimentId id of experiment
- * @return {string}               array containing all results for experiment
+ *
+ * @param  {int}     $experimentId id of experiment
+ * @return {string}  array containing all results for experiment
  */
 function getExperimentResults($experimentId) {
     var result;
@@ -1962,7 +1977,6 @@ function displayHeatmap() {
         pictureName: pictureName,
         imageUrl: pictureURL
     });
-
 }
 
 /**

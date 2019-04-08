@@ -11,6 +11,7 @@ jQuery.fn.swap = function(b) {
     t.parentNode.removeChild(t);
     return this;
 }
+
 $(document).ready(function() {
 
     //Adds listener to menu
@@ -59,9 +60,11 @@ $(document).ready(function() {
             steps: 5,
             start: 1
         });
+        
         $(document.body).on('click', '.notice', function() {
             $(this).parent().remove();
         });
+
         //---------------- STEP 1 --------------------//
         $('#ex-optional-fields').hide(); //Hides step 1 optional fields
         $('#ex-description-up').hide(); //Hides the visual "down"-icon
@@ -100,7 +103,9 @@ $(document).ready(function() {
         $(document.body).on('change', '#algorithm-type', function() {
             algorithmSelect();
         });
+
         //---------------- STEP 3 --------------------//
+
         $('#ex-add-field').click(function() { //Displays an additional field for the scientist to use
             $('.notice').parent().remove();
             customFieldAmount++;
@@ -121,7 +126,9 @@ $(document).ready(function() {
             $('#ex-add-field').before(div); // scientist to use
             return null;
         });
+
         //---------------- STEP 4 --------------------//
+        
         //Listener for remove button used on elements with remove(thrashcan) button, removes parent div
         $(document.body).off('click', '.remove-parent');
         $(document.body).on('click', '.remove-parent', function(e) {
@@ -193,7 +200,9 @@ $(document).ready(function() {
             }
             activeImageSet.remove(); //Removes imageset
         });
-        /---------------- STEP 5 --------------------/ / $(document.body).off('click', '.finish');
+
+        //---------------- STEP 5 --------------------/ / $(document.body).off('click', '.finish');
+
         $(document.body).on('click', '.finish', function() {
             finishExperiment();
         });
@@ -333,14 +342,19 @@ function loadAlgorithmTypes() {
  * Gets experiment methods and algorithms, removes step 5 based on choices.
  */
 function populateExperimentSelect() {
-    var pairing = new Array('Random Queue', 'Custom Queue'); //Algorithms on pair-comparison
-    var other = new Array('Random Queue'); //Algorithms on other methods
-    var method = $('#experiment-type').val(); //Current method
-    //Adds the right options and parameters based on method
+    var pairing = new Array('Random Queue', 'Custom Queue'); // algorithms on pair-comparison
+    var other = new Array('Random Queue'); // algorithms on other methods
+    var method = $('#experiment-type').val(); // current method
+
+    // randomize images within sets, randomize 
+    
+    // adds the right options and parameters based on method
     displayParameters(method);
     setUpStep5(method);
-    //Resets checkboxes for new method
+
+    // resets checkboxes for new method
     $('#ex-step2').find('input[type=checkbox]').attr('checked', false);
+
     if (method == 'Rank order') {
         $('#algorithm-type').empty();
         other.forEach(function(t) {
@@ -559,6 +573,7 @@ function setUpDragNDrop(bool) {
         });
     }
 }
+
 /**
  * Adds listener to add-pair button to add a new pair including listener for buttons within pair.
  * @returns {undefined}
@@ -585,6 +600,7 @@ function setUpAddPairListener() {
         $(this).parent().siblings('.input-control.text').fadeIn(); // displays inputfield
     });
 }
+
 /**
  * Adds listener to remove-pair listener. Also handles select/input-fields when there are no pairs left
  * @returns {undefined}
@@ -602,6 +618,7 @@ function setUpRemovePairListener() {
         $(this).closest('div > .ex-pair').parent().remove();
     });
 }
+
 /**
  * Gets index of two elements and swaps them through swapWith function
  * @param {type} a first element to be swapped
@@ -614,6 +631,7 @@ function swapQueue($a, $b) {
     var bPos = $($b).index('.image-set-div');
     $('.ex-image-pair').eq(aPos).swapWith($('.ex-image-pair').eq(bPos));
 }
+
 /**
  * Swaps the elements on dom level
  * @author Paolo Bergantino http://stackoverflow.com/questions/698301/is-there-a-native-jquery-function-to-switch-elements
@@ -628,6 +646,7 @@ jQuery.fn.swapWith = function($to) {
         $(this).replaceWith(copy_to);
     });
 };
+
 /**
  * Manages imagesets and its queue on step 5. Called when user changes the dropdown selecting imageset name
  * on step 4. Adds or edits the queue based on imagename selected and if its first select from the
@@ -657,6 +676,7 @@ function imageSetChange($a) {
     }
     $a.data('firstSelect', false); //Sets firstselect to false as user has selected an imageset
 }
+
 /**
  * Loads an imageset into element $a
  * @param {type} $a element for imageset to be loaded into
@@ -679,6 +699,7 @@ function loadImageSet($a, $name, $id) {
         });
     });
 }
+
 /**
  * Gets imagesetindex of element $a for imagesets who are initialized and does not have name "Select Image Set"
  * @param {type} $a any element within imageset
@@ -689,6 +710,7 @@ function getImageSetIndex($a) {
     var imageSets = $('select > option:selected:not(:disabled)').closest('.image-set-div').parent();
     return imageSets.index(activeImageSet);
 }
+
 /**
  * Checks to elemnents if they are both active imagesets
  * @param {type} a first element to be matched
@@ -706,6 +728,7 @@ function checkDragNDropElements($a, $b) {
         return false;
     }
 }
+
 /**
  * Checks for one element which is active imageset and one which is not, instruction or inactive, and fixes queue based on
  * distance between elements via the swapImageSetAndElement function
@@ -724,6 +747,7 @@ function checkDragNDropOtherElements($a, $b) {
         swapImageSetAndElement($b, $a);
     }
 }
+
 /**
  * Fixes queue when imageset and non imageset is switched
  * @param {type} $a active imageset
@@ -762,13 +786,14 @@ function swapImageSetAndElement($a, $b) {
  */
 function addExperimentQueue(experimentId) {
     var experimentQueueId = getExperimentQueueId();
+
     $('#ex-step4').find('div:eq(0)').children('div').each(function() {
         //If imageset
         if ($(this).find('.image-set').length == 1) {
             var imageSet = $(this).find('option:selected').attr('image-set');
             //If random queue
             if ($('#algorithm-type').val() != "Custom Queue") {
-                var pictureQueueId; //Id of the picturequeue
+                var pictureQueueId;
                 //Creates and adds pairing queue if pairing, else the entire pictureset
                 if ($('#experiment-type').val() == "Paired comparison") {
                     pictureQueueId = generateRandomPictureQueue($('#experiment-type').val(), imageSet, +$('#same-pair').find('input').prop('checked'));
@@ -780,34 +805,36 @@ function addExperimentQueue(experimentId) {
                     pictureQueueId = setPictureQueueRatingCategory(imageSet);
                 }
                 addPictureQueueToExperiment(pictureQueueId, experimentId);
-            } else { //If custom queue
-
+            // if custom queue
+            } else {
                 var imageSets = $('select > option:selected:not(:disabled)').closest('.image-set-div').parent(); //Gets all active imagesets
                 var index = imageSets.index($(this)); //Index of current imageset and imagequeue element
                 var imageQueueElement = $('.image-set-queue').eq(index); //Gets the imagequeue element
 
-
-                //If there is a new custom queue with pairs
+                // if there is a new custom queue with pairs
                 if (imageQueueElement.find('.ex-pair').length > 0) {
-                    var pictureQueue = 0; //Function creates new when id = 0, then updates this to right id
+                    var pictureQueue = 0; // function creates new when id = 0, then updates this to right id
                     var queueName = $(imageQueueElement).find('.queue-name').val();
-                    imageQueueElement.find('.image-pairs').children('div.pair-div').each(function() {
 
-                        pictureQueue = setPictureQueue([$(this).find('.first-image').children(':selected:not(:disabled)').attr('imageid'),
+                    imageQueueElement.find('.image-pairs').children('div.pair-div').each(function() {
+                        pictureQueue = setPictureQueue([
+                            $(this).find('.first-image').children(':selected:not(:disabled)').attr('imageid'),
                             $(this).find('.second-image').children(':selected:not(:disabled)').attr('imageid')
                         ], 0, pictureQueue, queueName);
                     });
+
                     addPictureQueueToExperiment(pictureQueue, experimentId);
-                } else { //If there is an existing queue
+                // if there is an existing queue
+                } else {
                     var queueId = imageQueueElement.find('option:selected:not(:disabled)').attr('imagequeue');
                     addPictureQueueToExperiment(queueId, experimentId);
                 }
             }
-            //If instruction
+        // if instruction
         } else if ($(this).children('.instruction-field').length == 1) {
             var instruction = $(this).find('input').val();
             addInstruction(instruction, experimentQueueId);
-            //If instruction from history
+        // if instruction from history
         } else if ($(this).children('.instruction-field-history').length == 1) {
             var instruction = $(this).find('option:selected:not(:disabled)').attr('instruction');
             addInstructionHistory(instruction, experimentQueueId);
@@ -820,41 +847,40 @@ function addExperimentQueue(experimentId) {
  * @return {array} array of intputfields
  */
 function getDefaultInputFields() {
-    var a;
+    var defaultInputs;
     $.ajax({
         type: 'POST',
         async: false,
         dataType: 'json',
         url: 'ajax/scientist/getDefaultInputFields.php',
         success: function(data) {
-            a = data;
+            defaultInputs = data;
         },
         error: function(request, status, error) {
             alert(request.responseText);
         }
     });
-    return a;
+    return defaultInputs;
 }
 
 /**
  * Adds default inputfields to step 3
  */
 function setUpDefaultInputs() {
-    var a = getDefaultInputFields();
     getDefaultInputFields().forEach(function(t) {
         var div = $('<div></div>');
         div.load('ajax/scientist/setupexperiment/defaultInputFields.html', function() {
             $(this).find('input:text').val(t['info']);
             $(this).find('input:text').attr('infoType', t['id']);
         });
-        $('#ex-default-fieldset').append(div); //Adds new field at bottom
+        $('#ex-default-fieldset').append(div);
     });
 }
 
 /**
  * Adds a new instructions for current experiment
- * @param {string} text            text of instruction
- * @param {int} experimentQueue id of experimentqueue
+ * @param {string}  text             text of instruction
+ * @param {int}     experimentQueue  id of experimentqueue
  */
 function addInstruction($text, $experimentQueue) {
     var a;
@@ -980,6 +1006,7 @@ function addCategories($experimentId) {
 function setUpFinishButton(index) {
     var method = $('#experiment-type').val();
     var algorithm = $('#algorithm-type').val();
+
     if (index == 5) {
         $('.next-button').hide();
         $('.finish').show();
@@ -987,14 +1014,15 @@ function setUpFinishButton(index) {
         $('.next-button').show();
         $('.previous-button').hide();
         $('.finish').hide();
-    } else if (index == 4 &&
-        (method == "Rank order" ||
+    } else if (index == 4) {
+        if (
+            (method == "Rank order" ||
             (method == "Paired comparison" && algorithm == "Random Queue") ||
-            (method == "Artifact marking" && algorithm == "Random Queue")
-        )
-    ) {
-        $('.next-button').hide();
-        $('.finish').show();
+            (method == "Artifact marking" && algorithm == "Random Queue"))
+        ) {
+            $('.next-button').hide();
+            $('.finish').show();
+        } 
     } else if (index == 4 && (method == "Rank order" || (method == "Triplet comparison" && algorithm == "Random Queue"))) {
         $('.next-button').show();
         $('.finish').hide();

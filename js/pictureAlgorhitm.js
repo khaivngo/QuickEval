@@ -1,14 +1,16 @@
-//Funksjon som generer bildekø for et helt bildesett når random funksjonen er valg for bildesettet.
+/**
+ * Funksjon som generer bildekø for et helt bildesett når random funksjonen er valg for bildesettet.
+ */
 function generateRandomPictureQueue(imagesetId, rightAndLeft) {
 	var pictureQueueId;
-    $.ajax
-    ({
+
+    $.ajax({
         url: 'ajax/scientist/setPictureQueue.php',
         async: false,
         data: {
-        	'imagesetId'  :imagesetId,
-        	'rightAndLeft':rightAndLeft,
-        	'option':'generateRandom'
+        	'imagesetId': imagesetId,
+        	'rightAndLeft': rightAndLeft,
+        	'option': 'generateRandom'
         },
         dataType: 'json',
         success: function(data) {
@@ -18,12 +20,12 @@ function generateRandomPictureQueue(imagesetId, rightAndLeft) {
             alert(request.responseText);
         }
     });
+
     return pictureQueueId;
 }
 
 /**
  * @param pictureQueueId is the queue which to add pictures to. if it is 0 then a new queue is begun.
- *
  */
 function setPictureQueue(imagesArray, rightAndLeft, pictureQueueId) {
 	var pictureQueueId;

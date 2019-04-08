@@ -23,7 +23,6 @@ $stmt2 = $db->prepare(
     ON pictureorder.picture = picture.id
     WHERE experimentqueue.experiment = ?"
 );
-
 $stmt2->bindParam(1, $experiment_id);
 $stmt2->execute();
 $pictures = $stmt2->fetchAll(PDO::FETCH_OBJ);

@@ -3,6 +3,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
+        <title>QuickEval</title>
 
         <!-- CSS -->
         <link href="css/metro-bootstrap.css" rel="stylesheet">
@@ -26,34 +27,33 @@
         <div id="wrapper">
             <?php include_once("includes/headerLogin.html"); ?>
 
-            <div id="login-form" style="width:500px; margin:auto">
+            <div id="login-form" style="width:500px; margin: auto; margin-top: 50px; margin-bottom: 80px;">
                 <div id="headline">
                     <h1>QuickEval</h1>
                 </div>
-
 
                 <div id="login-field">
                     <fieldset>
                         <legend>Register</legend>
                         <label>Email</label>
                         <div id="email-div" class="input-control text" data-role="input-control">
-                            <input id="email" name="email" type="text" placeholder="Username">
+                            <input id="email" name="email" type="text">
                         </div>
                         <label>Password</label>
                         <div id="password-div" class="input-control password" data-role="input-control">
-                            <input id="password" name="password" type="password" placeholder="Password">
+                            <input id="password" name="password" type="password">
                         </div>
                         <label>Confirm Password</label>
                         <div id="password2-div" class="input-control password" data-role="input-control">
-                            <input id="password2" name="password2" type="password" placeholder="Confirm Password">
+                            <input id="password2" name="password2" type="password">
                         </div>
                         <label>First Name</label>
                         <div id="first-name-div" class="input-control text" data-role="input-control">
-                            <input id="first-name" name="firstname" type="text" placeholder="First Name">
+                            <input id="first-name" name="firstname" type="text">
                         </div>
                         <label>Last Name</label>
                         <div id="last-name-div" class="input-control text" data-role="input-control">
-                            <input id="last-name" name="lastname" type="text" placeholder="Last Name">
+                            <input id="last-name" name="lastname" type="text">
                         </div>
 
                         <div class="grid" style="margin:0">
@@ -67,6 +67,8 @@
                                         <option></option>
                                         <option>Male</option>
                                         <option>Female</option>
+                                        <option>Other</option>
+                                        <option>Prefer not to say</option>
                                     </select>
                                 </div>
                                 <div id="calendar-div" class="input-control text span3" style="margin-left:20px">
@@ -78,7 +80,6 @@
                         <label>Institution</label>
                         <div id="institution-div" class="input-control select">
                             <select c id="institution" name="institution" id="institution">
-
                             </select>
                         </div>
                         
@@ -337,15 +338,24 @@
                                 <option value="ZW">Zimbabwe</option>
                             </select>
                         </div>
-                        <div id="submit-div" style="margin-top: 20px">
-                            <button id="submit" class="button primary" style="margin:20px 0">Register</submit></button>
+                        <div id="submit-div" style="margin-top: 10px;">
+                            <button id="submit" class="button primary" style="margin: 20px 0;">
+                                Register
+                            </button>
                         </div>
                     </fieldset>
-                    <p><i class="icon-flag on-left"></i>Scientists needs of now to register as an observer and email admin to be upgraded to scientist.</p>
-                    <p><i class="icon-mail on-left"></i><a href="mailto:marius.pedersen@hig.no">Marius Pedersen</a></p>
+                    <p>
+                        <i class="icon-flag on-left"></i>
+                        Scientists needs, as of now, to register as an observer and email admin to be upgraded to scientist.
+                    </p>
+                    <p>
+                        <i class="icon-mail on-left"></i>
+                        <a href="mailto:marius.pedersen@ntnu.no">
+                            Marius Pedersen
+                        </a>
+                    </p>
                 </div> 
             </div>	    
-
 
             <?php include_once("includes/footer.html"); ?>
         </div>

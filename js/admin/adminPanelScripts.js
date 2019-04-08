@@ -104,8 +104,3 @@ function setActive($target) {
     $target.siblings().removeClass("active");
     $target.addClass("active");
 }
-
-function getUsername() {
-    var username = "Christopher Dokkeberg";
-    return username;
-}

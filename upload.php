@@ -12,9 +12,10 @@ include_once("db.php");
 
 
 if (!isset($_SESSION['user'])) {
-               header("Location: login.php"); 
-            }
-echo "swag";
+   header("Location: login.php");
+   exit;
+}
+
 // Make sure file is not cached (as it happens for example on iOS devices)
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");

@@ -10,6 +10,7 @@ if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
+        exit;
     }
 }
 
@@ -25,7 +26,6 @@ if (isset($_GET["invite"])) {
 
     }
 } else {
-
     $_SESSION['experimentId'] = $_POST['experimentId'];
 }
 ?>
@@ -56,21 +56,14 @@ if (isset($_GET["invite"])) {
     <script src="js/stopwatch.js"></script>
     <script src="js/popup.js"></script>
     <script src="js/plugins/rubaxa.sortable/Sortable.js"></script>
-
-
-    <?php
-    //    if (!isset($_SESSION['user'])) {
-    //      header("Location: login.php");
-    // }
-    ?>
-
 </head>
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-
 <!--Starts timer-->
-<body class="metro no-select" style="background-color:#808080; overflow:hidden;" onload="show();
-            start();">
+<body
+    class="metro no-select"
+    style="background-color:#808080; overflow:hidden;"
+    onload="show(); start();"
+>
 
 <div id="popupContact" style="">
     <p id="contactArea" style="font-size:18px;">
@@ -81,9 +74,8 @@ if (isset($_GET["invite"])) {
     </p>
 
     <div id="popupButtons" class="popupButtons" style="">
-        <button id="continue" class="button size2">Continue</button>
-        <button id="quit" class="button size2">Quit</button>
-
+        <button id="continue" class="button size2" style="background: rgba(255, 255, 255, 0.5); color: #000;">Continue</button>
+        <button id="quit" class="button size2" style="background-color: #ED5E68; color: #fff; font-weight: 500;">Quit</button>
     </div>
 </div>
 
@@ -138,7 +130,7 @@ if (isset($_GET["invite"])) {
 <div id="backgroundPopup4"></div>
 
 
-<!-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+<!--------------------->
 
 <div id="header-div">
     <div class="inner-header">
@@ -151,10 +143,9 @@ if (isset($_GET["invite"])) {
         <button id="exit-fullscreen" class="button fullscreenExit top-buttons" style="margin-left:1px; ">Exit
             fullscreen
         </button>
-
         <span id="ie-info-fullscreen"
               style="color:white;">Press F11 for fullscreen, F11 or ESC to exit fullscreen</span>
-        <button class="button cancel-experiment" id="cancel-experiment">Cancel experiment</button>
+        <button class="button cancel-experiment" id="cancel-experiment">Quit experiment</button>
 
         <div id="info" class="center" style="color:white;">
             <span id="progress">&nbsp<span id="time" onload="start();"></span></span>

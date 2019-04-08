@@ -10,6 +10,7 @@ if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
+        exit;
     }
 }
 
@@ -35,7 +36,7 @@ if (isset($_GET["invite"])) {
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-
+    <title>QuickEval</title>
 
     <!-- CSS -->
     <link href="css/metro-bootstrap.css" rel="stylesheet">
@@ -43,10 +44,6 @@ if (isset($_GET["invite"])) {
     <link href="css/rating-experiment.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
-    <!-- JQuery -->
-<!--    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>-->
-
-<!--    <script src="js/jquery/jquery.min.js"></script>-->
     <script src="js/jquery/jquery-3.1.1.min.js"></script>
     <script src="js/jquery/jquery-ui.custom.min.js"></script>
 
@@ -65,12 +62,14 @@ if (isset($_GET["invite"])) {
     <script src="js/Observer/alterExperimentPosition.js"></script>
     <script src="js/ratingExperimentScript.js"></script>
     <script src="js/categoryExperimentScript.js"></script>
-
 </head>
-<body class="metro" style="padding: 0; margin: 0;background-color:#808080;" onload="show();
-            start();">
+<body
+    class="metro"
+    style="padding: 0; margin: 0; background-color:#808080;"
+    onload="show(); start();"
+>
 
-<div id="popupContact" style="">
+<div id="popupContact">
     <p id="contactArea" class="contactArea-center" style="font-size:18px;">
         Press ESC, Continue or anywhere else to close and continue.
         <br/><br/>
@@ -110,7 +109,6 @@ if (isset($_GET["invite"])) {
     </div>
 </div>
 <div id="backgroundPopup3"></div>
-
 
 
 <div id="header-div" style="width:100%; height:50px; background-color: #282828;">
@@ -196,6 +194,4 @@ if (isset($_GET["invite"])) {
 
 
 </body>
-
-
 </html>

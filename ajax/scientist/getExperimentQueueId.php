@@ -5,7 +5,7 @@
 require_once('../../db.php');
 
 
-try{
+try {
 	$stmt = $db->prepare("SELECT experimentqueue.id FROM experimentqueue "
 	. " JOIN experiment ON experimentqueue.experiment = experiment.id "
 	. " WHERE experiment.person = :person"

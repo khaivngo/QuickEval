@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <?php
-require_once 'functions.php';   //also starts session
+require_once 'functions.php'; // also starts session
 
-//Checks if user is logged in, and the user is scientist or higher level
+// checks if user is logged in, and the user is scientist or higher level
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['userType'] > 2) {
         header('Location: index.php');
@@ -10,7 +10,6 @@ if (isset($_SESSION['user'])) {
 } else {
     redirectAfterLogin('scientistpanel.php');
 }
-
 ?>
 <html lang="en">
     <head>
@@ -18,6 +17,8 @@ if (isset($_SESSION['user'])) {
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
+        <title>QuickEval</title>
+        <link rel="icon" href="images/favicon.png"/>
 
         <!-- CSS -->
         <link href="css/metro-bootstrap.css" rel="stylesheet">
@@ -104,10 +105,8 @@ if (isset($_SESSION['user'])) {
             }
         </script>
 
-
         <!-- Used by the heatmap -->
        <script src="js/plugins/jquery.panzoom.min.js"></script>
-
     </head>
     <body class="metro" style="overflow-y:scroll">
         <div id="wrapper">
@@ -115,7 +114,7 @@ if (isset($_SESSION['user'])) {
 
             <div id="panels" style="width: 1200px; margin:auto; margin-bottom: 560px;">
                 <div id="left-panel" class="span4" style="float:left">
-                    <nav class="sidebar light" >
+                    <nav class="sidebar light">
                         <ul>
                             <li class="title">Scientist Panel</li>
                             <li id="dashboard" class="active stick bg-green"><a  href="#"><i class="icon-home"></i>Dashboard</a></li>
@@ -125,28 +124,22 @@ if (isset($_SESSION['user'])) {
                             <li id="image-sets" ><a href="#"><i class="icon-image"></i>Manage Image Sets</a></li>
 
                             <li class="title">Experiments</li>
-                            <li id="set-up-experiment" ><a href="#"><i class="icon-new"></i>Set Up Experiment</a></li>
-                            <li id="view-experiments" ><a href="#"><i class="icon-folder"></i>View Experiments</a></li>
-                            <li id="import-experiment" ><a href="#"><i class="icon-upload"></i>Import Experiment</a></li>
-
+                            <li id="set-up-experiment"><a href="#"><i class="icon-new"></i>Set Up Experiment</a></li>
+                            <li id="view-experiments"><a href="#"><i class="icon-folder"></i>View Experiments</a></li>
+                            <li id="import-experiment"><a href="#"><i class="icon-upload"></i>Import Experiment</a></li>
 
                             <li class="title">Other</li>
-                            <li id="invite-scientist" ><a href="#"><i class="icon-user"></i>Invite Scientist</a></li>
-                            <li id="delete-instruction" ><a href="#"><i class="icon-paragraph-justify"></i>Delete Instructions</a></li>
-
+                            <li id="invite-scientist"><a href="#"><i class="icon-user"></i>Invite Scientist</a></li>
+                            <li id="delete-instruction"><a href="#"><i class="icon-paragraph-justify"></i>Delete Instructions</a></li>
                         </ul>
                     </nav>
                 </div>
-                <div id="right-panel" class="span7" style="float: left; margin:20px">
-                </div>
-                <div id="right-menu" class="bg-steel" style="float: left;">
 
-
-                </div>
-                <div id='below-right-menu' style='float:left'>
-
-                </div>
+                <div id="right-panel" class="span7" style="float: left; margin:20px"></div>
+                <div id="right-menu" class="bg-steel" style="float: left;"></div>
+                <div id="below-right-menu" style='float:left'></div>
             </div>
+
             <?php include_once("includes/footer.html"); ?>
         </div>
     </body>
