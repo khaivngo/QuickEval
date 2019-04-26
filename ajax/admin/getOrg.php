@@ -9,7 +9,7 @@ try {
     $stmt->execute();
     $res = $stmt->fetchAll();
     echo json_encode($res);
-
+    exit;
 } catch (PDOException $excpt) {}
 
 ?>

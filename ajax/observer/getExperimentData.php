@@ -24,28 +24,30 @@ try {
             $res[0] = $stmt->fetch();      //Fetches result
         }
 
-        $stmt = $db->prepare("SELECT *, infotype.id AS infoTypeId FROM infotype t "
-                . " JOIN experimentinfotype e ON e.infoType = t.id "
-                . " JOIN infotype ON e.infoType = infotype.id"
-                . " WHERE e.experiment = ? ");
+        $stmt = $db->prepare(
+            "SELECT *, infotype.id AS infoTypeId FROM infotype t " .
+            " JOIN experimentinfotype e ON e.infoType = t.id " .
+            " JOIN infotype ON e.infoType = infotype.id" .
+            " WHERE e.experiment = ?"
+        );
 
         $stmt->bindParam(1, $_POST['experiment']);
         $stmt->execute();
 
         $rows = $stmt->rowCount();
 
-        if ($rows == 0) {               //Returns 0 if no rows are found
+        if ($rows == 0) {
             $res[1] = 0;
         } else {
-            $res[1] = $stmt->fetchAll();      //Fetches result
+            $res[1] = $stmt->fetchAll();
         }
     } else {
-        $res = 0;                       //Returns 0 if experiment is not set
+        $res = 0; //Returns 0 if experiment is not set
     }
 
-   // ChromePhp::log($res);
     echo json_encode($res);
+    exit;
 } catch (PDOException $excpt) {
-   // ChromePhp::log($excpt->getMessage());
+    // ChromePhp::log($excpt->getMessage());
 }
 ?>

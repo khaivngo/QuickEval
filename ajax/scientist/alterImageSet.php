@@ -6,64 +6,67 @@
  */
 
 require_once('../../db.php');
-if (!isset($_SESSION['user'])) {
-               header("Location: ../../login.php"); 
-            }
 
-	$option = $_POST['option'];
-	
-	if(isset($_POST['imagesetId'])) {
-		$imagesetId = $_POST['imagesetId'];
+if (!isset($_SESSION['user'])) {
+   header("Location: ../../login.php");
+   exit;
+}
+
+$option = $_POST['option'];
+
+if (isset($_POST['imagesetId'])) {
+	$imagesetId = $_POST['imagesetId'];
+}
+
+if ($option == "updateAmountOfPictures") {
+	try {
+		$amount = $_POST['amount'];
+
+    $sql = "UPDATE pictureset SET pictureAmount=(pictureAmount + ?) WHERE id = ?";
+		$sth = $db->prepare($sql);
+		$sth->bindParam(1, $amount);
+		$sth->bindParam(2, $imagesetId);
+		$sth->execute();
+	} catch (PDOException $excpt) {
+		//
 	}
-	
-	if($option == "updateAmountOfPictures") {
-		try {
-			$amount = $_POST['amount'];
-		    $sql = "UPDATE pictureset SET pictureAmount=(pictureAmount + ?) WHERE id = ?";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1, $amount);
-			$sth->bindParam(2, $imagesetId);
-			$sth->execute();
-			echo json_encode("Updated amount of pictures"); //FJERN
-			
-		} catch (PDOException $excpt) {
-			}
-			
-	} else if($option == "updateName"){
-		try {
-			$name = $_POST['name'];
-		    $sql = "UPDATE pictureset SET name=? WHERE id = ?";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1, $name);
-			$sth->bindParam(2, $imagesetId);  
-			$sth->execute();
-			echo json_encode("Updated name for imageset");
-			
-		} catch (PDOException $excpt) {
-			}
-			
-	} else if($option == "updateText") {
-		try {
-		
-			$text = $_POST['text'];
-		    $sql = "UPDATE pictureset SET text=? WHERE id = ?";
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1, $text);
-			$sth->bindParam(2, $imagesetId);  
-			$sth->execute();
-			echo json_encode("Updated text for imageset");
-		} catch (PDOException $excpt) {
-			}
-	
-			
-	} else if($option == "finishedUploading") {
-		$_SESSION['user']['imagesetId'] = 0;	//"Resets" the imagesetId
-		
-	} else if ($option == 'getActiveImagesetId') {
-		echo json_encode($_SESSION['user']['imagesetId']);
-		
-	} else if ($option =='updateOriginal') {
-		try {
+} else if ($option == "updateName"){
+	try {
+		$name = $_POST['name'];
+
+    $sql = "UPDATE pictureset SET name=? WHERE id = ?";
+		$sth = $db->prepare($sql);
+		$sth->bindParam(1, $name);
+		$sth->bindParam(2, $imagesetId);  
+		$sth->execute();
+		echo json_encode("Updated name for imageset");
+		exit;
+	} catch (PDOException $excpt) {
+		//
+	}
+} else if ($option == "updateText") {
+	try {
+		$text = $_POST['text'];
+
+    $sql = "UPDATE pictureset SET text=? WHERE id = ?";
+		$sth = $db->prepare($sql);
+		$sth->bindParam(1, $text);
+		$sth->bindParam(2, $imagesetId);  
+		$sth->execute();
+		echo json_encode("Updated text for imageset");
+		exit;
+	} catch (PDOException $excpt) {
+		//
+	}
+} else if ($option == "finishedUploading") {
+	$_SESSION['user']['imagesetId'] = 0;	//"Resets" the imagesetId
+
+} else if ($option == 'getActiveImagesetId') {
+	echo json_encode($_SESSION['user']['imagesetId']);
+	exit;
+
+} else if ($option =='updateOriginal') {
+	try {
 		$imageId = $_POST['idOfOriginal'];
 		
 		$sql = "SELECT * FROM picture WHERE id = ?";
@@ -83,11 +86,12 @@ if (!isset($_SESSION['user'])) {
 		$sthn->execute();
 		
 		echo json_encode("1");
-		} catch(PDOException $excpt) {
-			echo json_encode("0");
-		}
-
+		exit;
+	} catch(PDOException $excpt) {
+		echo json_encode("0");
+		exit;
 	}
-	
+
+}
 
 ?>

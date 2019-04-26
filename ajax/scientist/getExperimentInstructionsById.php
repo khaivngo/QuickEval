@@ -12,10 +12,6 @@ if (!isset($_SESSION['user'])) {
    exit;
 }
 
-// if ($_SESSION['user']['userType'] > 2) {
-//   exit;
-// }
-
 $experiment_id = isset($_POST['experimentId']) ? $_POST['experimentId'] : 0;
 
 if ($experiment_id !== 0) {

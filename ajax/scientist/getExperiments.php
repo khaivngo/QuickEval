@@ -1,11 +1,13 @@
 <?php
 /**
-* Gets results for an pair-experiment
+* Gets experiments belonging til a person.
 */
 
 require_once('../../db.php');
+
 if (!isset($_SESSION['user'])) {
-	header("Location: ../../login.php"); 
+	header("Location: ../../login.php");
+  exit;
 }	
 
 try {
@@ -17,8 +19,9 @@ try {
 
 	$result = $sth->fetchAll();
 	echo json_encode($result);
-
+  exit;
 } catch(PDOException $excpt) {
 	echo json_encode("0");
 }
+
 ?>

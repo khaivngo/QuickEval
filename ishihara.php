@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php session_start(); ?>
 <html lang="en" style="height: 100%">
     <head>
         <meta charset="utf-8">
@@ -21,14 +22,7 @@
         <!-- Other JS -->
         <script src="js/ishihara.js"></script>
         <script src="js/scripts.js"></script>
-
-
     </head>
-
-
-    <?php session_start(); ?>
-
-
     <body class="metro">
         <div id="wrapper">
             <?php include_once("includes/header.html"); ?>
@@ -133,6 +127,6 @@
                     </div>
                 </div>
 
-                </body>
-                <?php include_once("includes/footer.html"); ?>
-                </html>
+            <?php include_once("includes/footer.html"); ?>
+        </body>
+    </html>

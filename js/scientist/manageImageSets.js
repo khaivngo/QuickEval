@@ -14,13 +14,15 @@ $(document).ready(function () {
  * @returns {undefined}
  */
 function manageImageSets() {
-    inject("ajax/scientist/editImageSets.html");    //Injects framework
-    setActive($(this));                             //Sets active on menu
-    $(document.body).off();                         //Removes previous listeners
+    inject("ajax/scientist/editImageSets.html");
+    setActive($(this)); //Sets active on menu
+    $(document.body).off(); //Removes previous listeners
+
     $('#right-menu').load('ajax/scientist/imageSetMenu.html', function () {  //Adds menu with sort buttons
         $('#sort-alphabethical').addClass("active");        //Sets sort by alphabethical as default
         setUpMenuListeners();
     });
+
     if (setUpImageSetsGrid() != 0) {
         setUpButtons();
     }
@@ -85,7 +87,6 @@ function setUpButtonListeners($images, $imageSet) {
 
     if ($images == true) {
         $(document.body).on('click', '#confirm-delete', function () {
-
             if ($('.tile.selected').length > 0) {
                 deleteImages($imageSet);
             }
@@ -105,8 +106,6 @@ function setUpButtonListeners($images, $imageSet) {
         $(document.body).on('click', '.picture-name', function () {
             $('.notice').remove();
         });
-
-
     } else {
         $(document.body).on('click', '#confirm-delete', function () {
             deleteImageSets($imageSet);
@@ -148,8 +147,6 @@ function sortCalendar() {
  * @returns {Boolean}
  */
 function setUpImageSetsGrid($sort) {
-
-
     var imageSets = getImageSets($sort);
     var tile; //Tile to display image set
     var row; //Row, contains tiles
@@ -161,25 +158,26 @@ function setUpImageSetsGrid($sort) {
     for (var i = 0; i < imageSets.length; i++) {
         d = imageSets[i];
         url = 'uploads/' + d['person'] + '/' + d['id'] + '/' + d['url'] + '.' + d['pictureName'].substr(d['pictureName'].lastIndexOf('.') + 1);
-        if (i % 2 == 0) {                           //If new row has to be created
-            grid.append(row); //Adds last row to grid
-            row = $('<div class="row">'); //Creates new row
+        if (i % 2 == 0) {                   //If new row has to be created
+            grid.append(row);               //Adds last row to grid
+            row = $('<div class="row">');   //Creates new row
         }
-        tile = $('<div >'); //Sets up new tile
 
-
-        tile.append(' <div class = "image-set" imageset="' + d['id'] + '" style = "margin: 0 10px">' +
-            '   <div class = "tile double sets">' +
-            '       <div class = "tile-content image">' +
-            '           <img class = "original-image" src = "' + url + '"/>' +
+        //Sets up new tile
+        tile = $('<div >');
+        // Adds content to tile
+        tile.append(' <div class="image-set" imageset="' + d['id'] + '" style = "margin: 0 10px">' +
+            '   <div class="tile double sets">' +
+            '       <div class="tile-content image">' +
+            '           <img class="original-image" src = "' + url + '"/>' +
             '       </div>' +
-            '       <div class = "brand bg-dark opacity">' +
-            '           <span class = "label fg-white image-set-name"> ' + d['name'] + ' </span>' +
-            '           <span class = "badge bg-orange image-count"> ' + d['pictureAmount'] + ' </span>' +
+            '       <div class="brand bg-dark opacity">' +
+            '           <span class="label fg-white image-set-name"> ' + d['name'] + ' </span>' +
+            '           <span class="badge bg-orange image-count"> ' + d['pictureAmount'] + ' </span>' +
             '       </div>' +
             '   </div>' +
             '</div>'
-        ); // Adds content to tile
+        );
 
         row.append(tile); //Adds image-set to row
         tiles = true;
@@ -218,7 +216,6 @@ function toggleSelect($images) {
         $('#toggle-select').removeClass('start');           //Removes "start" class to prepare for stop-select
         if ($images) {
             removeSlideshowListener();
-
         }
     } else {
         $(document.body).off('click', '.tile');                         //Removes listener for selecting
@@ -306,12 +303,11 @@ function deleteImageSets() {
  * @returns {undefined}
  */
 function displayImageSet($imageSet) {
-
     var data = getImageSetData($imageSet);
     var images = getAllImagesInSet($imageSet);
-    //console.log(images);
+
     $('#right-panel').load('ajax/scientist/viewImageSet.html', function () { //Loads imput fields, buttons
-        $('#right-menu').empty();                                           // and hides buttons to be used later
+        $('#right-menu').empty();                           // and hides buttons to be used later
         $('#image-set-title').text(data['name']);           //Fills title, name and description
         $('#image-set-name').val(data['name']);
         $('#image-set-description').val(data['text']);
@@ -514,7 +510,7 @@ function deleteImagesetFromDatabase(imagesetIds) {
         },
         dataType: 'json',
         success: function (data) {
-            console.log("Deleted imageset! = " + data);	//FJERN
+            //
         },
         error: function (request, status, error) {
             console.log(request.responseText);
@@ -566,7 +562,6 @@ function checkPictureName($pictureId, $imageSet) {
  * @returns {undefined}
  */
 function updatePictureName($pictureId, $name) {
-
     $.ajax({
         type: 'POST',
         url: 'ajax/scientist/updatePictureName.php',
@@ -575,7 +570,7 @@ function updatePictureName($pictureId, $name) {
             'name': $name
         },
         success: function (data) {
-            $.Notify({//notifies user about successfull email change
+            $.Notify({ //notifies user about successfull email change
                 content: "Picture name updated",
                 style: {background: 'lime'},
             });
@@ -587,9 +582,7 @@ function updatePictureName($pictureId, $name) {
 }
 
 function toggleDisabled($el, $danger) {
-
     $el.toggleClass(($danger == 1) ? 'danger' : 'primary').toggleClass('fg-gray');  //Toggles disabled style on buttons
-    $el.children('i').toggleClass(($danger == 1) ? 'bg-red' : 'bg-cyan');          //Toggles disabled style on icons within buttons
+    $el.children('i').toggleClass(($danger == 1) ? 'bg-red' : 'bg-cyan');           //Toggles disabled style on icons within buttons
     $el.prop('disabled', !$el.prop('disabled'));                                    //Toggles disabled buttons
-
 }

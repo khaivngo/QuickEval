@@ -168,6 +168,7 @@ function getExperiments($experiment) {
 		var institute = $('#select-institution a.active:not(.all)').text();
 		var organization = $('#select-organization a.active:not(.all)').text();
 		var scientist = $('#select-scientist a.active:not(.all)').text();
+
 		$.ajax({
 				url: 'ajax/observer/getExperiments.php',
 				data: {
@@ -180,18 +181,22 @@ function getExperiments($experiment) {
 				async: false,
 				dataType: 'json',
 				success: function (data) {
-						$('#select-experiment a').remove();
-						emptyExperimentData();
-						if (data !== 0) {
-								for (var i = 0; i < data.length; i++) {
-										$('#select-experiment').append('<a class="list experiment" eid="' + data[i]['id'] +
-										'" method="' + data[i]['experimentType'] + '" href="#">' +
-										'<div class="list-content">' +
+					$('#select-experiment a').remove();
+					// empty list
+					emptyExperimentData();
+					// re-populate list
+					if (data !== 0) {
+						for (var i = 0; i < data.length; i++) {
+							var listItemHTML =
+								'<a class="list experiment" eid="' + data[i]['id'] + '" method="' + data[i]['experimentType'] + '" href="#">' +
+									'<div class="list-content">' +
 										'<span id="experiment' + i + '" class="list-title">' + data[i]['title'] + '</span>' +
-										'</div>' +
-										'</a>');
-								}
+									'</div>' +
+								'</a>';
+
+							$('#select-experiment').append(listItemHTML);
 						}
+					}
 				},
 				complete: function () {
 						displayByMethod($('#select-method').children('.active'));
@@ -315,7 +320,6 @@ function setUpEventHandlers() {
 				}
 				else if (checkCustomFieldValues() == true) {
 						startExperiment();
-
 				}
 		});
 
@@ -384,8 +388,12 @@ function getExperimentData($eId, $type, $invite) {
 										}
 
 										if (data[0]['allowColourBlind'] == 0 && checkColourBlind() == false) {
-												$('#experiment-buttons').append('<button id="bottom-button" class="button success colourblind" style="margin 20px 0; float:right" ' +
-												'eid="' + data[0]['id'] + '">Start Colourblind Test</button>')
+												var html =
+													'<button id="bottom-button" class="button success colourblind" eid="' + data[0]['id'] + '" style="margin 20px 0; float:right">' +
+														'Start Colourblind Test' +
+													'</button>';
+
+												$('#experiment-buttons').append(html);
 										} else {
 												$('#experiment-buttons').append('<button id="bottom-buttom"' +
 												'class="button success start-experiment" style="margin 20px 0; float:right"' +
@@ -527,10 +535,10 @@ function startExperiment() {
 						break;
 		}
 
-		url += invite;    //adds invite hash if set
+		url += invite; //adds invite hash if set
 
 		var form = $('<form action="' + url + '" method="post" target="_blank">' +
-		'<input type="hidden" name="experimentId" value="' + $('.start-experiment').attr('eid') + '" />' +
+			'<input type="hidden" name="experimentId" value="' + $('.start-experiment').attr('eid') + '" />' +
 		'</form>');
 		$('body').append(form);
 		$(form).submit();

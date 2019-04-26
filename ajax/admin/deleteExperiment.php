@@ -10,8 +10,6 @@ $experimentId = $_POST['experimentId'];
 
 try {
   $stmt = $db->exec("DELETE FROM experiment WHERE id = '" . $experimentId . "' AND person = '" . $userId . "'");
-
- // $stmt->execute(array(':id' => $_POST['experimentId'],
 	
   echo json_encode($stmt);
   exit;

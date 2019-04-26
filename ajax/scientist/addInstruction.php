@@ -4,18 +4,23 @@
  */
 require_once('../../db.php');
 
-	$stmt = $db->prepare("INSERT INTO instruction (text, personId) VALUES (:text, :personId)");
+$stmt = $db->prepare("INSERT INTO instruction (text, personId) VALUES (:text, :personId)");
 
-	$stmt->execute(array(':text' => $_POST['text'],
-		':personId' => $_SESSION['user']['id']));
+$stmt->execute(array(
+  ':text' => $_POST['text'],
+  ':personId' => $_SESSION['user']['id']
+));
 
-	$id = $db->lastInsertId();
+$id = $db->lastInsertId();
 
+$stmt = $db->prepare("INSERT INTO experimentorder (experimentQueue, instruction) VALUES (:experimentQueue, :instruction)");
 
-	$stmt = $db->prepare("INSERT INTO experimentorder (experimentQueue, instruction) VALUES (:experimentQueue, :instruction)");
+$stmt->execute(array(
+  ':experimentQueue' => $_POST['experimentQueue'],
+	':instruction' => $id
+));
 
-	$stmt->execute(array(':experimentQueue' => $_POST['experimentQueue'],
-		':instruction' => $id));
-	
-	echo json_encode(1);
+echo json_encode(1);
+exit;
+
 ?>

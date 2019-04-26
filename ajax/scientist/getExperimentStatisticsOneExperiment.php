@@ -4,7 +4,7 @@
  */
 require_once('../../db.php');
 
-$userId = $_SESSION['user']['id'];             //fetching user id from session
+$userId = $_SESSION['user']['id'];
 $experimentId = json_decode($_POST["experimentId"]);
 
 try {
@@ -12,9 +12,11 @@ try {
     $available;
 
     //selects the three latest experiments made by user.
-    $stmt = $db->query("SELECT id, title, person FROM experiment WHERE person = '" . $userId . "' AND experiment.id = '" . $experimentId . "'"
-            . "	ORDER BY ID DESC\n"
-            . "	LIMIT 1");
+    $stmt = $db->query(
+        "SELECT id, title, person FROM experiment WHERE person = '" . $userId . "' AND experiment.id = '" . $experimentId . "'"
+        . "	ORDER BY ID DESC\n"
+        . "	LIMIT 1"
+    );
 
     $res = $stmt->fetchAll();
 
@@ -29,76 +31,78 @@ try {
     }
 
 
-//---------------------Total visitors---------------------------------------------------------------------------------------
+//---------------------Total visitors------------------------------
 
-    $i = 1; 
+    $i = 1;
 
-        if (!isset(${'id' . $i})) {
-            echo "breaking out of for loop";
-            break;
-        }
+    if (!isset(${'id' . $i})) {
+        echo "breaking out of for loop";
+        break;
+    }
 
-        $stmt = $db->query("select COUNT(DISTINCT person) as total FROM experimentresult\n"
-                . "WHERE experiment = '" . ${'id' . $i} . "'");
+    $stmt = $db->query("select COUNT(DISTINCT person) as total FROM experimentresult\n"
+            . "WHERE experiment = '" . ${'id' . $i} . "'");
 
-        $res = $stmt->fetchAll();
+    $res = $stmt->fetchAll();
 
-        $data['visitors' . $i] = $res;
-    
+    $data['visitors' . $i] = $res;
+
 
 //--------------------Total completions----------------------------------------------------------------------------------------
 
 
-        if (!isset(${'id' . $i})) {
-            echo "breaking out of for loop";
-            break;
-        }
+    if (!isset(${'id' . $i})) {
+        echo "breaking out of for loop";
+        break;
+    }
 
-        $stmt = $db->query("SELECT COUNT(complete) AS total FROM experimentresult\n"
-                . " WHERE experiment = '" . ${'id' . $i} . "' AND complete = \"1\"\n");
+    $stmt = $db->query(
+        "SELECT COUNT(complete) AS total FROM experimentresult\n"
+        . " WHERE experiment = '" . ${'id' . $i} . "' AND complete = \"1\"\n"
+    );
 
-        $res = $stmt->fetchAll();
+    $res = $stmt->fetchAll();
 
-        $data['completion' . $i] = $res;
-  //  }
+    $data['completion' . $i] = $res;
+//  }
 
 
 //-------------------Average time-----------------------------------------------------------------------------------------
 
 
-        if (!isset(${'id' . $i})) {
-            echo "breaking out of for loop";
-            break;
+    if (!isset(${'id' . $i})) {
+        echo "breaking out of for loop";
+        break;
+    }
+
+    $stmt = $db->query(
+        "SELECT  TIME_TO_SEC(TIMEDIFF(endTime, startTime)) timeDiff FROM experimentresult \n"
+        . "	WHERE experiment = '" . ${'id' . $i} . "' AND complete = \"1\""
+    );
+
+    $results = $stmt->fetchAll();
+
+
+    $totalTime = 0;
+    $counter = 0;
+    foreach ($results as $row) {
+
+        if ($row['timeDiff'] != NULL) {
+            $difference = $row['timeDiff'];
+         
+            $totalTime +=$difference;
+            $counter++;
         }
+    }
 
-        $stmt = $db->query("SELECT  TIME_TO_SEC(TIMEDIFF(endTime, startTime)) timeDiff FROM experimentresult \n"
-                . "	WHERE experiment = '" . ${'id' . $i} . "' AND complete = \"1\"");
+    if ($totalTime != 0) {
+        $totalAverage = $totalTime / $counter;
+        $average = gmdate("H:i:s", $totalAverage);
+        $data['average' . $i] = $average;
+    }
 
-        $results = $stmt->fetchAll();
-
-
-
-        $totalTime = 0;
-        $counter = 0;
-        foreach ($results as $row) {
-
-            if ($row['timeDiff'] != NULL) {
-                $difference = $row['timeDiff'];
-             
-                $totalTime +=$difference;
-                $counter++;
-            }
-        }
-
-        if ($totalTime != 0) {
-
-            $totalAverage = $totalTime / $counter;
-            $average = gmdate("H:i:s", $totalAverage);
-            $data['average' . $i] = $average;
-        }
-
-    echo json_encode($data);  //returns them to ajax
-    
+    echo json_encode($data);
+    exit;
 } catch (Exception $ex) {
 }
 ?>

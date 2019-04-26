@@ -6,19 +6,19 @@ require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
 try {
+  $stmt = $db->query(
+    "SELECT usertype.title, count(userType) as total FROM person "
+    . "JOIN usertype "
+    . "ON usertype.id = person.userType "
+    . "GROUP by userType"
+  );
 
-    $stmt = $db->query("SELECT usertype.title, count(userType) as total FROM person\n"
-    . "JOIN usertype\n"
-    . "	ON usertype.id = person.userType\n"
-    . "GROUP by userType");
-	
-	
 	$res = $stmt->fetchAll();
 
 	echo json_encode($res);
-    
+  exit;
 } catch (PDOException $excpt) {
-    ChromePhp::log($excpt->getMessage());
+  // ChromePhp::log($excpt->getMessage());
 }
 
 ?>

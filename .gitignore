@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 /uploads
 /Nettside
-=======
 uploads/
 .idea/scopes/scope_settings.xml
 .idea/QuickEval.iml
 .idea/.name
 .idea/
 *.stackdump
->>>>>>> 41201aa159d2bfb62d801fa14c330b0bc7524d74

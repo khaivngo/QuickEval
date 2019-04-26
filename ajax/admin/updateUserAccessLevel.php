@@ -5,15 +5,19 @@
 require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
-if($_SESSION['user']['userType'] > 1) {
-	return;
+if ($_SESSION['user']['userType'] > 1) {
+	exit;
 }
-try {                                   //updates user's access level for the owner of email		
+
+try { //updates user's access level for the owner of email
     $stmt = $db->prepare("UPDATE person, userType SET person.userType = usertype.id WHERE person.email = :email AND usertype.title  = :type");
 
-    $stmt->execute(array(':email' => $_POST['email'],
-        ':type' => $_POST['type']));
+    $stmt->execute(array(
+      ':email' => $_POST['email'],
+      ':type' => $_POST['type']
+    ));
 } catch (Exception $ex) {
    // ChromePhp::log($ex->getMessage());
 }
+
 ?>

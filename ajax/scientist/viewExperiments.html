@@ -1,4 +1,4 @@
-<fieldset style='margin:10px; width:100%'>
+<fieldset style="margin:10px; width:100%">
     <legend>View Experiments</legend>
 
     <div class="listview-outlook" data-role="listview">
@@ -18,99 +18,162 @@
 
     <div id="selected-experiment" style="margin:20px 0">
         <fieldset>
-            <h2 id="experiment-name">Experiment Name</h2>
+            <div class="flex-space-between">
+                <h2 id="experiment-name">Experiment Name</h2>
+                <button id="edit-experiment" class="primary">
+                    Edit Experiment <i style="margin-left: 10px;" class="icon-pencil"></i>
+                </button>
+            </div>
+
             <p id="experiment-type"></p>
             <p id="experiment-description">Description</p>
             <div class="experiment-instructions-list" style="margin-bottom: 30px;">
                 <p>Instructions:</p>
             </div>
             <p id="experiment-url" style="position: absolute">URL</p>
-            <button id="export-experiment" class="primary" style="margin-top: 30px; width:140px">Export Experiment</button> <br/>
+            <button id="export-experiment" class="primary" style="margin-top: 30px; width:140px">Export Experiment</button>
+            <br/>
             <button id="set-hidden" class="primary" style="margin: 10px 0; width:140px">Set Hidden</button>
-            <button id="set-public" class="primary" style="margin: 10px 0; width:140px">Set Public</button><br/>
+            <button id="set-public" class="primary" style="margin: 10px 0; width:140px">Set Public</button>
+            <br/>
             <button id="delete-experiment" class="danger" style="width:140px">Delete Experiment</button>
         </fieldset>
-        <div id='export-parameters'>
+        <div id="export-parameters">
             <fieldset>
                 <div id="parameter-complete" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Only exports results from observers who completed the full experiment" data-hint-position="right">Complete Results</span>
+                        <span
+                            class="hint-trigger"
+                            data-hint="Only exports results from observers who completed the full experiment"
+                            data-hint-position="right"
+                        >
+                            Complete Results
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
                 <legend id="paramters-title">Parameters</legend>
                 <div id="parameter-metadata" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Experiment information like name, description, timestamp, scientist" data-hint-position="right">Metadata</span>
+                        <span
+                            class="hint-trigger"
+                            data-hint="Experiment information like name, description, timestamp, scientist"
+                            data-hint-position="right"
+                        >
+                            Metadata
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
                 <div id="parameter-parameters" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Displays parameters like display original, display timer etc" data-hint-position="right">Parameters</span>
+                        <span
+                            class="hint-trigger"
+                            data-hint="Displays parameters like display original, display timer etc"
+                            data-hint-position="right"
+                        >
+                            Parameters
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
                 <div id="parameter-instructions" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Displays instructions used in experiment." data-hint-position="right">Instructions</span>
+                        <span
+                            class="hint-trigger"
+                            data-hint="Displays instructions used in experiment."
+                            data-hint-position="right"
+                        >
+                            Instructions
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
                 <div id="parameter-image-sets" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Displays imagesets with their names and images" data-hint-position="right">Image Sets</span>
+                        <span
+                            class="hint-trigger"
+                            data-hint="Displays imagesets with their names and images"
+                            data-hint-position="right"
+                        >
+                            Image Sets
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
                 <div id="parameter-observer-data" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Displays all observers used in experiment and their userdata" data-hint-position="right">Observer Data</span>
+                        <span
+                            class="hint-trigger"
+                            data-hint="Displays all observers used in experiment and their userdata"
+                            data-hint-position="right"
+                        >
+                            Observer Data
+                        </span>
                     </label>
                 </div> <br/>
                 <div id="parameter-input-field-data" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Displays all inputfields used in experiment and results from observers like first name, age" data-hint-position="right">Input Field Data</span>
+                        <span
+                          class="hint-trigger"
+                          data-hint="Displays all inputfields used in experiment and results from observers like first name, age"
+                          data-hint-position="right"
+                        >
+                          Input Field Data
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
                 <div id="parameter-results" class="input-control checkbox hei" data-role="input-control">
                     <label>
                         <input type="checkbox" checked/>
                         <span class="check"></span>
-                        <span class="hint-trigger" data-hint="Displays results for experiment." data-hint-position="right">Results</span>
+                        <span class="hint-trigger" data-hint="Displays results for experiment." data-hint-position="right">
+                          Results
+                        </span>
                     </label>
-                </div> <br/>
+                </div>
+                <br/>
             </fieldset>
         </div>
         <button id="export-results" class="primary" style="margin: 10px 0; width:140px">
             Export Results
-        </button><br/>
+        </button>
+        <br/>
         <button id="clear-results" class="danger" title="Removes all results connected to the experiment"
             style="margin: 10px 0; width:140px">
             Clear experiment results
-        </button><br/>
+        </button>
+        <br/>
 
-    	<h3 style="margin-top: 50px;">Experiment statistics</h3>
-    	<div id="selected-experiment" class="primary">
-            <table class="table bordered" id="table3">
-                <tbody id="statistics">
-                </tbody>
-            </table>
-    	</div>
+      	<h3 style="margin-top: 50px;">Experiment statistics</h3>
+      	<div id="selected-experiment" class="primary">
+              <table class="table bordered" id="table3">
+                  <tbody id="statistics">
+                  </tbody>
+              </table>
+      	</div>
 
         <div id="experiment-results">
             <!--  -->
         </div>
 
-        <h3 id="no-results-warning">No results yet</h3>
+        <h3 id="no-results-warning">
+            No results yet
+        </h3>
     </div>
 </fieldset>

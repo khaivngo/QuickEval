@@ -6,16 +6,17 @@ require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
 try {
+  $stmt = $db->prepare(
+    "SELECT id FROM person " .
+    "WHERE email=:email2"
+  );
 
-    $stmt = $db->prepare("SELECT id FROM person "
-            . "WHERE email=:email2");
+  $stmt->execute(array(':email2' => $_POST['email2']));
+  $res = $stmt->rowCount();
 
-    $stmt->execute(array(':email2' => $_POST['email2']));
-    $res = $stmt->rowCount();
-    
-//    ChromePhp::log($res);
-    echo json_encode($res);
+  echo json_encode($res);
+  exit;
 } catch (PDOException $excpt) {
- //   ChromePhp::log($excpt->getMessage());
+  //
 }
 ?>

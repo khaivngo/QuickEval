@@ -4,11 +4,14 @@
  */
 require_once('../../db.php');
 include_once('../../functions.php');
+
 if (!isset($_SESSION['user'])) {
-               header("Location: ../../login.php"); 
-            }
-if($_SESSION['user']['userType'] > 2) {
-	return;
+   header("Location: ../../login.php");
+   exit;
+}
+
+if ($_SESSION['user']['userType'] > 2) {
+	exit;
 }
 
 $option = $_GET['option'];
@@ -21,6 +24,7 @@ if($option == "getInputfields") {
 	$sth->execute();
 	$result = $sth->fetchAll();
 	echo json_encode($result);
+  exit;
 }
 
 

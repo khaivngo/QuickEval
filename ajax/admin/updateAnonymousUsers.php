@@ -4,18 +4,19 @@
  */
 require_once('../../db.php');
 require_once('../../ChromePhp.php');
-if($access > 1) {	//3/4 = observer/anonymous
-	return;
+
+if ($access > 1) {	//3/4 = observer/anonymous
+    exit;
 }
 $selection = $_POST['selection'];
 
 global $interval;
 
-if(checkLogin > 2) {
- return;
+if (checkLogin > 2) {
+    exit;
 }
 
-if (strlen($selection) < 2) {                   //user has chosen from the dropdown menu with predifined intervals.
+if (strlen($selection) < 2) { //user has chosen from the dropdown menu with predifined intervals.
     switch ($selection) {
         case '1':
             $interval = "1 WEEK";
@@ -32,8 +33,7 @@ if (strlen($selection) < 2) {                   //user has chosen from the dropd
 
         default:
     }
-} else {                        //user has either input custom date or used datepicker
- //   ChromePhp::log("user used DATAPICKER");
+} else { //user has either input custom date or used datepicker
     $now = time();
     $myTime = strtotime($selection);
     $dateDiff = $now - $myTime;
@@ -42,26 +42,27 @@ if (strlen($selection) < 2) {                   //user has chosen from the dropd
     try {
         $stmt = $db->exec("DELETE FROM person WHERE creationDate < DATE_SUB(NOW(), INTERVAL '" . $days . "' DAYS) AND userType = 5");
         echo json_encode($stmt);
+        exit;
     } catch (Exception $ex) {
         // ChromePhp::log($ex->getMessage());
     }
 }
 
-if ($interval == 0) {                            //if user has opted to just purge the table for anonymyous users
+if ($interval == 0) { //if user has opted to just purge the table for anonymyous users
     try {
         $stmt = $db->exec("DELETE FROM person WHERE userType = 5");
-        // ChromePhp::log($stmt);
         echo json_encode($stmt);
+        exit;
     } catch (Exception $ex) {
-       //  ChromePhp::log($ex->getMessage());
+        // ChromePhp::log($ex->getMessage());
     }
-} else {                //
+} else {
     try {
         $stmt = $db->exec("DELETE FROM person WHERE creationDate < DATE_SUB(NOW(), INTERVAL '" . $interval . "') AND userType = 5");
         echo json_encode($stmt);
-       //  ChromePhp::log("Update complete");          //for logging purposes
+        exit;
     } catch (Exception $ex) {
-       //  ChromePhp::log($ex->getMessage());
+        // ChromePhp::log($ex->getMessage());
     }
 }
 ?>

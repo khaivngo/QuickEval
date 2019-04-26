@@ -4,7 +4,6 @@
  */
 require_once('../../db.php');
 
-
 try {
 	$stmt = $db->prepare("SELECT experimentqueue.id FROM experimentqueue "
 	. " JOIN experiment ON experimentqueue.experiment = experiment.id "
@@ -15,6 +14,7 @@ try {
 	$res = $stmt->fetch();
 	
 	echo json_encode($res);
-} catch (PDOException $excpt) {
-}
+  exit;
+} catch (PDOException $excpt) {}
+
 ?>

@@ -67,8 +67,8 @@
             <div style="width:500px; height: 100%; padding: 50px; background-color: #fff; background-color: rgba(0,0,0,0.5);">
                 <h1 class="fg-white" style="font-weight: 550">QuickEval</h1>
                 <h3 class="fg-white" style="font-weight: 300">
-                    QuickEval is a web-based tool for psychometric image evaluation. 
-                    It supports rank order, paired comparison and category judgement. 
+                    QuickEval is a web-based tool for psychometric image evaluation.
+                    It supports rank order, paired comparison and category judgement.
                     The tool is provided by the Norwegian Colour and Visual Computing Laboratory.
                 </h3>
             </div>

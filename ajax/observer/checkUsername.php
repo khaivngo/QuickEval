@@ -1,23 +1,22 @@
 <?php
+/**
+ * Searches for a person and returns true if found. Used to check username later.
+ */
 
 require_once('../../db.php');
 require_once('../../ChromePhp.php');
-/**
- * Searches for a person and returns true if found.  Used for check username later.
- */
+
 try {
+  $stmt = $db->prepare(
+    "SELECT id FROM person WHERE email=:email"
+  );
 
-    //---------------------------REGISTER PERSON---------------------------------//
+  $stmt->execute(array(':email' => $_POST['email']));
+  $res = $stmt->rowCount();
 
-    $stmt = $db->prepare("SELECT id FROM person "
-            . "WHERE email=:email");
-
-    $stmt->execute(array(':email' => $_POST['email']));
-    $res = $stmt->rowCount();
-    
-   // ChromePhp::log($res);
-    echo json_encode($res);
+  echo json_encode($res);
+  exit;
 } catch (PDOException $excpt) {
-  //  ChromePhp::log($excpt->getMessage());
+  // ChromePhp::log($excpt->getMessage());
 }
 ?>

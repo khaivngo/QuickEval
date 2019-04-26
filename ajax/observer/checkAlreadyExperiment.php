@@ -5,20 +5,21 @@
 require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
-$userId = $_SESSION['user']['id'];              //fetching user id from session
-
+$userId = $_SESSION['user']['id'];
 
 try {
+  $stmt = $db->prepare(
+    "SELECT DISTINCT experimentId FROM result " .
+    "WHERE personId = '" . $userId . "' AND experimentId = :eId"
+  );
 
-    $stmt = $db->prepare("SELECT DISTINCT experimentId FROM result "
-            . "WHERE personId = '" . $userId . "' AND experimentId = :eId");
+  $stmt->execute(array(':eId' => $_POST['experimentId']));
+  $res = $stmt->rowCount();
 
-    $stmt->execute(array(':eId' => $_POST['experimentId']));
-    $res = $stmt->rowCount();
-
-//    ChromePhp::log($res);
-    echo json_encode($res);
+  echo json_encode($res);
+  exit;
 } catch (PDOException $excpt) {
- //   ChromePhp::log($excpt->getMessage());
+  // ChromePhp::log($excpt->getMessage());
 }
+
 ?>

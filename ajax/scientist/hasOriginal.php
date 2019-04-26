@@ -4,24 +4,33 @@
  */
 require_once('../../db.php');
 include_once('../../functions.php');
+
 if (!isset($_SESSION['user'])) {
-	header("Location: ../../login.php"); 
+	header("Location: ../../login.php");
+  exit;
 }
-if($_SESSION['user']['userType'] > 2) {
-	return;
+
+if ($_SESSION['user']['userType'] > 2) {
+	exit;
 }
 
 $pictureSetId = $_GET['pictureSetId'];
-$sql = "SELECT pictureset.id FROM pictureset " .
+
+$sql =
+  "SELECT pictureset.id FROM pictureset " .
 	"JOIN picture ON picture.pictureSet = pictureset.id " .
 	"WHERE pictureset.id = ? AND picture.isOriginal = 1";
+
 $sth = $db->prepare($sql);
 $sth->bindParam(1,$pictureSetId);
 $sth->execute();
 
-if($sth->rowCount() > 0) {
+if ($sth->rowCount() > 0) {
 	echo json_encode();
+  exit;
 } else {
 	echo json_encode(0);
+  exit;
 }
+
 ?>

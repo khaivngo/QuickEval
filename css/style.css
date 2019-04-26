@@ -29,6 +29,14 @@ textarea {
     font-size: 14px;
 }
 
+/*---------layout-----------*/
+.flex-space-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/*------end layout------*/
+
 .dashboard {
     margin-left: 2%;
     margin-top: 2%;
@@ -40,12 +48,10 @@ textarea {
 
 #right-panel .manage-remove .icon-remove:hover {
     cursor: pointer;
-
 }
 
 #selected-experiment {
     width: 100%;
-
 }
 
 #selected-experiment #table3 {

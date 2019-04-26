@@ -5,20 +5,20 @@
 require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
-$userId = $_SESSION['user']['id'];             //fetching user id from session
+$userId = $_SESSION['user']['id'];
 
-try {                           
-							//returns id if user has taken any experiment
+try {
+	//returns id if user has taken any experiment
 	$stmt = $db->prepare("SELECT id from experimentResult WHERE person = '" . $userId . "'  AND experiment = :experimentId ");
-	
-    $stmt->execute(array(':experimentId' => $_POST['experimentId']));
-	
+
+  $stmt->execute(array(':experimentId' => $_POST['experimentId']));
+
 	$res = $stmt->fetchAll();
-	
-	echo json_encode($res);	
-	
+
+	echo json_encode($res);
+	exit;
 } catch (Exception $excpt) {
-   ChromePhp::log($excpt->getMessage());
+  // ChromePhp::log($excpt->getMessage());
 }
 
 ?>

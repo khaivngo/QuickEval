@@ -6,7 +6,6 @@ require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
 try {
-
     $experiment = "";
     $institute = $_POST['institute'];
     $organization = $_POST['organization'];
@@ -24,24 +23,28 @@ try {
     
     //Setting up subquery to include last part of query; wheres, order by
     $subQuery = //" LEFT OUTER JOIN experimentresult ON e.id = experimentresult.experiment " .
-             " WHERE ((CONCAT(LOWER(p.firstName), LOWER(p.lastName)) LIKE :scientist) OR "
-            . " (CONCAT(LOWER(p.lastName), LOWER(p.firstName)) LIKE :scientist)) ";
-            //. " AND experimentresult.id IS NULL";
-
-
+        " WHERE ((CONCAT(LOWER(p.firstName), LOWER(p.lastName)) LIKE :scientist) OR " .
+        " (CONCAT(LOWER(p.lastName), LOWER(p.firstName)) LIKE :scientist)) ";
+        //. " AND experimentresult.id IS NULL";
 
     //Adds institute to query if institute is set
     if ($institute != "") {
-        $query = $query . " JOIN workplacebelongs wb ON p.id = wb.personId "
-                . " JOIN workplace w1 ON wb.workPlace = w1.id ";
+        $query =
+            $query .
+            " JOIN workplacebelongs wb ON p.id = wb.personId " .
+            " JOIN workplace w1 ON wb.workPlace = w1.id ";
         $subQuery = $subQuery . " AND LOWER(w1.name) LIKE :institute ";
     }
 
     //Adds organization to query if organization is set
     if ($organization != "") {
-        $query = $query . " JOIN workplacebelongs wb ON p.id = wb.personId "
-                . " JOIN workplace w2 ON wb.workPlace = w2.id ";
-        $subQuery = $subQuery . " AND LOWER(w2.name) LIKE :organization ";
+        $query =
+            $query .
+            " JOIN workplacebelongs wb ON p.id = wb.personId " .
+            " JOIN workplace w2 ON wb.workPlace = w2.id ";
+        $subQuery =
+            $subQuery .
+            " AND LOWER(w2.name) LIKE :organization ";
     }
 
     //Ensures results are public only
@@ -93,8 +96,11 @@ try {
     }
 
     echo json_encode($res);
+    exit;
 } catch (PDOException $excpt) {
    // ChromePhp::log($excpt->getMessage());
     echo json_encode(0);
+    exit;
 }
+
 ?>

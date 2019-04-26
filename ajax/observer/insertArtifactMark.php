@@ -1,9 +1,7 @@
 <?php
-
-/*-------------------------------------------*
- * Insert a artifact mark into the database. *
- *-------------------------------------------*/
-
+/**
+ * Insert a artifact mark into the database.
+ */
 require_once "../../db.php";
 
 $picture_queue = isset($_POST['picture_queue']) ? $_POST['picture_queue'] : 0;
@@ -13,8 +11,8 @@ $experiment_id = isset($_POST['experiment_id']) ? $_POST['experiment_id'] : 0;
       $user_id = $_SESSION['user']['id'];
 
 $stmt = $db->prepare(
-    "INSERT INTO artifactmark (picture_queue, experiment_id, marked_pixels, remark, person)
-    VALUES (?, ?, ?, ?, ?)"
+  "INSERT INTO artifactmark (picture_queue, experiment_id, marked_pixels, remark, person)
+   VALUES (?, ?, ?, ?, ?)"
 );
 
 $stmt->bindParam(1, $picture_queue);

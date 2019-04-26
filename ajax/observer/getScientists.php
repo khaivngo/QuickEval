@@ -6,17 +6,16 @@ require_once('../../db.php');
 require_once('../../ChromePhp.php');
 
 try {
-
+    //If institute name is sent
     if (isset($_POST['scientist'])) {
-
-        //If institute name is sent
-
         $scientist = $_POST['scientist'];
 
-        $stmt = $db->prepare("SELECT * FROM person "
-                . "WHERE (LOWER(firstName) LIKE :scientist OR "
-                . "LOWER(lastName) LIKE :scientist) AND "
-                . "userType <= 2");
+        $stmt = $db->prepare(
+            "SELECT * FROM person "
+            . "WHERE (LOWER(firstName) LIKE :scientist OR "
+            . "LOWER(lastName) LIKE :scientist) AND "
+            . "userType <= 2"
+        );
 
         $stmt->execute(array(':scientist' => '%' . $scientist . '%'));
     }
@@ -32,6 +31,7 @@ try {
     echo json_encode($res);
     exit;
 } catch (PDOException $excpt) {
-   // ChromePhp::log($excpt->getMessage());
+    // ChromePhp::log($excpt->getMessage());
 }
+
 ?>

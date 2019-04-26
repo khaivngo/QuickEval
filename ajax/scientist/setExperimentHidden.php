@@ -5,14 +5,13 @@
 require_once('../../db.php');
 require_once('functions.php');
 
-$userId = $_SESSION['user']['id'];             //fetching user id from session
+$userId = $_SESSION['user']['id'];
 $experimentId = $_POST['experimentId'];
 $hidden = $_POST['hidden'];
 
-if(checkLogin > 2) {
- return;
+if (checkLogin > 2) {
+  exit;
 }
-
 
 try {
 	$stmt = $db->prepare("UPDATE experiment SET isPublic = ? WHERE id = ? AND person = ? ");
@@ -22,8 +21,9 @@ try {
 	$stmt->execute();
 	
 	echo json_encode(1);
-
+  exit;
 } catch (Exception $ex) {
+  //
 }
 
 ?>

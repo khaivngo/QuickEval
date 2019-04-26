@@ -33,7 +33,7 @@ if ($res[0][0] == "Superuser" && $mode == 0 && $option != 3) {				//fetches all 
 		$stmt->execute();
 		$res = $stmt->fetchAll();
 		echo json_encode($res);
-    exit;
+        exit;
 	} catch (PDOException $excpt) {}
 }
 else if ($res[0][0] == "Admin" && $mode == 0 && $option != 3)	{		//Fetches all instructions from DB that belongs to user associated with institution of admin

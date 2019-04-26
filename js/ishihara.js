@@ -8,20 +8,20 @@ $(document).ready(function() {
     $('#submit').click(function() {
         if (checkValues()) {
             $.ajax
-                    ({
-                        url: 'ajax/observer/updateColourBlindness.php',
-                        async: false,
-                        success: function(data) {
+            ({
+                url: 'ajax/observer/updateColourBlindness.php',
+                async: false,
+                success: function(data) {
 
-                        },
-                        error: function(request, status, error) {
-                            alert(request.responseText);
-                        }
-                    });
+                },
+                error: function(request, status, error) {
+                    alert(request.responseText);
+                }
+            });
         }
     });
-    setUpModeMenu('.observer-mode');
 
+    setUpModeMenu('.observer-mode');
 });
 /**
  * Check if users input is the correct values
@@ -62,6 +62,3 @@ function checkValues() {        //Input values matches images
         return false;
     }
 }
-
-
-

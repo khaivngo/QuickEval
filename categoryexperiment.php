@@ -108,35 +108,47 @@ if (isset($_GET["invite"])) {
         <button id="quit2" class="button size2" style="margin-right:10px;">Quit</button>
     </div>
 </div>
+
 <div id="backgroundPopup3"></div>
 
-
+<!--  -->
 <div id="header-div" style="width:100%; height:50px; background-color: #282828;">
     <div class="inner-header">
         <button id="button-instruction" class="button top-buttons" style="margin-left:15px; margin-right:20px">
             Instruction
         </button>
-        <button id="enter-fullscreen" class="button fullscreen top-buttons" style="margin-left:10px; "><i
-                class="icon-fullscreen"></i>Enter fullscreen
+
+        <button id="enter-fullscreen" class="button fullscreen top-buttons" style="margin-left:10px;">
+            <i class="icon-fullscreen"></i> Enter fullscreen
         </button>
+
         <button id="exit-fullscreen" class="button fullscreenExit top-buttons" style="margin-left:1px; ">Exit
             fullscreen
         </button>
 
-        <span id="ie-info-fullscreen"
-              style="color:white;">Press F11 for fullscreen, F11 or ESC to exit fullscreen</span>
-        <button class="button cancel-experiment" id="cancel-experiment">Cancel experiment</button>
+        <span id="ie-info-fullscreen" style="color:white;">
+            Press F11 for fullscreen, F11 or ESC to exit fullscreen
+        </span>
+
+        <button class="button cancel-experiment" id="cancel-experiment">
+            Cancel experiment
+        </button>
 
         <div id="info" class="center" style="color:white;">
-            <span id="progress">&nbsp;<span id="time" onload="start();"></span></span>
+            <span id="progress">
+                &nbsp;<span id="time" onload="start();"></span>
+            </span>
             <!--Comparison <span id="current-step"></span> of <span id="total-steps"></span> &nbsp |-->
         </div>
     </div>
 </div>
 
 <div id="category-container" style="height: 80%; overflow: hidden; padding-top: 50px;">
-    <div id="reproduction" class="reproduction panning-container no-original" 
-    style="display: inline-block; width: 42%; height: 70%; margin-left: 5%; vertical-align: top;">
+    <div
+        id="reproduction"
+        class="reproduction panning-container no-original" 
+        style="display: inline-block; width: 42%; height: 70%; margin-left: 5%; vertical-align: top;"
+    >
         <section id="set2">
             <div class="parent" style="overflow: hidden; position: relative; height: 100%; width: 100%;">
                 <a href="" id="reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
@@ -148,13 +160,12 @@ if (isset($_GET["invite"])) {
         </section>
     </div>
 
-
-    <div id="original" class="panning-container" style="display:inline-block; vertical-align: top;
-    margin-left: 5%; width:42%; height:70%;">
-        <span id="original-tag" class="span-original-tag" style="margin-left:50%;"><p>Original</p></span>
+    <div id="original" class="panning-container" style="display:inline-block; vertical-align:top; margin-left:5%; width:42%; height:70%;">
+        <span id="original-tag" class="span-original-tag" style="margin-left:50%;">
+            <p>Original</p>
+        </span>
 
         <section id="set1">
-
             <div class="parent" style="overflow:hidden; position: relative; height:100%; width:100%;">
                 <a href="" id="original-link" target="_blank" class="new-tab" onclick="return false;"></a>
                 <!--<a href="uploads/6/5/o_18j3b4ooil9k1g0o1k1pcc91vfna.jpeg" id="original-link" target="_blank" class="new-tab"></a >-->
@@ -163,7 +174,6 @@ if (isset($_GET["invite"])) {
                 </div>
             </div>
         </section>
-
     </div>
 
     <div class="category-button-container" style="width: 100%; padding: 0; position: absolute; bottom: 5%;">

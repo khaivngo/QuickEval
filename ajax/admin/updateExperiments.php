@@ -4,21 +4,19 @@
  */
 require_once('../../db.php');
 require_once('../../ChromePhp.php');
+require_once('functions.php');
 
 $selection = $_POST['selection'];
 $userCheck = $_POST['userCheck'];
 $access = $_SESSION['user']['userType'];
-require_once('functions.php');
 
 global $interval;
 
 if (checkLogin > 2) {
-    return;
     exit;
 }
 
-
-if (strlen($selection) < 2) {                   //user has chosen from the dropdown menu with predifined intervals.
+if (strlen($selection) < 2) { //user has chosen from the dropdown menu with predifined intervals.
     switch ($selection) {
         case '1':
             $interval = "1 WEEK";
@@ -38,7 +36,6 @@ if (strlen($selection) < 2) {                   //user has chosen from the dropd
 
 //user has either input custom date or used datepicker
 } else {
-    ChromePhp::log("user used DATAPICKER");
     $now = time();
     $myTime = strtotime($selection);
     $dateDiff = $now - $myTime;
@@ -49,8 +46,9 @@ if (strlen($selection) < 2) {                   //user has chosen from the dropd
         try {
             $stmt = $db->exec("DELETE FROM experiment WHERE date < DATE_SUB(NOW(), INTERVAL '" . $days . "' DAYS)");
             echo json_encode($stmt);
+            exit;
         } catch (Exception $ex) {
-            ChromePhp::log($ex->getMessage());
+            // ChromePhp::log($ex->getMessage());
         }
 
     //user check is checked and user is not admin. Checks whether user is owner of experiment.
@@ -58,8 +56,9 @@ if (strlen($selection) < 2) {                   //user has chosen from the dropd
         try {
             $stmt = $db->exec("DELETE FROM experiment WHERE date < DATE_SUB(NOW(), INTERVAL '" . $days . "' DAYS) AND person = '" . $userId . "'");
             echo json_encode($stmt);
+            exit;
         } catch (Exception $ex) {
-            ChromePhp::log($ex->getMessage());
+            // ChromePhp::log($ex->getMessage());
         }
     }
 }
@@ -68,23 +67,22 @@ if (strlen($selection) < 2) {                   //user has chosen from the dropd
 if ($interval == 0 && $access == 1) {
     try {
         $stmt = $db->exec("TRUNCATE TABLE experiment");
-        ChromePhp::log($stmt);
         echo json_encode($stmt);
+        exit;
     } catch (Exception $ex) {
-        ChromePhp::log($ex->getMessage());
+        // ChromePhp::log($ex->getMessage());
     }
 
 //user is presumed not admin therefore a check on owner of experiment.
 } else {
     //user check is required, checks if user is the owner of experiments
     if ($userCheck == 1) {
-    
         try {
             $stmt = $db->exec("DELETE FROM experiment WHERE date < DATE_SUB(NOW(), INTERVAL '" . $interval . "' ) AND person = '" . $userId . "'");
             echo json_encode($stmt);
-            ChromePhp::log("Update complete");
+            exit;
         } catch (Exception $ex) {
-            ChromePhp::log($ex->getMessage());
+            // ChromePhp::log($ex->getMessage());
         }
     }
 
@@ -93,10 +91,11 @@ if ($interval == 0 && $access == 1) {
         try {
             $stmt = $db->exec("DELETE FROM experiment WHERE date < DATE_SUB(NOW(), INTERVAL '" . $interval . "' )");
             echo json_encode($stmt);
-            ChromePhp::log("Update complete");
+            exit;
         } catch (Exception $ex) {
-            ChromePhp::log($ex->getMessage());
+            // ChromePhp::log($ex->getMessage());
         }
     }
 }
+
 ?>

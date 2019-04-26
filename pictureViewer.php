@@ -1,6 +1,4 @@
 <!DOCTYPE html>
-<?php
-?>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -19,30 +17,21 @@
         <!-- Metro UI -->
         <script src="min/metro.min.js"></script>
 
-
         <!-- Other JS -->
         <script src="js/plugins/jquery.panzoom.min.js"></script>
-
-
     </head>
-
-    <body class="metro" style="background-color:#808080;" >
+    <body class="metro" style="background-color:#808080;">
 
         <div id="container" style="text-align:center; vertical-align:text-top; margin-top:2%;">
             <img id="image" src="">
-
-
         </div>
 
+        <script type="text/javascript">
+            var url = window.data;
+            var colour = window.colour;
+            
+            $('#image').attr('src', url);
+            $('body').css("background-color", colour);
+        </script>
     </body>
-
-
-    <script type="text/javascript">
-        var url = window.data;
-        var colour = window.colour;
-        
-        $('#image').attr('src', url);
-        $('body').css("background-color", colour);
-        
-    </script>
 </html>
