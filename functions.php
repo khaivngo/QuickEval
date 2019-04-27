@@ -126,9 +126,9 @@ function getExperimentById($id, $db) {
 }
 
 
-if(isset($_GET['option'])) {
+if (isset($_GET['option'])) {
 	$option = $_GET['option'];
-	if($option == "getPictureUrl") {
+	if ($option == "getPictureUrl") {
 		$pictureId = $_GET['pictureId'];
 		echo json_encode(getUrlForPicture($pictureId, $db));
 	}
@@ -250,23 +250,23 @@ function getExperimentResults($experimentId, $db, $complete) {
 
 	$result[] = $imageSetImages;
 
-    // Retrieves url for thumbnail picture of each image set
-    foreach($imageSets as $key=>$imageSet) {
-        $sql = "SELECT * FROM picture
-	    JOIN pictureset ON picture.pictureset=pictureset.id
-	    WHERE picture.isOriginal = 1 AND picture.pictureSet = ?;";
-        $sth = $db->prepare($sql);
-        $sth->bindParam(1, $imageSet['id']);
-        $sth->execute();
-        $result['imageUrl'][$key] = generateUrl($sth->fetch());
-    }
+  // Retrieves url for thumbnail picture of each image set
+  foreach($imageSets as $key=>$imageSet) {
+    $sql = "SELECT * FROM picture
+    JOIN pictureset ON picture.pictureset=pictureset.id
+    WHERE picture.isOriginal = 1 AND picture.pictureSet = ?;";
+    $sth = $db->prepare($sql);
+    $sth->bindParam(1, $imageSet['id']);
+    $sth->execute();
+    $result['imageUrl'][$key] = generateUrl($sth->fetch());
+  }
 
-    //If rating experiment
+  //If rating experiment
 	if ($type == 1) {
 
 		$resultArray = array();
 
-        //Iterates through all experimentorders
+    //Iterates through all experimentorders
 		for ($i = 0; $i < sizeof($experimentOrders); $i++) {
             $currentResult = array(); //Result for current experimentorder
             $tempArray = array();
@@ -295,8 +295,6 @@ function getExperimentResults($experimentId, $db, $complete) {
 
             $experimentOrderResult = $sth->fetchAll();
             $rows = sizeof($experimentOrderResult);
-
-
 
             //Iterates through first row of all results
             for ($k = 0; $k < $rows; $k+=$imagesLength) {
@@ -353,30 +351,30 @@ function getExperimentResults($experimentId, $db, $complete) {
 			    . " JOIN experimentorder ON picturequeue.id = experimentorder.pictureQueue "
 			    . " WHERE pictureorder.pOrder = po AND experimentorder.eOrder = eOrderId AND picture.id != pictureId "
 			    . " LIMIT 0,1) AS wonAgainstName  "
-			. "FROM pictureorder  "
-			. "JOIN picturequeue ON pictureorder.pictureQueue = picturequeue.id  "
-			. "JOIN experimentorder ON picturequeue.id = experimentorder.pictureQueue  "
-			. "JOIN experimentqueue on experimentorder.experimentQueue = experimentqueue.id  "
-			. "JOIN experiment ON experiment.id = experimentqueue.experiment  "
-			. "JOIN picture ON pictureorder.picture = picture.id  "
-			. "LEFT JOIN result ON pictureorder.id = result.pictureOrderId  "
-			. (($complete == 1) ?  " JOIN experimentresult ON result.experimentId = experimentresult.experiment AND experimentresult.person = result.personId " : ' ')
-			. "WHERE experiment.id = ? AND experiment.person = ? AND experimentorder.eOrder = ? AND created IS NOT NULL ". (($complete == 1) ? " AND experimentresult.complete != 1 " : " ")
-			. "GROUP BY orderId, personId "
-			. "ORDER BY orderId ";
+  			. "FROM pictureorder  "
+  			. "JOIN picturequeue ON pictureorder.pictureQueue = picturequeue.id  "
+  			. "JOIN experimentorder ON picturequeue.id = experimentorder.pictureQueue  "
+  			. "JOIN experimentqueue on experimentorder.experimentQueue = experimentqueue.id  "
+  			. "JOIN experiment ON experiment.id = experimentqueue.experiment  "
+  			. "JOIN picture ON pictureorder.picture = picture.id  "
+  			. "LEFT JOIN result ON pictureorder.id = result.pictureOrderId  "
+  			. (($complete == 1) ?  " JOIN experimentresult ON result.experimentId = experimentresult.experiment AND experimentresult.person = result.personId " : ' ')
+  			. "WHERE experiment.id = ? AND experiment.person = ? AND experimentorder.eOrder = ? AND created IS NOT NULL ". (($complete == 1) ? " AND experimentresult.complete != 1 " : " ")
+  			. "GROUP BY orderId, personId "
+  			. "ORDER BY orderId ";
 
-			$sth = $db->prepare($sql);
-			$sth->bindParam(1, $experimentId);
-			$sth->bindParam(2, $_SESSION['user']['id']);
-			$sth->bindParam(3, $experimentOrder['eOrder']);
-			$sth->execute();
-			$pairResults[] = $sth->fetchAll();
+  			$sth = $db->prepare($sql);
+  			$sth->bindParam(1, $experimentId);
+  			$sth->bindParam(2, $_SESSION['user']['id']);
+  			$sth->bindParam(3, $experimentOrder['eOrder']);
+  			$sth->execute();
+  			$pairResults[] = $sth->fetchAll();
 			}
 
 
 			$result[] = $pairResults;
 
-			        //If category experiment
+    //If category experiment
 		} elseif ($type == 3) {
 
         	//Gets all categories and saves in result, needed in case all categories aren't chosen

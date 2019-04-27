@@ -3,8 +3,9 @@
  * File will get ALL experiments and return them in an array.
  */
 require_once('../../db.php');
-if($_SESSION['user']['userType'] > 2) {
-	return;
+
+if ($_SESSION['user']['userType'] > 2) {
+	exit;
 }
 $userId = $_SESSION['user']['id'];
 
@@ -17,8 +18,8 @@ try {
     // and those who are hidden:
     
     $stmt = $db->query(
-        "SELECT COUNT(experiment.id) AS total FROM experiment"
-        . "Join experimenttype on experiment.experimenttype=experimenttype.id AND experimenttype.type = 'rating'"
+        "SELECT COUNT(experiment.id) AS total FROM experiment "
+        . "Join experimenttype on experiment.experimenttype=experimenttype.id AND experimenttype.type = 'rating' "
         . "Join person On experiment.person=person.id AND person.id = '" . $userId . "'"
     );
 
@@ -27,7 +28,7 @@ try {
     $data['totalRating'] = $res;  //saving in an array with named index.
 
     $stmt = $db->query(
-        "SELECT COUNT(experiment.id) AS total FROM experiment"
+        "SELECT COUNT(experiment.id) AS total FROM experiment "
         . "Join experimenttype on experiment.experimenttype=experimenttype.id AND experimenttype.type = \"rating\" AND experiment.isPublic = \"0 = Hidden\"\n"
         . "Join person On experiment.person=person.id AND person.id = '" . $userId . "'"
     );
@@ -37,7 +38,7 @@ try {
     $data['hiddenRating'] = $res;
 
 
-    //--------------PAIR COMPARISON------------------    
+    //--------------PAIR COMPARISON------------------
 
     // getting all experiments of type pair comparison
     // and those who are hidden:
@@ -69,11 +70,10 @@ try {
     // getting all experiments of type category
     // and those who are hidden:
     
-    
     $stmt = $db->query(
-        "SELECT COUNT(experiment.id) AS total FROM experiment\n"
-        . "Join experimenttype on experiment.experimenttype=experimenttype.id AND experimenttype.type = \"category\"\n"
-        . "Join person On experiment.person=person.id AND person.id = '" . $userId . "'"
+        "SELECT COUNT(experiment.id) AS total FROM experiment " .
+        "JOIN experimenttype ON experiment.experimenttype=experimenttype.id AND experimenttype.type = \"category\" " .
+        "JOIN person ON experiment.person=person.id AND person.id = '" . $userId . "'"
     );
 
     $res = $stmt->fetchAll();
@@ -81,9 +81,10 @@ try {
     $data['totalCategory'] = $res;
 
     $stmt = $db->query(
-        "SELECT COUNT(experiment.id) AS total FROM experiment\n"
-        . "Join experimenttype on experiment.experimenttype=experimenttype.id AND experimenttype.type = \"category\" AND experiment.isPublic = \"0 = Hidden\"\n"
-        . "Join person On experiment.person=person.id AND person.id = '" . $userId . "'"
+        "SELECT COUNT(experiment.id) AS total FROM experiment " .
+        "JOIN experimenttype on experiment.experimenttype=experimenttype.id " .
+        "AND experimenttype.type = 'category' AND experiment.isPublic = '0 = Hidden' " .
+        "JOIN person ON experiment.person=person.id AND person.id = '" . $userId . "'"
     );
 
     $res = $stmt->fetchAll();
