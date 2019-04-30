@@ -96,8 +96,7 @@ function inject($data) {
 }
 
 /**
- * Sets the $target button active in the left
- * sidebar.
+ * Sets the $target button active in the left sidebar.
  * $data is the jquery element to be set active.
  */
 function setActive($target) {

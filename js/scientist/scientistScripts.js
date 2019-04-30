@@ -167,7 +167,6 @@ function addObserverInputFields(defaultFields, customFields, experimentId) {
  */
 function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, showOriginal, colorblind, hidden, timer, experimentId) {
 
-
     if (experimentId == 0 || experimentId == null) {
         experimentId = getActiveExperimentInCreation();
     }
@@ -189,7 +188,6 @@ function addObserverParametersPair(backgroundColour, forcedPick, samePairTwice, 
             'colorblind': colorblind,
             'hidden': hidden,
             'timer': timer
-
         },
         success: function (data) {
             //console.log(data);
@@ -283,7 +281,6 @@ function getEarlierPictureQueues(pictureSetId) {
  * @return {int}              0 if no original
  */
 function hasOriginal(pictureSetId) {
-
     var bool;
 
     $.ajax({
@@ -311,7 +308,6 @@ function hasOriginal(pictureSetId) {
  * @param {int} experimentId id of experiment
  */
 function addCategory(categoryText, experimentId) {
-
     $.ajax({
         url: 'ajax/scientist/addCategory.php',
         async: false,
@@ -323,7 +319,6 @@ function addCategory(categoryText, experimentId) {
             alert(request.responseText);
         }
     });
-
 }
 
 /**
@@ -332,7 +327,6 @@ function addCategory(categoryText, experimentId) {
  * @param {int} experimentId   id of experiment
  */
 function addExistingCategory(categoryNameId, experimentId) {
-
     $.ajax({
         url: 'ajax/scientist/addExistingCategory.php',
         async: false,
@@ -344,7 +338,6 @@ function addExistingCategory(categoryNameId, experimentId) {
             alert(request.responseText);
         }
     });
-
 }
 
 /**
@@ -456,12 +449,13 @@ function deleteExperiment(experimentId) {
         },
         dataType: 'json',
         success: function (data) {
+            console.log(data)
             if (data == 1) { //that particular experiment was successfully deleted.
                 $.Notify({ //notifies user about successfull experiment deletion change.
                     content: "Experiment successfully deleted",
                     style: {
                         background: 'lime'
-                    },
+                    }
                 });
             }
         },

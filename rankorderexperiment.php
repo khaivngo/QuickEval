@@ -23,7 +23,7 @@ if (isset($_GET["invite"])) {
         $res = $stmt->fetchAll();
         $_SESSION['experimentId'] = $res[0]['id'];
     } catch (Exception $ex) {
-
+        // 
     }
 } else {
     $_SESSION['experimentId'] = $_POST['experimentId'];
@@ -153,7 +153,6 @@ if (isset($_GET["invite"])) {
     </div>
 </div>
 
-
 <div id="rating-container">
     <h2 id="original-tag" style="text-align:center; width:100%;">Original</h2>
 
@@ -201,31 +200,12 @@ if (isset($_GET["invite"])) {
         </section>
         <div id="picture-in-panner-right">Picture in panner right: <span><strong></strong></span></div>
     </div>
-
-
 </div>
-
-
-<!--<div id="rating" class="footer rating-collection center" style="">-->
-<!--    <div id="rating-images"></div>-->
-<!---->
-<!--</div>-->
-
-<!--<div class="rating-container" style="margin-top: 500px;">-->
-<!--    <div id="items">-->
-<!---->
-<!--            <div class="tile" data-force="30">item 1</div>-->
-<!--            <div class="tile" data-force="30">item 2</div>-->
-<!--            <div class="tile" data-force="30">item 3</div>-->
-<!---->
-<!--    </div>-->
-<!--</div>-->
 
 <div id="rating" class="footer rating-collection" style="">
-
     <div id="rating-images"></div>
-
 </div>
+
 <div style="margin-top:-30px">
     <button id="button-finished" class="size2 button-finished" style=""><strong>Next</strong></button>
 </div>

@@ -85,7 +85,6 @@ function deletePicture($imageId, $db, $access, $userId, $deleteOriginal) {
 			$sth->execute();
 			$result = $sth->fetch();	
 			$imagesetId = $result['id'];
-
 			
 			/**
 			 * If user owns picture, OR is admin with accesslevel 1
@@ -147,12 +146,12 @@ function getFilePath($imageId, $db, $userId) {
 	$sth->bindParam(1,$imageId);
 	$sth->execute();
 	$result = $sth->fetch();
-	
+
 	$url = $result['url'];
 	$index = strripos($result['name'],".");
 	$fileType = substr($result['name'],$index, strlen($result['name']));
-	
-	return("../../uploads/" . $userId . "/" . $result['pictureSet'] . "/" . $result['url'] . $fileType);
+
+	return "../../uploads/" . $userId . "/" . $result['pictureSet'] . "/" . $result['url'] . $fileType;
 }
 
 /**

@@ -10,8 +10,8 @@ if (!isset($_SESSION['user']['id'])) {
         redirectAfterLogin($url . $hash);
     } else {
         header("Location: login.php");
+        exit;
     }
-
 }
 if (isset($_GET["invite"])) {
     $hash = $_GET["invite"];
@@ -23,7 +23,7 @@ if (isset($_GET["invite"])) {
         $res = $stmt->fetchAll();
         $_SESSION['experimentId'] = $res[0]['id'];
     } catch (Exception $ex) {
-
+        // 
     }
 } else {
     $_SESSION['experimentId'] = $_POST['experimentId'];
@@ -156,12 +156,10 @@ if (isset($_GET["invite"])) {
                     </div>
                 </section>
                 <br>
-
             </div>
 
-            <div id="right-reproduction" class="right pictureContainer"
-                 style="display:inline-block; margin-left: 2%; width:30%; height: 70%">
-                <section id="set2" style="">
+            <div id="right-reproduction" class="right pictureContainer" style="display:inline-block; margin-left: 2%; width:30%; height: 70%">
+                <section id="set2">
                     <div class="parent" style="overflow:hidden; position: relative; height: 100%; width: 100%;">
                         <a href="" id="right-reproduction-link" target="_blank" class="new-tab" onclick="return false;"></a>
 
@@ -171,7 +169,6 @@ if (isset($_GET["invite"])) {
                     </div>
                 </section>
                 <br>
-
             </div>
 
             <div style="width:100%;">

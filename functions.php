@@ -8,36 +8,32 @@ include_once('db.php');
 require_once('ChromePhp.php');
 
 /**
- * Forces a session update for user and returns the users userType 
+ * Forces a session update for user and returns the users userType
  * @return null If there is an error, or userType if not
  */
 function checkLogin($db) {
 	try {
       // Check for existing session
-      if (isset($_SESSION['user'])) {
-      	$stmt = $db->prepare("SELECT * FROM person WHERE id=:id");  
-
-        // Get userdata
-        $stmt->execute(array(':id' => $_SESSION['user']['id']));
-
-      //If user isn't in database
-      } else {
-          return null;
+      if (!isset($_SESSION['user'])) {
+        return null;
       }
 
-    $rows = $stmt->rowCount();
+      $stmt = $db->prepare("SELECT * FROM person WHERE id=:id");
+      $stmt->execute(array(':id' => $_SESSION['user']['id']));
+      $rows = $stmt->rowCount();
 
-        if ($rows == 1) {                   //Checks if found user
-        	$res = $stmt->fetchAll();
-            $_SESSION['user'] = $res[0];    //Updates session
-        } else {                            //If couldn't find user
+      //Checks if found user
+      if ($rows == 1) {
+      	$res = $stmt->fetchAll();
+        //Updates session
+        $_SESSION['user'] = $res[0];
+      } else {
         return null;
-    }
+      }
 
-        return $_SESSION['user']['userType'];   //Returns userlevel
-        
+      return $_SESSION['user']['userType']; //Returns userlevel
     } catch (PDOException $excpt) {
-        return null;    //If SQL error
+        return null;
     }
 }
 
@@ -87,15 +83,7 @@ function getUrlForPicture($pictureId, $db) {
 	$sth->execute();
 	$row = $sth->fetch();
 	$url = generateUrl($row);
-	
-	/*var_dump($_SESSION['activeObserverExperiment']);
-	if(isset($_SESSION['activeObserverExperiment'])) {	//This will get the current active pictureOrder which are done in experiment
-		foreach($_SESSION['activeObserverExperiment']['activePictureOrder'] as $index) {
-			if($_SESSION['activeObserverExperiment']['pictureOrder'][$index]['picture'] == $pictureId) {
-				$url['pictureOrderId'] = $_SESSION['activeObserverExperiment']['pictureOrder'][$index][5]; //Number 5 is the id for the pictureOrder
-			}
-		}
-	}*/
+
 	$url['pictureOrderId'] = $pictureId['pictureOrderId'];
 	
 	$sql = "SELECT * FROM picture
@@ -111,10 +99,13 @@ function getUrlForPicture($pictureId, $db) {
 }
 
 function getExperimentById($id, $db) {
-	$sql = "SELECT *, experimenttype.name AS experimentTypeName, experiment.title AS experimentName, experiment.longDescription AS experimentDescription "
-	. " FROM experiment "
-	. " JOIN experimenttype ON experiment.experimentType = experimenttype.id "
-	. " WHERE person = ? AND experiment.id = ?";
+	$sql = "SELECT *, " .
+    "experimenttype.name AS experimentTypeName, " .
+    "experiment.title AS experimentName, " .
+    "experiment.longDescription AS experimentDescription " .
+  "FROM experiment " .
+	"JOIN experimenttype ON experiment.experimentType = experimenttype.id " .
+	"WHERE person = ? AND experiment.id = ?";
 
 	$sth = $db->prepare($sql);
 	$sth->bindParam(1,$_SESSION['user']['id']);
@@ -138,7 +129,7 @@ if (isset($_GET['option'])) {
  * Returns results for category experiments
  *
  * @param  $experimentId  int     id of experiment
- * @param  $db            object  object of current database
+ * @param  $db            object  database connection object
  * @param  $type          int     experimenttype id
  *
  * @return array  array of rows with result data
@@ -147,7 +138,6 @@ function getExperimentRawData($experimentId, $db, $type, $complete) {
 	$result = 0;
 
 	if ($type == 3) {
-
 		//Magic be here, DO NOT TOUCH OR GOD BE WITH YOU
 		$sql = "SELECT result.*, picture.*, experimentorder.eOrder as experimentOrder, person.firstName, person.lastName, categoryname.name AS categoryName"
 		. " FROM `result` "
@@ -170,10 +160,10 @@ function getExperimentRawData($experimentId, $db, $type, $complete) {
 }
 
 /**
- * Returns data of experiment and resultsbased on experimenttype
- * @param  int $experimentId Id of experiment
- * @param  object $db           object of current database
- * @return array               [0] = experimenttype, [1] = image sets, [2] = experimentorders, [3] = results
+ * Returns data of experiment and results based on experimenttype
+ * @param  int          $experimentId Id of experiment
+ * @param  object $db   object of current database
+ * @return array        [0] = experimenttype, [1] = image sets, [2] = experimentorders, [3] = results
  */
 function getExperimentResults($experimentId, $db, $complete) {
 	$result = array();
@@ -191,7 +181,7 @@ function getExperimentResults($experimentId, $db, $complete) {
 
 	$result[] = $type;
 
-    //Gets all imageset id's and adds to result
+  //Gets all imageset id's and adds to result
 	$sql = "SELECT pictureset.id, pictureset.name FROM experiment "
 	. " JOIN experimentqueue ON experimentqueue.experiment = experiment.id "
 	. " JOIN experimentorder ON experimentqueue.id = experimentorder.experimentQueue "
@@ -209,7 +199,7 @@ function getExperimentResults($experimentId, $db, $complete) {
 	$imageSets = $sth->fetchAll();
 	$result[] = $imageSets;
 
-    //Gets all experimentorders, since not all images in imagesets might be used in experiment
+  //Gets all experimentorders, since not all images in imagesets might be used in experiment
 	$sql = "SELECT experimentorder.eOrder FROM experiment "
 	. " JOIN experimentqueue ON experimentqueue.experiment = experiment.id "
 	. " JOIN experimentorder ON experimentqueue.id = experimentorder.experimentQueue "
@@ -230,8 +220,6 @@ function getExperimentResults($experimentId, $db, $complete) {
 
 	foreach ($experimentOrders as $experimentOrder) {
 		$sql = "SELECT picture.name, picture.id, picture.pictureset FROM picture "
-		  
-		 
 		. " JOIN pictureorder ON picture.id = pictureorder.picture "
         . " JOIN picturequeue ON pictureorder.pictureQueue = picturequeue.id "
 		. " JOIN experimentorder ON experimentorder.picturequeue = picturequeue.id "
@@ -251,7 +239,7 @@ function getExperimentResults($experimentId, $db, $complete) {
 	$result[] = $imageSetImages;
 
   // Retrieves url for thumbnail picture of each image set
-  foreach($imageSets as $key=>$imageSet) {
+  foreach($imageSets as $key => $imageSet) {
     $sql = "SELECT * FROM picture
     JOIN pictureset ON picture.pictureset=pictureset.id
     WHERE picture.isOriginal = 1 AND picture.pictureSet = ?;";
@@ -272,7 +260,6 @@ function getExperimentResults($experimentId, $db, $complete) {
             $tempArray = array();
             $experimentOrder = $experimentOrders[$i];
             $imagesLength = sizeof($imageSetImages[$i]);
-
 
             $sql = "SELECT result.*, person.firstName, person.lastName, picture.id as pictureId, picture.name, result.created, pictureset.id AS pictureSet, eOrder "
             . "FROM `result` \n"
@@ -300,7 +287,7 @@ function getExperimentResults($experimentId, $db, $complete) {
             for ($k = 0; $k < $rows; $k+=$imagesLength) {
             	$tempArray = array();
 
-                //Iterates through rest of results
+              //Iterates through rest of results
             	for ($j = $k; $j < $k + $imagesLength; $j++) {
 
             		$tmp = $experimentOrderResult[$j];
@@ -311,16 +298,10 @@ function getExperimentResults($experimentId, $db, $complete) {
             		$imageIndex = arrayObjectIndexOf($imageSetImages[$i], $tmp['pictureId'], 'id');
 
             		$tempArray[$j - $k] = $imageIndex + 1;
-
-                    // $resultRow = array('pictureName' 	=> $tmp['name'], 
-                    //                    'person' 		=> ($tmp['lastName'].", ".$tmp['firstName']), 
-                    //                    'pictureId' 		=> $tmp['pictureId']);
-                    // $currentResult[] = $resultRow;
             	}
 
-                //Saves current row to experimentorderarray
+              //Saves current row to experimentorderarray
             	$currentResult[] = $tempArray;
-
             }
 
             //Saves current experimentorderresult to array
@@ -440,7 +421,7 @@ function getExperimentResults($experimentId, $db, $complete) {
 
 			$result[] = $resultArray;
 
-		    //If error
+    //If error
 		} else {
 			$result = 0;
 		}

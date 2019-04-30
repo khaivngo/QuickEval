@@ -281,8 +281,9 @@ function setExperimentHidden($experimentId, $hidden) {
         },
         dataType: 'json',
         success: function (data) {
-            if (data == 1) { //that particular experiment was successfully deleted.
-                $.Notify({ //notifies user about successfull experiment deletion change.
+            // if successfull server reponse
+            if (data == 1) {
+                $.Notify({
                     content: "Experiment successfully set " + (($hidden == 1) ? "hidden" : "public"),
                     style: {
                         background: 'lime'
@@ -305,7 +306,6 @@ function setUpExperimentView() {
         async: false,
         url: "ajax/scientist/viewExperiments.html",
         success: function (data) {
-
             //Initializes UI
             $($('#right-panel')).html(data);
             $('#right-menu').empty();
@@ -314,16 +314,15 @@ function setUpExperimentView() {
             $('#set-public').hide();
 
             //Sets up UI and listeners
-
             setUpListListener();
             setUpExperimentList();
             setUpListeners();
-
         },
         error: function (request, status, error) {
             alert(request.responseText);
         }
     });
+    // set active sidebar item
     setActive($(this));
 }
 
