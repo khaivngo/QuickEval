@@ -13,7 +13,7 @@ class AuthController extends Controller
 
       try {
         $response = $http->post(config('services.passport.login_endpoint'), [
-          'form_params'   => [
+          'form_params' => [
             'grant_type'    => 'password',
             'client_id'     => config('services.passport.client_id'),
             'client_secret' => config('services.passport.client_secret'),
@@ -24,15 +24,15 @@ class AuthController extends Controller
 
         return $response->getBody();
       } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-        switch ($e->getCode()) {
-          case 400:
-            return response()->json('Invalid Request. Please enter a username or a password.', $e->getCode());
-          break;
+        // switch ($e->getCode()) {
+        //   case 400:
+        //     return response()->json('Invalid Request. Please enter a username or a password.', $e->getCode());
+        //   break;
 
-          case 401:
-            return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
-          break;
-        }
+        //   case 401:
+        //     return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
+        //   break;
+        // }
 
         return response()->json('Something went wrong on the server.', $e->getCode());
       }

@@ -16,7 +16,7 @@ class CreateExperimentsTable extends Migration
         Schema::create('experiments', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('title');
             $table->string('short_description');
