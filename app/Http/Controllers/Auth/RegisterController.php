@@ -63,7 +63,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // scientist = true, send mail to Marius
+        // if scientist = true, send mail to Marius
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],

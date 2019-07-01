@@ -21,7 +21,15 @@
     ></v-text-field>
 
     <v-card-actions>
-      <v-btn @click="login" depressed color="#78AA1C" dark :loading="logging" large class="mt-5">
+      <v-btn
+        @click="login"
+        :disabled="email === null || password === null"
+        :loading="logging"
+        depressed
+        color="#78AA1C"
+        large
+        class="white--text mt-5"
+      >
         Log in
       </v-btn>
     </v-card-actions>

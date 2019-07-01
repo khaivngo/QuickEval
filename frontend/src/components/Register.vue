@@ -69,7 +69,7 @@
     </p>
 
     <v-card-actions>
-      <v-btn @click="register" depressed color="#78AA1C" dark :loading="registering" large class="mt-5">
+      <v-btn @click="register" depressed color="#78AA1C" :loading="registering" large class="white--text mt-5" :disabled="email === ''">
         Register
       </v-btn>
     </v-card-actions>

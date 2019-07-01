@@ -1,37 +1,40 @@
 <template>
   <v-card>
-    <v-container>
+    <v-container class="ma-0 pa-2" style="border-bottom: 1px solid #ccc;">
       <v-layout>
         <v-btn outline fab small @click="$router.back()">
           <v-icon>arrow_back</v-icon>
         </v-btn>
-
+      </v-layout>
+    </v-container>
+    <v-container>
+      <v-layout>
         <h4 class="display-1">
-          {{ experiment.name }}
+          {{ experiment.title }}
         </h4>
 
-        <div class="ml-4">
+        <!-- <div class="ml-4">
           <div class="body-1">
-            {{ experiment.public === true ? 'Public' : 'Hidden' }}
+            {{ experiment.is_public === true ? 'Public' : 'Hidden' }}
           </div>
 
           <v-switch
             class="mt-0"
-            v-model="experiment.public"
+            v-model="experiment.is_public"
             color="success"
             @change="visibility"
           ></v-switch>
-        </div>
+        </div> -->
       </v-layout>
 
       <v-layout column class="mt-4">
         <p class="subheading">
-          Type: {{ experiment.type }}
+          Type: {{ experiment.experiemnt_type }}
         </p>
 
-        <p>{{ experiment.description }}</p>
+        <p>{{ experiment.short_description }}</p>
 
-        <InviteLink :code="experiment.inviteCode"/>
+        <InviteLink :code="experiment.invite_hash"/>
       </v-layout>
 
       <v-layout mt-5 justify-space-between>
@@ -62,22 +65,32 @@ export default {
   data () {
     return {
       experiment: {
-        name: 'Red chroma evaluation expriment thing',
-        type: 'Rank order',
-        description: `
-          A test under controlled conditions that is made to demonstrate a known truth, to examine the
-          validity of a hypothesis, or to determine the efficacy of something previously untried.
-        `,
-        public: true,
-        inviteCode: '87164dd492'
+        title: null,
+        type: null,
+        short_description: null,
+        is_public: null,
+        inviteCode: null
       }
     }
   },
 
+  created () {
+    this.getExperiment()
+  },
+
   methods: {
     visibility () {
-      this.$axios.post('/upload').then((response) => {
-        console.log('success')
+      // this.$axios.post('/upload').then((response) => {
+      //   console.log('success')
+      // })
+    },
+
+    getExperiment () {
+      this.$axios.get('/experiment/' + this.$route.params.id).then(response => {
+        console.log(response)
+        this.experiment = response.data
+      }).catch(() => {
+        //
       })
     }
   }

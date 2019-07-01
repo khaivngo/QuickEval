@@ -16,34 +16,34 @@ class CreateExperimentsTable extends Migration
         Schema::create('experiments', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            // $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('title');
-            $table->string('short_description');
-            $table->text('long_description');
-
-            $table->integer('user_id');
             $table->integer('experiment_type');
 
-            $table->tinyInteger('is_public');
-            $table->tinyInteger('allow_colour_blind');
-            $table->tinyInteger('timer');
+            $table->string('short_description')->nullable();
+            $table->text('long_description')->nullable();
 
-            $table->tinyInteger('allow_ties');
-            $table->tinyInteger('show_original');
-            $table->tinyInteger('same_pair');
-            $table->tinyInteger('horizontal_flip');
-            $table->tinyInteger('natural_lighting');
+            $table->tinyInteger('is_public')->default(0);
+            $table->tinyInteger('allow_colour_blind')->nullable();
+            $table->tinyInteger('timer')->nullable();
 
-            $table->string('background_colour',     50)->nullable()->default(NULL);
-            $table->string('monitor_distance',      50)->nullable()->default(NULL);
-            $table->string('light_type',            50)->nullable()->default(NULL);
-            $table->string('viewing_distance',      50)->nullable()->default(NULL);
-            $table->string('screen_luminance',      50)->nullable()->default(NULL);
-            $table->string('white_point',           50)->nullable()->default(NULL);
-            $table->string('white_point_room',      50)->nullable()->default(NULL);
-            $table->string('ambient_illumination',  50)->nullable()->default(NULL);
-            $table->string('invite_hash', 100);
+            $table->tinyInteger('allow_ties')       ->nullable();
+            $table->tinyInteger('show_original')    ->nullable();
+            $table->tinyInteger('same_pair')        ->nullable();
+            $table->tinyInteger('horizontal_flip')  ->nullable();
+            $table->tinyInteger('natural_lighting') ->nullable();
+
+            $table->string('background_colour',     50)->nullable();
+            $table->string('monitor_distance',      50)->nullable();
+            $table->string('light_type',            50)->nullable();
+            $table->string('viewing_distance',      50)->nullable();
+            $table->string('screen_luminance',      50)->nullable();
+            $table->string('white_point',           50)->nullable();
+            $table->string('white_point_room',      50)->nullable();
+            $table->string('ambient_illumination',  50)->nullable();
+            $table->string('invite_hash', 100)->default('');
 
             $table->timestamps();
         });

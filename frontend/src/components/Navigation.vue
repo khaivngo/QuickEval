@@ -21,6 +21,12 @@
       </v-btn>
     </v-toolbar-items>
 
+    <v-toolbar-items>
+      <v-btn to="/admin" dark flat class="text-none">
+        <span class="mr-2">Admin Mode</span>
+      </v-btn>
+    </v-toolbar-items>
+
     <v-spacer></v-spacer>
 
     <v-toolbar-items>

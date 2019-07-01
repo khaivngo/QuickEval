@@ -1,5 +1,3 @@
-# quick-eval
-
 ## Project setup
 ```
 npm install

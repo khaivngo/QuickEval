@@ -84,8 +84,10 @@
                   <v-flex grow>
                     <v-select
                       class="mt-3"
-                      v-model="form.basicDetails.type"
-                      :items="['Rank order', 'Paired comparison', 'Category judgement', 'Triplet comparison', 'Artifact marking']"
+                      v-model="form.basicDetails.experimentType"
+                      :items="experimentTypes"
+                      item-text="title"
+                      item-value="id"
                       label="Experiment Type"
                     ></v-select>
                   </v-flex>
@@ -202,12 +204,31 @@
           </v-card>
         </v-stepper-content>
 
-        <!-- <v-stepper-content step="5">
-          <v-card class="mb-5" flat>
+        <v-stepper-content step="5">
+          <v-card class="mb-5 pa-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[4].title }}</h2>
-            <div v-for="detail in form.basicDetails">{{ detail }}</div>
+
+            <!-- <div v-for="detail in form.basicDetails">
+              {{ detail }}
+            </div> -->
+            <div class="mt-5">
+              <h3 class="subheading mb-2">Experiment details</h3>
+              <div class="mb-1">Title</div>
+              <div class="mb-1">Description</div>
+              <div class="mb-1">Type</div>
+              <div class="mb-1">Algorithm</div>
+              <code class="mb-1">v * 23 / 34 + 1</code>
+            </div>
+
+            <div class="mt-5">
+              <h3 class="subheading mb-2">System details</h3>
+              <div class="mb-1">Time inbetween stimuli, 0.6 milliseconds</div>
+              <div class="mb-1">What</div>
+              <div class="mb-1">Hello</div>
+              <div class="mb-1">Hello</div>
+            </div>
           </v-card>
-        </v-stepper-content> -->
+        </v-stepper-content>
       </v-stepper-items>
 
       <v-container>
@@ -230,7 +251,7 @@
 
               <span>OR</span>
 
-              <v-btn @click="publish" depressed color="#78AA1C" dark :loading="publishing" large>
+              <v-btn @click="publish" depressed color="#78AA1C" dark :disable="publishing" :loading="publishing" large>
                 <template v-if="$route.params.id"> <!-- if we're editing -->
                   Save changes
                 </template>
@@ -251,6 +272,7 @@
 <script>
 import order from '@/components/scientist/Order'
 import observerInputs from '@/components/scientist/ObserverInputs'
+import EventBus from '@/eventBus'
 
 export default {
   components: {
@@ -263,22 +285,29 @@ export default {
       currentLevel: 1,
 
       // mode: this.$route.params.id,
+      experimentTypes: [
+        { id: 1, title: 'Rank order' },
+        { id: 2, title: 'Paired comparison' },
+        { id: 3, title: 'Category judgement' },
+        { id: 4, title: 'Triplet comparison' },
+        { id: 5, title: 'Artifact marking' }
+      ],
 
       steps: [
         { title: 'Basic Details' },
         { title: 'Settings' },
         { title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
-        { title: 'Observer Inputs' }
-        // { title: 'Summary' }
+        { title: 'Observer Inputs' },
+        { title: 'Summary' }
         // Final Checks? and/or summary
       ],
 
       form: {
         basicDetails: {
-          title: '',
-          shortDescription: '',
-          longDescription: '',
-          type: null,
+          title: null,
+          shortDescription: null,
+          longDescription: null,
+          experimentType: null,
           algorithm: null
         },
 
@@ -306,6 +335,15 @@ export default {
         type: 'Rank order',
         algorithm: 'Random'
       }
+
+      // this.$axios.patch('/experiment/10', {
+      //   title: 'new title',
+      //   experiment_type: 1
+      // }).then(response => {
+      //   console.log(response)
+      // }).catch((error) => {
+      //   console.log(error)
+      // })
     }
   },
 
@@ -320,16 +358,29 @@ export default {
       this.currentLevel--
     },
 
-    async publish () {
+    publish () {
       this.publishing = true
 
-      const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
-      await pause(1500)
+      this.$axios.post('/experiment/store', this.form.basicDetails).then(response => {
+        EventBus.$emit('experimentCreated', 'Experiment succesfully created.')
 
-      this.publishing = false
-
-      this.$router.push('/scientist/experiment/experiments')
+        this.publishing = false
+        this.$router.push('/scientist/experiment/experiments')
+      }).catch(() => {
+        this.publishing = false
+      })
     },
+
+    // async publish () {
+    //   this.publishing = true
+
+    //   const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
+    //   await pause(1500)
+
+    //   this.publishing = false
+
+    //   this.$router.push('/scientist/experiment/experiments')
+    // },
 
     async exists () {
       const pause = ms => new Promise(resolve => setTimeout(resolve, ms))

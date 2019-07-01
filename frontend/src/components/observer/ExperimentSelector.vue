@@ -40,6 +40,7 @@
             class="grey lighten-5"
             open-on-click
             transition
+            item-text="title"
           >
             <template v-slot:prepend="{ item, active }">
               <v-icon
@@ -66,7 +67,7 @@
             <v-card v-else :key="selected.id" class="pt-4 mx-auto" flat max-width="400">
               <v-card-text>
                 <h3 class="headline mb-2">
-                  {{ selected.name }}
+                  {{ selected.title }}
                 </h3>
               </v-card-text>
               <!-- <v-divider></v-divider> -->
@@ -75,12 +76,12 @@
                 text-xs-left
                 wrap
               >
-                <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Contact:</v-flex>
+                <!-- <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Contact:</v-flex>
                 <v-flex>
                   <a :href="`mailto: ${selected.email}`">
                     {{ selected.email }}
                   </a>
-                </v-flex>
+                </v-flex> -->
                 <!-- <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>University:</v-flex>
                 <v-flex>{{ selected.company.name }}</v-flex> -->
               </v-layout>
@@ -104,6 +105,12 @@
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export default {
+  created () {
+    this.$axios.get('/experiments/all').then((response) => {
+      this.experiments = response.data
+    })
+  },
+
   data: () => ({
     experiments: [],
     active: [],
@@ -129,8 +136,8 @@ export default {
     items () {
       return [
         {
-          name: 'Experiments',
-          children: this.users
+          title: 'Experiments',
+          children: this.experiments
         }
       ]
     },
@@ -139,7 +146,7 @@ export default {
 
       const id = this.active[0]
 
-      return this.users.find(user => user.id === id)
+      return this.experiments.find(experiment => experiment.id === id)
     }
   },
 
@@ -149,17 +156,10 @@ export default {
       // you've made optimizations! :)
       await pause(500)
 
-      return fetch('https://jsonplaceholder.typicode.com/users')
-        .then(res => res.json())
+      return this.$axios.get('/experiments/all')
+        .then(res => res.data.json())
         .then(json => (item.children.push(...json)))
         .catch(err => console.warn(err))
-
-      // return this.$axios.get('https://quickeval.no/experimental/ajax/scientist/getExperiments.php', {
-      //   experiment: 'wwdd'
-      // }).then((response) => {
-      //   this.experiments = response.data
-      //   console.log(response.data)
-      // })
     },
 
     async startExperiment () {

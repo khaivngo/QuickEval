@@ -39,8 +39,9 @@
           <v-btn
             depressed
             v-on="on"
+            class="text-none"
           >
-            Add category <v-icon class="ml-2" :size="20">add</v-icon>
+            Add input field <v-icon class="ml-2" :size="20">add</v-icon>
           </v-btn>
         </template>
 

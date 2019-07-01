@@ -13,11 +13,26 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+# auth:api middleware gives access to user object
+Route::middleware('auth:api')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::get('/experiments', 'ExperimentsController@index');
+    Route::get('/experiments/all', 'ExperimentsController@all');
+    Route::get('/experiment/{id}', 'ExperimentsController@find');
+    Route::post('/experiment/store', 'ExperimentsController@store');
+    Route::patch('/experiment/{experiment}', 'ExperimentsController@update');
+    Route::patch('/experiment/{experiment}/visibility', 'ExperimentsController@visibility');
+    Route::delete('/experiment/{experiment}', 'ExperimentsController@destroy');
+
+    Route::post('/imageSet', 'PictureSetsController@store');
+
+    Route::post('/logout', 'AuthController@logout');
 });
+
+Route::post('/file', 'PicturesController@store'); // move inside auth
 
 Route::post('/register', 'AuthController@register');
 Route::post('/login', 'AuthController@login');
-
-Route::middleware('auth:api')->post('/logout', 'AuthController@logout');

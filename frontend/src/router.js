@@ -83,7 +83,7 @@ export default new VueRouter({
     {
       path: '/admin',
       name: 'admin.dashboard',
-      component: loadView('experiment/Experiment'),
+      component: loadView('admin/Admin'),
       meta: {
         requiresAdmin: true
         // redirect: { name: 'login' },
@@ -98,5 +98,7 @@ export default new VueRouter({
         requiresAuth: true
       }
     }
+    // ,
+    // { path: '*', component: NotFoundComponent }
   ]
 })

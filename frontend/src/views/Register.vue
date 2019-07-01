@@ -77,8 +77,17 @@
     <!-- email to marius, if no checkbox -->
 
     <v-card-actions>
-      <v-btn @click="register" depressed color="#78AA1C" dark :loading="registering" large class="mt-5">
-        Register
+      <v-btn
+        @click="register"
+        :loading="registering"
+        :disabled="true"
+        depressed
+        color="#78AA1C"
+        dark
+        large
+        class="mt-5"
+      >
+        Register w
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -89,7 +98,7 @@ export default {
   data () {
     return {
       form: {
-        email: '',
+        email: null,
         password: '',
         confirmPassword: '',
         firstName: '',

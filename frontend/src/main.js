@@ -1,4 +1,3 @@
-import 'es6-promise/auto'
 import Vue from 'vue'
 import axios from 'axios'
 import router from './router'
@@ -46,3 +45,18 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
+
+// defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// axios.defaults.baseURL = 'http://127.0.0.1:8080/api'
+// axios.defaults.headers.common['Authorization'] = AUTH_TOKEN
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// let token = document.head.querySelector('meta[name="csrf-token"]')
+
+// if (token) {
+//   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content
+//   axios.defaults.headers.common['Authorization'] = token.content
+// } else {
+//   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token')
+// }
+
+// axios.defaults.baseURL = `${process.env.MIX_APP_URL}/api`

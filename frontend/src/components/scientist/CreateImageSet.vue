@@ -16,8 +16,7 @@
 
     <v-layout mt-5>
       <v-flex>
-        <Uppy/>
-        <!-- v-show="imageSet.name !== null && imageSet.name !== ''" -->
+        <Uppy :imagesetid="imageSet.imageSetId" :class="imageSet.name === null || imageSet.name === '' ? 'not-interactable' : ''"/>
       </v-flex>
     </v-layout>
 
@@ -41,20 +40,19 @@ export default {
     return {
       imageSet: {
         name: null,
-        description: null
+        description: null,
+        imageSetId: null
       }
     }
   },
 
   methods: {
     createImageSet () {
-      this.$axios.post('/scientist/createNewImageSet.php',
-        {
-          name: this.imageSet.name,
-          text: this.imageSet.description
-        }
-      ).then((response) => {
-        console.log(response)
+      this.$axios.post('/imageSet', {
+        title: this.imageSet.name,
+        description: this.imageSet.description
+      }).then((response) => {
+        this.imageSet.imageSetId = response.data.id
 
         // if success upload images
       })
@@ -62,3 +60,10 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="css">
+  .not-interactable {
+    pointer-events: none;
+    opacity: 0.3;
+  }
+</style>

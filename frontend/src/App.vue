@@ -14,7 +14,7 @@
       :right="x === 'right'"
       :timeout="timeout"
       :top="y === 'top'"
-      color="success"
+      :color="color"
       :vertical="mode === 'vertical'"
     >
       {{ text }}
@@ -30,6 +30,7 @@
 
 <script>
 import MainNavigation from '@/components/Navigation'
+import EventBus from '@/eventBus'
 
 export default {
   name: 'App',
@@ -47,14 +48,17 @@ export default {
       x: 'right',
       mode: '',
       timeout: 6000,
-      text: 'Successfully created.'
+      text: 'Successfully created.',
+      color: 'success'
     }
   },
 
-  computed: {
-    loggedIn () {
-      return this.token !== null
-    }
+  mounted () {
+    EventBus.$on('experimentCreated', (payload) => {
+      this.text = payload
+
+      this.snackbar = true
+    })
   }
 }
 </script>

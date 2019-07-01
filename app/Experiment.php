@@ -4,11 +4,31 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Experiments extends Model
+class Experiment extends Model
 {
-    // protected $fillable = [
-    //     'name', 'email', 'password',
-    // ];
+    protected $fillable = [
+        'user_id',
+        'title',
+        'experiment_type',
+        'short_description',
+        'long_description',
+        'is_public',
+        'allow_colour_blind',
+        'timer',
+        'allow_ties',
+        'show_original',
+        'same_pair',
+        'horizontal_flip',
+        'natural_lighting',
+        'background_colour',
+        'monitor_distance',
+        'light_type',
+        'viewing_distance',
+        'screen_luminance',
+        'white_point',
+        'white_point_room',
+        'ambient_illumination'
+    ];
 
     public function user () {
         return $this->belongsTo('App\User');
