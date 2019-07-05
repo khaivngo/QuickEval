@@ -24,7 +24,7 @@ export default new VueRouter({
       path: '/',
       component: loadView('Home'),
       meta: {
-        requiresVisitor: true
+        // requiresVisitor: true
       }
     },
     {
@@ -32,14 +32,14 @@ export default new VueRouter({
       path: '/observer',
       component: loadView('Observer'),
       meta: {
-        requiresAuth: true
+        // requiresAuth: true
       }
     },
     {
       path: '/scientist',
       component: loadView('Scientist'),
       meta: {
-        requiresScientist: true
+        // requiresScientist: true
         // auth: {
         //   roles: 2,
         //   redirect: { name: 'login' },
@@ -82,20 +82,37 @@ export default new VueRouter({
     },
     {
       path: '/admin',
-      name: 'admin.dashboard',
       component: loadView('admin/Admin'),
       meta: {
-        requiresAdmin: true
+        // requiresAdmin: true
         // redirect: { name: 'login' },
         // forbiddenRedirect: '/403'
-      }
+      },
+      children: [
+        // loaded by default
+        {
+          name: 'admin.dashboard',
+          path: '',
+          component: loadView('admin/Dashboard')
+        },
+        {
+          // name: 'admin.dashboard',
+          path: 'dashboard',
+          component: loadView('admin/Dashboard')
+        },
+        {
+          name: 'admin.authorize',
+          path: 'authorize',
+          component: loadView('admin/Authorize')
+        }
+      ]
     },
     {
       name: 'Experiment Mode',
       path: '/experiment',
       component: loadView('Experiment'),
       meta: {
-        requiresAuth: true
+        // requiresAuth: true
       }
     }
     // ,

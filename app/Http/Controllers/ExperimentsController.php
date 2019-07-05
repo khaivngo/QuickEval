@@ -26,8 +26,7 @@ class ExperimentsController extends Controller
     public function store (Request $request) {
       $data = $request->validate([
           'title' => 'required|string',
-          'user_id' => 'required',
-          'experiment_type' => 'required'
+          'experimentType' => 'required'
       ]);
 
       $experiment = Experiment::create([

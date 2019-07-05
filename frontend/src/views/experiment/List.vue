@@ -82,7 +82,7 @@ export default {
         this.$axios.delete('/experiment/' + exp.id).then(response => {
           console.log(response.data)
 
-          this.experiments.splice(exp, 1)
+          // this.experiments.splice(exp, 1)
 
           // call notification
         }).catch(() => {

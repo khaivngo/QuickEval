@@ -168,7 +168,7 @@
               <v-flex xs6>
                 <v-text-field
                   v-model="form.settings.stimuliSpacing"
-                  label="Stimuli seperation distance"
+                  label="Stimuli separation distance"
                   suffix="px"
                   type="text"
                 >
@@ -328,13 +328,15 @@ export default {
   created () {
     if (this.$route.params.id) {
       // fake ajax request
-      this.form.basicDetails = {
-        title: 'Red chroma evaluation expriment thing',
-        shortDescription: '',
-        longDescription: `A test under controlled conditions that is made to demonstrate a known truth, to examine the validity of a hypothesis, or to determine the efficacy of something previously untried.`,
-        type: 'Rank order',
-        algorithm: 'Random'
-      }
+      // this.form.basicDetails = {
+      //   title: 'Red chroma evaluation expriment thing',
+      //   shortDescription: '',
+      //   longDescription: `A test under controlled conditions that is made to demonstrate a known truth, to examine the validity of a hypothesis, or to determine the efficacy of something previously untried.`,
+      //   type: 'Rank order',
+      //   algorithm: 'Random'
+      // }
+      console.log(this.$route.params.id)
+      this.findExperiment(this.$route.params.id)
 
       // this.$axios.patch('/experiment/10', {
       //   title: 'new title',
@@ -381,6 +383,12 @@ export default {
 
     //   this.$router.push('/scientist/experiment/experiments')
     // },
+
+    async findExperiment (id) {
+      return this.$axios.get('/experiment/' + id)
+        .then(json => (this.form.basicDetails = json.data))
+        .catch(err => console.warn(err))
+    },
 
     async exists () {
       const pause = ms => new Promise(resolve => setTimeout(resolve, ms))

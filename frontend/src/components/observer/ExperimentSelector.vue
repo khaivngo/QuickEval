@@ -152,13 +152,10 @@ export default {
 
   methods: {
     async fetchUsers (item) {
-      // Remove in 6 months and say
-      // you've made optimizations! :)
-      await pause(500)
+      // await pause(500)
 
       return this.$axios.get('/experiments/all')
-        .then(res => res.data.json())
-        .then(json => (item.children.push(...json)))
+        .then(json => (item.children.push(json)))
         .catch(err => console.warn(err))
     },
 

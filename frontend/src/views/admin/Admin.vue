@@ -3,7 +3,7 @@
     <v-container>
       <v-layout wrap justify-center>
         <v-flex shrink class="mr-5">
-          <!-- <Navigation/> -->
+          <Navigation/>
         </v-flex>
         <v-flex grow xl5 md8 sm12 xs12>
           <!-- <transition
@@ -20,11 +20,11 @@
 </template>
 
 <script>
-// import Navigation from '@/components/scientist/Navigation'
+import Navigation from '@/components/admin/Navigation'
 
 export default {
-  // components: {
-  //   Navigation
-  // }
+  components: {
+    Navigation
+  }
 }
 </script>

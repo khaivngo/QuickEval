@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePictureSequencesTable extends Migration
+class CreateScientistRequestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,11 @@ class CreatePictureSequencesTable extends Migration
      */
     public function up()
     {
-        Schema::create('picture_sequences', function (Blueprint $table) {
+        Schema::create('scientist_requests', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->integer('picture_order');
-            $table->integer('picture_id');
-            $table->integer('picture_queue_id');
+            $table->bigInteger('user_id');
+            $table->tinyInteger('accepted');
 
             $table->timestamps();
         });
@@ -31,6 +30,6 @@ class CreatePictureSequencesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('picture_sequences');
+        Schema::dropIfExists('scientist_requests');
     }
 }

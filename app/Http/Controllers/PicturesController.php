@@ -18,7 +18,6 @@ class PicturesController extends Controller
       // }
 
       $image_set_id = $request->imageSetId;
-
       $files = $request->file('files');
 
       if (! empty($files)) {

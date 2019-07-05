@@ -46,17 +46,12 @@ export default {
   data () {
     return {
       items: [
-        { title: 'Dashboard', url: '/scientist/dashboard', icon: '' },
-        { header: 'Images' },
-        { title: 'Manage Image Sets', url: '/scientist/image-sets/create', icon: 'cloud_upload' },
-        { divider: true },
-        { header: 'Experiments' },
-        { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' },
-        { title: 'View Experiments', url: '/scientist/experiment/experiments', icon: 'folder' },
-        { title: 'Import Experiment', url: '/scientist/experiment/import', icon: 'import_export' },
-        { divider: true },
-        { header: 'Other' },
-        { title: 'Invite Scientist', url: '/scientist/invite', icon: 'person_add' }
+        // { header: 'Images' },
+        { title: 'Dashboard', url: '/admin/dashboard', icon: '' },
+        { title: 'Scientist Requests', url: '/admin/authorize', icon: '' }
+        // { divider: true },
+        // { header: 'Experiments' },
+        // { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' },
       ]
     }
   },
