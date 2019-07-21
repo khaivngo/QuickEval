@@ -118,7 +118,9 @@ export default {
       instructionsText: 'Rate the images.',
 
       rightReproductionActive: false,
-      leftReproductionActive: false
+      leftReproductionActive: false,
+
+      experiment: {}
     }
   },
 
@@ -140,9 +142,49 @@ export default {
         }).panzoom('zoom')
       })()
     })
+
+    // fetch experiment data
+    this.getExperiment(this.$route.params.id)
+
+    // setOriginal()
+    // function setPictureQueue(imagesArray, rightAndLeft, pictureQueueId) {
+    // function generateRandomPictureQueue(imagesetId, rightAndLeft) {
+    // function postStartData(experimentId) { ... add entry to experiments results table
+    //  url: 'ajax/observer/insertExperimentResultData.php',
+    // async: false,
+
+    // data: {
+    //     'browser': browser.name + "(" + browser.version + ")",
+    //     'os': getOs(),
+    //     'xDimension': dimension['width'],
+    //     'yDimension': dimension['height'],
+    //     'startTime': getDateTime(),
+    //     'experimentId': experimentId,
+    // },
+    // function checkIfExperimentTaken() {
+    // deleteoldresults
+    this.$axios.post('/queue/store')
+      .then(payload => console.log(payload))
+      .catch(err => console.warn(err))
   },
 
   methods: {
+    setOriginal () {
+      // url: 'ajax/observer/getShowOriginal.php',
+      // success: function (data) {
+      //     if (data[0].showOriginal == 0) {
+      //         removeOriginal()
+      //         this.original = false
+      //     }
+      // }
+    },
+
+    async getExperiment (experimentId) {
+      return this.$axios.get('/experiment/' + experimentId)
+        .then(payload => (this.experiment = payload.data))
+        .catch(err => console.warn(err))
+    },
+
     abort () {
       this.abortDialog = true
       this.$router.push('/observer')
@@ -159,9 +201,15 @@ export default {
     },
 
     next () {
+      // if () {
+      //   return
+      // }
+      // function postResults(type, pictureOrderId, choose)
+
       this.rightReproductionActive = false
       this.leftReproductionActive = false
 
+      // remove, and load new images
       var url = 'https://cakebycourtney.com/wp-content/uploads/2016/04/Tonight-Show-Cake-3-1024x683.jpg'
       $('.picture').attr('src', url)
 
@@ -171,6 +219,8 @@ export default {
       //   animate: false,
       //   silent: true
       // })
+
+      //
     }
   }
 }

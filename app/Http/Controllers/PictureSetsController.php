@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class PictureSetsController extends Controller
 {
+    public function index () {
+      return PictureSet::where('user_id', auth()->user()->id)->get();
+    }
+
     public function store (Request $request) {
       // $data = $request->validate([
       //     'title' => 'required|string',

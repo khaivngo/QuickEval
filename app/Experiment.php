@@ -9,7 +9,7 @@ class Experiment extends Model
     protected $fillable = [
         'user_id',
         'title',
-        'experiment_type',
+        'experiment_type_id',
         'short_description',
         'long_description',
         'is_public',
@@ -32,5 +32,12 @@ class Experiment extends Model
 
     public function user () {
         return $this->belongsTo('App\User');
+    }
+
+    /**
+     * Get the experiment type record associated with the experiment.
+     */
+    public function experiment_type () {
+        return $this->hasOne('App\ExperimentType');
     }
 }

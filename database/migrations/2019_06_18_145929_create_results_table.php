@@ -18,9 +18,9 @@ class CreateResultsTable extends Migration
 
             $table->integer('user_id');
             $table->integer('experiment_id');
-            $table->integer('experiment_type');
+            $table->integer('experiment_type_id');
             $table->integer('picture_order_id');
-            $table->integer('category')->nullable();
+            $table->integer('category_id')->nullable();
             $table->tinyInteger('choose_noone')->nullable();
 
             $table->timestamps();

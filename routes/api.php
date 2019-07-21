@@ -28,11 +28,17 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/experiment/{experiment}', 'ExperimentsController@destroy');
 
     Route::post('/imageSet', 'PictureSetsController@store');
+    Route::get('/image-sets', 'PictureSetsController@index');
+    Route::get('/instructions', 'InstructionsController@index');
+    Route::get('/observer-metas', 'ObserverMetasController@index');
 
+    Route::get('/categories', 'CategoriesController@index');
+
+    Route::post('/file', 'PicturesController@store');
     Route::post('/logout', 'AuthController@logout');
 });
 
-Route::post('/file', 'PicturesController@store'); // move inside auth
+Route::post('/queue/store', 'PictureQueuesController@store');
 
 Route::post('/register', 'AuthController@register');
 Route::post('/login', 'AuthController@login');

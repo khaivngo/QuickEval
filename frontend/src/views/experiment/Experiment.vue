@@ -27,6 +27,12 @@
         </div> -->
       </v-layout>
 
+      <v-layout>
+        <div>
+          System details
+        </div>
+      </v-layout>
+
       <v-layout column class="mt-4">
         <p class="subheading">
           Type: {{ experiment.experiemnt_type }}
@@ -39,7 +45,10 @@
 
       <v-layout mt-5 justify-space-between>
         <ExportMenu/>
-        <DeleteMenu/>
+
+        <v-btn depressed color="error text-none">
+          Wipe results <v-icon :size="20" class="ml-2">delete</v-icon>
+        </v-btn>
       </v-layout>
 
       <!-- <v-layout>
@@ -51,13 +60,11 @@
 </template>
 
 <script>
-import DeleteMenu from '@/components/scientist/DeleteMenu'
 import ExportMenu from '@/components/scientist/ExportMenu'
 import InviteLink from '@/components/scientist/InviteLink'
 
 export default {
   components: {
-    DeleteMenu,
     ExportMenu,
     InviteLink
   },
@@ -75,24 +82,9 @@ export default {
   },
 
   created () {
-    this.getExperiment()
-  },
-
-  methods: {
-    visibility () {
-      // this.$axios.post('/upload').then((response) => {
-      //   console.log('success')
-      // })
-    },
-
-    getExperiment () {
-      this.$axios.get('/experiment/' + this.$route.params.id).then(response => {
-        console.log(response)
-        this.experiment = response.data
-      }).catch(() => {
-        //
-      })
-    }
+    this.$axios.get('/experiment/' + this.$route.params.id)
+      .then(response => { this.experiment = response.data })
+      .catch(err => console.log(err))
   }
 }
 </script>

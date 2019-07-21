@@ -14,17 +14,17 @@
       ></v-text-field>
     </v-layout>
 
-    <v-layout mt-5>
-      <v-flex>
-        <Uppy :imagesetid="imageSet.imageSetId" :class="imageSet.name === null || imageSet.name === '' ? 'not-interactable' : ''"/>
-      </v-flex>
-    </v-layout>
-
-    <!-- <v-layout justify-end>
+    <v-layout justify-end>
       <v-btn color="success" depressed @click="createImageSet">
         Create
       </v-btn>
-    </v-layout> -->
+    </v-layout>
+
+    <v-layout mt-5>
+      <v-flex>
+        <Uppy :imagesetid="imageSet.imageSetId" :class="imageSet.imageSetId === null ? 'not-interactable' : ''"/>
+      </v-flex>
+    </v-layout>
   </div>
 </template>
 

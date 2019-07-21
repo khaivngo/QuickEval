@@ -23,8 +23,8 @@ class CreateExperimentResultsTable extends Migration
             $table->string('os');
             $table->integer('x');
             $table->integer('y');
-            $table->dateTime('startTime');
-            $table->dateTime('endTime');
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
             $table->tinyInteger('completed');
 
             $table->timestamps();

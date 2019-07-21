@@ -13,7 +13,7 @@
             v-if="item.title"
             :key="item.title"
             :class="(item.url === $route.path) ? 'active-nav' : ''"
-            @click="loadView(item.url)"
+            @click="$router.push(item.url)"
           >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
@@ -39,6 +39,23 @@
       </v-list>
     </v-navigation-drawer>
   </v-card>
+
+  <!-- <div>
+    <div class="subheading">
+      Username
+    </div>
+
+    <div class="body-1 mt-3">
+      Manage Image Sets
+    </div>
+
+    <div class="body-1 mt-3">
+      <a href="">Create Experiment</a>
+    </div>
+    <div>
+      Manage Experiments
+    </div>
+  </div> -->
 </template>
 
 <script>
@@ -46,24 +63,18 @@ export default {
   data () {
     return {
       items: [
-        { title: 'Dashboard', url: '/scientist/dashboard', icon: '' },
+        { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
         { header: 'Images' },
         { title: 'Manage Image Sets', url: '/scientist/image-sets/create', icon: 'cloud_upload' },
         { divider: true },
         { header: 'Experiments' },
         { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' },
-        { title: 'View Experiments', url: '/scientist/experiment/experiments', icon: 'folder' },
-        { title: 'Import Experiment', url: '/scientist/experiment/import', icon: 'import_export' },
-        { divider: true },
-        { header: 'Other' },
-        { title: 'Invite Scientist', url: '/scientist/invite', icon: 'person_add' }
+        { title: 'Manage Experiments', url: '/scientist/experiment/experiments', icon: 'folder' }
+        // { title: 'Import Experiment', url: '/scientist/experiment/import', icon: 'import_export' },
+        // { divider: true },
+        // { header: 'Other' },
+        // { title: 'Invite Scientist', url: '/scientist/invite', icon: 'person_add' }
       ]
-    }
-  },
-
-  methods: {
-    loadView (url) {
-      this.$router.push(url)
     }
   }
 }

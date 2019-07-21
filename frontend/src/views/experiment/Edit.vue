@@ -8,6 +8,12 @@ import ExperimentCreationForm from '@/components/scientist/ExperimentCreationFor
 export default {
   components: {
     ExperimentCreationForm
+  },
+
+  data () {
+    return {
+      experimentId: this.$route.params.id
+    }
   }
 }
 </script>

@@ -20,7 +20,7 @@ class CreateExperimentsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
             $table->string('title');
-            $table->integer('experiment_type');
+            $table->integer('experiment_type_id');
 
             $table->string('short_description')->nullable();
             $table->text('long_description')->nullable();

@@ -16,7 +16,7 @@ class CreatePictureQueuesTable extends Migration
         Schema::create('picture_queues', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->string('title');
+            $table->string('title')->nullable();
 
             $table->timestamps();
         });

@@ -16,11 +16,9 @@ class CreatePictureSequencesTable extends Migration
         Schema::create('picture_sequences', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->integer('picture_order');
+            $table->integer('picture_order'); //pOrder
             $table->integer('picture_id');
             $table->integer('picture_queue_id');
-
-            $table->timestamps();
         });
     }
 

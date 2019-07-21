@@ -24,7 +24,7 @@
                   <v-flex grow>
                     <v-text-field
                       class="mt-3"
-                      v-model.trim="form.basicDetails.title"
+                      v-model.trim="form.title"
                       label="Experiment Name"
                     ></v-text-field>
                   </v-flex>
@@ -44,7 +44,7 @@
                   <v-flex grow>
                     <v-text-field
                       class="mt-3"
-                      v-model.trim="form.basicDetails.shortDescription"
+                      v-model.trim="form.shortDescription"
                       label="Short Description"
                     ></v-text-field>
                   </v-flex>
@@ -64,7 +64,7 @@
                   <v-flex grow>
                     <v-textarea
                       class="mt-3"
-                      v-model.trim="form.basicDetails.longDescription"
+                      v-model.trim="form.longDescription"
                       label="Long Description - (optional)"
                     ></v-textarea>
                   </v-flex>
@@ -84,9 +84,9 @@
                   <v-flex grow>
                     <v-select
                       class="mt-3"
-                      v-model="form.basicDetails.experimentType"
+                      v-model="form.experimentType"
                       :items="experimentTypes"
-                      item-text="title"
+                      item-text="name"
                       item-value="id"
                       label="Experiment Type"
                     ></v-select>
@@ -107,9 +107,10 @@
                   <v-flex grow>
                     <v-select
                       class="mt-3"
-                      v-model="form.basicDetails.algorithm"
-                      :items="['Random queue', 'Custom queue']"
+                      v-model="form.algorithm"
+                      :items="['Random Queue']"
                       label="Algorithm"
+                      :disabled="true"
                     ></v-select>
                   </v-flex>
                   <v-flex shrink style="opacity: 0;">
@@ -132,27 +133,72 @@
           <v-card class="mb-5 pa-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[1].title }}</h2>
             <v-checkbox
-              v-model="form.settings.timer"
+              v-model="form.timer"
               color="success"
               :label="`Display timer for observer`"
             ></v-checkbox>
 
             <v-checkbox
-              v-model="form.settings.colourVisionDeficiencies"
+              v-model="form.cvd"
               color="success"
-              :label="`Allow observer with colour vision deficiencies (did not pass Ishihara test)`"
+              :label="`Allow observers with colour vision deficiencies (did not pass Ishihara test)`"
             ></v-checkbox>
 
-            <v-checkbox
-              v-model="form.settings.forcedChoice"
+            <v-layout align-center>
+              <v-flex shrink>
+                <v-checkbox
+                  v-model="form.showOriginal"
+                  color="success"
+                  :label="`Display original image`"
+                ></v-checkbox>
+              </v-flex>
+              <v-flex shrink ml-5>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>
+                    Display the original image of the image set.
+                  </span>
+                </v-tooltip>
+              </v-flex>
+            </v-layout>
+
+            <!-- <v-checkbox
+              v-model="form.forcedChoice"
               color="success"
               :label="`Forced choice`"
-            ></v-checkbox>
+            ></v-checkbox> -->
+
+            <v-layout align-center>
+              <v-flex shrink>
+                <v-checkbox
+                  v-model="form.samePairTwice"
+                  color="success"
+                  :label="`Same pair twice (flipped)`"
+                ></v-checkbox>
+              </v-flex>
+              <v-flex shrink ml-5>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>
+                    Each pair of images will have their positin flipped in the queue. Leading
+                    to double the comparisons for the observer.
+                  </span>
+                </v-tooltip>
+              </v-flex>
+            </v-layout>
 
             <v-layout class="mt-3">
               <v-flex xs6>
                 <v-text-field
-                  v-model="form.settings.bgColour"
+                  v-model="form.bgColour"
                   label="Background colour"
                   prefix="#"
                   placeholder="808080"
@@ -160,14 +206,14 @@
               </v-flex>
 
               <!-- <v-flex shrink class="ml-2"
-                :style="'border-radius: 2px; width: 40px; height: 40px; background:' + form.settings.bgColour"
+                :style="'border-radius: 2px; width: 40px; height: 40px; background:' + form.bgColour"
               ></v-flex> -->
             </v-layout>
 
             <v-layout class="mt-3">
               <v-flex xs6>
                 <v-text-field
-                  v-model="form.settings.stimuliSpacing"
+                  v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
                   suffix="px"
                   type="text"
@@ -193,16 +239,26 @@
             <p class="body-1">
               Add instructions and image sets in the order they should appear in your experiment.
             </p>
-            <order/>
+            <Sequence @added="onSequence"/>
           </v-card>
         </v-stepper-content>
 
         <v-stepper-content step="4">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[3].title }}</h2>
-            <observerInputs/>
+            <ObserverMetas @added="onObserverMeta"/>
           </v-card>
         </v-stepper-content>
+
+        <!-- <v-stepper-content step="6" v-if="form.experimentType === 2">
+          <v-card class="mb-5 pa-5 text-xs-center" flat>
+            <h2>{{ steps[2].title }}</h2>
+            <p class="body-1">
+              Add instructions and image sets in the order they should appear in your experiment.
+            </p>
+            <Sequence/>
+          </v-card>
+        </v-stepper-content> -->
 
         <v-stepper-content step="5">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
@@ -212,7 +268,7 @@
               {{ detail }}
             </div> -->
             <div class="mt-5">
-              <h3 class="subheading mb-2">Experiment details</h3>
+              <h3 class="title mb-2">Experiment details</h3>
               <div class="mb-1">Title</div>
               <div class="mb-1">Description</div>
               <div class="mb-1">Type</div>
@@ -221,11 +277,12 @@
             </div>
 
             <div class="mt-5">
-              <h3 class="subheading mb-2">System details</h3>
-              <div class="mb-1">Time inbetween stimuli, 0.6 milliseconds</div>
-              <div class="mb-1">What</div>
+              <h3 class="title mb-2">System details</h3>
+              <div class="mb-1">Delay of 0.6 milliseconds inbetween stimuli</div>
+              <div class="mb-1">Algorithm for making random queue. 2 * 2</div>
+              <!-- <div class="mb-1">What</div>
               <div class="mb-1">Hello</div>
-              <div class="mb-1">Hello</div>
+              <div class="mb-1">Hello</div> -->
             </div>
           </v-card>
         </v-stepper-content>
@@ -245,18 +302,28 @@
             </v-btn>
 
             <template v-if="currentLevel === steps.length">
-              <v-btn color="secondary" flat outline :loading="save">
-                Save as hidden
+              <v-btn
+                @click="mode === 'new' ? store('hidden') : update()"
+                color="secondary" flat outline
+                :disable="loaders.saving"
+                :loading="loaders.saving"
+              >
+                Finish later
               </v-btn>
 
               <span>OR</span>
 
-              <v-btn @click="publish" depressed color="#78AA1C" dark :disable="publishing" :loading="publishing" large>
-                <template v-if="$route.params.id"> <!-- if we're editing -->
-                  Save changes
+              <v-btn
+                @click="mode === 'new' ? store('public') : update()"
+                color="#78AA1C" depressed dark large
+                :disable="loaders.storing"
+                :loading="loaders.storing"
+              >
+                <template v-if="mode === 'new'">
+                  Publish
                 </template>
                 <template v-else>
-                  Publish
+                  Save changes
                 </template>
               </v-btn>
             </template>
@@ -270,129 +337,138 @@
 </template>
 
 <script>
-import order from '@/components/scientist/Order'
-import observerInputs from '@/components/scientist/ObserverInputs'
+import Sequence from '@/components/scientist/Sequence'
+import ObserverMetas from '@/components/scientist/ObserverMetas'
 import EventBus from '@/eventBus'
 
 export default {
   components: {
-    order,
-    observerInputs
+    Sequence,
+    ObserverMetas
   },
 
   data () {
     return {
       currentLevel: 1,
 
-      // mode: this.$route.params.id,
-      experimentTypes: [
-        { id: 1, title: 'Rank order' },
-        { id: 2, title: 'Paired comparison' },
-        { id: 3, title: 'Category judgement' },
-        { id: 4, title: 'Triplet comparison' },
-        { id: 5, title: 'Artifact marking' }
-      ],
+      experimentTypes: [],
 
       steps: [
         { title: 'Basic Details' },
         { title: 'Settings' },
         { title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
         { title: 'Observer Inputs' },
-        { title: 'Summary' }
-        // Final Checks? and/or summary
+        { title: 'Summary' } // final checks?
+        // { title: 'Categories' }
       ],
 
       form: {
-        basicDetails: {
-          title: null,
-          shortDescription: null,
-          longDescription: null,
-          experimentType: null,
-          algorithm: null
-        },
-
-        settings: {
-          timer: false,
-          colourVisionDeficiencies: true,
-          forcedChoice: false,
-          bgColour: '808080',
-          stimuliSpacing: 20
-        }
+        title: null,
+        shortDescription: null,
+        longDescription: null,
+        experimentType: null,
+        algorithm: 'Random Queue',
+        timer: null,
+        cvd: null,
+        forcedChoice: false,
+        samePairTwice: false,
+        bgColour: '808080',
+        stimuliSpacing: 20,
+        showOriginal: false,
+        isPublic: 0,
+        sequences: [],
+        observerMetas: []
       },
 
-      publishing: false,
-      save: false
+      loaders: {
+        storing: false,
+        saving: false
+      }
+    }
+  },
+
+  computed: {
+    mode () {
+      return (this.$route.params.id !== undefined) ? 'edit' : 'new'
     }
   },
 
   created () {
     if (this.$route.params.id) {
-      // fake ajax request
-      // this.form.basicDetails = {
-      //   title: 'Red chroma evaluation expriment thing',
-      //   shortDescription: '',
-      //   longDescription: `A test under controlled conditions that is made to demonstrate a known truth, to examine the validity of a hypothesis, or to determine the efficacy of something previously untried.`,
-      //   type: 'Rank order',
-      //   algorithm: 'Random'
-      // }
-      console.log(this.$route.params.id)
       this.findExperiment(this.$route.params.id)
-
-      // this.$axios.patch('/experiment/10', {
-      //   title: 'new title',
-      //   experiment_type: 1
-      // }).then(response => {
-      //   console.log(response)
-      // }).catch((error) => {
-      //   console.log(error)
-      // })
     }
+
+    this.experimentTypes = [
+      { id: 1, name: 'Pair Comparison' },
+      { id: 2, name: 'Rank Order' },
+      { id: 3, name: 'Category Judgement' }
+    ]
   },
 
   methods: {
     next () {
-      if (this.currentLevel === this.steps.length) this.currentLevel = 0
+      if (this.currentLevel === this.steps.length) {
+        this.currentLevel = 0
+      }
       this.currentLevel++
     },
 
     previous () {
-      if (this.currentLevel === 1) this.currentLevel = this.steps.length + 1
+      if (this.currentLevel === 1) {
+        this.currentLevel = this.steps.length + 1
+      }
       this.currentLevel--
     },
 
-    publish () {
-      this.publishing = true
+    onSequence (values) {
+      this.form.sequences = values
+    },
 
-      this.$axios.post('/experiment/store', this.form.basicDetails).then(response => {
-        EventBus.$emit('experimentCreated', 'Experiment succesfully created.')
+    onObserverMeta (values) {
+      this.form.observerMetas = values
+    },
 
-        this.publishing = false
-        this.$router.push('/scientist/experiment/experiments')
+    store (type) {
+      this.isPublic = (type === 'hidden') ? 0 : 1
+
+      this.loaders.storing = (type === 'public')
+      this.loaders.saving = (type === 'hidden')
+
+      this.$axios.post('/experiment/store', this.form).then(response => {
+        EventBus.$emit('success', 'Experiment succesfully created.')
+
+        this.loaders.storing = false
+        this.loaders.saving = false
+
+        // this.$router.push('/scientist/experiment/experiments')
       }).catch(() => {
-        this.publishing = false
+        this.loaders.storing = false
+        this.loaders.saving = false
       })
     },
 
-    // async publish () {
-    //   this.publishing = true
-
-    //   const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
-    //   await pause(1500)
-
-    //   this.publishing = false
-
-    //   this.$router.push('/scientist/experiment/experiments')
-    // },
-
-    async findExperiment (id) {
-      return this.$axios.get('/experiment/' + id)
-        .then(json => (this.form.basicDetails = json.data))
-        .catch(err => console.warn(err))
+    update () {
+      // don't do anything to is_public
+      this.$axios.patch('/experiment/' + this.$route.params.id).then(response => {
+        // redirect
+      }).catch((error) => {
+        console.log(error)
+      })
     },
 
-    async exists () {
-      const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
-      await pause(1500)
+    findExperiment (id) {
+      this.$axios.get('/experiment/' + id)
+        .then(json => {
+          console.log(json.data)
+          this.form.title = json.data.title
+          this.form.shortDescription = json.data.short_description
+          this.form.longDescription = json.data.long_description
+          this.form.experimentType = json.data.experiment_type
+          this.form.timer = json.data.title
+          this.form.cvd = json.data.allow_colour_blind
+          this.form.bgColour = json.data.background_colour
+        })
+        .catch(err => console.warn(err))
     }
   }
 }

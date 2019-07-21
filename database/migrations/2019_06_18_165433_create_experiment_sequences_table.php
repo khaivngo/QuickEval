@@ -16,12 +16,12 @@ class CreateExperimentSequencesTable extends Migration
         Schema::create('experiment_sequences', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->bigInteger('picture_set')->nullable(); // can this be removed?
-            $table->bigInteger('experiment_queue');
-            $table->bigInteger('picture_queue');
-            $table->bigInteger('instruction')->nullable();
+            $table->bigInteger('picture_set_id')->nullable(); // can this be removed?
+            $table->bigInteger('experiment_queue_id');
+            $table->bigInteger('picture_queue_id')->nullable(); # will be NULL if instruction_id is set
+            $table->bigInteger('instruction_id')->nullable(); # will be NULL if picture_queue_id is set
 
-            // $table->timestamps();
+            $table->timestamps();
         });
     }
 

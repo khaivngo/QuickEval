@@ -109,7 +109,7 @@ export default new VueRouter({
     },
     {
       name: 'Experiment Mode',
-      path: '/experiment',
+      path: '/experiment/:id',
       component: loadView('Experiment'),
       meta: {
         // requiresAuth: true

@@ -2,10 +2,13 @@
   <v-data-table
     :headers="headers"
     :items="experiments"
+    no-data-text=""
     item-key="id"
     class="elevation-1"
     hide-actions
+    :loading="loading"
   >
+    <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
     <template v-slot:items="props">
       <td>
         <router-link :to="'/scientist/experiment/experiments/' + props.item.id">
@@ -45,7 +48,9 @@ export default {
         { text: '', value: 'edit', align: 'right' }
       ],
 
-      experiments: []
+      experiments: [],
+
+      loading: false
     }
   },
 
@@ -55,11 +60,14 @@ export default {
 
   methods: {
     getUsersExperiments () {
+      this.loading = true
+
       this.$axios.get('/experiments').then(response => {
-        // console.log(response)
         this.experiments = response.data
+
+        this.loading = false
       }).catch(() => {
-        //
+        this.loading = false
       })
     },
 
@@ -68,9 +76,9 @@ export default {
         is_public: exp.is_public
       }).then(response => {
         if (response.data.is_public) {
-          EventBus.$emit('experimentCreated', 'Experiment is now visible to the public')
+          EventBus.$emit('success', 'Experiment is now visible to the public')
         } else {
-          EventBus.$emit('experimentCreated', 'Experiment is now only visible to you')
+          EventBus.$emit('success', 'Experiment is now only visible to you')
         }
       }).catch(() => {
         //

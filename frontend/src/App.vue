@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <MainNavigation v-if="$route.path !== '/experiment'"/>
+    <MainNavigation v-if="$route.name !== 'Experiment Mode'"/>
 
     <v-content>
       <router-view/>
@@ -54,7 +54,7 @@ export default {
   },
 
   mounted () {
-    EventBus.$on('experimentCreated', (payload) => {
+    EventBus.$on('success', (payload) => {
       this.text = payload
 
       this.snackbar = true
