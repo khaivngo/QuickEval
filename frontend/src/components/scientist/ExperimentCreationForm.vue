@@ -398,11 +398,10 @@ export default {
       this.findExperiment(this.$route.params.id)
     }
 
-    this.experimentTypes = [
-      { id: 1, name: 'Pair Comparison' },
-      { id: 2, name: 'Rank Order' },
-      { id: 3, name: 'Category Judgement' }
-    ]
+    this.$axios.get('/experiment-types')
+      .then(json => {
+        this.experimentTypes = json.data
+      })
   },
 
   methods: {
@@ -439,6 +438,8 @@ export default {
 
         this.loaders.storing = false
         this.loaders.saving = false
+
+        // EMPTY FORM: {}
 
         // this.$router.push('/scientist/experiment/experiments')
       }).catch(() => {

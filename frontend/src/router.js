@@ -30,10 +30,7 @@ export default new VueRouter({
     {
       name: 'Observer Mode',
       path: '/observer',
-      component: loadView('Observer'),
-      meta: {
-        // requiresAuth: true
-      }
+      component: loadView('Observer')
     },
     {
       path: '/scientist',
@@ -52,31 +49,31 @@ export default new VueRouter({
         {
           name: 'Scientist Mode',
           path: '',
-          component: loadView('Dashboard')
+          component: loadView('scientist/Dashboard')
         },
         {
           path: 'dashboard',
-          component: loadView('Dashboard')
+          component: loadView('scientist/Dashboard')
         },
         {
           path: 'experiment/create',
-          component: loadView('experiment/Create')
+          component: loadView('scientist/experiment/Create')
         },
         {
           path: 'experiment/edit/:id',
-          component: loadView('experiment/Edit')
+          component: loadView('scientist/experiment/Edit')
         },
         {
           path: 'experiment/experiments',
-          component: loadView('experiment/List')
+          component: loadView('scientist/experiment/List')
         },
         {
           path: 'experiment/experiments/:id',
-          component: loadView('experiment/Experiment')
+          component: loadView('scientist/experiment/Experiment')
         },
         {
           path: 'image-sets/create',
-          component: loadView('experiment/Uploader')
+          component: loadView('scientist/experiment/Uploader')
         }
       ]
     },
@@ -110,12 +107,11 @@ export default new VueRouter({
     {
       name: 'Experiment Mode',
       path: '/experiment/:id',
-      component: loadView('Experiment'),
-      meta: {
-        // requiresAuth: true
-      }
+      component: loadView('observer/Experiment')
+    },
+    {
+      path: '*',
+      component: loadView('NotFound')
     }
-    // ,
-    // { path: '*', component: NotFoundComponent }
   ]
 })

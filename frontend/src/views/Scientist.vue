@@ -2,7 +2,8 @@
   <div>
     <v-container>
       <v-layout wrap justify-center>
-        <v-flex shrink class="mr-5">
+        <!-- <v-flex shrink class="mr-5"> -->
+        <v-flex xs12>
           <Navigation/>
         </v-flex>
         <v-flex grow xl5 md8 sm12 xs12>

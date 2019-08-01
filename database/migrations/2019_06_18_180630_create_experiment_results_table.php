@@ -19,13 +19,13 @@ class CreateExperimentResultsTable extends Migration
             $table->bigInteger('experiment_id');
             $table->bigInteger('user_id');
 
-            $table->string('browser');
-            $table->string('os');
-            $table->integer('x');
-            $table->integer('y');
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
-            $table->tinyInteger('completed');
+            $table->string('browser')->nullable();
+            $table->string('os')->nullable();
+            $table->integer('x')->nullable();
+            $table->integer('y')->nullable();
+            $table->dateTime('start_time')->nullable();
+            $table->dateTime('end_time')->nullable();
+            $table->tinyInteger('completed')->nullable();
 
             $table->timestamps();
         });

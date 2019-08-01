@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <!-- <v-card>
     <v-navigation-drawer
       :disable-resize-watcher="true"
       floating
@@ -38,24 +38,37 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-  </v-card>
+  </v-card> -->
 
-  <!-- <div>
-    <div class="subheading">
+  <v-container fluid>
+    <!-- <div class="subheading">
       Username
-    </div>
+    </div> -->
+    <v-layout
+      wrap justify-center
+      mb-3
+    >
+      <v-btn :to="'/scientist/dashboard'" color="grey darken-3" flat class="ma-0 text-none">
+        <v-icon left>insert_chart_outlined</v-icon>
+        <span class="pr-3">Dashboard</span>
+      </v-btn>
 
-    <div class="body-1 mt-3">
-      Manage Image Sets
-    </div>
+      <v-btn :to="'/scientist/image-sets/create'" color="grey darken-3" flat class="ma-0 text-none">
+        <v-icon left>folder_open</v-icon>
+        <span class="pr-3">Manage Image Sets</span>
+      </v-btn>
 
-    <div class="body-1 mt-3">
-      <a href="">Create Experiment</a>
-    </div>
-    <div>
-      Manage Experiments
-    </div>
-  </div> -->
+      <v-btn :to="'/scientist/experiment/create'" flat color="grey darken-3" class="ma-0 text-none">
+        <v-icon left>add</v-icon>
+        <span class="pr-3">Create Experiment</span>
+      </v-btn>
+
+      <v-btn :to="'/scientist/experiment/experiments'" flat color="grey darken-3" class="ma-0 text-none">
+        <v-icon left>folder_open</v-icon>
+        <span class="pr-3">Manage Experiments</span>
+      </v-btn>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -80,9 +93,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .active-nav {
   background-color: #1BA1E2;
   color: #fff;
+}
+
+.v-btn--active {
+  background-color: #FAFAFA;
+  font-weight: 900;
 }
 </style>

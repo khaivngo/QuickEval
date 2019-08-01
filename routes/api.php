@@ -33,12 +33,14 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/observer-metas', 'ObserverMetasController@index');
 
     Route::get('/categories', 'CategoriesController@index');
+    Route::get('/experiment-types', 'ExperimentTypesController@all');
+
+    Route::get('/experiment/{id}/start', 'ExperimentsController@start');
+    Route::post('/result', 'ResultsController@store');
 
     Route::post('/file', 'PicturesController@store');
     Route::post('/logout', 'AuthController@logout');
 });
-
-Route::post('/queue/store', 'PictureQueuesController@store');
 
 Route::post('/register', 'AuthController@register');
 Route::post('/login', 'AuthController@login');

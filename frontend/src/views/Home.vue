@@ -50,16 +50,16 @@
       </v-flex>
 
       <v-flex>
-        <v-btn @click="loginAsAnonymous" depressed large color="primary" class="text-none">
+        <v-btn @click="loginAsAnonymous" outline large color="primary">
           Continue as anonymous
         </v-btn>
         <span>OR</span>
-        <v-btn @click="loginAsAnonymous" depressed large color="primary" class="text-none">
+        <v-btn @click="loginAsAnonymous" outline large color="primary">
           Log in
         </v-btn>
 
         <div>
-          <v-btn to="/register" depressed large color="primary">
+          <v-btn to="/register" outline large color="primary">
             Register
           </v-btn>
 
