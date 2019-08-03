@@ -38,6 +38,7 @@ router.beforeEach((to, from, next) => {
 
 Vue.prototype.$axios = axios
 Vue.prototype.$domain = 'https://quickeval.no'
+Vue.prototype.$UPLOADS_FOLDER = 'http://127.0.0.1/QuickEval/storage/app/'
 
 Vue.config.productionTip = false
 

@@ -12,6 +12,10 @@ use Illuminate\Http\Request;
 
 class PicturesController extends Controller
 {
+    public function index ($id) {
+      return Picture::where('id', $id)->first();
+    }
+
     public function store (Request $request, PictureSet $picture_set) {
       // if ($picture_set->user_id !== auth()->user()->id) {
       //   return response()->json('Unauthorized', 401);

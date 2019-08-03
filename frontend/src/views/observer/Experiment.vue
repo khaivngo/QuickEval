@@ -86,34 +86,69 @@
       </v-flex>
     </v-layout>
 
-    <v-btn fixed bottom right color="#D9D9D9" @click="next(23)" :disabled="disableNextBtn">
+    <v-btn fixed bottom right color="#D9D9D9" @click="next()" :disabled="disableNextBtn">
       <span class="ml-1">next</span>
       <v-icon>keyboard_arrow_right</v-icon>
     </v-btn>
+
+    <v-dialog persistent v-model="iDialog" max-width="500">
+      <v-card>
+        <v-card-title class="headline">
+          Instructions
+        </v-card-title>
+
+        <v-card-text>
+          {{ instructionText }}
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            flat="flat"
+            @click="iDialog = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 export default {
+  name: 'experiment-view',
+
   data () {
     return {
-      instructionsDialog: false,
-      abortDialog: false,
-
       bgColour: '#808080',
       distance: 20,
       instructionsText: 'Rate the images.',
 
-      rightReproductionActive: false,
-      leftReproductionActive: false,
-
       experiment: {
-        id: null
+        id: null,
+        show_original: null
       },
 
-      original: true,
+      stimuli: [],
 
-      disableNextBtn: false
+      original: true,
+      index: 0,
+
+      selectedStimuli: null,
+
+      rightReproductionActive: false,
+      leftReproductionActive: false,
+      disableNextBtn: false,
+
+      instructionsDialog: false,
+      abortDialog: false,
+
+      iDialog: false,
+      instructionText: '',
+
+      leftImage: ''
     }
   },
 
@@ -121,7 +156,7 @@ export default {
     this.getExperiment(this.$route.params.id).then(response => {
       this.experiment = response.data
 
-      // checkIfExperimentTaken() -> load index from localstorage or find num rows in results table
+      // checkIfExperimentTaken() -> look for completed key in experimentResults table load index from localstorage or find num rows in results table
       // -> deleteoldresults()
 
       /* eslint-env jquery */
@@ -129,9 +164,9 @@ export default {
         (function () {
           var url = 'https://images4.alphacoders.com/213/thumb-1920-213794.jpg'
 
-          $('#picture-left').attr('src', url)
+          // $('#picture-left').attr('src', url)
           $('#picture-original').attr('src', url)
-          $('#picture-right').attr('src', url)
+          // $('#picture-right').attr('src', url)
 
           var $pictureContainer = $('.picture-container')
 
@@ -144,11 +179,20 @@ export default {
         })()
       })
 
-      this.$axios.get('/experiment/' + this.experiment.id + '/start').then(payload => {
+      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
-          // this.setOriginal()
+          this.stimuli = payload.data
+
+          if (localStorage.getItem('index') === null) {
+            localStorage.setItem('index', 0)
+          }
+
+          this.index = Number(localStorage.getItem('index'))
+          console.log(this.index)
+          this.next()
+        } else {
+          alert('Something went wrong. Could not start the experiment.')
         }
-        console.log(payload)
       }).catch(err => {
         console.warn(err)
       })
@@ -166,69 +210,99 @@ export default {
       }
     },
 
-    next (pictureOrderId) {
-      // exit if no stimuli has been selected
-      if (this.rightReproductionActive === false && this.leftReproductionActive === false) {
-        return
-      }
-
+    /**
+     * Load the next image queue stimuli, or instructions.
+     */
+    next () {
       this.disableNextBtn = true
 
-      // next index in array
-      // if image
-      // if instruction
+      if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
+        // if right-hand reproduction is selected, get the stimuli object from the array of stimuli
+        let selectedStimuli = (this.rightReproductionActive === true) ? this.stimuli[this.index] : this.stimuli[this.index + 1]
 
-      // save sequence/queueIndex localStorage
+        // exit if no stimuli has been selected
+        // if (this.rightReproductionActive === false && this.leftReproductionActive === false) {
+        //   return
+        // }
 
-      this.store(pictureOrderId, null, 0).then(response => {
-        if (response.data === 'result_stored') {
-          // if (this.sequence, last step)
-          // this.nextSequence().then(response => {
-          //   if (response.data) {
-          //     console.log(response.data)
-
-          //     this.rightReproductionActive = false
-          //     this.leftReproductionActive = false
-
-          //     this.loadImages()
-          //     this.disableNextBtn = false
-          //   } else {
-          //     alert('Could not load next sequence.')
-          //     this.disableNextBtn = false
-          //   }
-          // })
-        } else {
-          alert('Could not save your answer.')
+        this.store(selectedStimuli.id, null, 0).then(response => {
           this.disableNextBtn = false
-        }
-      })
 
-      // $('.picture-container').panzoom("resetPan", {
-      //   animate: false,
-      //   silent: true
-      // })
+          if (response.data === 'result_stored') {
+            // have we reached the end?
+            // if (this.index === this.stimuli.length - 1) {
+            //   // display dialog, redirect on close
+            //   this.disableNextBtn = false
+            //   return
+            // }
 
-      //
+            // this.setOriginal() THIS NEEDS TO CHECK/CHANGE EVERY PICTURE QUEUE...
+            this.getImage(this.stimuli[this.index].picture_id).then(image => {
+              $('#picture-left').attr('src', this.$UPLOADS_FOLDER + image.data.path)
+              // this.leftImage = image.data.path
+            })
+
+            this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
+              $('#picture-right').attr('src', this.$UPLOADS_FOLDER + image.data.path)
+            })
+
+            // this.loadImages(leftImage, rightImage, null)
+
+            // console.log(this.stimuli[this.index].picture_id)
+            // console.log(this.stimuli[this.index + 1].picture_id)
+
+            selectedStimuli = null
+            this.rightReproductionActive = false
+            this.leftReproductionActive = false
+            this.index += 2
+            // localStorage.setItem('index', this.index)
+          } else {
+            alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
+          }
+        })
+
+        this.disableNextBtn = false
+      } else {
+        this.iDialog = true
+        this.instructionText = this.stimuli[this.index].description
+        this.index += 1
+        // localStorage.setItem('index', this.index)
+        this.disableNextBtn = false
+        // IMPROVEMENT: show instruction, on close go next
+        this.next()
+      }
+    },
+
+    async getImage (id) {
+      return this.$axios.get('/picture/' + id)
+        .catch(err => console.warn(err))
+    },
+
+    async getOriginal () {
+      // return this.$axios.get('/experiment/' + experimentId)
+      //   .catch(err => console.warn(err))
+    },
+
+    loadImages (urlLeft, urlRight, urlOriginal) {
+      $('#picture-left').attr('src', urlLeft)
+      $('#picture-right').attr('src', urlRight)
+
+      if (urlOriginal !== null) {
+        $('#picture-original').attr('src', urlOriginal)
+      }
+
+      $('.picture-container').find('.panzoom')
+        .panzoom('reset', {
+          animate: false
+        })
+    },
+
+    setOriginal (url) {
+      $('#picture-original').attr('src', url)
     },
 
     onFinish () {
       // delete loalStorage
-    },
-
-    loadImages () {
-      // remove, and load new images
-      var url = 'https://cakebycourtney.com/wp-content/uploads/2016/04/Tonight-Show-Cake-3-1024x683.jpg'
-
-      $('#picture-left').attr('src', url)
-      $('#picture-original').attr('src', url)
-      $('#picture-right').attr('src', url)
-
-      $('.picture-container').find('.panzoom').panzoom('reset', { animate: false })
-    },
-
-    async nextSequence () {
-      return this.$axios.get('/')
-        .catch(err => console.warn(err))
     },
 
     async store (pictureOrderId, categoryId, choseNone) {
@@ -241,10 +315,6 @@ export default {
 
       return this.$axios.post('/result', data)
         .catch(err => console.warn(err))
-    },
-
-    setOriginal () {
-      //
     },
 
     async getExperiment (experimentId) {

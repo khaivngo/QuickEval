@@ -32,6 +32,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/instructions', 'InstructionsController@index');
     Route::get('/observer-metas', 'ObserverMetasController@index');
 
+    Route::get('/picture/{id}', 'PicturesController@index');
+
     Route::get('/categories', 'CategoriesController@index');
     Route::get('/experiment-types', 'ExperimentTypesController@all');
 

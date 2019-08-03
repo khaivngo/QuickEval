@@ -260,67 +260,51 @@ class ExperimentsController extends Controller
       return response('Deleted experiment', 200);
     }
 
+    /**
+     * 
+     */
     public function start ($id) {
-      session_start();
-      $db = new PDO('mysql:host=127.0.0.1;' . 'dbname=passport;', 'root', '');
-      $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-      $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, "SET NAMES utf8");
-      $db->query("SET NAMES 'utf8'");
-
-      // $result = DB::table('experiment_queues')
-      //   ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-      //   ->where('experiment_queues.experiment_id', $id)
-      //   ->get();
-
-      $sql = "SELECT * FROM experiment_queues
-        JOIN experiment_sequences ON experiment_sequences.experiment_queue_id = experiment_queues.id
-        WHERE experiment_queues.experiment_id = ?
-        ORDER BY experiment_sequences.id ASC;";
-
-      $sth = $db->prepare($sql);
-      $sth->bindParam(1, $id);
-      $sth->execute();
-      $result = $sth->fetchAll();
+      $sequences = DB::table('experiment_queues')
+        ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
+        ->where('experiment_queues.experiment_id', $id)
+        ->get();
+      // ORDER BY experiment_sequences.id ASC;
 
       $all = [];
-      foreach ($result as $sequence)
+      foreach ($sequences as $sequence)
       {
-        if ($sequence['picture_queue_id'] != null) {
-          $sql = "
-            SELECT * FROM experiment_sequences
-            JOIN picture_sequences ON picture_sequences.picture_queue_id = experiment_sequences.picture_queue_id
-            WHERE experiment_sequences.id = ?;
-          ";
-          $sth = $db->prepare($sql);
-          $sth->bindParam(1, $sequence['id']);
-          $sth->execute();
-          $result = $sth->fetchAll();
+        if ($sequence->picture_queue_id !== null)
+        {
+          # get all picture sequences
+          $result = DB::table('experiment_sequences')
+            ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
+            ->where('experiment_sequences.id', $sequence->id)
+            ->get();
 
-          # Shuffle the picture queue every time we fetch it,
+          # Algorithm that shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different queue.
           $Algorithms = new \App\Classes\Algorithms;
           $result = $Algorithms->shuffle_the_cards($result);
 
-          array_push($all, $result);
+          array_push($all, [ 'picture_queue' => $result ]);
         }
         
-        if ($sequence['instruction_id'] != null) {
-          $sql = "
-            SELECT * FROM experiment_sequences
-            JOIN instructions ON instructions.id = experiment_sequences.instruction_id
-            WHERE experiment_sequences.id = ?;
-          ";
+        if ($sequence->instruction_id !== null)
+        {
+          # get all instruction belonging to experiment sequence
+          $result = DB::table('experiment_sequences')
+            ->join('instructions', 'instructions.id', '=', 'experiment_sequences.instruction_id')
+            ->where('experiment_sequences.id', $sequence->id)
+            ->get(); // ->first();
 
-          $sth = $db->prepare($sql);
-          $sth->bindParam(1, $sequence['id']);
-          $sth->execute();
-          $result = $sth->fetchAll();
-
-          array_push($all, $result);
+          array_push($all, [ 'instructions' => $result ]);
         }
       }
 
-      return response($all);
+      $collection = collect($all);
+      $flattened = $collection->flatten();
+
+      return response($flattened->all());
     }
 
     public function next_step () {
