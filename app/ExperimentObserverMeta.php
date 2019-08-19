@@ -10,4 +10,9 @@ class ExperimentObserverMeta extends Model
         'experiment_id',
         'observer_meta_id'
     ];
+
+    public function experiment()
+    {
+        return $this->belongsTo('App\Experiment');
+    }
 }

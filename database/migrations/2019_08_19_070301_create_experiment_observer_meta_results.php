@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateResultsTable extends Migration
+class CreateExperimentObserverMetaResults extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class CreateResultsTable extends Migration
      */
     public function up()
     {
-        Schema::create('results', function (Blueprint $table) {
+        Schema::create('experiment_observer_meta_results', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->integer('user_id');
             $table->integer('experiment_id');
-            // $table->integer('experiment_result_id');
-            $table->integer('picture_order_id')->nullable();
-            $table->integer('category_id')->nullable();
-            $table->tinyInteger('chose_none')->nullable();
+            $table->integer('user_id');
+            $table->integer('observer_meta_id');
+
+            $table->string('answer')->nullable();
 
             $table->timestamps();
         });
@@ -34,6 +33,6 @@ class CreateResultsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('results');
+        Schema::dropIfExists('experiment_observer_meta_results');
     }
 }

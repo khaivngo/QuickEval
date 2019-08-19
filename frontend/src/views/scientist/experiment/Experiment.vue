@@ -44,7 +44,9 @@
       </v-layout>
 
       <v-layout mt-5 justify-space-between>
-        <ExportMenu/>
+        <v-btn depressed color="primary text-none">
+          Export results <v-icon :size="20" class="ml-2">arrow_downward</v-icon>
+        </v-btn>
 
         <v-btn depressed color="error text-none">
           Wipe results <v-icon :size="20" class="ml-2">delete</v-icon>
@@ -60,12 +62,10 @@
 </template>
 
 <script>
-import ExportMenu from '@/components/scientist/ExportMenu'
 import InviteLink from '@/components/scientist/InviteLink'
 
 export default {
   components: {
-    ExportMenu,
     InviteLink
   },
 

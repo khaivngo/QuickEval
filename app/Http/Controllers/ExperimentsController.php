@@ -13,21 +13,39 @@ use App\ExperimentObserverMeta;
 class ExperimentsController extends Controller
 {
     public function index () {
-      return Experiment::where('user_id', auth()->user()->id)->get();
+      return Experiment::where('user_id', auth()->user()->id)
+        ->get();
     }
 
     public function all () {
-      return Experiment::orderBy('id', 'desc')->get();
+      return Experiment::orderBy('id', 'desc')
+        ->get();
+    }
+
+    public function all_public () {
+      return Experiment::where('is_public', 1)->get();
+        // ->orderBy('id', 'desc')
+        // ->get();
     }
 
     public function find (Request $request) {
       return Experiment::find($request->id);
     }
-    
-    public function findIsOwner (Request $request) {
-      return Experiment::where('user_id', auth()->user()->id)
-        ->where('id', $request->id)
+
+    public function observer_metas (Request $request) {
+      $metas = DB::table('experiment_observer_metas')
+        ->join('observer_metas', 'observer_metas.id', '=', 'experiment_observer_metas.observer_meta_id')
+        ->where('experiment_observer_metas.experiment_id', $request->id)
         ->get();
+
+      return $metas;
+    }
+
+    public function is_owner (Request $request) {
+      return Experiment::where([
+        ['user_id', auth()->user()->id],
+        ['id', $request->id]
+      ])->get();
     }
 
     public function store (Request $request) {
@@ -43,7 +61,8 @@ class ExperimentsController extends Controller
         'short_description' => $request->shortDescription,
         'long_description'  => $request->longDescription,
         'is_public'         => $request->isPublic,
-        'same_pair'         => $request->samePairTwice
+        'same_pair'         => $request->samePairTwice,
+        'show_original'     => $request->showOriginal
       ]);
 
       if ($experiment->id > 0)
@@ -240,14 +259,12 @@ class ExperimentsController extends Controller
       }
 
       $data = $request->validate([
-        'is_public' => 'required|boolean'
+        'is_public' => 'required'
       ]);
 
       $experiment->update($data);
 
       return response($experiment, 200);
-
-      // Experiment::where('user_id', auth()->user()->id)->update($data);
     }
 
     public function destroy (Request $request, Experiment $experiment) {
@@ -257,18 +274,20 @@ class ExperimentsController extends Controller
 
       $experiment->delete();
 
-      return response('Deleted experiment', 200);
+      return response('deleted_experiment', 200);
     }
 
     /**
-     * 
+     * Checks if user has taken the experiment before. If so
      */
-    public function start ($id) {
+    public function start ($id)
+    {
+      $newOrExists = $this->start_results($id);
+
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
         ->where('experiment_queues.experiment_id', $id)
-        ->get();
-      // ORDER BY experiment_sequences.id ASC;
+        ->get(); // Add this?: ORDER BY experiment_sequences.id ASC;
 
       $all = [];
       foreach ($sequences as $sequence)
@@ -281,14 +300,31 @@ class ExperimentsController extends Controller
             ->where('experiment_sequences.id', $sequence->id)
             ->get();
 
-          # Algorithm that shuffle the picture queue every time we fetch it,
+          # algorithm that shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different queue.
           $Algorithms = new \App\Classes\Algorithms;
           $result = $Algorithms->shuffle_the_cards($result);
 
+          # add a property to the first object in the sequence,
+          # this will be used by the frontend to understand when to check for a original image
+          $result[0]->start = true;
+
+          // take the picture_set_id of first picture in the sequence and find the original in that set,
+
+          // take the id of first image in the sequence, then the picture_set_id from that image, then find the orginal with that id
+
+          $picture = \App\Picture::where('id', $result[0]->picture_id)->first();
+          $picture_set = \App\PictureSet::where('id', $picture->picture_set_id)->first();
+          $original = \App\Picture::where([
+            ['picture_set_id', $picture_set->id],
+            ['is_original', 1]
+          ])->first();
+
+          $result[0]->original = $original;
+
           array_push($all, [ 'picture_queue' => $result ]);
         }
-        
+
         if ($sequence->instruction_id !== null)
         {
           # get all instruction belonging to experiment sequence
@@ -305,6 +341,47 @@ class ExperimentsController extends Controller
       $flattened = $collection->flatten();
 
       return response($flattened->all());
+    }
+
+    /**
+     *
+     */
+    public function start_results ($id) {
+      $experimentResult = \App\ExperimentResult::where([
+        ['experiment_id', (int)$id],
+        ['user_id', auth()->user()->id]
+      ])->get();
+
+      if (count($experimentResult) > 0) {
+        return "exists";
+      } else {
+        \App\ExperimentResult::create([
+          'experiment_id' => (int)$id,
+          'user_id' => auth()->user()->id
+        ]);
+        return "new";
+      }
+    }
+
+    /**
+     * Set the experiment status to completed.
+     */
+    public function completed (Request $request, \App\ExperimentResult $experiment) {
+      if ($experimentResult->user_id !== auth()->user()->id) {
+        return response()->json('Unauthorized', 401);
+      }
+
+      if ($experimentResult->experiment_id !== $request->experiment_id) {
+        return response()->json('Unauthorized', 401);
+      }
+
+      $data = $request->validate([
+        'completed' => 'required'
+      ]);
+
+      $experimentResult->update($data);
+
+      return response($experimentResult, 200);
     }
 
     public function next_step () {

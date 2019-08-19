@@ -1,12 +1,12 @@
 <template>
   <div>
-    <v-container>
+    <v-container mt-3>
       <v-layout wrap justify-center>
         <!-- <v-flex shrink class="mr-5"> -->
-        <v-flex xs12>
+        <v-flex shrink mr-3>
           <Navigation/>
         </v-flex>
-        <v-flex grow xl5 md8 sm12 xs12>
+        <v-flex grow xl5 md8 sm12 xs12 mt-2>
             <!-- <transition
               mode="out-in"
               appear name="custom-classes-transition"

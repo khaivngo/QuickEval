@@ -1,11 +1,12 @@
 <template>
-  <!-- <v-card>
+  <!-- <v-card> -->
     <v-navigation-drawer
       :disable-resize-watcher="true"
       floating
       permanent
       stateless
       value="true"
+      style="background-color: rgb(250, 250, 250);"
     >
       <v-list dense>
         <template v-for="(item, index) in items">
@@ -38,12 +39,9 @@
         </template>
       </v-list>
     </v-navigation-drawer>
-  </v-card> -->
+  <!-- </v-card> -->
 
-  <v-container fluid>
-    <!-- <div class="subheading">
-      Username
-    </div> -->
+  <!-- <v-container fluid>
     <v-layout
       wrap justify-center
       mb-3
@@ -68,7 +66,40 @@
         <span class="pr-3">Manage Experiments</span>
       </v-btn>
     </v-layout>
-  </v-container>
+  </v-container> -->
+
+  <!-- <v-list style="max-width: 300px; background-color: rgb(250, 250, 250);">
+    <v-list-group
+      v-for="item in items"
+      :key="item.title"
+      v-model="item.active"
+      :prepend-icon="item.icon"
+      no-action
+    >
+      <template v-slot:activator>
+      <v-list-tile>
+        <v-list-tile-content>
+          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+        </v-list-tile-content>
+      </v-list-tile>
+      </template>
+
+      <v-list-tile
+        v-for="subItem in item.items"
+        :key="subItem.title"
+        :class="(item.url === $route.path) ? 'active-nav' : ''"
+        @click="$router.push(item.url)"
+      >
+        <v-list-tile-content>
+          <v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
+        </v-list-tile-content>
+
+        <v-list-tile-action>
+          <v-icon>{{ subItem.action }}</v-icon>
+        </v-list-tile-action>
+      </v-list-tile>
+    </v-list-group>
+  </v-list> -->
 </template>
 
 <script>
@@ -77,12 +108,13 @@ export default {
     return {
       items: [
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
-        { header: 'Images' },
-        { title: 'Manage Image Sets', url: '/scientist/image-sets/create', icon: 'cloud_upload' },
-        { divider: true },
-        { header: 'Experiments' },
-        { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' },
-        { title: 'Manage Experiments', url: '/scientist/experiment/experiments', icon: 'folder' }
+        // { header: 'Images' },
+        // { divider: true, inset: true },
+        { title: 'Manage Image Sets', url: '/scientist/image-sets/create', icon: 'folder' },
+        // { divider: true, inset: true },
+        // { header: 'Experiments' },
+        { title: 'Manage Experiments', url: '/scientist/experiment/experiments', icon: 'folder' },
+        { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' }
         // { title: 'Import Experiment', url: '/scientist/experiment/import', icon: 'import_export' },
         // { divider: true },
         // { header: 'Other' },
@@ -95,8 +127,13 @@ export default {
 
 <style scoped>
 .active-nav {
-  background-color: #1BA1E2;
-  color: #fff;
+  /*background-color: #1BA1E2;*/
+  /*color: #1BA1E2;*/
+  font-weight: 900;
+}
+
+.active-nav .v-list__tile__title {
+  font-weight: 900;
 }
 
 .v-btn--active {

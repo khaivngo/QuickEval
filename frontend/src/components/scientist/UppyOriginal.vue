@@ -1,5 +1,5 @@
 <template>
-  <div id="drag-drop-area-reproductions"></div>
+  <div id="drag-drop-area-original"></div>
 </template>
 
 <script>
@@ -45,11 +45,15 @@ export default {
   },
 
   mounted () {
-    this.uppy = Uppy()
+    this.uppy = Uppy({
+      restrictions: {
+        maxNumberOfFiles: 1
+      }
+    })
 
     this.uppy.use(Dashboard, {
       inline: true,
-      target: '#drag-drop-area-reproductions',
+      target: '#drag-drop-area-original',
       width: this.width,
       height: this.height,
       thumbnailWidth: 280,
@@ -79,7 +83,7 @@ export default {
 
     this.uppy.setMeta({
       imageSetId: this.imagesetid,
-      original: 0
+      original: 1
     })
 
     this.uppy.on('complete', (result) => {
@@ -87,6 +91,7 @@ export default {
       console.log(result)
 
       // show toast and/or redirect
+
       // disable name when clicking upload
       // emit event
     })

@@ -74,6 +74,10 @@ export default new VueRouter({
         {
           path: 'image-sets/create',
           component: loadView('scientist/experiment/Uploader')
+        },
+        {
+          path: 'image-sets/set/:id',
+          component: loadView('scientist/PictureSet')
         }
       ]
     },

@@ -40,4 +40,8 @@ class Experiment extends Model
     public function experiment_type () {
         return $this->hasOne('App\ExperimentType');
     }
+
+    public function observer_meta () {
+        return $this->hasMany('App\ObserverMeta');
+    }
 }

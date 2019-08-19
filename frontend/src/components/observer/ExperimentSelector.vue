@@ -11,17 +11,14 @@
         søk
       </v-btn> -->
     </div>
-    <v-card flat>
+    <v-card>
       <!-- <v-card-title class="headline">
         Select Experiment
       </v-card-title> -->
 
-      <v-layout justify-space-between pa-3>
-        <!-- <v-layout pa-4>
-        </v-layout> -->
-
-        <v-flex xs6>
-          <div class="mb-5 mr-2 ml-2">
+      <v-layout justify-space-between>
+        <v-flex xs6 style="background-color: #F7F7F7">
+          <div class=" mr-2 ml-2 pt-3 pr-5 pl-4">
             <v-text-field
               v-model="searchTerm"
               @keyup.enter="findExperiment"
@@ -31,17 +28,18 @@
           </div>
 
           <v-treeview
+            class="pa-3 mb-5"
             :active.sync="active"
             :items="items"
             :load-children="fetchExperiments"
             :open.sync="open"
             activatable
-            active-class="primary--text"
-            class="grey lighten-5"
+            active-class="font-weight-black"
             open-on-click
             transition
             item-text="title"
           >
+            <!-- active-class="primary--text font-weight-black" -->
             <template v-slot:prepend="{ item, active }">
               <v-icon
                 v-if="!item.children"
@@ -55,6 +53,8 @@
         <v-flex
           d-flex
           xs6
+          pa-5
+          mb-5
           text-xs-center
         >
           <v-scroll-y-transition mode="out-in">
@@ -70,29 +70,34 @@
                   {{ selected.title }}
                 </h3>
               </v-card-text>
-              <!-- <v-divider></v-divider> -->
+
               <v-layout
                 tag="v-card-text"
-                text-xs-left
                 wrap
               >
-                <!-- <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>Contact:</v-flex>
-                <v-flex>
-                  <a :href="`mailto: ${selected.email}`">
-                    {{ selected.email }}
-                  </a>
-                </v-flex> -->
-                <!-- <v-flex tag="strong" xs5 text-xs-right mr-3 mb-2>University:</v-flex>
-                <v-flex>{{ selected.company.name }}</v-flex> -->
+                <!-- text-xs-left -->
+                <v-flex>{{ selected.short_description }}</v-flex>
               </v-layout>
 
-              <!-- <v-layout> -->
+              <!-- <v-divider></v-divider> -->
+
+              <v-layout column v-if="observerInputs.length > 0" mt-5>
+                <v-flex v-for="(observerInput, i) in observerInputs" :key="i">
+                  <v-text-field
+                    :label="observerInput.meta"
+                    v-model="observerInput.answer"
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+
+               <v-layout mt-4>
                 <v-flex>
                   <v-btn @click="startExperiment(selected.id)" color="success" :loading="prefetch">
                     Start experiment
                   </v-btn>
                 </v-flex>
-              <!-- </v-layout> -->
+              </v-layout>
+
             </v-card>
           </v-scroll-y-transition>
         </v-flex>
@@ -102,17 +107,16 @@
 </template>
 
 <script>
-const pause = ms => new Promise(resolve => setTimeout(resolve, ms))
-
 export default {
   created () {
-    this.$axios.get('/experiments/all').then((response) => {
+    this.$axios.get('/experiments/public').then((response) => {
       this.experiments = response.data
     })
   },
 
   data: () => ({
     experiments: [],
+    observerInputs: [],
     active: [],
     open: [],
     users: [],
@@ -139,31 +143,35 @@ export default {
     }
   },
 
+  watch: {
+    selected (exp) {
+      this.$axios.get(`/experiment/${exp.id}/observer-metas`)
+        .then(response => { this.observerInputs = response.data })
+        .catch(err => console.warn(err))
+    }
+  },
+
   methods: {
     async fetchExperiments (item) {
-      // await pause(500)
-
-      return this.$axios.get('/experiments/all')
+      return this.$axios.get('/experiments/all-public')
         .then(json => (item.children.push(json)))
         .catch(err => console.warn(err))
     },
 
-    async startExperiment (experimentId) {
-      this.prefetch = true
-      await pause(1000)
-      this.prefetch = false
-
-      // todo: $router push after
-      this.$router.push('/experiment/' + experimentId)
-      // new Promise((resolve) => {
-      //   resolve('Experiment has begun!')
-      // }).then(val => {
-      //   console.log(val)
-      // })
+    async saveObserverInputs () {
+      return this.$axios.post('/experiment-observer-meta-result', this.observerInputs)
     },
 
-    findExperiment () {
-      //
+    async startExperiment (experimentId) {
+      this.prefetch = true
+
+      if (this.observerInputs.length > 0) {
+        await this.saveObserverInputs()
+
+        this.prefetch = false
+
+        // this.$router.push(`/experiment/${experimentId}`)
+      }
     }
   }
 }

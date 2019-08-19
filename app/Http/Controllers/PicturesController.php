@@ -16,12 +16,14 @@ class PicturesController extends Controller
       return Picture::where('id', $id)->first();
     }
 
-    public function store (Request $request, PictureSet $picture_set) {
+    // public function store (Request $request, PictureSet $picture_set) {
+    public function store (Request $request) {
       // if ($picture_set->user_id !== auth()->user()->id) {
       //   return response()->json('Unauthorized', 401);
       // }
 
       $image_set_id = $request->imageSetId;
+      $is_original = ((int)$request->original == 1) ? 1 : 0;
       $files = $request->file('files');
 
       if (! empty($files)) {
@@ -31,9 +33,9 @@ class PicturesController extends Controller
 
           $picture = Picture::create([
             // 'user_id' => auth()->user()->id,
-            'name' => $path,
+            'name' => $file->getClientOriginalName(),
             'path' => $path,
-            'is_original' => 0,
+            'is_original' => $is_original,
             'picture_set_id' => $image_set_id
           ]);
         }
@@ -77,5 +79,17 @@ class PicturesController extends Controller
         // $path = Storage::putFile('avatars', $request->file('avatar'));
 
         // return $path;
+    }
+
+    public function destroy ($id) {
+      $picture = Picture::find($id);
+      // $picture = Picture::destroy($id);
+      $path = $picture->path;
+
+      if ($picture->delete()) {
+        Storage::delete($path);
+      }
+
+      return response('deleted', 200);
     }
 }

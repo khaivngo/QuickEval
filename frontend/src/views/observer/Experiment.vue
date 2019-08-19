@@ -52,7 +52,7 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout mt-3 justify-center v-if="original">
+    <v-layout mt-3 justify-center v-if="showOriginal">
       <h4 class="subheading font-weight-regular">Original</h4>
     </v-layout>
 
@@ -64,13 +64,13 @@
         xs4 ma-2
       >
         <div class="panzoom">
-          <img id="picture-left" class="picture" src=""/>
+          <img id="picture-left" class="picture" :src="leftImage"/>
         </div>
       </v-flex>
 
-      <v-flex xs4 ma-2 class="picture-container" v-if="original">
+      <v-flex xs4 ma-2 class="picture-container" v-if="showOriginal">
         <div class="panzoom">
-          <img id="picture-original" class="picture" src=""/>
+          <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
       </v-flex>
 
@@ -81,18 +81,22 @@
         xs4 ma-2
       >
         <div class="panzoom">
-          <img id="picture-right" class="picture" src=""/>
+          <img id="picture-right" class="picture" :src="rightImage"/>
         </div>
       </v-flex>
     </v-layout>
 
-    <v-btn fixed bottom right color="#D9D9D9" @click="next()" :disabled="disableNextBtn">
+    <v-btn fixed bottom right color="#D9D9D9"
+      @click="next()"
+      :disabled="disableNextBtn || (rightReproductionActive === false && leftReproductionActive === false)"
+      :loading="disableNextBtn"
+    >
       <span class="ml-1">next</span>
       <v-icon>keyboard_arrow_right</v-icon>
     </v-btn>
 
     <v-dialog persistent v-model="iDialog" max-width="500">
-      <v-card>
+      <v-card style="background-color: grey; color: #fff;">
         <v-card-title class="headline">
           Instructions
         </v-card-title>
@@ -104,7 +108,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
-            color="green darken-1"
+            color="primary darken-1"
             flat="flat"
             @click="iDialog = false"
           >
@@ -133,7 +137,7 @@ export default {
 
       stimuli: [],
 
-      original: true,
+      showOriginal: true,
       index: 0,
 
       selectedStimuli: null,
@@ -148,7 +152,9 @@ export default {
       iDialog: false,
       instructionText: '',
 
-      leftImage: ''
+      originalImage: '',
+      leftImage: '',
+      rightImage: ''
     }
   },
 
@@ -162,12 +168,6 @@ export default {
       /* eslint-env jquery */
       $(document).ready(function () {
         (function () {
-          var url = 'https://images4.alphacoders.com/213/thumb-1920-213794.jpg'
-
-          // $('#picture-left').attr('src', url)
-          $('#picture-original').attr('src', url)
-          // $('#picture-right').attr('src', url)
-
           var $pictureContainer = $('.picture-container')
 
           $pictureContainer.find('.panzoom').panzoom({
@@ -182,13 +182,14 @@ export default {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
           this.stimuli = payload.data
+          console.log(this.stimuli)
 
           if (localStorage.getItem('index') === null) {
             localStorage.setItem('index', 0)
           }
 
           this.index = Number(localStorage.getItem('index'))
-          console.log(this.index)
+
           this.next()
         } else {
           alert('Something went wrong. Could not start the experiment.')
@@ -200,6 +201,63 @@ export default {
   },
 
   methods: {
+    /**
+     * Load the next image queue stimuli, or instructions.
+     */
+    next () {
+      // have we reached the end?
+      if (this.index === this.stimuli.length - 1) {
+        // update completed in experiments table
+        // display dialog, redirect on close
+        // return
+      }
+
+      if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
+        let selectedStimuli = 0
+        if (this.rightReproductionActive === true) selectedStimuli = this.stimuli[this.index]
+        if (this.leftReproductionActive === true) selectedStimuli = this.stimuli[this.index + 1]
+
+        if (this.stimuli[this.index].hasOwnProperty('original')) {
+          this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
+        }
+        // setLeftImage()
+        this.getImage(this.stimuli[this.index].picture_id).then(image => {
+          this.leftImage = this.$UPLOADS_FOLDER + image.data.path
+        })
+        // setRightImage()
+        this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
+          this.rightImage = this.$UPLOADS_FOLDER + image.data.path
+        })
+
+        // don't do anything unless stimuli has been selected
+        if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
+          this.disableNextBtn = true
+
+          // HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
+
+          this.store(selectedStimuli.id, null, 0).then(response => {
+            if (response.data !== 'result_stored') {
+              alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
+            }
+
+            this.disableNextBtn = false
+            this.rightReproductionActive = false
+            this.leftReproductionActive = false
+            this.index += 2
+            // localStorage.setItem('index', this.index)
+          })
+        }
+      } else {
+        this.instructionText = this.stimuli[this.index].description
+        this.iDialog = true
+
+        this.index += 1
+        // localStorage.setItem('index', this.index)
+
+        this.next()
+      }
+    },
+
     toggleSelected (side) {
       if (side === 'left') {
         this.leftReproductionActive = !this.leftReproductionActive
@@ -207,69 +265,6 @@ export default {
       } else {
         this.rightReproductionActive = !this.rightReproductionActive
         this.leftReproductionActive = false
-      }
-    },
-
-    /**
-     * Load the next image queue stimuli, or instructions.
-     */
-    next () {
-      this.disableNextBtn = true
-
-      if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
-        // if right-hand reproduction is selected, get the stimuli object from the array of stimuli
-        let selectedStimuli = (this.rightReproductionActive === true) ? this.stimuli[this.index] : this.stimuli[this.index + 1]
-
-        // exit if no stimuli has been selected
-        // if (this.rightReproductionActive === false && this.leftReproductionActive === false) {
-        //   return
-        // }
-
-        this.store(selectedStimuli.id, null, 0).then(response => {
-          this.disableNextBtn = false
-
-          if (response.data === 'result_stored') {
-            // have we reached the end?
-            // if (this.index === this.stimuli.length - 1) {
-            //   // display dialog, redirect on close
-            //   this.disableNextBtn = false
-            //   return
-            // }
-
-            // this.setOriginal() THIS NEEDS TO CHECK/CHANGE EVERY PICTURE QUEUE...
-            this.getImage(this.stimuli[this.index].picture_id).then(image => {
-              $('#picture-left').attr('src', this.$UPLOADS_FOLDER + image.data.path)
-              // this.leftImage = image.data.path
-            })
-
-            this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
-              $('#picture-right').attr('src', this.$UPLOADS_FOLDER + image.data.path)
-            })
-
-            // this.loadImages(leftImage, rightImage, null)
-
-            // console.log(this.stimuli[this.index].picture_id)
-            // console.log(this.stimuli[this.index + 1].picture_id)
-
-            selectedStimuli = null
-            this.rightReproductionActive = false
-            this.leftReproductionActive = false
-            this.index += 2
-            // localStorage.setItem('index', this.index)
-          } else {
-            alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
-          }
-        })
-
-        this.disableNextBtn = false
-      } else {
-        this.iDialog = true
-        this.instructionText = this.stimuli[this.index].description
-        this.index += 1
-        // localStorage.setItem('index', this.index)
-        this.disableNextBtn = false
-        // IMPROVEMENT: show instruction, on close go next
-        this.next()
       }
     },
 
@@ -281,24 +276,6 @@ export default {
     async getOriginal () {
       // return this.$axios.get('/experiment/' + experimentId)
       //   .catch(err => console.warn(err))
-    },
-
-    loadImages (urlLeft, urlRight, urlOriginal) {
-      $('#picture-left').attr('src', urlLeft)
-      $('#picture-right').attr('src', urlRight)
-
-      if (urlOriginal !== null) {
-        $('#picture-original').attr('src', urlOriginal)
-      }
-
-      $('.picture-container').find('.panzoom')
-        .panzoom('reset', {
-          animate: false
-        })
-    },
-
-    setOriginal (url) {
-      $('#picture-original').attr('src', url)
     },
 
     onFinish () {

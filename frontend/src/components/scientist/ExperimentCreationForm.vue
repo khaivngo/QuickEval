@@ -428,20 +428,25 @@ export default {
     },
 
     store (type) {
-      this.isPublic = (type === 'hidden') ? 0 : 1
-
+      // determine which button as been click in order to show a loading spinner in that button
       this.loaders.storing = (type === 'public')
       this.loaders.saving = (type === 'hidden')
 
+      // convert values from boolean to integer before saving
+      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.isPublic = (type === 'hidden') ? 0 : 1
+
       this.$axios.post('/experiment/store', this.form).then(response => {
+        // if (response.data === 'experiment_stored') {
         EventBus.$emit('success', 'Experiment succesfully created.')
+
+        // EMPTY FORM: {}
 
         this.loaders.storing = false
         this.loaders.saving = false
 
-        // EMPTY FORM: {}
-
-        // this.$router.push('/scientist/experiment/experiments')
+        this.$router.push('/scientist/experiment/experiments')
+        // }
       }).catch(() => {
         this.loaders.storing = false
         this.loaders.saving = false
@@ -449,7 +454,7 @@ export default {
     },
 
     update () {
-      // don't do anything to is_public
+      // remember: leave is_public alone
       this.$axios.patch('/experiment/' + this.$route.params.id).then(response => {
         // redirect
       }).catch((error) => {

@@ -5,6 +5,7 @@ import './plugins/vuetify'
 import App from './App.vue'
 
 axios.defaults.baseURL = 'http://127.0.0.1/QuickEval/public/api'
+
 if (localStorage.access_token) {
   axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
 }
