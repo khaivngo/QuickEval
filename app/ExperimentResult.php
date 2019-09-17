@@ -17,4 +17,9 @@ class ExperimentResult extends Model
         'end_time',
         'completed'
     ];
+
+    public function results ()
+    {
+        return $this->hasMany('App\Result', 'user_id', 'experiment_id'); # GJØR OM DISSE TIL foreign KEY
+    }
 }

@@ -23,8 +23,8 @@ class CreateExperimentResultsTable extends Migration
             $table->string('os')->nullable();
             $table->integer('x')->nullable();
             $table->integer('y')->nullable();
-            $table->dateTime('start_time')->nullable();
-            $table->dateTime('end_time')->nullable();
+            $table->integer('start_time')->nullable();
+            $table->integer('end_time')->nullable();
             $table->tinyInteger('completed')->nullable();
 
             $table->timestamps();

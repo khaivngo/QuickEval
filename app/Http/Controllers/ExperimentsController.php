@@ -278,11 +278,11 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Checks if user has taken the experiment before. If so
+     *
      */
     public function start ($id)
     {
-      $newOrExists = $this->start_results($id);
+      // $newOrExists = $this->start_results($id);
 
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')

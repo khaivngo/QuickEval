@@ -134,6 +134,7 @@ export default {
         }
       ]
     },
+
     selected () {
       if (!this.active.length) return undefined
 
@@ -165,12 +166,17 @@ export default {
     async startExperiment (experimentId) {
       this.prefetch = true
 
-      if (this.observerInputs.length > 0) {
-        await this.saveObserverInputs()
+      const experimentResult = await this.$axios.post('/experiment-result', { experimentId: experimentId })
+      localStorage.setItem('experimentResult', experimentResult.data.id)
 
-        this.prefetch = false
+      if (experimentResult.data) {
+        if (this.observerInputs.length > 0) {
+          await this.saveObserverInputs()
 
-        // this.$router.push(`/experiment/${experimentId}`)
+          this.prefetch = false
+
+          this.$router.push(`/experiment/${experimentId}`)
+        }
       }
     }
   }

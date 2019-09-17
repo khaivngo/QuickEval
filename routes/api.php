@@ -37,6 +37,13 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/experiment-observer-meta-result', 'ExperimentObserverMetaResultsController@store');
     Route::get('/experiment/{id}/observer-metas', 'ExperimentsController@observer_metas');
 
+    Route::get('/experiment/{id}/experiment-results', 'ExperimentResultsController@index');
+
+    Route::post('/experiment-result', 'ExperimentResultsController@store');
+    Route::get('/experiment-result/{id}', 'ExperimentResultsController@fetch');
+
+    Route::get('/results/{id}', 'ResultsController@index');
+
 
     Route::get('/picture-sets/original/{id}', 'PictureSetsController@original');
     Route::delete('/picture/{id}', 'PicturesController@destroy');
@@ -58,4 +65,5 @@ Route::middleware('auth:api')->group(function () {
 Route::post('/file', 'PicturesController@store');
 
 Route::post('/register', 'AuthController@register');
+Route::post('/anonymous', 'AuthController@anonymous');
 Route::post('/login', 'AuthController@login');

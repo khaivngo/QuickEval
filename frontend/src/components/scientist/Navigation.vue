@@ -16,9 +16,9 @@
             :class="(item.url === $route.path) ? 'active-nav' : ''"
             @click="$router.push(item.url)"
           >
-            <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-action>
+            <!-- <v-list-tile-action style="background: red;" class="pa-0 ma-0"> -->
+              <v-icon class="mr-2">{{ item.icon }}</v-icon>
+            <!-- </v-list-tile-action> -->
 
             <v-list-tile-content>
               <v-list-tile-title>{{ item.title }}</v-list-tile-title>
@@ -110,11 +110,11 @@ export default {
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
         // { header: 'Images' },
         // { divider: true, inset: true },
-        { title: 'Manage Image Sets', url: '/scientist/image-sets/create', icon: 'folder' },
+        { title: 'Your Image Sets', url: '/scientist/image-sets/create', icon: 'folder' },
         // { divider: true, inset: true },
         // { header: 'Experiments' },
-        { title: 'Manage Experiments', url: '/scientist/experiment/experiments', icon: 'folder' },
-        { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' }
+        { title: 'Your Experiments', url: '/scientist/experiment/experiments', icon: 'folder' }
+        // { title: 'Create Experiment', url: '/scientist/experiment/create', icon: 'add_box' }
         // { title: 'Import Experiment', url: '/scientist/experiment/import', icon: 'import_export' },
         // { divider: true },
         // { header: 'Other' },

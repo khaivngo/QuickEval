@@ -139,6 +139,7 @@ export default {
 
       showOriginal: true,
       index: 0,
+      experimentResult: null,
 
       selectedStimuli: null,
 
@@ -182,13 +183,14 @@ export default {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
           this.stimuli = payload.data
-          console.log(this.stimuli)
+          // console.log(this.stimuli)
 
           if (localStorage.getItem('index') === null) {
             localStorage.setItem('index', 0)
           }
 
           this.index = Number(localStorage.getItem('index'))
+          this.experimentResult = Number(localStorage.getItem('experimentResult'))
 
           this.next()
         } else {
@@ -279,12 +281,13 @@ export default {
     },
 
     onFinish () {
-      // delete loalStorage
+      // delete localStorage
     },
 
     async store (pictureOrderId, categoryId, choseNone) {
       let data = {
         experiment_id: this.experiment.id,
+        experiment_result_id: this.experimentResult,
         picture_order_id: pictureOrderId,
         category_id: categoryId,
         chose_none: choseNone

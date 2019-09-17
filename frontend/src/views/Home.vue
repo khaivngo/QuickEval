@@ -39,33 +39,53 @@
           </v-flex>
         </v-layout>
 
-        <v-layout justify-center>
+        <v-layout justify-center wrap>
           <v-flex xs12>
-            <v-img :src="require('@/assets/colourlab-logo.png')" contain max-width="200"></v-img>
+            <v-img
+              :src="require('@/assets/colourlab-logo.png')"
+              contain max-width="200"
+            ></v-img>
           </v-flex>
           <v-flex xs12>
-            <v-img :src="require('@/assets/ntnu-logo-slogan.png')" contain max-width="200"></v-img>
+            <v-img
+              :src="require('@/assets/ntnu-logo-slogan.png')"
+              contain max-width="200"
+            ></v-img>
           </v-flex>
         </v-layout>
       </v-flex>
 
       <v-flex>
-        <v-btn @click="loginAsAnonymous" outline large color="primary">
+        <v-btn
+          @click="loginAsAnonymous()"
+          outline large
+          color="primary"
+        >
           Continue as anonymous
         </v-btn>
+
         <span>OR</span>
-        <v-btn @click="loginAsAnonymous" outline large color="primary">
+
+        <v-btn
+          @click="toggleIntent('login')"
+          outline large
+          color="primary"
+        >
           Log in
         </v-btn>
 
+        <v-btn
+          @click="toggleIntent('register')"
+          flat large
+          color="primary"
+          class="ma-0"
+        >
+          Register
+        </v-btn>
+
         <div>
-          <v-btn to="/register" outline large color="primary">
-            Register
-          </v-btn>
-
-          <Register/>
-
-          <Login/>
+          <Register v-if="registerIntent"/>
+          <Login v-if="loginIntent"/>
         </div>
       </v-flex>
     </v-layout>
@@ -82,19 +102,37 @@ export default {
     Login
   },
 
-  methods: {
-    loginAsAnonymous () {
-      // ajax create anonymous
-      // redirect
+  data () {
+    return {
+      registerIntent: false,
+      loginIntent: false
+    }
+  },
 
-      // this.$http({
-      //   url: `users`,
-      //   method: 'GET'
-      // }).then((res) => {
-      //   this.users = res.data.users
-      // }, () => {
-      //   this.has_error = true
-      // })
+  methods: {
+    toggleIntent (intent) {
+      if (intent === 'register') {
+        this.registerIntent = true
+        this.loginIntent = false
+      }
+
+      if (intent === 'login') {
+        this.registerIntent = false
+        this.loginIntent = true
+      }
+    },
+
+    loginAsAnonymous () {
+      this.$axios.post('/anonymous').then(response => {
+        localStorage.setItem('access_token', response.data.access_token)
+        this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
+        // // if (response.data.type === 2) redirect /scientist
+        this.$router.push('/observer')
+        // // this.registering = false
+      }).catch(() => {
+        // push notification
+        // this.registering = false
+      })
     }
   }
 }

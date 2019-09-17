@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^7.1.3",
+        "aplr/laravel-passport-grant-anonymous": "^0.1.4",
         "barryvdh/laravel-cors": "^0.11.3",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^6.3",

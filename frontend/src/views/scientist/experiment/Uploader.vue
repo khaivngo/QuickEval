@@ -1,13 +1,23 @@
 <template>
-  <v-card>
-    <v-card-title class="justify-center pt-5 pb-0">
-      <h2 class="mb-4">Manage Image Set</h2>
-    </v-card-title>
+  <div>
+    <v-layout mb-5>
+      <h2 class="display-1">
+        Your Image Sets
+      </h2>
+    </v-layout>
 
-    <v-container pl-5 pr-5 pb-5 pt-2>
-      <CreateImageSet/>
-    </v-container>
-  </v-card>
+    <v-layout justify-end mb-3>
+      <v-btn color="success" class="ma-0" :to="'/scientist/image-sets/create'"> <!-- @click="createImageSet" :loading="creating" -->
+        Create New
+      </v-btn>
+    </v-layout>
+
+    <v-card>
+      <v-container pl-5 pr-5 pt-2>
+        <CreateImageSet/>
+      </v-container>
+    </v-card>
+  </div>
 </template>
 
 <script>

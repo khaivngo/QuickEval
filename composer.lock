@@ -4,8 +4,62 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "12a0a7a812033ce6ce2ed021e4ab6279",
+    "content-hash": "b5ee29975e73631e706175cc5e5db6d9",
     "packages": [
+        {
+            "name": "aplr/laravel-passport-grant-anonymous",
+            "version": "v0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aplr/laravel-passport-grant-anonymous.git",
+                "reference": "c9465dd94575f934d92a51377f99cf5e9e9ff21a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aplr/laravel-passport-grant-anonymous/zipball/c9465dd94575f934d92a51377f99cf5e9e9ff21a",
+                "reference": "c9465dd94575f934d92a51377f99cf5e9e9ff21a",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "5.*",
+                "laravel/passport": "^3.0|^4.0|^5.0|^6.0|^7.0",
+                "php": ">=5.6.4"
+            },
+            "require-dev": {
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Aplr\\LaravelPassportAnonymous\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Aplr\\LaravelPassportAnonymous\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Pfurtscheller",
+                    "email": "hello@aplr.me"
+                }
+            ],
+            "description": "Anonymous Grant for Laravel Passport.",
+            "keywords": [
+                "laravel",
+                "oauth",
+                "passport"
+            ],
+            "time": "2018-09-13T10:47:10+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "1.2.0",

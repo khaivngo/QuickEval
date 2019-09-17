@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-container>
+    <v-container mt-3>
       <v-layout wrap justify-center>
         <v-flex shrink class="mr-5">
           <Navigation/>

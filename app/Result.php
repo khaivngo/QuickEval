@@ -9,9 +9,14 @@ class Result extends Model
     protected $fillable = [
         'user_id',
         'experiment_id',
-        // 'experiment_result_id',
+        'experiment_result_id',
         'picture_order_id',
         'category_id',
         'chose_none'
     ];
+
+    public function experiment ()
+    {
+        return $this->belongsTo('App\Experiment');
+    }
 }

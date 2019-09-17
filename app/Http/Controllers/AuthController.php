@@ -38,6 +38,35 @@ class AuthController extends Controller
       }
     }
 
+    public function anonymous () {
+      $auth_id = uniqid();
+      $anonymous = \App\User::create([
+        'name'          => 'anonymous',
+        'email'         => $auth_id . '@anonymous.com',
+        'password'      => '',
+        'auth_id'       => $auth_id,
+        'role'          => 3
+      ]);
+
+      $http = new \GuzzleHttp\Client;
+      $response = $http->post(config('services.passport.login_endpoint'), [
+        'form_params' => [
+          'grant_type'    => 'anonymous',
+          'client_id'     => config('services.passport.client_id'),
+          'client_secret' => config('services.passport.client_secret'),
+          // 'auth_id'    => 'some-unique-identifier',
+          'auth_id'       => $anonymous->auth_id,
+          // 'scope'      => '',
+        ]
+      ]);
+
+      // return json_decode((string) $response->getBody(), true);
+      return $response->getBody();
+    }
+
+    /**
+     *
+     */
     public function logout () {
       auth()->user()->tokens->each(function ($token, $key) {
         $token->delete();
@@ -46,6 +75,9 @@ class AuthController extends Controller
       return response()->json('Logged out successfully', 200);
     }
 
+    /**
+     *
+     */
     public function register (Request $request) {
         $request->validate([
             'name'      => 'required|string|max:255',

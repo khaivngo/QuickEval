@@ -46,7 +46,7 @@ class Algorithms {
 
     $final = [];
     foreach ($sorted as $pictures) {
-        foreach($pictures as $picture) {
+        foreach ($pictures as $picture) {
             $final[] = $picture;
         }
     }

@@ -16,9 +16,9 @@ class CreateResultsTable extends Migration
         Schema::create('results', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->integer('user_id');
-            $table->integer('experiment_id');
-            // $table->integer('experiment_result_id');
+            $table->integer('user_id'); // no not need
+            $table->integer('experiment_id'); // no not need
+            $table->integer('experiment_result_id')->nullable();
             $table->integer('picture_order_id')->nullable();
             $table->integer('category_id')->nullable();
             $table->tinyInteger('chose_none')->nullable();

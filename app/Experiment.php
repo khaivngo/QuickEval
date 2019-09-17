@@ -30,18 +30,8 @@ class Experiment extends Model
         'ambient_illumination'
     ];
 
-    public function user () {
-        return $this->belongsTo('App\User');
-    }
-
-    /**
-     * Get the experiment type record associated with the experiment.
-     */
-    public function experiment_type () {
-        return $this->hasOne('App\ExperimentType');
-    }
-
-    public function observer_meta () {
-        return $this->hasMany('App\ObserverMeta');
+    public function results ()
+    {
+        return $this->hasMany('App\Result');
     }
 }

@@ -1,5 +1,11 @@
 <template>
   <div>
+    <v-layout mb-5>
+      <h2 class="display-1">
+        Create Experiment
+      </h2>
+    </v-layout>
+
     <v-stepper v-model="currentLevel" alt-labels non-linear>
       <v-stepper-header class="elevation-0">
         <template v-for="(item, i) in steps">

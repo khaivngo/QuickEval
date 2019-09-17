@@ -1,39 +1,61 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="experiments"
-    no-data-text=""
-    item-key="id"
-    class="elevation-1"
-    hide-actions
-    :loading="loading"
-  >
-    <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
-    <template v-slot:items="props">
-      <td>
-        <router-link :to="'/scientist/experiment/experiments/' + props.item.id" class="experiment-link">
-          {{ props.item.title }}
-        </router-link>
-      </td>
-      <td class="public-switch">
-        <v-switch
-          class="ma-0 pa-0"
-          v-model="props.item.is_public"
-          color="success"
-          @change="visibility(props.item)"
-        ></v-switch>
-      </td>
-      <td align="right">
-        <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
-          <v-icon>edit</v-icon>
-        </v-btn>
+  <div>
+    <v-layout justify-space-between mb-4>
+      <h2 class="display-1">
+        Your Experiments
+      </h2>
 
-        <v-btn flat icon @click="destroy(props.item, props.index)">
-          <v-icon>delete</v-icon>
-        </v-btn>
-      </td>
-    </template>
-  </v-data-table>
+      <!-- <v-btn color="success" class="ma-0">
+        Create new
+      </v-btn> -->
+    </v-layout>
+
+    <v-layout justify-end mb-3>
+      <v-btn color="success" class="ma-0" :to="'/scientist/experiment/create'">
+        Create new
+      </v-btn>
+    </v-layout>
+
+    <v-data-table
+      :headers="headers"
+      :items="experiments"
+      no-data-text=""
+      item-key="id"
+      class="elevation-1"
+      hide-actions
+      :loading="loading"
+    >
+      <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
+      <template v-slot:items="props">
+        <td>
+          <router-link :to="'/scientist/experiment/experiments/' + props.item.id" class="experiment-link">
+            {{ props.item.title }}
+          </router-link>
+        </td>
+        <td class="public-switch text-xs-right">
+          <v-switch
+            class="ma-0 pa-0"
+            v-model="props.item.is_public"
+            color="success"
+            @change="visibility(props.item)"
+          ></v-switch>
+        </td>
+        <td align="right">
+          <!-- <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
+            <v-icon>bar_chart</v-icon>
+          </v-btn> -->
+
+          <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
+            <v-icon>edit</v-icon>
+          </v-btn>
+
+          <v-btn flat icon @click="destroy(props.item, props.index)">
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </td>
+      </template>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
@@ -43,9 +65,9 @@ export default {
   data () {
     return {
       headers: [
-        { text: 'Name', value: 'name', align: 'left', sortable: true },
-        { text: 'Public', value: 'public' },
-        { text: '', value: 'edit', align: 'right' }
+        { text: 'Title', value: 'name', align: 'left' },
+        { text: 'Visible to the public', value: 'public' },
+        { text: 'Actions', value: 'edit', align: 'right', sortable: false }
       ],
 
       experiments: [],
