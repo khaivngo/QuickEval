@@ -48,4 +48,8 @@ class User extends Authenticatable
     public function experiments () {
         return $this->hasMany('App\Experiment');
     }
+
+    public function scientist_request () {
+        return $this->hasOne('App\ScientistRequest');
+    }
 }

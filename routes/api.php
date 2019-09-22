@@ -60,6 +60,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/result', 'ResultsController@store');
 
     Route::post('/logout', 'AuthController@logout');
+
+    Route::get('/scientist-request', 'ScientistRequestsController@index');
+    Route::post('/scientist-request/{id}/accept', 'ScientistRequestsController@accept');
+    Route::post('/scientist-request/{id}/reject', 'ScientistRequestsController@reject');
 });
 
 Route::post('/file', 'PicturesController@store');

@@ -85,7 +85,7 @@ class AuthController extends Controller
             'password'  => 'required|string|min:8'
         ]);
 
-        return \App\User::create([
+        $user = \App\User::create([
             'name'          => $request->name,
             'email'         => $request->email,
             'password'      => Hash::make($request->password),
@@ -94,5 +94,14 @@ class AuthController extends Controller
             'institution'   => $request->institution,
             'nationality'   => $request->nationality
         ]);
+
+        if ($request->scientist === true) {
+          \App\ScientistRequest::create([
+            'user_id'  => $user->id,
+            'accepted' => 0
+          ]);
+        }
+
+        return $user;
     }
 }

@@ -14,10 +14,14 @@
           src="https://images.unsplash.com/photo-1534231284628-c3bbbdfbc6ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1489&q=80"
         ></v-img> -->
         <div>
-          <v-icon @click="deleteImageSet(set.id, i)">delete</v-icon>
+          <v-icon @click="deleteImageSet(set.id, i)">
+            delete
+          </v-icon>
         </div>
-        <router-link :to="'set/' + set.id">
-          <h4 class="body-2">{{ set.title }}</h4>
+        <router-link :to="`set/${set.id}`">
+          <h4 class="body-2">
+            {{ set.title }}
+          </h4>
         </router-link>
       </v-flex>
     </v-layout>

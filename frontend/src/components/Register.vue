@@ -122,12 +122,12 @@ export default {
         yob: this.yob,
         institution: this.institution,
         nationality: this.nationality,
-        scientist: false
+        scientist: this.scientist
       }).then(response => {
         localStorage.setItem('access_token', response.data.access_token)
         this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
         // if (response.data.type === 2) redirect /scientist
-        this.$router.push('/observer')
+        // this.$router.push('/observer')
         this.registering = false
       }).catch(() => {
         // push notification

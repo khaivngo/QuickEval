@@ -75,6 +75,10 @@ export default new VueRouter({
           path: 'image-sets/create',
           component: loadView('scientist/experiment/Uploader')
         },
+        // {
+        //   path: 'image-sets/create',
+        //   component: loadView('scientist/experiment/Create')
+        // },
         {
           path: 'image-sets/set/:id',
           component: loadView('scientist/PictureSet')
@@ -103,8 +107,8 @@ export default new VueRouter({
         },
         {
           name: 'admin.authorize',
-          path: 'authorize',
-          component: loadView('admin/Authorize')
+          path: 'scientist-request',
+          component: loadView('admin/ScientistRequest')
         }
       ]
     },

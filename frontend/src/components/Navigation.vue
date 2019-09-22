@@ -9,19 +9,19 @@
     </v-toolbar-title>
 
     <!-- class="hidden-sm-and-down" -->
-    <v-toolbar-items>
+    <v-toolbar-items v-if="user.role > 0">
       <v-btn to="/observer" dark flat class="text-none">
         <span class="mr-2">Observer Mode</span>
       </v-btn>
     </v-toolbar-items>
 
-    <v-toolbar-items>
+    <v-toolbar-items v-if="user.role > 1">
       <v-btn to="/scientist" dark flat class="text-none">
         <span class="mr-2">Scientist Mode</span>
       </v-btn>
     </v-toolbar-items>
 
-    <v-toolbar-items>
+    <v-toolbar-items v-if="user.role > 2">
       <v-btn to="/admin" dark flat class="text-none">
         <span class="mr-2">Admin Mode</span>
       </v-btn>
@@ -42,7 +42,7 @@
       </v-btn>
     </v-toolbar-items>
 
-    <v-toolbar-items>
+    <v-toolbar-items v-if="user.id !== 0">
       <Logout/>
     </v-toolbar-items>
   </v-toolbar>
@@ -52,6 +52,27 @@
 import Logout from '@/components/Logout'
 
 export default {
+  props: {
+    user: {
+      type: Object,
+      default: function () {
+        return {
+          id: 0,
+          role: 0
+        }
+      }
+    }
+  },
+
+  // data () {
+  //   return {
+  //     user: {
+  //       id: 0,
+  //       role: 0
+  //     }
+  //   }
+  // },
+
   components: {
     Logout
   }

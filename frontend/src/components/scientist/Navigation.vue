@@ -110,7 +110,7 @@ export default {
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
         // { header: 'Images' },
         // { divider: true, inset: true },
-        { title: 'Your Image Sets', url: '/scientist/image-sets/create', icon: 'folder' },
+        { title: 'Your Image Sets', url: '/scientist/image-sets/create', icon: 'photo' },
         // { divider: true, inset: true },
         // { header: 'Experiments' },
         { title: 'Your Experiments', url: '/scientist/experiment/experiments', icon: 'folder' }

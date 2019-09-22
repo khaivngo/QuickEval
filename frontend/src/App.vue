@@ -1,6 +1,28 @@
 <template>
   <v-app>
-    <MainNavigation v-if="$route.name !== 'Experiment Mode'"/>
+    <MainNavigation v-if="$route.name !== 'Experiment Mode'" :user="user"/>
+
+    <!-- <v-breadcrumbs :items="[
+      {
+        text: 'Dashboard',
+        disabled: false,
+        href: 'breadcrumbs_dashboard'
+      },
+      {
+        text: 'Link 1',
+        disabled: false,
+        href: 'breadcrumbs_link_1'
+      },
+      {
+        text: 'Link 2',
+        disabled: true,
+        href: 'breadcrumbs_link_2'
+      }
+    ]">
+      <template v-slot:divider>
+        <v-icon>chevron_right</v-icon>
+      </template>
+    </v-breadcrumbs> -->
 
     <v-content>
       <router-view/>
@@ -41,6 +63,7 @@ export default {
 
   data () {
     return {
+      user: { id: 0, role: 0 },
       token: localStorage.getItem('access_token') || null,
 
       snackbar: false,
@@ -53,11 +76,25 @@ export default {
     }
   },
 
+  created () {
+    this.$axios.get(`/user`).then(response => {
+      this.user = response.data
+    })
+  },
+
   mounted () {
     EventBus.$on('success', (payload) => {
       this.text = payload
 
       this.snackbar = true
+    })
+
+    EventBus.$on('logged', (payload) => {
+      this.$axios.get(`/user`).then(response => {
+        this.user = response.data
+      }).catch(() => {
+        this.user = { id: 0, role: 0 }
+      })
     })
   }
 }

@@ -5,6 +5,7 @@
         <v-layout
           text-xs-center
           wrap
+          justify-center
         >
           <v-flex xs12>
             <v-img
@@ -32,61 +33,71 @@
               <h3>artifact marking</h3>
             </div>
 
-            <p class="mt-5">
+            <p class="mt-5 mb-0">
               The tool is provided by the<br>
               Norwegian Colour and Visual Computing Laboratory.
             </p>
           </v-flex>
         </v-layout>
 
-        <v-layout justify-center wrap>
-          <v-flex xs12>
-            <v-img
-              :src="require('@/assets/colourlab-logo.png')"
-              contain max-width="200"
-            ></v-img>
-          </v-flex>
-          <v-flex xs12>
-            <v-img
-              :src="require('@/assets/ntnu-logo-slogan.png')"
-              contain max-width="200"
-            ></v-img>
-          </v-flex>
+        <v-layout justify-center mb-3>
+          <!-- <v-flex justify-center align-self-center xs12 mb-5 style="background-color: red;"> -->
+          <v-img
+            :src="require('@/assets/colourlab-logo.png')"
+            contain
+            max-width="200"
+          ></v-img>
+        </v-layout>
+
+        <v-layout justify-center>
+          <v-img
+            :src="require('@/assets/ntnu-logo-slogan.png')"
+            contain
+            max-width="200"
+          ></v-img>
         </v-layout>
       </v-flex>
 
-      <v-flex>
-        <v-btn
-          @click="loginAsAnonymous()"
-          outline large
-          color="primary"
-        >
-          Continue as anonymous
-        </v-btn>
+      <v-flex align-self-center>
+        <v-layout column justify-center>
+          <v-layout justify-center>
+            <v-btn
+              @click="loginAsAnonymous()"
+              outline large
+              color="primary"
+              :loading="anonymousIntent"
+            >
+              Continue as anonymous
+            </v-btn>
+          </v-layout>
 
-        <span>OR</span>
+          <v-layout justify-center mt-3 mb-3>
+            <span>OR</span>
+          </v-layout>
 
-        <v-btn
-          @click="toggleIntent('login')"
-          outline large
-          color="primary"
-        >
-          Log in
-        </v-btn>
+          <v-layout justify-center>
+            <v-btn
+              @click="toggleIntent('login')"
+              outline large
+              color="primary"
+            >
+              Log in
+            </v-btn>
 
-        <v-btn
-          @click="toggleIntent('register')"
-          flat large
-          color="primary"
-          class="ma-0"
-        >
-          Register
-        </v-btn>
+            <v-btn
+              @click="toggleIntent('register')"
+              outline large
+              color="primary"
+            >
+              Register
+            </v-btn>
+          </v-layout>
 
-        <div>
-          <Register v-if="registerIntent"/>
-          <Login v-if="loginIntent"/>
-        </div>
+          <div>
+            <Register v-if="registerIntent"/>
+            <Login v-if="loginIntent"/>
+          </div>
+        </v-layout>
       </v-flex>
     </v-layout>
   </v-container>
@@ -95,6 +106,7 @@
 <script>
 import Register from '@/components/Register'
 import Login from '@/components/Login'
+import EventBus from '@/eventBus'
 
 export default {
   components: {
@@ -104,6 +116,7 @@ export default {
 
   data () {
     return {
+      anonymousIntent: false,
       registerIntent: false,
       loginIntent: false
     }
@@ -123,15 +136,18 @@ export default {
     },
 
     loginAsAnonymous () {
+      this.anonymousIntent = true
+
       this.$axios.post('/anonymous').then(response => {
         localStorage.setItem('access_token', response.data.access_token)
         this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        // // if (response.data.type === 2) redirect /scientist
+        // // if (response.data.role === 2) redirect /scientist
+        EventBus.$emit('logged', response.data)
+        this.anonymousIntent = false
         this.$router.push('/observer')
-        // // this.registering = false
       }).catch(() => {
         // push notification
-        // this.registering = false
+        this.anonymousIntent = false
       })
     }
   }

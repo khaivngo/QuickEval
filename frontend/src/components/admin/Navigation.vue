@@ -16,9 +16,9 @@
             :class="(item.url === $route.path) ? 'active-nav' : ''"
             @click="$router.push(item.url)"
           >
-            <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-tile-action>
+            <!-- <v-list-tile-action> -->
+            <v-icon class="mr-2">{{ item.icon }}</v-icon>
+            <!-- </v-list-tile-action> -->
 
             <v-list-tile-content>
               <v-list-tile-title>{{ item.title }}</v-list-tile-title>
@@ -107,8 +107,8 @@ export default {
   data () {
     return {
       items: [
-        { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
-        { title: 'Scientist Requests', url: '/scientist/experiment/experiments', icon: 'folder' }
+        { title: 'Dashboard', url: '/admin/dashboard', icon: 'insert_chart' },
+        { title: 'Scientist Requests', url: '/admin/scientist-request', icon: 'verified_user' }
       ]
     }
   }
