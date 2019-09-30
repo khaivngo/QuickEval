@@ -237,7 +237,7 @@ export default {
 
           // HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
 
-          this.store(selectedStimuli.id, null, 0).then(response => {
+          this.store(selectedStimuli.id, null, 0, this.stimuli[this.index], this.stimuli[this.index + 1]).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
             }
@@ -284,7 +284,7 @@ export default {
       // delete localStorage
     },
 
-    async store (pictureOrderId, categoryId, choseNone) {
+    async store (pictureOrderId, categoryId, choseNone, pictureOrderIdLeft, pictureOrderIdRight) {
       let data = {
         experiment_id: this.experiment.id,
         experiment_result_id: this.experimentResult,
@@ -292,6 +292,16 @@ export default {
         category_id: categoryId,
         chose_none: choseNone
       }
+
+      let paired = {
+        experiment_result_id: this.experimentResult,
+        picture_order_id_selected: pictureOrderId, // rename picture_sequence_id ? save pictureId instead?
+        picture_order_id_left: pictureOrderIdLeft,
+        picture_order_id_right: pictureOrderIdRight,
+        chose_none: choseNone
+      }
+
+      this.$axios.post('/paired-result', paired).catch(err => console.warn(err))
 
       return this.$axios.post('/result', data)
         .catch(err => console.warn(err))

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout justify-space-between mb-4>
+    <v-layout justify-space-between mb-5>
       <h2 class="display-1">
         Your Experiments
       </h2>
@@ -11,7 +11,7 @@
     </v-layout>
 
     <v-layout justify-end mb-3>
-      <v-btn color="success" class="ma-0" :to="'/scientist/experiment/create'">
+      <v-btn color="success" class="ma-0" :to="'/scientist/experiments/create'" exact>
         Create new
       </v-btn>
     </v-layout>
@@ -28,7 +28,7 @@
       <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
       <template v-slot:items="props">
         <td>
-          <router-link :to="'/scientist/experiment/experiments/' + props.item.id" class="experiment-link">
+          <router-link :to="`/scientist/experiments/view/${props.item.id}`" class="experiment-link">
             {{ props.item.title }}
           </router-link>
         </td>

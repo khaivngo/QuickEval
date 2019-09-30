@@ -15,108 +15,56 @@ function loadView (view) {
   return () => import(`@/views/${view}.vue`) /* webpackChunkName: "view-[request]" */
 }
 
+/* eslint-disable */
 export default new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
+    /* home */
     {
-      name: 'Home',
       path: '/',
-      component: loadView('Home'),
-      meta: {
-        // requiresVisitor: true
-      }
+      component: loadView('Index')
     },
+
+    /* observer */
     {
-      name: 'Observer Mode',
       path: '/observer',
-      component: loadView('Observer')
+      component: loadView('observer/Index')
     },
+
+    /* scientist */
     {
       path: '/scientist',
-      component: loadView('Scientist'),
-      meta: {
-        // requiresScientist: true
-        // auth: {
-        //   roles: 2,
-        //   redirect: { name: 'login' },
-        //   forbiddenRedirect: '/403'
-        // }
-      },
-      // these will be rendered inside Scientist's <router-view>
+      component: loadView('scientist/Index'),
       children: [
-        // loaded by default
-        {
-          name: 'Scientist Mode',
-          path: '',
-          component: loadView('scientist/Dashboard')
-        },
-        {
-          path: 'dashboard',
-          component: loadView('scientist/Dashboard')
-        },
-        {
-          path: 'experiment/create',
-          component: loadView('scientist/experiment/Create')
-        },
-        {
-          path: 'experiment/edit/:id',
-          component: loadView('scientist/experiment/Edit')
-        },
-        {
-          path: 'experiment/experiments',
-          component: loadView('scientist/experiment/List')
-        },
-        {
-          path: 'experiment/experiments/:id',
-          component: loadView('scientist/experiment/Experiment')
-        },
-        {
-          path: 'image-sets/create',
-          component: loadView('scientist/experiment/Uploader')
-        },
-        // {
-        //   path: 'image-sets/create',
-        //   component: loadView('scientist/experiment/Create')
-        // },
-        {
-          path: 'image-sets/set/:id',
-          component: loadView('scientist/PictureSet')
-        }
+        { path: 'dashboard',                   component: loadView('scientist/Dashboard')             },
+        { path: 'experiments',                 component: loadView('scientist/experiment/List')       },
+        { path: 'experiments/view/:id',        component: loadView('scientist/experiment/Experiment') },
+        { path: 'experiments/create',          component: loadView('scientist/experiment/Create')     },
+        { path: 'experiments/edit/:id',        component: loadView('scientist/experiment/Edit')       },
+        { path: 'image-sets/view/:id',         component: loadView('scientist/image-set/ImageSet')    },
+        { path: 'image-sets/create',           component: loadView('scientist/image-set/List')        },
+        // { path: 'image-sets/create',        component: loadView('scientist/image-set/List')        },
+        { path: 'image-sets/:id/file-upload',  component: loadView('scientist/image-set/CreateFile')  }
       ]
     },
+
+    /* admin */
     {
       path: '/admin',
-      component: loadView('admin/Admin'),
-      meta: {
-        // requiresAdmin: true
-        // redirect: { name: 'login' },
-        // forbiddenRedirect: '/403'
-      },
+      component: loadView('admin/Index'),
       children: [
-        // loaded by default
-        {
-          name: 'admin.dashboard',
-          path: '',
-          component: loadView('admin/Dashboard')
-        },
-        {
-          // name: 'admin.dashboard',
-          path: 'dashboard',
-          component: loadView('admin/Dashboard')
-        },
-        {
-          name: 'admin.authorize',
-          path: 'scientist-request',
-          component: loadView('admin/ScientistRequest')
-        }
+        { path: 'scientist-role-requests',  component: loadView('admin/ScientistRoleRequest') }
       ]
     },
+
+    /* experiment */
     {
-      name: 'Experiment Mode',
       path: '/experiment/:id',
       component: loadView('observer/Experiment')
     },
+
+    /* catch all non-existing routes */
     {
       path: '*',
       component: loadView('NotFound')

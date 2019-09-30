@@ -7,6 +7,13 @@
     </v-layout>
 
     <v-stepper v-model="currentLevel" alt-labels non-linear>
+      <!-- <v-container class="ma-0 pa-2" style="border-bottom: 1px solid #ccc;">
+        <v-layout align-center>
+          <v-btn outline fab small @click="$router.back()">
+            <v-icon>arrow_back</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-container> -->
       <v-stepper-header class="elevation-0">
         <template v-for="(item, i) in steps">
           <v-stepper-step :step="i + 1" :key="i" editable>

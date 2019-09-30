@@ -16,13 +16,13 @@
     </v-toolbar-items>
 
     <v-toolbar-items v-if="user.role > 1">
-      <v-btn to="/scientist" dark flat class="text-none">
+      <v-btn to="/scientist/dashboard" dark flat class="text-none">
         <span class="mr-2">Scientist Mode</span>
       </v-btn>
     </v-toolbar-items>
 
     <v-toolbar-items v-if="user.role > 2">
-      <v-btn to="/admin" dark flat class="text-none">
+      <v-btn to="/admin/scientist-role-requests" dark flat class="text-none">
         <span class="mr-2">Admin Mode</span>
       </v-btn>
     </v-toolbar-items>

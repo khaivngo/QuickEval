@@ -112,7 +112,7 @@
           <v-card class="pa-4">
             <v-card-title class="headline">Create Image Set</v-card-title>
             <v-card-text>
-              <CreateImageSet/>
+              <!-- <CreateImageSet/> -->
             </v-card-text>
             <!-- <v-card-actions>
               <v-spacer></v-spacer>
@@ -156,12 +156,12 @@
 </template>
 
 <script>
-import CreateImageSet from '@/components/scientist/CreateImageSet'
+// import CreateImageSet from '@/components/scientist/CreateImageSet'
 
 export default {
-  components: {
-    CreateImageSet
-  },
+  // components: {
+  //   CreateImageSet
+  // },
 
   data: () => ({
     // existing instructions
