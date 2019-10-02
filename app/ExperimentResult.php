@@ -18,8 +18,13 @@ class ExperimentResult extends Model
         'completed'
     ];
 
-    public function results ()
+    // public function results ()
+    // {
+    //     return $this->hasMany('App\Result', 'user_id', 'experiment_id'); # GJØR OM DISSE TIL foreign KEY
+    // }
+
+    public function paired_results ()
     {
-        return $this->hasMany('App\Result', 'user_id', 'experiment_id'); # GJØR OM DISSE TIL foreign KEY
+        return $this->hasMany('App\PairedResult');
     }
 }

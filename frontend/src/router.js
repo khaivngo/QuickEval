@@ -44,7 +44,6 @@ export default new VueRouter({
         { path: 'experiments/edit/:id',        component: loadView('scientist/experiment/Edit')       },
         { path: 'image-sets/view/:id',         component: loadView('scientist/image-set/ImageSet')    },
         { path: 'image-sets/create',           component: loadView('scientist/image-set/List')        },
-        // { path: 'image-sets/create',        component: loadView('scientist/image-set/List')        },
         { path: 'image-sets/:id/file-upload',  component: loadView('scientist/image-set/CreateFile')  }
       ]
     },
@@ -61,7 +60,8 @@ export default new VueRouter({
     /* experiment */
     {
       path: '/experiment/:id',
-      component: loadView('observer/Experiment')
+      component: loadView('observer/experiment/Experiment'),
+      name: 'Experiment Mode'
     },
 
     /* catch all non-existing routes */

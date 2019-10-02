@@ -183,6 +183,7 @@ export default {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
           this.stimuli = payload.data
+          // console.log(this.stimuli)
 
           if (localStorage.getItem('index') === null) {
             localStorage.setItem('index', 0)
@@ -218,32 +219,25 @@ export default {
         if (this.rightReproductionActive === true) selectedStimuli = this.stimuli[this.index]
         if (this.leftReproductionActive === true) selectedStimuli = this.stimuli[this.index + 1]
 
-        /* set original */
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-
-        /* set left reproduction image */
+        // setLeftImage()
         this.getImage(this.stimuli[this.index].picture_id).then(image => {
           this.leftImage = this.$UPLOADS_FOLDER + image.data.path
         })
-
-        /* set right reproduction image */
+        // setRightImage()
         this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
           this.rightImage = this.$UPLOADS_FOLDER + image.data.path
         })
 
-        /* don't do anything unless stimuli has been selected */
+        // don't do anything unless stimuli has been selected
         if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
           this.disableNextBtn = true
 
-          // TODO: HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
+          // HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
 
-          this.store(
-            selectedStimuli,
-            this.stimuli[this.index],
-            this.stimuli[this.index + 1]
-          ).then(response => {
+          this.store(selectedStimuli.id, null, 0, this.stimuli[this.index], this.stimuli[this.index + 1]).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
             }
@@ -266,14 +260,6 @@ export default {
       }
     },
 
-    async getExperiment (experimentId) {
-      return this.$axios.get(`/experiment/${experimentId}`)
-    },
-
-    async getImage (id) {
-      return this.$axios.get(`/picture/${id}`)
-    },
-
     toggleSelected (side) {
       if (side === 'left') {
         this.leftReproductionActive = !this.leftReproductionActive
@@ -284,33 +270,66 @@ export default {
       }
     },
 
-    async store (pictureIdSelected, pictureIdLeft, pictureIdRight) {
-      let data = {
-        experiment_result_id: this.experimentResult,
-        picture_id_selected: pictureIdSelected.picture_id,
-        picture_id_left: pictureIdLeft.picture_id,
-        picture_id_right: pictureIdRight.picture_id,
-        chose_none: 0
-      }
+    async getImage (id) {
+      return this.$axios.get('/picture/' + id)
+        .catch(err => console.warn(err))
+    },
 
-      return this.$axios.post('/paired-result', data)
+    async getOriginal () {
+      // return this.$axios.get('/experiment/' + experimentId)
+      //   .catch(err => console.warn(err))
     },
 
     onFinish () {
       // delete localStorage
     },
 
+    async store (pictureIdSelected, categoryId, choseNone, pictureIdLeft, pictureIdRight) {
+      // let data = {
+      //   experiment_id: this.experiment.id,
+      //   experiment_result_id: this.experimentResult,
+      //   picture_order_id: pictureSequenceId,
+      //   category_id: categoryId,
+      //   chose_none: choseNone
+      // }
+
+      let paired = {
+        experiment_result_id: this.experimentResult,
+        // picture_sequence_id_selected: pictureSequenceId, // should we save pictureId instead?
+        // picture_sequence_id_left: pictureSequenceIdLeft,
+        // picture_sequence_id_right: pictureSequenceIdRight,
+        picture_sequence_id_selected: pictureIdSelected,
+        picture_sequence_id_left: pictureIdLeft,
+        picture_sequence_id_right: pictureIdRight,
+        chose_none: choseNone
+      }
+
+      this.$axios.post('/paired-result', paired).catch(err => console.warn(err))
+
+      // return this.$axios.post('/result', data)
+      //   .catch(err => console.warn(err))
+    },
+
+    async getExperiment (experimentId) {
+      return this.$axios.get('/experiment/' + experimentId)
+        .catch(err => console.warn(err))
+    },
+
     abort () {
       this.abortDialog = true
       this.$router.push('/observer')
 
-      // Maybe do: delete localStorage
+      // delete localStorage!
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+// @import '~vuetify/src/stylus/theme.styl'
+
+// $material-light.background = #808080
+
 .qe-wrapper {
   background-color: #808080;
   min-height: 100vh;
@@ -325,6 +344,7 @@ export default {
 
 .selected {
   outline: solid 5px #282828;
+  // opacity: 0.3;
 }
 
 // .parent {

@@ -8,9 +8,13 @@ class PairedResult extends Model
 {
     protected $fillable = [
         'experiment_result_id',
-        'picture_order_id_selected',
-        'picture_order_id_left',
-        'picture_order_id_right',
+        'picture_id_selected',
+        'picture_id_left',
+        'picture_id_right',
         'chose_none'
     ];
+
+    public function experiment_result () {
+        return $this->belongsTo('App\ExperimentResult');
+    }
 }

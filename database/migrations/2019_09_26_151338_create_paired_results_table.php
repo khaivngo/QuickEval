@@ -18,9 +18,9 @@ class CreatePairedResultsTable extends Migration
 
             $table->integer('experiment_result_id')->nullable();
 
-            $table->integer('picture_order_id_selected');
-            $table->integer('picture_order_id_left');
-            $table->integer('picture_order_id_right');
+            $table->integer('picture_id_selected');
+            $table->integer('picture_id_left');
+            $table->integer('picture_id_right');
 
             $table->tinyInteger('chose_none')->nullable();
 

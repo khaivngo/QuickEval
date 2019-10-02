@@ -4,6 +4,10 @@ import router from './router'
 import './plugins/vuetify'
 import App from './App.vue'
 
+Vue.prototype.$domain = 'https://quickeval.no'
+Vue.prototype.$UPLOADS_FOLDER = 'http://127.0.0.1/QuickEval/storage/app/'
+Vue.prototype.$API_URL = 'http://127.0.0.1/QuickEval/public/api'
+
 axios.defaults.baseURL = 'http://127.0.0.1/QuickEval/public/api'
 
 if (localStorage.access_token) {
@@ -38,8 +42,6 @@ router.beforeEach((to, from, next) => {
 })
 
 Vue.prototype.$axios = axios
-Vue.prototype.$domain = 'https://quickeval.no'
-Vue.prototype.$UPLOADS_FOLDER = 'http://127.0.0.1/QuickEval/storage/app/'
 
 Vue.config.productionTip = false
 

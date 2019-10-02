@@ -50,9 +50,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/experiment-result',                   'ExperimentResultsController@store');
 
     # results
-    Route::get( '/results/{id}',    'ResultsController@index');
-    Route::post('/result',          'ResultsController@store');
-    Route::post('/paired-result',   'PairedResultsController@store');
+    // Route::get( '/paired-result/{id}',          'PairedResultsController@index');
+    // Route::get( '/paired-result/{id}/export',   'PairedResultsController@index_export');
+    // Route::get( '/paired-result/export',        'PairedResultsController@export');
+    // Route::post('/paired-result',               'PairedResultsController@store');
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');
@@ -80,6 +81,7 @@ Route::middleware('auth:api')->group(function () {
 
 // TODO: move this inside... InvalidArgumentException: Route [login] not defined
 Route::post('/file', 'PicturesController@store');
+Route::get( '/paired-result/{id}/export', 'PairedResultsController@export');
 
 Route::post('/register',    'AuthController@register');
 Route::post('/anonymous',   'AuthController@anonymous');

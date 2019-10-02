@@ -72,19 +72,21 @@
                 <td>{{ props.item.created_at }}</td>
                 <td class="text-xs-right">
                   <v-btn
+                    @click="exportResultsForObserver(props.item)"
                     outline small
                     color="primary text-none ma-0"
-                    @click="getResultsForObserver(props.item)"
-                  > <!-- @click="download(props.item)" -->
-                    Export <v-icon :size="20" class="ml-2">arrow_downward</v-icon>
+                  >
+                    Export
+                    <v-icon :size="20" class="ml-2">
+                      arrow_downward
+                    </v-icon>
                   </v-btn>
 
                   <!-- <v-btn
-                    @click="download(props.item)"
-                    outline small
-                    color="error text-none ma-0"
+                    flat small
+                    color="pa-0 text-none ma-0"
                   >
-                    Delete <v-icon :size="20" class="ml-2">arrow_downward</v-icon>
+                    <v-icon :size="20" class="ml-2">delete</v-icon>
                   </v-btn> -->
                 </td>
               </tr>
@@ -151,7 +153,7 @@ export default {
 
   methods: {
     getResultsForObserver (experimentResult, i) {
-      this.$axios.get(`/results/${experimentResult.id}`)
+      this.$axios.get(`/paired-result/${experimentResult.id}`)
         .then(response => {
           // this.$set(this.experimentResults[i], 'results', response.data)
           console.log(response)
@@ -159,14 +161,13 @@ export default {
         .catch(err => console.log(err))
     },
 
-    wipeAllResults () {
-      //
+    exportResultsForObserver (experimentResult, i) {
+      // window.location = this.$API_URL + '/paired-result/export'
+      window.open(`${this.$API_URL}/paired-result/${experimentResult}/export`, '_blank')
     },
 
-    download (experimentResult) {
-      this.$axios.get(`/results/${experimentResult.id}/download`)
-        .then(response => console.log(response))
-        .catch(err => console.log(err))
+    wipeAllResults () {
+      // this.$axios.delete(`/paired-result/${experimentResult.id}`)
     }
   }
 }
