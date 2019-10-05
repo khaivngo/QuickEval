@@ -2,7 +2,7 @@
   <p class="subheading">
     Invite link:
     <a :href="$domain + '/observer/' + code">
-      {{ $domain }}/observer/{{ code }}
+      {{ $domain }}/experiment/{{ code }}
     </a>
   </p>
 </template>
@@ -11,8 +11,8 @@
 export default {
   props: {
     code: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     }
   }
 }

@@ -45,15 +45,16 @@ Route::middleware('auth:api')->group(function () {
     Route::get(     '/picture/{id}', 'PicturesController@index');
 
     # experiment results
-    Route::get( '/experiment/{id}/experiment-results',  'ExperimentResultsController@index');
-    Route::get( '/experiment-result/{id}',              'ExperimentResultsController@fetch');
-    Route::post('/experiment-result',                   'ExperimentResultsController@store');
+    Route::get(     '/experiment/{id}/experiment-results',  'ExperimentResultsController@index');
+    Route::get(     '/experiment-result/{id}',              'ExperimentResultsController@fetch');
+    Route::post(    '/experiment-result/create',            'ExperimentResultsController@store');
+    Route::delete(  '/experiment-result/{id}/wipe',         'ExperimentResultsController@destroy');
 
-    # results
-    // Route::get( '/paired-result/{id}',          'PairedResultsController@index');
+    # paired results
+    Route::get( '/paired-result/{id}',          'PairedResultsController@index');
     // Route::get( '/paired-result/{id}/export',   'PairedResultsController@index_export');
     // Route::get( '/paired-result/export',        'PairedResultsController@export');
-    // Route::post('/paired-result',               'PairedResultsController@store');
+    Route::post('/paired-result',               'PairedResultsController@store');
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');
@@ -81,7 +82,9 @@ Route::middleware('auth:api')->group(function () {
 
 // TODO: move this inside... InvalidArgumentException: Route [login] not defined
 Route::post('/file', 'PicturesController@store');
-Route::get( '/paired-result/{id}/export', 'PairedResultsController@export');
+
+Route::get(    '/paired-result/{id}/export',     'PairedResultsController@export_observer');
+Route::get(    '/{id}/paired-result/all/export', 'PairedResultsController@export_all');
 
 Route::post('/register',    'AuthController@register');
 Route::post('/anonymous',   'AuthController@anonymous');

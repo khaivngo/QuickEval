@@ -38,7 +38,7 @@
 
           <p>{{ experiment.short_description }}</p>
 
-          <InviteLink :code="experiment.invite_hash"/>
+          <InviteLink :code="experiment.id"/>
         </v-layout>
 
         <v-container fluid pa-0 mt-5>
@@ -47,7 +47,10 @@
               Observer Raw Data
             </h2>
 
-            <v-btn outline color="primary text-none ma-0">
+            <v-btn
+              @click="exportResultsForExperiment()"
+              outline color="primary text-none ma-0"
+            >
               Export ALL data <v-icon :size="20" class="ml-2">arrow_downward</v-icon>
             </v-btn>
           </v-layout>
@@ -59,7 +62,7 @@
               { text: 'Export raw data', value: 'export', align: 'right', sortable: false }
             ]"
             :items="experimentResults"
-            no-data-text=""
+            no-data-text="There is no observer data yet."
             :expand="false"
             item-key="id"
             hide-actions
@@ -83,6 +86,7 @@
                   </v-btn>
 
                   <!-- <v-btn
+                    @click="getResultsForObserver(props.item)"
                     flat small
                     color="pa-0 text-none ma-0"
                   >
@@ -111,6 +115,7 @@
 
 <script>
 import InviteLink from '@/components/scientist/InviteLink'
+import EventBus from '@/eventBus.js'
 
 export default {
   components: {
@@ -122,6 +127,7 @@ export default {
       loading: false,
 
       experiment: {
+        id: null,
         title: null,
         type: null,
         short_description: null,
@@ -136,22 +142,29 @@ export default {
   created () {
     this.loading = true
 
-    this.$axios.get(`/experiment/${this.$route.params.id}`)
-      .then(response => {
-        this.experiment = response.data
-        this.loading = false
-      })
-      .catch(err => console.log(err))
-
-    this.$axios.get(`/experiment-result/${this.$route.params.id}`)
-      .then(response => {
-        this.experimentResults = response.data
-        this.loading = false
-      })
-      .catch(err => console.log(err))
+    this.getExperiment()
+    this.getExperimentResults()
   },
 
   methods: {
+    getExperiment () {
+      this.$axios.get(`/experiment/${this.$route.params.id}`)
+        .then(response => {
+          this.experiment = response.data
+          this.loading = false
+        })
+        .catch(err => console.log(err))
+    },
+
+    getExperimentResults () {
+      this.$axios.get(`/experiment-result/${this.$route.params.id}`)
+        .then(response => {
+          this.experimentResults = response.data
+          this.loading = false
+        })
+        .catch(err => console.log(err))
+    },
+
     getResultsForObserver (experimentResult, i) {
       this.$axios.get(`/paired-result/${experimentResult.id}`)
         .then(response => {
@@ -161,13 +174,26 @@ export default {
         .catch(err => console.log(err))
     },
 
-    exportResultsForObserver (experimentResult, i) {
-      // window.location = this.$API_URL + '/paired-result/export'
-      window.open(`${this.$API_URL}/paired-result/${experimentResult}/export`, '_blank')
+    exportResultsForObserver (experimentResult) {
+      window.open(`${this.$API_URL}/paired-result/${experimentResult.id}/export`, '_blank')
+    },
+
+    exportResultsForExperiment () {
+      window.open(`${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`, '_blank')
     },
 
     wipeAllResults () {
-      // this.$axios.delete(`/paired-result/${experimentResult.id}`)
+      if (confirm('Do you want to delete ALL results data for this experiment?')) {
+        this.$axios.delete(`/experiment-result/${this.$route.params.id}/wipe`).then(response => {
+          if (response.data === 'deleted') {
+            this.experimentResults = []
+
+            EventBus.$emit('success', 'Experiment has been deleted successfully')
+          } else {
+            EventBus.$emit('error', 'Could not delete experiment')
+          }
+        })
+      }
     }
   }
 }

@@ -12,4 +12,8 @@ class Picture extends Model
         'is_original',
         'picture_set_id'
     ];
+
+    // public function paired_result () {
+    //   return $this->hasMany('App\PairedResult', 'picture_id_selected', 'id');
+    // }
 }

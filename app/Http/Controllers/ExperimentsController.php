@@ -353,13 +353,13 @@ class ExperimentsController extends Controller
       ])->get();
 
       if (count($experimentResult) > 0) {
-        return "exists";
+        return response('exists', 200);
       } else {
         \App\ExperimentResult::create([
           'experiment_id' => (int)$id,
           'user_id' => auth()->user()->id
         ]);
-        return "new";
+        return response('new', 200);
       }
     }
 

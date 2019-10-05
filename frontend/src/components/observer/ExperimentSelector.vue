@@ -166,17 +166,16 @@ export default {
     async startExperiment (experimentId) {
       this.prefetch = true
 
-      const experimentResult = await this.$axios.post('/experiment-result', { experimentId: experimentId })
+      const experimentResult = await this.$axios.post('/experiment-result/create', { experimentId: experimentId })
       localStorage.setItem('experimentResult', experimentResult.data.id)
 
       if (experimentResult.data) {
         if (this.observerInputs.length > 0) {
           await this.saveObserverInputs()
-
-          this.prefetch = false
-
-          this.$router.push(`/experiment/${experimentId}`)
         }
+
+        this.prefetch = false
+        this.$router.push(`/experiment/${experimentId}`)
       }
     }
   }

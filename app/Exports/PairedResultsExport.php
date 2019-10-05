@@ -4,15 +4,31 @@ namespace App\Exports;
 
 use App\PairedResult;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\Exportable;
 
-class PairedResultsExport implements FromCollection
+class PairedResultsExport implements FromCollection, WithHeadings
 {
-    /**
-    * @return \Illuminate\Support\Collection
-    */
+    use Exportable;
+
+    public $data;
+
+    public function __construct($data)
+    {
+        $this->data = $data;
+    }
+
     public function collection()
     {
-        return PairedResult::all();
-        // return \App\ExperimentResult::find($id)->paired_results;
+        return collect($this->data);
+    }
+
+    public function headings(): array
+    {
+        return [
+            'left image',
+            'right image',
+            'selected image',
+        ];
     }
 }

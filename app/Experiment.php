@@ -29,9 +29,4 @@ class Experiment extends Model
         'white_point_room',
         'ambient_illumination'
     ];
-
-    public function results ()
-    {
-        return $this->hasMany('App\Result');
-    }
 }

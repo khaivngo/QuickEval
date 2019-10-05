@@ -22,25 +22,39 @@ class ExperimentResultsController extends Controller
       }
     }
 
-    public function destroy (Request $request, Experiment $experiment) {
-      // $results = $request->results;
+    public function destroy ($id) {
+      // check that scientist owns experiment
 
-      $userResults = auth()->user()->results->map(function ($result) {
+      $results = \App\ExperimentResult::where('experiment_id', $id)->get();
+
+      $experiment_results = $results->map(function ($result) {
         return $result->id;
       });
 
-      $valid = collect($results)->every(function ($value, $key) use ($userResultIds) {
-        return $userResultIds->contains($value);
-      });
+      \App\ExperimentResult::destroy($experiment_results);
 
-      if (!$valid) {
-        return response()->json('Unauthorized', 401);
-      }
-
-      Result::destroy($request->results);
-
-      return response()->json('Deleted', 200);
+      return response()->json('deleted', 200);
     }
+
+    // public function destroy (Request $request, Experiment $experiment) {
+    //   // $results = $request->results;
+
+    //   $userResults = auth()->user()->results->map(function ($result) {
+    //     return $result->id;
+    //   });
+
+    //   $valid = collect($results)->every(function ($value, $key) use ($userResultIds) {
+    //     return $userResultIds->contains($value);
+    //   });
+
+    //   if (!$valid) {
+    //     return response()->json('Unauthorized', 401);
+    //   }
+
+    //   Result::destroy($request->results);
+
+    //   return response()->json('Deleted', 200);
+    // }
 
     public function fetch ($id) {
       return \App\ExperimentResult

@@ -79,7 +79,11 @@
                       class="mt-3"
                       v-model.trim="form.longDescription"
                       label="Long Description - (optional)"
-                    ></v-textarea>
+                    >
+                      <template v-slot:label>
+                        Long Description -<span class="caption"> (optional)</span>
+                      </template>
+                    </v-textarea>
                   </v-flex>
                   <v-flex shrink>
                     <v-tooltip top>
@@ -458,7 +462,7 @@ export default {
         this.loaders.storing = false
         this.loaders.saving = false
 
-        this.$router.push('/scientist/experiment/experiments')
+        this.$router.push('/scientist/experiments')
         // }
       }).catch(() => {
         this.loaders.storing = false
