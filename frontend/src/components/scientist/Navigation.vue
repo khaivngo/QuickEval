@@ -16,7 +16,7 @@
           @click="$router.push(item.url)"
         >
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title class="body-1">
               {{ item.title }}
             </v-list-tile-title>
           </v-list-tile-content>

@@ -15,6 +15,19 @@ class CreateTripletResultsTable extends Migration
     {
         Schema::create('triplet_results', function (Blueprint $table) {
             $table->bigIncrements('id');
+
+            $table->integer('experiment_result_id')->nullable();
+
+            $table->string('category_id_left');
+            $table->string('category_id_middle');
+            $table->string('category_id_right');
+
+            $table->integer('picture_id_left');
+            $table->integer('picture_id_middle');
+            $table->integer('picture_id_right');
+
+            $table->tinyInteger('chose_none')->nullable();
+
             $table->timestamps();
         });
     }

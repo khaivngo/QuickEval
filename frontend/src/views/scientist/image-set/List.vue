@@ -42,10 +42,15 @@
       hide-actions
       :loading="loading"
     >
-      <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
+      <!-- <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear> -->
+      <template v-slot:no-data>
+        <div class="caption text-xs-center" v-if="loading === false">
+          You have no image sets.
+        </div>
+      </template>
       <template v-slot:items="props">
         <td>
-          <router-link :to="`/scientist/image-sets/view/${props.item.id}`">
+          <router-link :to="`/scientist/image-sets/view/${props.item.id}`" class="qe-title-link">
             {{ props.item.title }}
           </router-link>
         </td>

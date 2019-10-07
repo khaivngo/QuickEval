@@ -53,94 +53,76 @@
     </v-toolbar>
 
     <v-layout mt-4 mb-1 ml-3 mr-3 pa-0 justify-center align-center>
+      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
+        <v-layout pa-0 ma-0 justify-center>
+          <div class="pl-2 pr-2 category-select">
+            <v-select
+              v-model="selectedCategory"
+              :items="categories"
+              menu-props="auto"
+              label="Select category"
+              item-text="title"
+              item-value="id"
+              hide-details
+              single-line
+              class="ma-0 pt-0"
+            ></v-select>
+          </div>
+        </v-layout>
+      </v-flex>
+
       <v-flex ml-2 mr-2 xs6 class="text-xs-center" v-if="experiment.show_original === 1">
         <h4 class="subheading font-weight-regular">Original</h4>
-      </v-flex>
-
-      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center>
-          <div class="pl-2 pr-2 category-select">
-            <v-select
-              v-model="selectedCategoryLeft"
-              :items="categories"
-              menu-props="auto"
-              label="Select category"
-              item-text="title"
-              item-value="id"
-              hide-details
-              single-line
-              class="ma-0 pt-0"
-            ></v-select>
-          </div>
-        </v-layout>
-      </v-flex>
-
-      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center>
-          <div class="pl-2 pr-2 category-select">
-            <v-select
-              v-model="selectedCategoryMiddle"
-              :items="categories"
-              menu-props="auto"
-              label="Select category"
-              item-text="title"
-              item-value="id"
-              hide-details
-              single-line
-              class="ma-0 pt-0"
-            ></v-select>
-          </div>
-        </v-layout>
-      </v-flex>
-
-      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center>
-          <div class="pl-2 pr-2 category-select">
-            <v-select
-              v-model="selectedCategoryRight"
-              :items="categories"
-              menu-props="auto"
-              label="Select category"
-              item-text="title"
-              item-value="id"
-              hide-details
-              single-line
-              class="ma-0 pt-0"
-            ></v-select>
-          </div>
-        </v-layout>
       </v-flex>
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
-      <v-flex xs3 ma-2 class="picture-container" v-if="experiment.show_original === 1">
+      <v-flex
+        class="picture-container"
+        xs6 ma-2
+      >
         <div class="panzoom">
-          <img id="picture-original" class="picture" :src="imageLeft"/> <!-- originalImage -->
+          <img id="picture-left" class="picture" :src="leftImage"/>
         </div>
       </v-flex>
 
-      <v-flex xs3 ma-2 class="picture-container">
+      <v-flex xs6 ma-2 class="picture-container" v-if="experiment.show_original === 1">
         <div class="panzoom">
-          <img id="picture-left" class="picture" :src="imageLeft"/>
+          <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
       </v-flex>
 
-      <v-flex xs3 ma-2 class="picture-container">
+      <!-- <v-flex
+        class="picture-container"
+        :class="rightReproductionActive ? 'selected' : ''"
+        @click="toggleSelected('right')"
+        xs4 ma-2
+      >
         <div class="panzoom">
-          <img id="picture-right" class="picture" :src="imageMiddle"/>
+          <img id="picture-right" class="picture" :src="rightImage"/>
         </div>
-      </v-flex>
-
-      <v-flex xs3 ma-2 class="picture-container">
-        <div class="panzoom">
-          <img id="picture-right" class="picture" :src="imageRight"/>
-        </div>
-      </v-flex>
+      </v-flex> -->
     </v-layout>
+
+    <!-- <div style="position: fixed; bottom: 2%; left: 1.4%; right: 50.9%;"> -->
+      <!-- <v-pagination
+        :length="6"
+      ></v-pagination> -->
+      <!-- <v-tabs color="rgb(195, 195, 195)" show-arrows style="border-radius: 2px;">
+        <v-tabs-slider color="#000"></v-tabs-slider>
+        <v-tab
+          v-for="(item, i) in ['good', 'best', 'very long criteria', 'unsure', 'I\'ve seen better', 'another critera with long text', 'excellent', 'terrible', 'terrific', 'perfect']"
+          :key="i"
+          :href="'#tab-' + i"
+        >
+          <span style="color: #000;">{{ item }}</span>
+        </v-tab>
+      </v-tabs> -->
+    <!-- </div> -->
 
     <v-btn fixed bottom right color="#D9D9D9"
       @click="next()"
-      :disabled="disableNextBtn || (selectedCategoryLeft === null || selectedCategoryMiddle === null || selectedCategoryRight === null)"
+      :disabled="disableNextBtn || (selectedCategory === null)"
       :loading="disableNextBtn"
     >
       <span class="ml-1">next</span>
@@ -174,7 +156,7 @@
 
 <script>
 export default {
-  name: 'triplet-experiment-view',
+  name: 'category-experiment-view',
 
   data () {
     return {
@@ -187,10 +169,6 @@ export default {
         show_original: 1
       },
 
-      selectedCategoryLeft: null,
-      selectedCategoryMiddle: null,
-      selectedCategoryRight: null,
-
       stimuli: [],
 
       index: 0,
@@ -201,6 +179,7 @@ export default {
         { id: 4, title: 'Good' },
         { id: 21, title: 'Excellent' }
       ],
+      selectedCategory: null,
 
       disableNextBtn: false,
 
@@ -211,9 +190,8 @@ export default {
       instructionText: '',
 
       originalImage: '',
-      imageLeft: '',
-      imageMiddle: '',
-      imageRight: ''
+      leftImage: '',
+      rightImage: ''
     }
   },
 
@@ -245,8 +223,6 @@ export default {
           if (localStorage.getItem('index') === null) {
             localStorage.setItem('index', 0)
           }
-
-          // GET CATEGORIES
 
           this.index = Number(localStorage.getItem('index'))
           this.experimentResult = Number(localStorage.getItem('experimentResult'))
@@ -281,33 +257,23 @@ export default {
 
         /* set left reproduction image */
         this.getImage(this.stimuli[this.index].picture_id).then(image => {
-          this.imageLeft = this.$UPLOADS_FOLDER + image.data.path
+          this.leftImage = this.$UPLOADS_FOLDER + image.data.path
         })
 
-        this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
-          this.imageMiddle = this.$UPLOADS_FOLDER + image.data.path
-        })
-
-        this.getImage(this.stimuli[this.index + 2].picture_id).then(image => {
-          this.imageRight = this.$UPLOADS_FOLDER + image.data.path
-        })
-
-        /* don't do anything unless all categories has been selected */
-        if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
+        /* don't do anything unless category has been selected */
+        if (this.selectedCategory !== null) {
           this.disableNextBtn = true
 
           // TODO: HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
 
-          this.store(this.stimuli[this.index], this.stimuli[this.index + 1], this.stimuli[this.index + 2]).then(response => {
+          this.store(this.stimuli[this.index]).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
             }
 
             this.disableNextBtn = false
-            this.selectedCategoryLeft = null
-            this.selectedCategoryMiddle = null
-            this.selectedCategoryRight = null
-            this.index += 2
+            this.selectedCategory = null
+            this.index += 1
             // localStorage.setItem('index', this.index)
           }).catch(() => {
             this.disableNextBtn = false
@@ -317,7 +283,7 @@ export default {
         this.instructionText = this.stimuli[this.index].description
         this.iDialog = true
 
-        this.index += 2
+        this.index += 1
         // localStorage.setItem('index', this.index)
 
         this.next()
@@ -332,21 +298,15 @@ export default {
       return this.$axios.get(`/picture/${id}`)
     },
 
-    async store (pictureIdLeft, pictureIdMiddle, pictureIdRight) {
-      /* eslint-disable */
+    async store (pictureIdLeft) {
       let data = {
         experiment_result_id: this.experimentResult,
-        category_id_left:     this.selectedCategoryLeft,
-        category_id_middle:   this.selectedCategoryMiddle,
-        category_id_right:    this.selectedCategoryRight,
-        picture_id_left:      pictureIdLeft.picture_id,
-        picture_id_middle:    pictureIdMiddle.picture_id,
-        picture_id_right:     pictureIdRight.picture_id,
+        category_id: this.selectedCategory,
+        picture_id_left: pictureIdLeft.picture_id,
         chose_none: 0
       }
-      /* eslint-enable */
 
-      return this.$axios.post('/triplet-result', data)
+      return this.$axios.post('/category-result', data)
     },
 
     onFinish () {

@@ -54,7 +54,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get( '/paired-result/{id}',          'PairedResultsController@index');
     // Route::get( '/paired-result/{id}/export',   'PairedResultsController@index_export');
     // Route::get( '/paired-result/export',        'PairedResultsController@export');
+
     Route::post('/paired-result',               'PairedResultsController@store');
+    Route::post('/category-result',             'CategoryResultsController@store');
+    Route::post('/triplet-result',              'TripletResultsController@store');
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');

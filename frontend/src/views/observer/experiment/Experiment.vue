@@ -52,11 +52,11 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout mt-3 justify-center v-if="showOriginal">
+    <v-layout mt-3 justify-center v-if="experiment.show_original === 1">
       <h4 class="subheading font-weight-regular">Original</h4>
     </v-layout>
 
-    <v-layout ml-3 mr-3 pa-0 style="height: 85vh;">
+    <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
       <v-flex
         class="picture-container"
         :class="leftReproductionActive ? 'selected' : ''"
@@ -68,7 +68,7 @@
         </div>
       </v-flex>
 
-      <v-flex xs4 ma-2 class="picture-container" v-if="showOriginal">
+      <v-flex xs4 ma-2 class="picture-container" v-if="experiment.show_original === 1">
         <div class="panzoom">
           <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
@@ -137,7 +137,6 @@ export default {
 
       stimuli: [],
 
-      showOriginal: true,
       index: 0,
       experimentResult: null,
 

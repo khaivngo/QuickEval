@@ -92,7 +92,7 @@
 
                <v-layout mt-4>
                 <v-flex>
-                  <v-btn @click="startExperiment(selected.id)" color="success" :loading="prefetch">
+                  <v-btn @click="startExperiment(selected)" color="success" :loading="prefetch">
                     Start experiment
                   </v-btn>
                 </v-flex>
@@ -163,10 +163,10 @@ export default {
       return this.$axios.post('/experiment-observer-meta-result', this.observerInputs)
     },
 
-    async startExperiment (experimentId) {
+    async startExperiment (selected) {
       this.prefetch = true
 
-      const experimentResult = await this.$axios.post('/experiment-result/create', { experimentId: experimentId })
+      const experimentResult = await this.$axios.post('/experiment-result/create', { experimentId: selected.id })
       localStorage.setItem('experimentResult', experimentResult.data.id)
 
       if (experimentResult.data) {
@@ -175,7 +175,17 @@ export default {
         }
 
         this.prefetch = false
-        this.$router.push(`/experiment/${experimentId}`)
+
+        switch (selected.experiment_type_id) {
+          case 1:
+            this.$router.push(`/experiment/${selected.id}`)
+            break
+          case 2:
+            this.$router.push(`/experiment/category/${selected.id}`)
+            break
+          default:
+            alert('Something went wrong.')
+        }
       }
     }
   }

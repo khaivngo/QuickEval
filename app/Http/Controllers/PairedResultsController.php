@@ -61,7 +61,7 @@ class PairedResultsController extends Controller
         array_push($data, $arr);
       }
 
-      $file_ext = 'csv';
+      $file_ext = 'xlsx';
       // TODO: pre/append user_id or created_at to filename
       $filename = 'results.' . $file_ext;
 
@@ -88,9 +88,7 @@ class PairedResultsController extends Controller
         }
       }
 
-      // return response($data, 200);
-
-      $file_ext = 'csv';
+      $file_ext = 'xlsx';
       // TODO: pre/append user_id or created_at to filename
       $filename = 'results.' . $file_ext;
 

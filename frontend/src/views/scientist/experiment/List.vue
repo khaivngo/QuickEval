@@ -26,19 +26,29 @@
       :loading="loading"
     >
       <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
+      <template v-slot:no-data>
+        <div class="caption text-xs-center" v-if="loading === false">
+          You have no experiments.
+        </div>
+      </template>
       <template v-slot:items="props">
-        <td>
-          <router-link :to="`/scientist/experiments/view/${props.item.id}`" class="experiment-link">
-            {{ props.item.title }}
-          </router-link>
+        <td align="left">
+          <div class="qe-experiment-link-container">
+            <v-icon left>bar_chart</v-icon>
+            <router-link :to="`/scientist/experiments/view/${props.item.id}`">
+              {{ props.item.title }}
+            </router-link>
+          </div>
         </td>
-        <td class="public-switch text-xs-right">
-          <v-switch
-            class="ma-0 pa-0"
-            v-model="props.item.is_public"
-            color="success"
-            @change="visibility(props.item)"
-          ></v-switch>
+        <td align="right" class="public-switch text-xs-right">
+          <v-layout justify-center>
+            <v-switch
+              class="ma-0 pa-0"
+              v-model="props.item.is_public"
+              color="success"
+              @change="visibility(props.item)"
+            ></v-switch>
+          </v-layout>
         </td>
         <td align="right">
           <!-- <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
@@ -136,7 +146,7 @@ export default {
   }
 
   /*  */
-  .experiment-link {
+  .qe-experiment-link-container {
     display: flex;
     align-items: center;
     height: 100%;

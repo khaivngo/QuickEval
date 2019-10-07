@@ -9,11 +9,17 @@
     <v-card>
       <!-- <v-container> -->
       <v-data-table
+        :loading="loadingRequests"
         :headers="headers"
         :items="requests"
         :hide-actions="true"
         no-data-text=""
       >
+        <template v-slot:no-data>
+          <div class="caption text-xs-center" v-if="loadingRequests === false">
+            Currently no requests pending.
+          </div>
+        </template>
         <template v-slot:items="props">
           <td>{{ props.item.name }}</td>
           <td>{{ props.item.email }}</td>
@@ -62,13 +68,16 @@ export default {
 
       requests: [],
 
-      loading: false
+      loading: false,
+      loadingRequests: false
     }
   },
 
   created () {
+    this.loadingRequests = true
     this.$axios.get(`/scientist-request`).then(response => {
       this.requests = response.data
+      this.loadingRequests = false
     })
   },
 

@@ -18,7 +18,7 @@ class CreateCategoryResultsTable extends Migration
 
             $table->integer('experiment_result_id')->nullable();
 
-            $table->integer('picture_order_id');
+            $table->integer('picture_id_left');
             $table->integer('category_id');
 
             $table->tinyInteger('chose_none')->nullable();

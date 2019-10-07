@@ -64,6 +64,18 @@ export default new VueRouter({
       name: 'Experiment Mode'
     },
 
+    {
+      path: '/experiment/category/:id',
+      component: loadView('observer/experiment/CategoryJudgment'),
+      name: 'Category Experiment Mode'
+    },
+
+    {
+      path: '/experiment/triplet/:id',
+      component: loadView('observer/experiment/TripletComparison'),
+      name: 'Triplet Comparison Experiment Mode'
+    },
+
     /* catch all non-existing routes */
     {
       path: '*',

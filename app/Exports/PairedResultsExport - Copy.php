@@ -48,8 +48,8 @@ class PairedResultsExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'left',
-            'right',
+            'left image',
+            'right image',
             'selected image',
         ];
     }

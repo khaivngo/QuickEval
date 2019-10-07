@@ -1,6 +1,11 @@
 <template>
   <v-app>
-    <MainNavigation v-if="$route.name !== 'Experiment Mode'" :user="user"/>
+    <MainNavigation
+      v-if="$route.name !== 'Experiment Mode' &&
+      $route.name !== 'Category Experiment Mode' &&
+      $route.name !== 'Triplet Comparison Experiment Mode'"
+      :user="user"
+    />
 
     <!-- <v-breadcrumbs :items="[
       {
