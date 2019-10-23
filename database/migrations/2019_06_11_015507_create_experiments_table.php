@@ -25,6 +25,8 @@ class CreateExperimentsTable extends Migration
             $table->string('short_description')->nullable();
             $table->text('long_description')->nullable();
 
+            $table->integer('piture_sequence_algorithm')->nullable();
+
             $table->tinyInteger('is_public')->default(0);
             $table->tinyInteger('allow_colour_blind')->nullable();
             $table->tinyInteger('timer')->nullable();

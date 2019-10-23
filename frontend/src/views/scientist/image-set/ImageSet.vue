@@ -7,37 +7,83 @@
     </v-layout>
 
     <v-card>
-      <v-container class="ma-0 pa-2" style="border-bottom: 1px solid #ccc;">
-        <v-layout align-center justify-space-between>
-          <v-btn outline fab small @click="$router.back()">
-            <v-icon>arrow_back</v-icon>
-          </v-btn>
+      <Back>Back to all image sets</Back>
 
-          <v-btn class="success" :to="`/scientist/image-sets/${imageSetId}/file-upload`">
-            Add Files
-          </v-btn>
-        </v-layout>
-      </v-container>
-      <v-layout pa-5 wrap>
+      <v-layout justify-end pr-4 pt-2 pb-2>
+        <v-btn class="success" :to="`/scientist/image-sets/${imageSetId}/file-upload`">
+          Add Files
+        </v-btn>
+      </v-layout>
+
+      <v-layout pl-4 pr-4 pb-4 wrap>
         <v-flex
           v-for="(image, i) in images" :key="i"
           xs6 sm3 md3 lg3 xl3
           pa-1
         >
-          <h3 class="title">
-            <template v-if="image.is_original === 1">Original</template>
-            <template v-else>&nbsp;</template>
-          </h3>
-          <div>
+          <div class="qe-actions">
+            <h3 class="title font-weight-regular ml-1 pt-1 pb-1">
+              <template v-if="image.is_original === 1">Original</template>
+              <template v-else>&nbsp;</template>
+            </h3>
+
             <v-icon @click="deleteImage(image.id, i)">
               delete
             </v-icon>
           </div>
-          <v-img :src="$UPLOADS_FOLDER + image.path"></v-img>
+
+          <v-img
+            :src="$UPLOADS_FOLDER + image.path"
+            aspect-ratio="1"
+            class="grey lighten-2"
+          >
+            <template v-slot:placeholder>
+              <v-layout
+                fill-height
+                align-center
+                justify-center
+                ma-0
+              >
+                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+              </v-layout>
+            </template>
+          </v-img>
+
           <h5 class="subheading qe-image-name mt-2 mb-2">
             {{ image.name }}
           </h5>
         </v-flex>
+
+        <!-- <v-container grid-list-sm fluid>
+          <v-layout row wrap>
+            <v-flex
+              v-for="(image, i) in images"
+              :key="i"
+              xs4
+              d-flex
+            >
+              <v-card flat tile class="d-flex">
+                <v-img
+                  :src="$UPLOADS_FOLDER + image.path"
+                  aspect-ratio="1"
+                  class="grey lighten-2"
+                >
+                  <template v-slot:placeholder>
+                    <v-layout
+                      fill-height
+                      align-center
+                      justify-center
+                      ma-0
+                    >
+                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                    </v-layout>
+                  </template>
+                </v-img>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container> -->
+
       </v-layout>
     </v-card>
   </div>
@@ -45,8 +91,13 @@
 
 <script>
 import EventBus from '@/eventBus'
+import Back from '@/components/Back'
 
 export default {
+  components: {
+    Back
+  },
+
   data () {
     return {
       imageSetId: null,
@@ -83,5 +134,15 @@ export default {
 <style scoped lang="css">
   .qe-image-name {
     word-wrap: break-word;
+  }
+
+  .qe-actions {
+    /*border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-top: 1px solid #ddd;*/
+    display: flex;
+    background-color: #efefef;
+    padding: 4px;
+    justify-content: space-between;
   }
 </style>

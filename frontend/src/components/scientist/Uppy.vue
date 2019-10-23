@@ -83,9 +83,6 @@ export default {
     })
 
     this.uppy.on('complete', (result) => {
-      console.log('Upload complete! We’ve uploaded these files: ', result.successful)
-      console.log(result)
-
       // show toast and/or redirect
       // disable name when clicking upload
       // emit event

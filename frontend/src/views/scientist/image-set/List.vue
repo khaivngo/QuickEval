@@ -10,7 +10,7 @@
       <v-layout align-center>
         <v-text-field
           v-model="newImageSet.name"
-          label="Name"
+          label="Title"
         ></v-text-field>
 
         <v-btn

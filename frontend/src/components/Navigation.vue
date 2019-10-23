@@ -11,19 +11,19 @@
     <!-- class="hidden-sm-and-down" -->
     <v-toolbar-items v-if="user.role > 0">
       <v-btn to="/observer" dark flat class="text-none">
-        <span class="mr-2">Observer Mode</span>
+        <span class="mr-2 font-weight-regular">Observer Mode</span>
       </v-btn>
     </v-toolbar-items>
 
     <v-toolbar-items v-if="user.role > 1">
-      <v-btn to="/scientist/dashboard" dark flat class="text-none">
-        <span class="mr-2">Scientist Mode</span>
+      <v-btn to="/scientist" dark flat class="text-none">
+        <span class="mr-2 font-weight-regular">Scientist Mode</span>
       </v-btn>
     </v-toolbar-items>
 
     <v-toolbar-items v-if="user.role > 2">
-      <v-btn to="/admin/scientist-role-requests" dark flat class="text-none">
-        <span class="mr-2">Admin Mode</span>
+      <v-btn to="/admin" dark flat class="text-none">
+        <span class="mr-2 font-weight-regular">Admin Mode</span>
       </v-btn>
     </v-toolbar-items>
 
@@ -37,7 +37,7 @@
         href="https://github.com/khaivngo/QuickEval/issues"
         target="_blank"
       >
-        <span class="mr-2">Report issues</span>
+        <span class="mr-2 font-weight-regular">Report issues</span>
         <v-icon small>open_in_new</v-icon>
       </v-btn>
     </v-toolbar-items>
@@ -64,15 +64,6 @@ export default {
     }
   },
 
-  // data () {
-  //   return {
-  //     user: {
-  //       id: 0,
-  //       role: 0
-  //     }
-  //   }
-  // },
-
   components: {
     Logout
   }
@@ -80,6 +71,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+  .router-link-active {
+    color: #000;
+    background: darken(#2196F3, 20%);
+  }
   .main__nav a {
     padding: 10px;
     text-decoration: none;

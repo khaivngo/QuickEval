@@ -1,15 +1,16 @@
 <template>
   <div>
     <v-container mt-3>
-      <v-layout wrap justify-center>
-        <v-flex shrink class="mr-5">
+      <v-layout>
+        <v-flex shrink mr-3 mt-5 mb-5>
           <Navigation/>
         </v-flex>
-        <v-flex grow xl5 md8 sm12 xs12>
+        <v-flex grow mt-2 ml-5 mr-5>
           <!-- <transition
             mode="out-in"
-            appear name="custom-classes-transition"
-            enter-active-class="animated fadeIn"
+            appear
+            name="custom-classes-transition"
+            enter-active-class="animated slideInLeft"
           > -->
           <router-view/>
           <!-- </transition> -->

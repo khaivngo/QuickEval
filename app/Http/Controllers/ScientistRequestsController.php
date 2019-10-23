@@ -11,18 +11,20 @@ class ScientistRequestsController extends Controller
 {
   public function index ()
   {
-    // if (auth()->user()->role != 3) {
-    //   return response()->json('Unauthorized', 401);
-    // }
+    if (auth()->user()->role != 3) {
+      return response()->json('Unauthorized', 401);
+    }
 
-    return response([], 200);
+    $requests = \App\ScientistRequest
+      ::where('accepted', 0)
+      ->get();
 
-    // $email = \App\ScientistRequest::find(1)->user;
-    // return response($email, 200);
+    $all = [];
+    foreach ($requests as $request) {
+      array_push($all, $request->user);
+    }
 
-    // return \App\ScientistRequest
-    //   ::where('accepted', 0)
-    //   ->get();
+    return response($all, 200);
   }
 
   public function accept ($id)

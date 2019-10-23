@@ -7,13 +7,7 @@
     </v-layout>
 
     <v-card>
-      <v-container class="ma-0 pa-2" style="border-bottom: 1px solid #ccc;">
-        <v-layout align-center>
-          <v-btn outline fab small @click="$router.back()">
-            <v-icon>arrow_back</v-icon>
-          </v-btn>
-        </v-layout>
-      </v-container>
+      <Back>Back to image set</Back>
 
       <!-- <v-layout mt-2>
         <v-text-field
@@ -54,6 +48,12 @@
         <div>
           <Uppy :imagesetid="imageSet.imageSetId"/>
         </div>
+
+        <v-layout mt-5 justify-end>
+          <v-btn class="success" @click="$router.back()">
+            Done
+          </v-btn>
+        </v-layout>
       </div>
     </v-card>
   </div>
@@ -62,11 +62,13 @@
 <script>
 import UppyOriginal from '@/components/scientist/UppyOriginal'
 import Uppy from '@/components/scientist/Uppy'
+import Back from '@/components/Back'
 
 export default {
   components: {
     UppyOriginal,
-    Uppy
+    Uppy,
+    Back
   },
 
   data () {

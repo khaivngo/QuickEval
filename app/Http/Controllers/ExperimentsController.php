@@ -32,11 +32,20 @@ class ExperimentsController extends Controller
       return Experiment::find($request->id);
     }
 
+    public function find_public (Request $request) {
+      return Experiment::where([
+        ['id', $request->id],
+        ['is_public', 1]
+      ])->get();
+    }
+
     public function observer_metas (Request $request) {
       $metas = DB::table('experiment_observer_metas')
         ->join('observer_metas', 'observer_metas.id', '=', 'experiment_observer_metas.observer_meta_id')
         ->where('experiment_observer_metas.experiment_id', $request->id)
         ->get();
+
+      // ExperimentObserverMetas::find($id)->observer_meta;
 
       return $metas;
     }
@@ -95,21 +104,51 @@ class ExperimentsController extends Controller
             }
           }
 
+          if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
+          {
+            foreach ($request->categories as $category)
+            {
+              if ($category['type'] == 'category') {
+                $cat = \App\Category::create([
+                  'user_id' => auth()->user()->id,
+                  'title'   => $category['value']
+                ]);
+
+                \App\ExperimentCategory::create([
+                  'experiment_id' => $experiment->id,
+                  'category_id'   => $cat->id
+                ]);
+              }
+
+              if ($category['type'] == 'categoryFromHistory') {
+                \App\ExperimentCategory::create([
+                  'experiment_id' => $experiment->id,
+                  'category_id'   => $category['value']
+                ]);
+              }
+            }
+          }
+
+
           foreach ($request->sequences as $step)
           {
-            if ($step['type'] === 'imageSet')
+            if ($step['type'] === 'imageSet') // TODO: check that the user owns the image set
             {
-              if ($request->algorithm === 'Random Queue') // save algo in experiment table and use $experiment->algorithm instead?
+              # random within image set
+              if ($request->algorithm === 1) // save algo in experiment table and use $experiment->algorithm instead?
               {
                 if ($experiment->experiment_type_id == 1)
                 {
-                  $picture_queue_id = $this->random_queue(
-                    $step['type'],
-                    $experiment->same_pair,
-                    $step['value']
+                  $picture_queue_id = $this->random_paired_queue(
+                    $step['value'],
+                    $experiment->same_pair
                   );
                 }
-                else # Category Rating
+                else if ($experiment->experiment_type_id == 5)
+                {
+                  $picture_queue_id = $this->random_triplet_queue( $step['value'] );
+                }
+                else
                 {
                   $picture_queue_id = $this->make_category_queue( $step['value'] );
                 }
@@ -160,15 +199,52 @@ class ExperimentsController extends Controller
     /**
      * 
      */
-    protected function random_queue ($type, $twice, $imageSetId) {
+    protected function random_triplet_queue ($imageSetId)
+    {
       $images = \App\Picture::where([
         ['picture_set_id', $imageSetId],
         ['is_original', 0]
       ])->get();
 
-      // $algorithm = new \App\Classes\Algorithms();
-      // $algorithm->make_queue($images, $twice);
-      $pairs = $this->make_queue($images, $twice);
+      $TripletComparison = new \App\Classes\TripletComparison();
+      $triplets = $TripletComparison->make_queue($images);
+
+      $picture_queue = \App\PictureQueue::create([
+        'title' => NULL
+      ]);
+
+      # construct an array of all picture sequences
+      $order = 0;
+      $queries = [];
+      foreach ($triplets as $triplet) {
+        array_push(
+          $queries,
+          array('picture_order' => $order, 'picture_id' => $triplet[0], 'picture_queue_id' => $picture_queue->id),
+          array('picture_order' => $order, 'picture_id' => $triplet[1], 'picture_queue_id' => $picture_queue->id),
+          array('picture_order' => $order, 'picture_id' => $triplet[2], 'picture_queue_id' => $picture_queue->id)
+        );
+
+        $order++;
+      }
+
+      \App\PictureSequence::insert($queries);
+
+      return $picture_queue->id;
+    }
+
+    /**
+     * 
+     */
+    protected function random_paired_queue ($imageSetId, $twice)
+    {
+      $images = \App\Picture::where([
+        ['picture_set_id', $imageSetId],
+        ['is_original', 0]
+      ])->get();
+
+      $PairedComparison = new \App\Classes\PairedComparison();
+      $pairs = $PairedComparison->make_queue($images, $twice);
+      // $pairs = $this->make_queue($images, $twice);
 
       $picture_queue = \App\PictureQueue::create([
         'title' => NULL
@@ -192,7 +268,11 @@ class ExperimentsController extends Controller
       return $picture_queue->id;
     }
 
-    protected function make_category_queue ($image_set_id) {
+    /**
+     *
+     */
+    protected function make_category_queue ($image_set_id)
+    {
       $picture_queue = \App\PictureQueue::create([
         'title' => NULL
       ]);
@@ -235,25 +315,11 @@ class ExperimentsController extends Controller
       return $experiment_sequence;
     }
 
-    public function update (Request $request, Experiment $experiment) {
-      if ($experiment->user_id !== auth()->user()->id) {
-        return response()->json('Unauthorized', 401);
-      }
-
-      $data = $request->validate([
-        'title' => 'required|string',
-        'experiment_type' => 'required'
-      ]);
-
-      $experiment->update($data);
-
-      return response($experiment, 200);
-    }
-
     /**
      * Set whether the experiment should be visible to the public or not.
      */
-    public function visibility (Request $request, Experiment $experiment) {
+    public function visibility (Request $request, Experiment $experiment)
+    {
       if ($experiment->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
       }
@@ -267,26 +333,13 @@ class ExperimentsController extends Controller
       return response($experiment, 200);
     }
 
-    public function destroy (Request $request, Experiment $experiment) {
-      if ($experiment->user_id !== auth()->user()->id) {
-        return response()->json('Unauthorized', 401);
-      }
-
-      $experiment->delete();
-
-      return response('deleted_experiment', 200);
-    }
-
-    /**
-     *
-     */
-    public function start ($id)
+    public function start (Experiment $experiment)
     {
       // $newOrExists = $this->start_results($id);
 
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-        ->where('experiment_queues.experiment_id', $id)
+        ->where('experiment_queues.experiment_id', $experiment->id)
         ->get(); // Add this?: ORDER BY experiment_sequences.id ASC;
 
       $all = [];
@@ -302,8 +355,15 @@ class ExperimentsController extends Controller
 
           # algorithm that shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different queue.
-          $Algorithms = new \App\Classes\Algorithms;
-          $result = $Algorithms->shuffle_the_cards($result);
+
+          // TODO: if $experiment->experiment_algorithm = random
+
+          if ($experiment->experiment_type_id == 1) {
+            $Algorithms = new \App\Classes\Algorithms;
+            $result = $Algorithms->shuffle_the_cards($result);
+          } else {
+            $result = $result->shuffle();
+          }
 
           # add a property to the first object in the sequence,
           # this will be used by the frontend to understand when to check for a original image
@@ -337,6 +397,30 @@ class ExperimentsController extends Controller
         }
       }
 
+      // return response($collection, 200);
+
+      # shuffle the order of image sets
+      // WARNING!!! THIS RANDOMIZES INSTRUCTIONS
+      // if (we have only 1 instruction) {
+        // if ($experiment->algorithm == 1) {
+        //   $flattened = $flattened->shuffle(); // do we need to re-assign?
+        // }
+      // }
+
+
+      // if picture_queue run until no more picture queue... shuffle that... run again
+
+      // if ($experiment->algorithm == 2) {
+      // $w = [];
+
+      // foreach ($all as $one) {
+      //   if ($one->picture_queue) {
+          
+      //   }
+      // }
+      // }
+      
+
       $collection = collect($all);
       $flattened = $collection->flatten();
 
@@ -346,7 +430,12 @@ class ExperimentsController extends Controller
     /**
      *
      */
-    public function start_results ($id) {
+    public function start_results ($id)
+    {
+      // replace with?
+      // Retrieve flight by name, or create it if it doesn't exist...
+      // $flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
+
       $experimentResult = \App\ExperimentResult::where([
         ['experiment_id', (int)$id],
         ['user_id', auth()->user()->id]
@@ -384,29 +473,29 @@ class ExperimentsController extends Controller
       return response($experimentResult, 200);
     }
 
-    /**
-     * Algorithm for generating a image experiment queue.
-     */
-    private function make_queue ($images, $imagesShownRightAndLeft) {
-      $pairs = [];
-      $index = 1;
-      $arrIndex = 0;
 
-      foreach ($images as $image) {
-        for ($i = $index; $i < count($images); $i++ ) {
-          $pairs[$arrIndex][0] = $image['id'];
-          $pairs[$arrIndex][1] = $images[$i]['id'];
-          if ($imagesShownRightAndLeft == 1) {
-            $arrIndex++;
-            $pairs[$arrIndex][0] = $images[$i]['id'];
-            $pairs[$arrIndex][1] = $image['id'];
-          }
-          $arrIndex++;
-        }
-        $index++;
+    public function update (Request $request, Experiment $experiment) {
+      if ($experiment->user_id !== auth()->user()->id) {
+        return response()->json('Unauthorized', 401);
       }
-      shuffle($pairs); # https://www.php.net/manual/en/function.shuffle.php
 
-      return $pairs;
+      $data = $request->validate([
+        'title' => 'required|string',
+        'experiment_type' => 'required'
+      ]);
+
+      $experiment->update($data);
+
+      return response($experiment, 200);
+    }
+
+    public function destroy (Request $request, Experiment $experiment) {
+      if ($experiment->user_id !== auth()->user()->id) {
+        return response()->json('Unauthorized', 401);
+      }
+
+      $experiment->delete();
+
+      return response('deleted_experiment', 200);
     }
 }

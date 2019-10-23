@@ -48,6 +48,7 @@ class PairedResultsController extends Controller
    */
   public function export_observer ($id)
   {
+      $experiment_results = \App\ExperimentResult::find($id);
       $paired_results = \App\ExperimentResult::find($id)->paired_results;
 
       // TODO: get rid of the loop
@@ -55,13 +56,14 @@ class PairedResultsController extends Controller
       foreach ($paired_results as $result)
       {
         $arr = [];
-        $arr['left'] = $result->picture_left->name;
-        $arr['right'] = $result->picture_right->name;
+        $arr['observer'] = $experiment_results->user_id;
+        $arr['left']     = $result->picture_left->name;
+        $arr['right']    = $result->picture_right->name;
         $arr['selected'] = $result->picture_selected->name;
         array_push($data, $arr);
       }
 
-      $file_ext = 'xlsx';
+      $file_ext = 'csv';
       // TODO: pre/append user_id or created_at to filename
       $filename = 'results.' . $file_ext;
 
@@ -76,19 +78,21 @@ class PairedResultsController extends Controller
     //   ->get();
 
       $paired_results = \App\ExperimentResult::where('experiment_id', $id)->get();
+      // return $paired_results;
 
       $data = [];
       foreach ($paired_results as $result) {
         foreach ($result->paired_results as $res) {
           $arr = [];
-          $arr['left'] = $res->picture_left->name;
-          $arr['right'] = $res->picture_right->name;
-          $arr['selected'] = $res->picture_selected->name;
+          $arr['observer']  = $result->user_id;
+          $arr['left']      = $res->picture_left->name;
+          $arr['right']     = $res->picture_right->name;
+          $arr['selected']  = $res->picture_selected->name;
           array_push($data, $arr);
         }
       }
 
-      $file_ext = 'xlsx';
+      $file_ext = 'csv';
       // TODO: pre/append user_id or created_at to filename
       $filename = 'results.' . $file_ext;
 

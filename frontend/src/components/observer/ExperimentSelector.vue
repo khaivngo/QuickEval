@@ -17,7 +17,7 @@
       </v-card-title> -->
 
       <v-layout justify-space-between>
-        <v-flex xs6 style="background-color: #F7F7F7">
+        <v-flex xs6 style="background-color: #F7F7F7;">
           <div class=" mr-2 ml-2 pt-3 pr-5 pl-4">
             <v-text-field
               v-model="searchTerm"
@@ -33,10 +33,10 @@
             :items="items"
             :load-children="fetchExperiments"
             :open.sync="open"
-            activatable
             active-class="font-weight-black"
-            open-on-click
             transition
+            activatable
+            open-on-click
             item-text="title"
           >
             <!-- active-class="primary--text font-weight-black" -->
@@ -108,20 +108,13 @@
 
 <script>
 export default {
-  created () {
-    this.$axios.get('/experiments/public').then((response) => {
-      this.experiments = response.data
-    })
-  },
-
   data: () => ({
+    active: [],
+    open: [1],
+
+    prefetch: false,
     experiments: [],
     observerInputs: [],
-    active: [],
-    open: [],
-    users: [],
-    prefetch: false,
-
     searchTerm: ''
   }),
 
@@ -129,6 +122,7 @@ export default {
     items () {
       return [
         {
+          id: 1,
           title: 'Experiments',
           children: this.experiments
         }
@@ -154,9 +148,19 @@ export default {
 
   methods: {
     async fetchExperiments (item) {
-      return this.$axios.get('/experiments/all-public')
-        .then(json => (item.children.push(json)))
-        .catch(err => console.warn(err))
+      // if the url contains an ID we fetch just that specific experiment
+      // this way the researcher can send a direct link to participants
+      if (this.$route.params.id !== undefined) {
+        return this.$axios.get('/experiment/' + this.$route.params.id).then((response) => {
+          this.experiments.push(response.data)
+
+          this.active.push(response.data.id)
+        })
+      } else {
+        return this.$axios.get('/experiments/public').then((response) => {
+          this.experiments = response.data
+        })
+      }
     },
 
     async saveObserverInputs () {
@@ -176,16 +180,8 @@ export default {
 
         this.prefetch = false
 
-        switch (selected.experiment_type_id) {
-          case 1:
-            this.$router.push(`/experiment/${selected.id}`)
-            break
-          case 2:
-            this.$router.push(`/experiment/category/${selected.id}`)
-            break
-          default:
-            alert('Something went wrong.')
-        }
+        // Onward!
+        this.$router.push(`/experiment/${selected.experiment_type_id}/${selected.id}`)
       }
     }
   }

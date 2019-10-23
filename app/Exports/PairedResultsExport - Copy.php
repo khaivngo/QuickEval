@@ -14,8 +14,7 @@ class PairedResultsExport implements FromCollection, WithHeadings
     use Exportable;
     public $data;
 
-    public function __construct($data)
-    {
+    public function __construct($data) {
         $this->data = $data;
     }
 
@@ -27,8 +26,7 @@ class PairedResultsExport implements FromCollection, WithHeadings
     //   return $this->data;
     // }
 
-    public function collection()
-    {
+    public function collection() {
         return collect($this->data);
     }
 
@@ -48,6 +46,7 @@ class PairedResultsExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
+            'observer',
             'left image',
             'right image',
             'selected image',

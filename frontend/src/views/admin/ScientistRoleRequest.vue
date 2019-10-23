@@ -31,7 +31,7 @@
               :loading="loading"
               :disabled="loading"
               color="success"
-              @click="accept(props.item.id)"
+              @click="accept(props.item.id, props.index)"
               small
             >
               Approve
@@ -40,8 +40,9 @@
             <v-btn
               :loading="loading"
               :disabled="loading"
-              @click="reject(props.item.id)"
+              @click="reject(props.item.id, props.index)"
               small
+              class="mr-0"
             >
               Decline
             </v-btn>
@@ -63,7 +64,7 @@ export default {
         { text: 'Institution', sortable: false, value: 'institution' },
         { text: 'Nationality', sortable: false, value: 'nationality' },
         // { text: 'When', sortable: false, value: 'when' },
-        { text: 'Actions', sortable: false, value: 'action' }
+        { text: 'Actions', sortable: false, value: 'action', align: 'right' }
       ],
 
       requests: [],
@@ -82,16 +83,14 @@ export default {
   },
 
   methods: {
-    accept (id) {
-      this.$axios.post(`/scientist-request/${id}/accept`).then(response => {
-        console.log(response)
-      })
+    async accept (id, index) {
+      await this.$axios.post(`/scientist-request/${id}/accept`)
+      this.requests.splice(index, 1)
     },
 
-    reject (id) {
-      this.$axios.post(`/scientist-request/${id}/reject`).then(response => {
-        console.log(response)
-      })
+    async reject (id, index) {
+      await this.$axios.post(`/scientist-request/${id}/reject`)
+      this.requests.splice(index, 1)
     }
   }
 }

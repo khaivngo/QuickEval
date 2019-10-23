@@ -1,6 +1,6 @@
 <template>
   <v-btn @click.prevent="logout" dark flat class="text-none" :loading="loggingOut">
-    <span class="mr-2">Logout</span>
+    <span class="mr-2 font-weight-regular">Sign out</span>
     <!-- <v-icon small>power_settings_new</v-icon> -->
     <v-icon small>logout</v-icon>
   </v-btn>

@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\PairedResult;
+use App\TripletResult;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 
-class PairedResultsExport implements FromCollection, WithHeadings
+class TripletResultsExport implements FromCollection, WithHeadings
 {
     use Exportable;
 
@@ -26,8 +26,11 @@ class PairedResultsExport implements FromCollection, WithHeadings
         return [
             'observer',
             'left image',
+            'middle image',
             'right image',
-            'selected image',
+            'left category ',
+            'middle category',
+            'right category',
         ];
     }
 }

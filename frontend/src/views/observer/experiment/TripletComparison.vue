@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="qe-wrapper" :style="'background-color: ' + bgColour">
+  <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar flat height="50" color="#282828">
       <v-toolbar-items>
         <v-dialog v-model="instructionsDialog" max-width="500">
@@ -113,25 +113,25 @@
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
-      <v-flex xs3 ma-2 class="picture-container" v-if="experiment.show_original === 1">
+      <v-flex ma-2 class="picture-container" v-if="experiment.show_original === 1">
         <div class="panzoom">
-          <img id="picture-original" class="picture" :src="imageLeft"/> <!-- originalImage -->
+          <img id="picture-original" class="picture" :src="imageLeft"/>
         </div>
       </v-flex>
 
-      <v-flex xs3 ma-2 class="picture-container">
+      <v-flex ma-2 class="picture-container">
         <div class="panzoom">
           <img id="picture-left" class="picture" :src="imageLeft"/>
         </div>
       </v-flex>
 
-      <v-flex xs3 ma-2 class="picture-container">
+      <v-flex ma-2 class="picture-container">
         <div class="panzoom">
           <img id="picture-right" class="picture" :src="imageMiddle"/>
         </div>
       </v-flex>
 
-      <v-flex xs3 ma-2 class="picture-container">
+      <v-flex ma-2 class="picture-container">
         <div class="panzoom">
           <img id="picture-right" class="picture" :src="imageRight"/>
         </div>
@@ -178,13 +178,13 @@ export default {
 
   data () {
     return {
-      bgColour: '#808080',
       distance: 20,
       instructionsText: 'Rate the images.',
 
       experiment: {
         id: null,
-        show_original: 1
+        show_original: 1,
+        background_colour: '808080'
       },
 
       selectedCategoryLeft: null,
@@ -197,9 +197,9 @@ export default {
       experimentResult: null,
 
       categories: [
-        { id: 3, title: 'Bad' },
-        { id: 4, title: 'Good' },
-        { id: 21, title: 'Excellent' }
+        // { id: 3, title: 'Bad' },
+        // { id: 4, title: 'Good' },
+        // { id: 21, title: 'Excellent' }
       ],
 
       disableNextBtn: false,
@@ -236,6 +236,10 @@ export default {
             $reset: $('.panning-reset')
           }).panzoom('zoom')
         })()
+      })
+
+      this.$axios.get(`/experiment/${this.experiment.id}/categories`).then((payload) => {
+        this.categories = payload.data
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {

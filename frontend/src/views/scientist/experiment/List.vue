@@ -34,7 +34,9 @@
       <template v-slot:items="props">
         <td align="left">
           <div class="qe-experiment-link-container">
-            <v-icon left>bar_chart</v-icon>
+            <!-- <v-icon left>show_chart</v-icon> -->
+            <!-- <v-icon left>bar_chart</v-icon> -->
+
             <router-link :to="`/scientist/experiments/view/${props.item.id}`">
               {{ props.item.title }}
             </router-link>
@@ -50,18 +52,33 @@
             ></v-switch>
           </v-layout>
         </td>
+        <td align="left">
+          <!-- <div class="qe-experiment-link-container"> -->
+          <InviteLink :experiment-id="props.item.id"/>
+          <!-- </div> -->
+        </td>
         <td align="right">
           <!-- <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
             <v-icon>bar_chart</v-icon>
           </v-btn> -->
 
-          <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
-            <v-icon>edit</v-icon>
-          </v-btn>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn :to="'/scientist/experiments/edit/' + props.item.id" flat icon v-on="on">
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </template>
+            <span>Edit</span>
+          </v-tooltip>
 
-          <v-btn flat icon @click="destroy(props.item, props.index)">
-            <v-icon>delete</v-icon>
-          </v-btn>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn flat icon @click="destroy(props.item, props.index)" v-on="on">
+                <v-icon>delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Delete</span>
+          </v-tooltip>
         </td>
       </template>
     </v-data-table>
@@ -70,13 +87,19 @@
 
 <script>
 import EventBus from '@/eventBus'
+import InviteLink from '@/components/scientist/InviteLink'
 
 export default {
+  components: {
+    InviteLink
+  },
+
   data () {
     return {
       headers: [
-        { text: 'Title', value: 'name', align: 'left' },
-        { text: 'Visible to the public', value: 'public' },
+        { text: 'Title', value: 'name', align: 'left', sortable: false },
+        { text: 'Visible to the public', value: 'public', sortable: false },
+        { text: 'Shareable link', value: 'invite', sortable: false },
         { text: 'Actions', value: 'edit', align: 'right', sortable: false }
       ],
 

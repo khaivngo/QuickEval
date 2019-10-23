@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="max-width: 900px;">
     <v-layout mb-5>
       <h2 class="display-1">
         Create Experiment
@@ -7,13 +7,8 @@
     </v-layout>
 
     <v-stepper v-model="currentLevel" alt-labels non-linear>
-      <!-- <v-container class="ma-0 pa-2" style="border-bottom: 1px solid #ccc;">
-        <v-layout align-center>
-          <v-btn outline fab small @click="$router.back()">
-            <v-icon>arrow_back</v-icon>
-          </v-btn>
-        </v-layout>
-      </v-container> -->
+      <Back>Back to your experiments</Back>
+
       <v-stepper-header class="elevation-0">
         <template v-for="(item, i) in steps">
           <v-stepper-step :step="i + 1" :key="i" editable>
@@ -31,125 +26,97 @@
         <v-stepper-content step="1">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[0].title }}</h2>
-            <v-form>
-              <v-flex xs12 sm12 md12 xl12>
-                <v-layout align-center>
-                  <v-flex grow>
-                    <v-text-field
-                      class="mt-3"
-                      v-model.trim="form.title"
-                      label="Experiment Name"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex shrink style="opacity: 0;">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon color="grey lighten-1">info</v-icon>
-                        </v-btn>
-                      </template>
-                      <span></span>
-                    </v-tooltip>
-                  </v-flex>
-                </v-layout>
 
-                <v-layout align-center>
-                  <v-flex grow>
-                    <v-text-field
-                      class="mt-3"
-                      v-model.trim="form.shortDescription"
-                      label="Short Description"
-                    ></v-text-field>
-                  </v-flex>
-                  <v-flex shrink>
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon color="grey lighten-1">help_outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Describe the essence of the experiment.</span>
-                    </v-tooltip>
-                  </v-flex>
-                </v-layout>
-
-                <v-layout align-center>
-                  <v-flex grow>
-                    <v-textarea
-                      class="mt-3"
-                      v-model.trim="form.longDescription"
-                      label="Long Description - (optional)"
-                    >
-                      <template v-slot:label>
-                        Long Description -<span class="caption"> (optional)</span>
-                      </template>
-                    </v-textarea>
-                  </v-flex>
-                  <v-flex shrink>
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon color="grey lighten-1">help_outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Describe what the experiment is all about.</span>
-                    </v-tooltip>
-                  </v-flex>
-                </v-layout>
-
-                <v-layout align-center>
-                  <v-flex grow>
-                    <v-select
-                      class="mt-3"
-                      v-model="form.experimentType"
-                      :items="experimentTypes"
-                      item-text="name"
-                      item-value="id"
-                      label="Experiment Type"
-                    ></v-select>
-                  </v-flex>
-                  <v-flex shrink style="opacity: 0;">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon color="grey lighten-1">info</v-icon>
-                        </v-btn>
-                      </template>
-                      <span></span>
-                    </v-tooltip>
-                  </v-flex>
-                </v-layout>
-
-                <v-layout align-center>
-                  <v-flex grow>
-                    <v-select
-                      class="mt-3"
-                      v-model="form.algorithm"
-                      :items="['Random Queue']"
-                      label="Algorithm"
-                      :disabled="true"
-                    ></v-select>
-                  </v-flex>
-                  <v-flex shrink style="opacity: 0;">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon color="grey lighten-1">info</v-icon>
-                        </v-btn>
-                      </template>
-                      <span></span>
-                    </v-tooltip>
-                  </v-flex>
-                </v-layout>
+            <v-layout align-center pr-5>
+              <v-flex>
+                <v-text-field
+                  class="mt-4"
+                  v-model.trim="form.title"
+                  label="Experiment Name"
+                ></v-text-field>
               </v-flex>
-            </v-form>
+            </v-layout>
+
+            <v-layout align-center>
+              <v-flex grow>
+                <v-text-field
+                  class="mt-4"
+                  v-model.trim="form.shortDescription"
+                  label="Short Description"
+                ></v-text-field>
+              </v-flex>
+              <v-flex shrink>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Describe the essence of the experiment.</span>
+                </v-tooltip>
+              </v-flex>
+            </v-layout>
+
+            <v-layout align-center>
+              <v-flex grow>
+                <v-textarea
+                  class="mt-4"
+                  v-model.trim="form.longDescription"
+                  label="Long Description - (optional)"
+                >
+                  <template v-slot:label>
+                    Long Description -<span class="caption"> (optional)</span>
+                  </template>
+                </v-textarea>
+              </v-flex>
+              <v-flex shrink>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Describe what the experiment is all about.</span>
+                </v-tooltip>
+              </v-flex>
+            </v-layout>
+
+            <v-layout align-center pr-5>
+              <v-flex>
+                <v-select
+                  class="mt-4"
+                  v-model="form.experimentType"
+                  :items="experimentTypes"
+                  item-text="name"
+                  item-value="id"
+                  label="Experiment Type"
+                ></v-select>
+              </v-flex>
+            </v-layout>
+
+            <v-layout align-center pr-5>
+              <v-flex>
+                <v-select
+                  class="mt-4"
+                  v-model="form.algorithm"
+                  :items="[
+                    { id: 1, text: 'Order of images within image sets' },
+                    { id: 2, text: 'Order of images within image sets AND order of the image sets' }
+                  ]"
+                  item-text="text"
+                  item-value="id"
+                  label="Randomization Algorithm"
+                ></v-select>
+              </v-flex>
+            </v-layout>
+
           </v-card>
         </v-stepper-content>
 
         <v-stepper-content step="2">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[1].title }}</h2>
-            <v-checkbox
+            <!-- <v-checkbox
               v-model="form.timer"
               color="success"
               :label="`Display timer for observer`"
@@ -159,7 +126,7 @@
               v-model="form.cvd"
               color="success"
               :label="`Allow observers with colour vision deficiencies (did not pass Ishihara test)`"
-            ></v-checkbox>
+            ></v-checkbox> -->
 
             <v-layout align-center>
               <v-flex shrink>
@@ -169,7 +136,7 @@
                   :label="`Display original image`"
                 ></v-checkbox>
               </v-flex>
-              <v-flex shrink ml-5>
+              <v-flex shrink pb-1>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -177,7 +144,8 @@
                     </v-btn>
                   </template>
                   <span>
-                    Display the original image of the image set.
+                    Display the original image of the image set alongside the reproductions.
+                    As a reference for the observer.
                   </span>
                 </v-tooltip>
               </v-flex>
@@ -189,7 +157,7 @@
               :label="`Forced choice`"
             ></v-checkbox> -->
 
-            <v-layout align-center>
+            <v-layout align-center v-if="form.experimentType === 1">
               <v-flex shrink>
                 <v-checkbox
                   v-model="form.samePairTwice"
@@ -197,7 +165,7 @@
                   :label="`Same pair twice (flipped)`"
                 ></v-checkbox>
               </v-flex>
-              <v-flex shrink ml-5>
+              <v-flex shrink pb-1>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -212,8 +180,8 @@
               </v-flex>
             </v-layout>
 
-            <v-layout class="mt-3">
-              <v-flex xs6>
+            <v-layout class="mt-3" align-center>
+              <v-flex xs3>
                 <v-text-field
                   v-model="form.bgColour"
                   label="Background colour"
@@ -222,31 +190,39 @@
                 ></v-text-field>
               </v-flex>
 
-              <!-- <v-flex shrink class="ml-2"
-                :style="'border-radius: 2px; width: 40px; height: 40px; background:' + form.bgColour"
-              ></v-flex> -->
+              <v-flex
+                xs1
+                shrink
+                class="ml-2"
+                :style="'border-radius: 2px; height: 30px; background: #' + form.bgColour"
+              ></v-flex>
             </v-layout>
 
             <v-layout class="mt-3">
-              <v-flex xs6>
+              <v-flex xs3>
                 <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
                   suffix="px"
                   type="text"
                 >
-                  <template v-slot:append-outer>
+                  <!-- <template v-slot:append-outer>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">help_outline</v-icon>
                       </template>
                       <span>Distance between stimuli images, in pixels.</span>
                     </v-tooltip>
-                  </template>
+                  </template> -->
                 </v-text-field>
               </v-flex>
-            </v-layout>
 
+              <!-- <v-layout align-center ml-3>
+                <div style="border-radius: 2px; padding: 5px; background-color: #ddd;">image 1</div>
+                <div style="border-radius: 2px; height: 30px; width: 40px"></div>
+                <div style="border-radius: 2px; padding: 5px; background-color: #ddd;">image 2</div>
+              </v-layout> -->
+            </v-layout>
           </v-card>
         </v-stepper-content>
 
@@ -256,6 +232,11 @@
             <p class="body-1">
               Add instructions and image sets in the order they should appear in your experiment.
             </p>
+
+            <v-layout justify-center v-if="form.experimentType === 3 || form.experimentType === 5">
+              <Categories @added="onCategory"/>
+            </v-layout>
+
             <Sequence @added="onSequence"/>
           </v-card>
         </v-stepper-content>
@@ -266,16 +247,6 @@
             <ObserverMetas @added="onObserverMeta"/>
           </v-card>
         </v-stepper-content>
-
-        <!-- <v-stepper-content step="6" v-if="form.experimentType === 2">
-          <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2>{{ steps[2].title }}</h2>
-            <p class="body-1">
-              Add instructions and image sets in the order they should appear in your experiment.
-            </p>
-            <Sequence/>
-          </v-card>
-        </v-stepper-content> -->
 
         <v-stepper-content step="5">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
@@ -297,9 +268,6 @@
               <h3 class="title mb-2">System details</h3>
               <div class="mb-1">Delay of 0.6 milliseconds inbetween stimuli</div>
               <div class="mb-1">Algorithm for making random queue. 2 * 2</div>
-              <!-- <div class="mb-1">What</div>
-              <div class="mb-1">Hello</div>
-              <div class="mb-1">Hello</div> -->
             </div>
           </v-card>
         </v-stepper-content>
@@ -356,12 +324,16 @@
 <script>
 import Sequence from '@/components/scientist/Sequence'
 import ObserverMetas from '@/components/scientist/ObserverMetas'
+import Categories from '@/components/scientist/Categories'
 import EventBus from '@/eventBus'
+import Back from '@/components/Back'
 
 export default {
   components: {
     Sequence,
-    ObserverMetas
+    ObserverMetas,
+    Categories,
+    Back
   },
 
   data () {
@@ -371,12 +343,12 @@ export default {
       experimentTypes: [],
 
       steps: [
-        { title: 'Basic Details' },
-        { title: 'Settings' },
-        { title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
-        { title: 'Observer Inputs' },
-        { title: 'Summary' } // final checks?
-        // { title: 'Categories' }
+        { id: 1, title: 'Basic Details' },
+        { id: 2, title: 'Settings' },
+        { id: 3, title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
+        { id: 4, title: 'Observer Inputs' },
+        // { id: 5, title: 'Categories' },
+        { id: 5, title: 'Summary' } // final checks?
       ],
 
       form: {
@@ -384,7 +356,7 @@ export default {
         shortDescription: null,
         longDescription: null,
         experimentType: null,
-        algorithm: 'Random Queue',
+        algorithm: 1,
         timer: null,
         cvd: null,
         forcedChoice: false,
@@ -394,7 +366,8 @@ export default {
         showOriginal: false,
         isPublic: 0,
         sequences: [],
-        observerMetas: []
+        observerMetas: [],
+        categories: []
       },
 
       loaders: {
@@ -444,6 +417,10 @@ export default {
       this.form.observerMetas = values
     },
 
+    onCategory (values) {
+      this.form.categories = values
+    },
+
     store (type) {
       // determine which button as been click in order to show a loading spinner in that button
       this.loaders.storing = (type === 'public')
@@ -471,7 +448,7 @@ export default {
     },
 
     update () {
-      // remember: leave is_public alone
+      // remember: leave 'is_public' alone
       this.$axios.patch('/experiment/' + this.$route.params.id).then(response => {
         // redirect
       }).catch((error) => {
@@ -482,14 +459,13 @@ export default {
     findExperiment (id) {
       this.$axios.get('/experiment/' + id)
         .then(json => {
-          console.log(json.data)
           this.form.title = json.data.title
           this.form.shortDescription = json.data.short_description
           this.form.longDescription = json.data.long_description
           this.form.experimentType = json.data.experiment_type
           this.form.timer = json.data.title
           this.form.cvd = json.data.allow_colour_blind
-          this.form.bgColour = json.data.background_colour
+          this.form.bgColour = json.data.background_colour || '808080'
         })
         .catch(err => console.warn(err))
     }

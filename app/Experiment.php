@@ -12,6 +12,7 @@ class Experiment extends Model
         'experiment_type_id',
         'short_description',
         'long_description',
+        'piture_sequence_algorithm',
         'is_public',
         'allow_colour_blind',
         'timer',

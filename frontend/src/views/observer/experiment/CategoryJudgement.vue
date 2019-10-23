@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="qe-wrapper" :style="'background-color: ' + bgColour">
+  <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar flat height="50" color="#282828">
       <v-toolbar-items>
         <v-dialog v-model="instructionsDialog" max-width="500">
@@ -77,16 +77,13 @@
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
-      <v-flex
-        class="picture-container"
-        xs6 ma-2
-      >
+      <v-flex ma-2 class="picture-container">
         <div class="panzoom">
           <img id="picture-left" class="picture" :src="leftImage"/>
         </div>
       </v-flex>
 
-      <v-flex xs6 ma-2 class="picture-container" v-if="experiment.show_original === 1">
+      <v-flex ma-2 class="picture-container" v-if="experiment.show_original === 1">
         <div class="panzoom">
           <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
@@ -104,11 +101,11 @@
       </v-flex> -->
     </v-layout>
 
-    <!-- <div style="position: fixed; bottom: 2%; left: 1.4%; right: 50.9%;"> -->
-      <!-- <v-pagination
+    <!-- <div style="position: fixed; bottom: 2%; left: 1.4%; right: 50.9%;">
+      <v-pagination
         :length="6"
-      ></v-pagination> -->
-      <!-- <v-tabs color="rgb(195, 195, 195)" show-arrows style="border-radius: 2px;">
+      ></v-pagination>
+      <v-tabs color="rgb(195, 195, 195)" show-arrows style="border-radius: 2px;">
         <v-tabs-slider color="#000"></v-tabs-slider>
         <v-tab
           v-for="(item, i) in ['good', 'best', 'very long criteria', 'unsure', 'I\'ve seen better', 'another critera with long text', 'excellent', 'terrible', 'terrific', 'perfect']"
@@ -117,8 +114,8 @@
         >
           <span style="color: #000;">{{ item }}</span>
         </v-tab>
-      </v-tabs> -->
-    <!-- </div> -->
+      </v-tabs>
+    </div> -->
 
     <v-btn fixed bottom right color="#D9D9D9"
       @click="next()"
@@ -160,13 +157,13 @@ export default {
 
   data () {
     return {
-      bgColour: '#808080',
       distance: 20,
       instructionsText: 'Rate the images.',
 
       experiment: {
         id: null,
-        show_original: 1
+        show_original: 1,
+        background_colour: '808080'
       },
 
       stimuli: [],
@@ -175,9 +172,9 @@ export default {
       experimentResult: null,
 
       categories: [
-        { id: 3, title: 'Bad' },
-        { id: 4, title: 'Good' },
-        { id: 21, title: 'Excellent' }
+        // { id: 3, title: 'Bad' },
+        // { id: 4, title: 'Good' },
+        // { id: 21, title: 'Excellent' }
       ],
       selectedCategory: null,
 
@@ -214,6 +211,10 @@ export default {
             $reset: $('.panning-reset')
           }).panzoom('zoom')
         })()
+      })
+
+      this.$axios.get(`/experiment/${this.experiment.id}/categories`).then((payload) => {
+        this.categories = payload.data
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {

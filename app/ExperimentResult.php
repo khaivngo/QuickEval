@@ -23,8 +23,15 @@ class ExperimentResult extends Model
     //     return $this->hasMany('App\Result', 'user_id', 'experiment_id'); # GJØR OM DISSE TIL foreign KEY
     // }
 
-    public function paired_results ()
-    {
+    public function paired_results () {
         return $this->hasMany('App\PairedResult');
+    }
+
+    public function triplet_results () {
+        return $this->hasMany('App\TripletResult');
+    }
+
+    public function category_results () {
+        return $this->hasMany('App\CategoryResult');
     }
 }

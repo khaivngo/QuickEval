@@ -5,14 +5,19 @@
     permanent
     stateless
     value="true"
-    style="background-color: rgb(250, 250, 250);"
+    class="qe-nav-drawer"
+    style="width: 200px;"
   >
     <v-list dense>
       <template v-for="(item, index) in items">
         <v-list-tile
           v-if="item.title"
           :key="item.title"
-          :class="(item.url === $route.path) ? 'active-nav' : ''"
+          :class="
+            (parentPage(item.url) === parentPage($route.path)) ||
+            ($route.path === '/scientist' && item.url === '/scientist/dashboard') ?
+            'active-nav' : ''
+          "
           @click="$router.push(item.url)"
         >
           <v-list-tile-content>
@@ -48,14 +53,22 @@ export default {
         { title: 'Your Experiments', url: '/scientist/experiments', icon: 'folder' }
       ]
     }
+  },
+
+  methods: {
+    parentPage (url) {
+      return url.split('/')[2]
+    }
   }
 }
 </script>
 
 <style scoped>
+.qe-nav-drawer {
+  background-color: rgb(250, 250, 250);
+}
+
 .active-nav {
-  /*background-color: #1BA1E2;*/
-  /*color: #1BA1E2;*/
   font-weight: 900;
 }
 

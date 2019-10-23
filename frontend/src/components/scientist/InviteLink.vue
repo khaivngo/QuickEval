@@ -1,18 +1,19 @@
 <template>
-  <p class="subheading">
-    Invite link:
-    <a :href="$domain + '/observer/' + code">
-      {{ $domain }}/experiment/{{ code }}
-    </a>
-  </p>
+  <!-- <p class="subheading"> -->
+    <!-- <a :href="`${$domain}/observer/${experimentId}`"> -->
+    <div>
+      {{ $domain }}/observer/{{ experimentId }}
+    </div>
+    <!-- </a> -->
+  <!-- </p> -->
 </template>
 
 <script>
 export default {
   props: {
-    code: {
+    experimentId: {
       type: Number,
-      default: 0
+      default: null
     }
   }
 }

@@ -5,14 +5,18 @@
     permanent
     stateless
     value="true"
-    style="background-color: rgb(250, 250, 250);"
+    style="background-color: rgb(250, 250, 250); width: 200px;"
   >
     <v-list dense>
       <template v-for="(item, index) in items">
         <v-list-tile
           v-if="item.title"
           :key="item.title"
-          :class="(item.url === $route.path) ? 'active-nav' : ''"
+          :class="
+            (parentPage(item.url) === parentPage($route.path)) ||
+            ($route.path === '/admin' && item.url === '/admin/scientist-role-requests') ?
+            'active-nav' : ''
+          "
           @click="$router.push(item.url)"
         >
           <v-list-tile-content>
@@ -46,6 +50,12 @@ export default {
         // { title: 'Dashboard', url: '/admin/dashboard', icon: 'insert_chart' },
         { title: 'Scientist Requests', url: '/admin/scientist-role-requests', icon: 'verified_user' }
       ]
+    }
+  },
+
+  methods: {
+    parentPage (url) {
+      return url.split('/')[2]
     }
   }
 }

@@ -1,9 +1,7 @@
 <template>
   <v-app>
     <MainNavigation
-      v-if="$route.name !== 'Experiment Mode' &&
-      $route.name !== 'Category Experiment Mode' &&
-      $route.name !== 'Triplet Comparison Experiment Mode'"
+      v-if="$route.path.indexOf('/experiment') !== 0"
       :user="user"
     />
 
@@ -112,9 +110,9 @@ export default {
 
 // Vuetify by default turns on the html scrollbar. Disable this.
 // https://vuetifyjs.com/en/getting-started/frequently-asked-questions#the-scrollbar-is-showing-even-though-my-content-is-not-overflowing-vertically-
-html {
-  overflow-y: auto;
-}
+// html {
+//   overflow-y: auto;
+// }
 
 // *:focus {
   // outline: 2px solid #FFBC42;

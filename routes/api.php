@@ -21,12 +21,13 @@ Route::middleware('auth:api')->group(function () {
     });
 
     # experiments
-    Route::get(     '/experiment/{id}/start',               'ExperimentsController@start');
+    Route::get(     '/experiment/{experiment}/start',       'ExperimentsController@start');
     Route::get(     '/experiment/{id}/observer-metas',      'ExperimentsController@observer_metas');
     Route::get(     '/experiments',                         'ExperimentsController@index');
     Route::get(     '/experiments/all',                     'ExperimentsController@all');
     Route::get(     '/experiments/public',                  'ExperimentsController@all_public');
     Route::get(     '/experiment/{id}',                     'ExperimentsController@find');
+    Route::get(     '/experiment/{id}/public',              'ExperimentsController@find_public');
     Route::post(    '/experiment/store',                    'ExperimentsController@store');
     Route::patch(   '/experiment/{experiment}/visibility',  'ExperimentsController@visibility');
     Route::patch(   '/experiment/{experiment}',             'ExperimentsController@update');
@@ -71,6 +72,9 @@ Route::middleware('auth:api')->group(function () {
     # categories
     Route::get('/categories', 'CategoriesController@index');
 
+    # experiment catgories
+    Route::get('/experiment/{experiment}/categories', 'ExperimentCategoriesController@index');
+
     # experiment types
     Route::get('/experiment-types', 'ExperimentTypesController@all');
 
@@ -86,8 +90,17 @@ Route::middleware('auth:api')->group(function () {
 // TODO: move this inside... InvalidArgumentException: Route [login] not defined
 Route::post('/file', 'PicturesController@store');
 
-Route::get(    '/paired-result/{id}/export',     'PairedResultsController@export_observer');
-Route::get(    '/{id}/paired-result/all/export', 'PairedResultsController@export_all');
+# paired export
+Route::get('/paired-result/{id}/export',     'PairedResultsController@export_observer');
+Route::get('/{id}/paired-result/all/export', 'PairedResultsController@export_all');
+
+# category export
+Route::get('/category-result/{id}/export',     'CategoryResultsController@export_observer');
+Route::get('/{id}/category-result/all/export', 'CategoryResultsController@export_all');
+
+# triplet export
+Route::get('/triplet-result/{id}/export',     'TripletResultsController@export_observer');
+Route::get('/{id}/triplet-result/all/export', 'TripletResultsController@export_all');
 
 Route::post('/register',    'AuthController@register');
 Route::post('/anonymous',   'AuthController@anonymous');
