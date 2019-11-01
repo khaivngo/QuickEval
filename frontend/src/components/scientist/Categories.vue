@@ -88,9 +88,27 @@ export default {
     this.$axios.get('/categories')
       .then(json => { this.items = json.data })
       .catch(err => console.warn(err))
+
+    if (this.$route.params.id !== undefined) {
+      this.editCategories()
+    }
   },
 
   methods: {
+    editCategories () {
+      this.$axios.get(`/experiment/${this.$route.params.id}/categories`)
+        .then(json => {
+          json.data.forEach((item) => {
+            this.events.push({
+              id: this.nonce++,
+              value: item.title,
+              type: 'category'
+            })
+          })
+        })
+        .catch(err => console.warn(err))
+    },
+
     add (type) {
       this.events.push({
         id: this.nonce++,

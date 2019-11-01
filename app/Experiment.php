@@ -8,11 +8,13 @@ class Experiment extends Model
 {
     protected $fillable = [
         'user_id',
+        'first_version_id',
+        'version',
         'title',
         'experiment_type_id',
         'short_description',
         'long_description',
-        'piture_sequence_algorithm',
+        'picture_sequence_algorithm',
         'is_public',
         'allow_colour_blind',
         'timer',

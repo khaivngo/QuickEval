@@ -28,7 +28,7 @@ export default new VueRouter({
 
     /* observer */
     { path: '/observer',     component: loadView('observer/Index') },
-    { path: '/observer/:id', component: loadView('observer/Index') },
+    { path: '/observer/:id', component: loadView('observer/Index'), name: 'referral' },
 
     /* scientist */
     {

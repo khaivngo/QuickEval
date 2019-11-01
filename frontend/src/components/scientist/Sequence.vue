@@ -69,7 +69,7 @@
           <template v-slot:activator="{ on }">
             <v-btn
               class="text-none"
-              depressed
+              color="info"
               v-on="on"
             >
               Add instruction
@@ -127,7 +127,7 @@
           <template v-slot:activator="{ on }">
             <v-btn
               class="text-none"
-              depressed
+              color="info"
               v-on="on"
             >
               Add image set
@@ -162,6 +162,34 @@ export default {
   // components: {
   //   CreateImageSet
   // },
+  props: {
+    editMode: String,
+    sequences: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+
+  watch: {
+    sequences (values) {
+      values.forEach((item) => {
+        let type  = (item.picture_queue_id != null) ? 'imageSet' : 'instruction'
+        let value = (item.picture_queue_id != null) ? item.picture_set_id : item.description
+
+        this.events.push({
+          id: this.nonce++,
+          value: value,
+          type: type
+        })
+
+        this.input = null
+
+        this.$emit('added', this.events)
+      })
+    }
+  },
 
   data: () => ({
     // existing instructions
@@ -173,20 +201,40 @@ export default {
     input: null,
     nonce: 0,
 
+    edit: [],
+
     newImageSet: false
   }),
 
-  created () {
-    this.$axios.get('/image-sets')
-      .then(json => { this.imageSets = json.data })
-      .catch(err => console.warn(err))
+  async created () {
+    // populate the instructions and image sets dropdowns
+    const instructions = await this.getInstructions()
+    this.instructions = instructions.data
 
-    this.$axios.get('/instructions')
-      .then(json => { this.instructions = json.data })
-      .catch(err => console.warn(err))
+    const imageSets = await this.getImageSets()
+    this.imageSets = imageSets.data
   },
 
   methods: {
+    // Since axios returns a promise the async/await can be omitted for the getData function
+    getInstructions () {
+      try {
+        return this.$axios.get('/instructions')
+      } catch (error) {
+        console.log(error)
+        return null
+      }
+    },
+
+    getImageSets () {
+      try {
+        return this.$axios.get('/image-sets')
+      } catch (error) {
+        console.log(error)
+        return null
+      }
+    },
+
     add (type) {
       this.events.push({
         id: this.nonce++,

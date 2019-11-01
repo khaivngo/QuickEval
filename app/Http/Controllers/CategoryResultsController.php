@@ -2,11 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use App\CategoryResult;
 use Illuminate\Http\Request;
+
+use App\Exports\CategoryResultsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+use App\CategoryResult;
 
 class CategoryResultsController extends Controller
 {
+    /**
+     * The \Maatwebsite\Excel package is used for creating exports.
+     * See: https://docs.laravel-excel.com/3.1/exports/
+     * Also see files in the app/Exports folder.
+     */
+    public function export_observer ($id)
+    {
+        $experiment_results = \App\ExperimentResult::find($id);
+        $category_results = \App\ExperimentResult::find($id)->category_results;
+
+        // TODO: get rid of the loop
+        $data = [];
+        foreach ($category_results as $result)
+        {
+          $arr = [];
+          $arr['observer']  = $experiment_results->user_id;
+          $arr['picture']   = $result->picture->name;
+          $arr['category']  = $result->category->title;
+
+          array_push($data, $arr);
+        }
+
+        $filename = 'results-' . $experiment_results->user_id . '.csv';
+
+        return Excel::download(new CategoryResultsExport($data), $filename);
+    }
+
+    public function export_all ($id) {
+        // TODO: check if scientist owns experiment and that results belong to experiment
+
+        $category_results = \App\ExperimentResult::where('experiment_id', $id)->get();
+        // return $paired_results;
+
+        $data = [];
+        foreach ($category_results as $result) {
+          foreach ($result->category_results as $res) {
+            $arr = [];
+            $arr['observer']  = $result->user_id;
+            $arr['picture']   = $res->picture->name;
+            $arr['category']  = $res->category->title;
+            array_push($data, $arr);
+          }
+        }
+
+        $file_ext = 'csv';
+        $filename = 'results.' . $file_ext;
+
+        return Excel::download(new CategoryResultsExport($data), $filename);
+    }
+
+    public function all () {
+      return TripletResult::where('experiment_result_id', $id)->get();
+
+      // get alle som tilhører en experiment results som har experiment_id = value
+      // definerer reletationship i model... mange til mange forhold?
+    }
+
+
     public function store (Request $request) {
       $result = CategoryResult::create([
         'experiment_result_id'  => $request->experiment_result_id,

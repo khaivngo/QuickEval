@@ -70,6 +70,7 @@
               hide-details
               single-line
               class="ma-0 pt-0"
+              color="#808080"
             ></v-select>
           </div>
         </v-layout>
@@ -88,6 +89,7 @@
               hide-details
               single-line
               class="ma-0 pt-0"
+              color="#808080"
             ></v-select>
           </div>
         </v-layout>
@@ -106,6 +108,7 @@
               hide-details
               single-line
               class="ma-0 pt-0"
+              color="#808080"
             ></v-select>
           </div>
         </v-layout>

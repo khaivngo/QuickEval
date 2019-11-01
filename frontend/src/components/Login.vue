@@ -62,11 +62,7 @@ export default {
       }).then(response => {
         localStorage.setItem('access_token', response.data.access_token)
         this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        // if (response.data.role === 2) redirect /scientist
-
         EventBus.$emit('logged')
-
-        this.$router.push('/observer')
         this.logging = false
       }).catch(() => {
         // push notification

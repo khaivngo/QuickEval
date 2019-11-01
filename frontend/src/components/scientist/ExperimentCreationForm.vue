@@ -29,6 +29,20 @@
 
             <v-layout align-center pr-5>
               <v-flex>
+                <v-select
+                  class="mt-4"
+                  v-model="form.experimentType"
+                  :disabled="mode === 'edit'"
+                  :items="experimentTypes"
+                  item-text="name"
+                  item-value="id"
+                  label="Experiment Type"
+                ></v-select>
+              </v-flex>
+            </v-layout>
+
+            <v-layout align-center pr-5>
+              <v-flex>
                 <v-text-field
                   class="mt-4"
                   v-model.trim="form.title"
@@ -85,19 +99,6 @@
               <v-flex>
                 <v-select
                   class="mt-4"
-                  v-model="form.experimentType"
-                  :items="experimentTypes"
-                  item-text="name"
-                  item-value="id"
-                  label="Experiment Type"
-                ></v-select>
-              </v-flex>
-            </v-layout>
-
-            <v-layout align-center pr-5>
-              <v-flex>
-                <v-select
-                  class="mt-4"
                   v-model="form.algorithm"
                   :items="[
                     { id: 1, text: 'Order of images within image sets' },
@@ -110,23 +111,28 @@
               </v-flex>
             </v-layout>
 
-          </v-card>
-        </v-stepper-content>
-
-        <v-stepper-content step="2">
-          <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-4">{{ steps[1].title }}</h2>
-            <!-- <v-checkbox
-              v-model="form.timer"
-              color="success"
-              :label="`Display timer for observer`"
-            ></v-checkbox>
-
-            <v-checkbox
-              v-model="form.cvd"
-              color="success"
-              :label="`Allow observers with colour vision deficiencies (did not pass Ishihara test)`"
-            ></v-checkbox> -->
+            <v-layout align-center v-if="form.experimentType === 1">
+              <v-flex shrink>
+                <v-checkbox
+                  v-model="form.samePairTwice"
+                  color="success"
+                  :label="`Same pair twice (flipped)`"
+                ></v-checkbox>
+              </v-flex>
+              <v-flex shrink pb-1>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>
+                    Each pair of images will have their positin flipped in the queue.<br> Leading
+                    to double the comparisons for the observer.
+                  </span>
+                </v-tooltip>
+              </v-flex>
+            </v-layout>
 
             <v-layout align-center>
               <v-flex shrink>
@@ -151,34 +157,29 @@
               </v-flex>
             </v-layout>
 
+          </v-card>
+        </v-stepper-content>
+
+        <v-stepper-content step="2">
+          <v-card class="mb-5 pa-5 text-xs-center" flat>
+            <h2 class="mb-4">{{ steps[1].title }}</h2>
+            <!-- <v-checkbox
+              v-model="form.timer"
+              color="success"
+              :label="`Display timer for observer`"
+            ></v-checkbox>
+
+            <v-checkbox
+              v-model="form.cvd"
+              color="success"
+              :label="`Allow observers with colour vision deficiencies (did not pass Ishihara test)`"
+            ></v-checkbox> -->
+
             <!-- <v-checkbox
               v-model="form.forcedChoice"
               color="success"
               :label="`Forced choice`"
             ></v-checkbox> -->
-
-            <v-layout align-center v-if="form.experimentType === 1">
-              <v-flex shrink>
-                <v-checkbox
-                  v-model="form.samePairTwice"
-                  color="success"
-                  :label="`Same pair twice (flipped)`"
-                ></v-checkbox>
-              </v-flex>
-              <v-flex shrink pb-1>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">help_outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span>
-                    Each pair of images will have their positin flipped in the queue. Leading
-                    to double the comparisons for the observer.
-                  </span>
-                </v-tooltip>
-              </v-flex>
-            </v-layout>
 
             <v-layout class="mt-3" align-center>
               <v-flex xs3>
@@ -200,12 +201,12 @@
 
             <v-layout class="mt-3">
               <v-flex xs3>
-                <v-text-field
+                <!-- <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
                   suffix="px"
                   type="text"
-                >
+                > -->
                   <!-- <template v-slot:append-outer>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -214,7 +215,7 @@
                       <span>Distance between stimuli images, in pixels.</span>
                     </v-tooltip>
                   </template> -->
-                </v-text-field>
+                <!-- </v-text-field> -->
               </v-flex>
 
               <!-- <v-layout align-center ml-3>
@@ -228,7 +229,7 @@
 
         <v-stepper-content step="3">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2>{{ steps[2].title }}</h2>
+            <h2 class="mb-1">{{ steps[2].title }}</h2>
             <p class="body-1">
               Add instructions and image sets in the order they should appear in your experiment.
             </p>
@@ -237,14 +238,17 @@
               <Categories @added="onCategory"/>
             </v-layout>
 
-            <Sequence @added="onSequence"/>
+            <Sequence @added="onSequence" :edit-mode="mode" :sequences="experiment.sequences"/>
           </v-card>
         </v-stepper-content>
 
         <v-stepper-content step="4">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-4">{{ steps[3].title }}</h2>
-            <ObserverMetas @added="onObserverMeta"/>
+            <h2 class="mb-1">{{ steps[3].title }}</h2>
+            <p class="body-1">
+              Add input fields to collect observer demogrphics.
+            </p>
+            <ObserverMetas @added="onObserverMeta" :metas="experiment.metas"/>
           </v-card>
         </v-stepper-content>
 
@@ -255,14 +259,14 @@
             <!-- <div v-for="detail in form.basicDetails">
               {{ detail }}
             </div> -->
-            <div class="mt-5">
+            <!-- <div class="mt-5">
               <h3 class="title mb-2">Experiment details</h3>
               <div class="mb-1">Title</div>
               <div class="mb-1">Description</div>
               <div class="mb-1">Type</div>
               <div class="mb-1">Algorithm</div>
               <code class="mb-1">v * 23 / 34 + 1</code>
-            </div>
+            </div> -->
 
             <div class="mt-5">
               <h3 class="title mb-2">System details</h3>
@@ -272,6 +276,15 @@
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
+
+      <v-layout justify-end v-if="currentLevel === steps.length && mode === 'edit'">
+        <v-flex xs6 class="caption">
+          Note: Saving changes will create a new experiment AND keep the original experiment.
+          This is in order to keep the version history and clarify that possible collected observer data is
+          collected under different versions of the experiment.
+          Delete the old expriment from the experiments list later if you don't need it.
+        </v-flex>
+      </v-layout>
 
       <v-container>
         <v-layout justify-space-between>
@@ -288,6 +301,7 @@
 
             <template v-if="currentLevel === steps.length">
               <v-btn
+                v-if="mode === 'new'"
                 @click="mode === 'new' ? store('hidden') : update()"
                 color="secondary" flat outline
                 :disable="loaders.saving"
@@ -296,7 +310,7 @@
                 Finish later
               </v-btn>
 
-              <span>OR</span>
+              <span v-if="mode === 'new'">OR</span>
 
               <v-btn
                 @click="mode === 'new' ? store('public') : update()"
@@ -348,8 +362,14 @@ export default {
         { id: 3, title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
         { id: 4, title: 'Observer Inputs' },
         // { id: 5, title: 'Categories' },
-        { id: 5, title: 'Summary' } // final checks?
+        { id: 5, title: 'Finish' } // final checks?
       ],
+
+      experiment: {
+        sequences: [],
+        metas: [],
+        categories: []
+      },
 
       form: {
         title: null,
@@ -422,7 +442,7 @@ export default {
     },
 
     store (type) {
-      // determine which button as been click in order to show a loading spinner in that button
+      // determine which button has been clicked in order to show a loading spinner in that button
       this.loaders.storing = (type === 'public')
       this.loaders.saving = (type === 'hidden')
 
@@ -432,7 +452,7 @@ export default {
 
       this.$axios.post('/experiment/store', this.form).then(response => {
         // if (response.data === 'experiment_stored') {
-        EventBus.$emit('success', 'Experiment succesfully created.')
+        EventBus.$emit('success', 'Experiment successfully created.')
 
         // EMPTY FORM: {}
 
@@ -448,24 +468,47 @@ export default {
     },
 
     update () {
-      // remember: leave 'is_public' alone
-      this.$axios.patch('/experiment/' + this.$route.params.id).then(response => {
-        // redirect
+      this.loaders.storing = true
+      this.loaders.saving = true
+
+      // convert values from boolean to integer before saving
+      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      // this.form.isPublic = (type === 'hidden') ? 0 : 1
+      this.form.isPublic = 1
+
+      this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
+        EventBus.$emit('success', 'Experiment successfully updated.')
+
+        // EMPTY FORM: {}
+        console.log(response)
+
+        this.loaders.storing = false
+        this.loaders.saving = false
+
+        this.$router.push('/scientist/experiments')
       }).catch((error) => {
         console.log(error)
+        EventBus.$emit('error', error.data)
+
+        this.loaders.storing = false
+        this.loaders.saving = false
       })
     },
 
     findExperiment (id) {
-      this.$axios.get('/experiment/' + id)
-        .then(json => {
-          this.form.title = json.data.title
-          this.form.shortDescription = json.data.short_description
-          this.form.longDescription = json.data.long_description
-          this.form.experimentType = json.data.experiment_type
-          this.form.timer = json.data.title
-          this.form.cvd = json.data.allow_colour_blind
-          this.form.bgColour = json.data.background_colour || '808080'
+      this.$axios.get(`/experiment/${id}/owner`)
+        .then(response => {
+          this.experiment = response.data
+
+          this.form.title            = response.data.title
+          this.form.shortDescription = response.data.short_description
+          this.form.longDescription  = response.data.long_description
+          this.form.experimentType   = response.data.experiment_type_id
+          this.form.timer            = response.data.title
+          this.form.cvd              = response.data.allow_colour_blind
+          this.form.bgColour         = response.data.background_colour || '808080'
+          this.form.showOriginal     = response.data.show_original // (response.data.show_original === 0) ? false : true
+          this.form.samePairTwice    = response.data.same_pair
         })
         .catch(err => console.warn(err))
     }

@@ -151,7 +151,7 @@ export default {
       // if the url contains an ID we fetch just that specific experiment
       // this way the researcher can send a direct link to participants
       if (this.$route.params.id !== undefined) {
-        return this.$axios.get('/experiment/' + this.$route.params.id).then((response) => {
+        return this.$axios.get('/experiment/' + this.$route.params.id + '/public').then((response) => {
           this.experiments.push(response.data)
 
           this.active.push(response.data.id)

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Experiment;
 use Illuminate\Http\Request;
-use PDO;
 use DB;
 
+use App\Experiment;
 use App\ObserverMeta;
 use App\ExperimentObserverMeta;
 
@@ -14,18 +13,44 @@ class ExperimentsController extends Controller
 {
     public function index () {
       return Experiment::where('user_id', auth()->user()->id)
+        ->orderBy('id', 'desc')
         ->get();
     }
 
-    public function all () {
-      return Experiment::orderBy('id', 'desc')
-        ->get();
-    }
+    public function is_owner (Request $request) {
+      $experiment = Experiment::where([
+        ['user_id', auth()->user()->id],
+        ['id', $request->id]
+      ])->first();
 
-    public function all_public () {
-      return Experiment::where('is_public', 1)->get();
-        // ->orderBy('id', 'desc')
-        // ->get();
+      $sequences = DB::table('experiment_queues')
+        ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
+        ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
+        ->leftJoin('instructions', 'experiment_sequences.instruction_id', '=', 'instructions.id')
+        ->where('experiment_queues.experiment_id', $request->id)
+        ->get();
+      $experiment['sequences'] = $sequences;
+
+      $metas = DB::table('experiment_observer_metas')
+        ->join('observer_metas', 'observer_metas.id', '=', 'experiment_observer_metas.observer_meta_id')
+        ->where('experiment_observer_metas.experiment_id', $request->id)
+        ->get();
+      $experiment['metas'] = $metas;
+
+      // $concatenated = $experiment->concat($sequences)->concat($metas);
+      // return $concatenated->all();
+
+      // if ($experiment->experiment_type_id === 3 || $experiment->experiment_type_id === 5) {
+      //   $experiment_categories = \App\ExperimentCategory::where('experiment_id', $request->id)->get();
+
+      //   $all = [];
+      //   foreach ($experiment_categories as $experiment_category) {
+      //     array_push($all, $experiment_category->category);
+      //   }
+      // }
+
+
+      return $experiment;
     }
 
     public function find (Request $request) {
@@ -36,7 +61,18 @@ class ExperimentsController extends Controller
       return Experiment::where([
         ['id', $request->id],
         ['is_public', 1]
-      ])->get();
+      ])->first();
+    }
+
+    public function all () {
+      return Experiment::orderBy('id', 'asc')
+        ->get();
+    }
+
+    public function all_public () {
+      return Experiment::where('is_public', 1)
+        ->orderBy('id', 'desc')
+        ->get();
     }
 
     public function observer_metas (Request $request) {
@@ -50,14 +86,12 @@ class ExperimentsController extends Controller
       return $metas;
     }
 
-    public function is_owner (Request $request) {
-      return Experiment::where([
-        ['user_id', auth()->user()->id],
-        ['id', $request->id]
-      ])->get();
-    }
-
     public function store (Request $request) {
+      # abort if not scientist or admin
+      if (auth()->user()->role < 2) {
+        return response()->json('Unauthorized', 401);
+      }
+
       $data = $request->validate([
         'title'          => 'required|string',
         'experimentType' => 'required'
@@ -71,7 +105,9 @@ class ExperimentsController extends Controller
         'long_description'  => $request->longDescription,
         'is_public'         => $request->isPublic,
         'same_pair'         => $request->samePairTwice,
-        'show_original'     => $request->showOriginal
+        'background_colour' => $request->bgColour,
+        'show_original'     => $request->show_original,
+        'version'           => 1
       ]);
 
       if ($experiment->id > 0)
@@ -156,7 +192,8 @@ class ExperimentsController extends Controller
                 $this->add_queue_to_experiment(
                   $experiment_queue->id,
                   $picture_queue_id,
-                  null
+                  null,
+                  $step['value']
                 );
               }
             }
@@ -170,7 +207,8 @@ class ExperimentsController extends Controller
               $this->add_queue_to_experiment(
                 $experiment_queue->id,
                 null,
-                $instruction->id
+                $instruction->id,
+                null
               );
             }
             else if ($step['type'] === 'instructionFromHistory')
@@ -180,7 +218,8 @@ class ExperimentsController extends Controller
               $this->add_queue_to_experiment(
                 $experiment_queue->id,
                 null,
-                $step['value']
+                $step['value'],
+                null
               );
             }
           }
@@ -298,18 +337,13 @@ class ExperimentsController extends Controller
     /**
      *
      */
-    protected function add_queue_to_experiment ($experiment_queue_id, $picture_queue_id = null, $instruction_id = null)
+    protected function add_queue_to_experiment ($experiment_queue_id, $picture_queue_id = null, $instruction_id = null, $picture_set_id = null)
     {
-      // $experiment_queue = \App\ExperimentQueue::where('experiment_id', $experiment_id)->first();
-
-      // $experiment_queue = \App\ExperimentQueue::create([
-      //   'experiment_id' => $experiment_id
-      // ]);
-
       $experiment_sequence = \App\ExperimentSequence::create([
         'experiment_queue_id' => $experiment_queue_id,
         'picture_queue_id'    => $picture_queue_id,
-        'instruction_id'      => $instruction_id
+        'instruction_id'      => $instruction_id,
+        'picture_set_id'      => $picture_set_id
       ]);
 
       return $experiment_sequence;
@@ -333,6 +367,9 @@ class ExperimentsController extends Controller
       return response($experiment, 200);
     }
 
+    /**
+     *
+     */
     public function start (Experiment $experiment)
     {
       // $newOrExists = $this->start_results($id);
@@ -474,19 +511,173 @@ class ExperimentsController extends Controller
     }
 
 
-    public function update (Request $request, Experiment $experiment) {
-      if ($experiment->user_id !== auth()->user()->id) {
+    public function update (Request $request, Experiment $original_experiment) {
+      # abort if not scientist or admin
+      if (auth()->user()->role < 2) {
+        return response()->json('Unauthorized', 401);
+      }
+
+      # abort if not owner of original experiment
+      if ($original_experiment->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
       }
 
       $data = $request->validate([
-        'title' => 'required|string',
-        'experiment_type' => 'required'
+        'title'          => 'required|string',
+        'experimentType' => 'required'
       ]);
 
-      $experiment->update($data);
+      if ($original_experiment->first_version_id) {
+        $last_version = Experiment::where('first_version_id', $original_experiment->first_version_id)->latest()->first();
+      } else {
+        $last_version = Experiment::where('first_version_id', $original_experiment->id)->latest()->first();
+      }
 
-      return response($experiment, 200);
+      # have we updated before?
+      $version  = ($last_version) ? ++$last_version->version : 2;
+      $original = ($original_experiment->first_version_id) ? $original_experiment->first_version_id : $original_experiment->id;
+
+      $experiment = Experiment::create([
+        'user_id'           => auth()->user()->id,
+        'title'             => $request->title,
+        'experiment_type_id'=> $request->experimentType,
+        'short_description' => $request->shortDescription,
+        'long_description'  => $request->longDescription,
+        'is_public'         => $request->isPublic,
+        'same_pair'         => $request->samePairTwice,
+        'background_colour' => $request->bgColour,
+        'show_original'     => $request->showOriginal,
+        'first_version_id'  => $original,
+        'version'           => $version
+      ]);
+
+      // TODO: abstract store function into another file/class
+
+      if ($experiment->id > 0)
+      {
+        $experiment_queue = \App\ExperimentQueue::create([
+          'experiment_id' => $experiment->id
+        ]);
+
+        if ($experiment_queue->id > 0)
+        {
+          foreach ($request->observerMetas as $meta)
+          {
+            if ($meta['type'] == 'meta') {
+              $observerMeta = ObserverMeta::create([
+                'user_id' => auth()->user()->id,
+                'meta'    => $meta['value']
+              ]);
+
+              ExperimentObserverMeta::create([
+                'experiment_id'    => $experiment->id,
+                'observer_meta_id' => $observerMeta->id
+              ]);
+            }
+
+            if ($meta['type'] == 'metaFromHistory') {
+              ExperimentObserverMeta::create([
+                'experiment_id'    => $experiment->id,
+                'observer_meta_id' => $meta['value']
+              ]);
+            }
+          }
+
+          if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
+          {
+            foreach ($request->categories as $category)
+            {
+              if ($category['type'] == 'category') {
+                $cat = \App\Category::create([
+                  'user_id' => auth()->user()->id,
+                  'title'   => $category['value']
+                ]);
+
+                \App\ExperimentCategory::create([
+                  'experiment_id' => $experiment->id,
+                  'category_id'   => $cat->id
+                ]);
+              }
+
+              if ($category['type'] == 'categoryFromHistory') {
+                \App\ExperimentCategory::create([
+                  'experiment_id' => $experiment->id,
+                  'category_id'   => $category['value']
+                ]);
+              }
+            }
+          }
+
+
+          foreach ($request->sequences as $step)
+          {
+            if ($step['type'] === 'imageSet') // TODO: check that the user owns the image set
+            {
+              # random within image set
+              if ($request->algorithm === 1) // save algo in experiment table and use $experiment->algorithm instead?
+              {
+                if ($experiment->experiment_type_id == 1)
+                {
+                  $picture_queue_id = $this->random_paired_queue(
+                    $step['value'],
+                    $experiment->same_pair
+                  );
+                }
+                else if ($experiment->experiment_type_id == 5)
+                {
+                  $picture_queue_id = $this->random_triplet_queue( $step['value'] );
+                }
+                else
+                {
+                  $picture_queue_id = $this->make_category_queue( $step['value'] );
+                }
+
+                $this->add_queue_to_experiment(
+                  $experiment_queue->id,
+                  $picture_queue_id,
+                  null,
+                  $step['value']
+                );
+              }
+            }
+            else if ($step['type'] === 'instruction')
+            {
+              $instruction = \App\Instruction::create([
+                'user_id' => auth()->user()->id,
+                'description' => $step['value']
+              ]);
+
+              $this->add_queue_to_experiment(
+                $experiment_queue->id,
+                null,
+                $instruction->id,
+                null
+              );
+            }
+            else if ($step['type'] === 'instructionFromHistory')
+            {
+              // TODO: check that the user owns the instruction
+
+              $this->add_queue_to_experiment(
+                $experiment_queue->id,
+                null,
+                $step['value'],
+                null
+              );
+            }
+          }
+
+          return response($experiment, 201);
+        } else {
+          return response('Experiment queue could not be created.', 404);
+          // IF SOMETHING FAILS WE SHOULD DELETE THE EXPERIMENT
+          // $experiment->delete();
+        }
+      } else {
+        return response('Experiment could not be created.', 404);
+      }
+
+      // return response($experiment, 200);
     }
 
     public function destroy (Request $request, Experiment $experiment) {

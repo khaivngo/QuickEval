@@ -41,7 +41,7 @@ class TripletResultsController extends Controller
 
         $file_ext = 'csv';
         // TODO: pre/append user_id or created_at to filename
-        $filename = 'results.' . $file_ext;
+        $filename = 'results-' . $experiment_results->user_id . '.csv';
 
         return Excel::download(new TripletResultsExport($data), $filename);
     }

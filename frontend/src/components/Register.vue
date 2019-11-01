@@ -72,11 +72,17 @@
       <v-btn @click="register" depressed color="#78AA1C" :loading="registering" large class="white--text mt-5" :disabled="email === ''">
         Register
       </v-btn>
+
+      <!-- <div v-for="err in errors.errors">
+        <span>{{ err }}</span>
+      </div> -->
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
+import EventBus from '@/eventBus'
+
 export default {
   data () {
     return {
@@ -126,11 +132,11 @@ export default {
       }).then(response => {
         localStorage.setItem('access_token', response.data.access_token)
         this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        // if (response.data.type === 2) redirect /scientist
-        // this.$router.push('/observer')
+        EventBus.$emit('logged')
         this.registering = false
-      }).catch(() => {
-        // push notification
+      }).catch((error) => {
+        console.log(error)
+        // this.errors = error
         this.registering = false
       })
     },

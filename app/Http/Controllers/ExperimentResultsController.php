@@ -10,6 +10,21 @@ use App\ExperimentResult;
 
 class ExperimentResultsController extends Controller
 {
+    /**
+     *
+     */
+    public function index ($experiment_id) {
+      return \App\Experiment::find($experiment_id)
+        ->results()
+        ->get();
+    }
+
+    public function fetch ($id) {
+      return \App\ExperimentResult
+        ::where('experiment_id', $id)
+        ->get();
+    }
+
     public function store (Request $request) {
       $experimentResult = ExperimentResult::create([
         'user_id' => auth()->user()->id,
@@ -55,19 +70,4 @@ class ExperimentResultsController extends Controller
 
     //   return response()->json('Deleted', 200);
     // }
-
-    public function fetch ($id) {
-      return \App\ExperimentResult
-        ::where('experiment_id', $id)
-        ->get();
-    }
-
-    /**
-     *
-     */
-    public function index ($experiment_id) {
-      return \App\Experiment::find($experiment_id)
-        ->results()
-        ->get();
-    }
 }

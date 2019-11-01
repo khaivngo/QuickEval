@@ -12,4 +12,16 @@ class CategoryResult extends Model
         'category_id',
         'chose_none'
     ];
+
+    public function experiment_result () {
+        return $this->belongsTo('App\ExperimentResult');
+    }
+
+    public function category () {
+      return $this->belongsTo('App\Category', 'category_id');
+    }
+
+    public function picture () {
+      return $this->belongsTo('App\Picture', 'picture_id_left');
+    }
 }

@@ -28,7 +28,8 @@
       <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
       <template v-slot:no-data>
         <div class="caption text-xs-center" v-if="loading === false">
-          You have no experiments.
+          You have no experiments. Yet...
+          <!-- <span style="font-size: 20px;">&#x261D;</span> U+1F9EA U+1F52C -->
         </div>
       </template>
       <template v-slot:items="props">
@@ -40,6 +41,9 @@
             <router-link :to="`/scientist/experiments/view/${props.item.id}`">
               {{ props.item.title }}
             </router-link>
+            <v-chip v-if="props.item.version > 1" small class="ml-2">
+              version {{ props.item.version }}
+            </v-chip>
           </div>
         </td>
         <td align="right" class="public-switch text-xs-right">
@@ -99,7 +103,7 @@ export default {
       headers: [
         { text: 'Title', value: 'name', align: 'left', sortable: false },
         { text: 'Visible to the public', value: 'public', sortable: false },
-        { text: 'Shareable link', value: 'invite', sortable: false },
+        { text: 'Shareable link to take part in experiment', value: 'invite', sortable: false },
         { text: 'Actions', value: 'edit', align: 'right', sortable: false }
       ],
 
@@ -139,7 +143,7 @@ export default {
     },
 
     destroy (exp, arrayIndex) {
-      if (confirm('Do you want to delete the experiment?')) {
+      if (confirm('Do you want to delete the experiment? You will no longer be able to retrive observer data.')) {
         this.$axios.delete(`/experiment/${exp.id}`).then(response => {
           if (response.data === 'deleted_experiment') {
             this.experiments.splice(arrayIndex, 1)

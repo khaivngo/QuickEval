@@ -8,13 +8,11 @@
     <!-- <v-breadcrumbs :items="[
       {
         text: 'Dashboard',
-        disabled: false,
         href: 'breadcrumbs_dashboard'
       },
       {
         text: 'Link 1',
-        disabled: false,
-        href: 'breadcrumbs_link_1'
+        href: '/scientist'
       },
       {
         text: 'Link 2',
@@ -30,6 +28,8 @@
     <v-content>
       <router-view/>
     </v-content>
+
+    <LoginModal :open="showAuth" v-if="$route.path != '/'"/>
 
     <v-snackbar
       v-model="snackbar"
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import LoginModal from '@/components/LoginModal'
 import MainNavigation from '@/components/Navigation'
 import EventBus from '@/eventBus'
 
@@ -61,12 +62,14 @@ export default {
   name: 'App',
 
   components: {
-    MainNavigation
+    MainNavigation,
+    LoginModal
   },
 
   data () {
     return {
       user: { id: 0, role: 0 },
+      showAuth: false,
       token: localStorage.getItem('access_token') || null,
 
       snackbar: false,
@@ -82,6 +85,8 @@ export default {
   created () {
     this.$axios.get(`/user`).then(response => {
       this.user = response.data
+    }).catch(() => {
+      this.showAuth = true
     })
   },
 
@@ -95,6 +100,14 @@ export default {
     EventBus.$on('logged', (payload) => {
       this.$axios.get(`/user`).then(response => {
         this.user = response.data
+        this.showAuth = false
+
+        if (this.$route.name === 'referral') {
+          this.$router.go()
+        } else {
+          // this.$router.go()
+          this.$router.push('/observer')
+        }
       }).catch(() => {
         this.user = { id: 0, role: 0 }
       })
@@ -110,9 +123,9 @@ export default {
 
 // Vuetify by default turns on the html scrollbar. Disable this.
 // https://vuetifyjs.com/en/getting-started/frequently-asked-questions#the-scrollbar-is-showing-even-though-my-content-is-not-overflowing-vertically-
-// html {
-//   overflow-y: auto;
-// }
+html {
+  overflow-y: auto;
+}
 
 // *:focus {
   // outline: 2px solid #FFBC42;

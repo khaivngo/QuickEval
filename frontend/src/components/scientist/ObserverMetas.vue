@@ -71,6 +71,31 @@
 
 <script>
 export default {
+  props: {
+    metas: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+
+  watch: {
+    metas (values) {
+      values.forEach((item) => {
+        this.events.push({
+          id: this.nonce++,
+          value: item.meta,
+          type: 'meta'
+        })
+
+        this.input = null
+
+        this.$emit('added', this.events)
+      })
+    }
+  },
+
   data: () => ({
     items: [], // existing observer metas
     events: [], // it all goes here
@@ -85,9 +110,7 @@ export default {
   },
 
   created () {
-    this.$axios.get('/observer-metas')
-      .then(json => { this.items = json.data })
-      .catch(err => console.warn(err))
+    this.$axios.get('/observer-metas').then(json => { this.items = json.data }).catch(err => console.warn(err))
   },
 
   methods: {

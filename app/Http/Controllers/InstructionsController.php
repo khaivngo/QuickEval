@@ -8,6 +8,7 @@ use App\Instruction;
 class InstructionsController extends Controller
 {
     public function index () {
-      return Instruction::where('user_id', auth()->user()->id)->get();
+      return Instruction::where('user_id', auth()->user()->id)
+        ->get();
     }
 }
