@@ -2,23 +2,30 @@
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar flat height="50" color="#282828">
       <v-toolbar-items>
-        <v-dialog v-model="instructionsDialog" max-width="500">
+        <v-dialog persistent v-model="iDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="on">
               Instructions
             </v-btn>
           </template>
-          <v-card>
-            <v-card-title class="headline">Instructions</v-card-title>
-            <v-card-text>
-              <div class="body-2">{{ instructionsText }}</div>
+          <v-card style="background-color: grey; color: #fff;">
+            <v-card-title class="headline">
+              Instructions
+            </v-card-title>
 
-              <h4 class="mt-5">Note</h4>
-              <p>If the images disappear outside the dragging area, click "reset panning".</p>
+            <v-card-text>
+              {{ instructionText }}
             </v-card-text>
+
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="green darken-1" flat @click="instructionsDialog = false">Close</v-btn>
+              <v-btn
+                color="primary darken-1"
+                flat="flat"
+                @click="iDialog = false"
+              >
+                Close
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -95,28 +102,6 @@
       <v-icon>keyboard_arrow_right</v-icon>
     </v-btn>
 
-    <v-dialog persistent v-model="iDialog" max-width="500">
-      <v-card style="background-color: grey; color: #fff;">
-        <v-card-title class="headline">
-          Instructions
-        </v-card-title>
-
-        <v-card-text>
-          {{ instructionText }}
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary darken-1"
-            flat="flat"
-            @click="iDialog = false"
-          >
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -127,7 +112,7 @@ export default {
   data () {
     return {
       distance: 20,
-      instructionsText: 'Rate the images.',
+      instructionsText: '',
 
       experiment: {
         id: null,

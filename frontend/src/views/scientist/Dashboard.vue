@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout mb-5>
+    <v-layout mb-5 mt-5>
       <h2 class="display-1">
         Dashboard
       </h2>
