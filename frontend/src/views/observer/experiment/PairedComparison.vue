@@ -180,6 +180,7 @@ export default {
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        // console.log(payload)
         if (payload) {
           this.stimuli = payload.data
 

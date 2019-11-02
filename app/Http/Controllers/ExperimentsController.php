@@ -101,6 +101,7 @@ class ExperimentsController extends Controller
         'user_id'           => auth()->user()->id,
         'title'             => $request->title,
         'experiment_type_id'=> $request->experimentType,
+        'picture_sequence_algorithm' => $request->algorithm,
         'short_description' => $request->shortDescription,
         'long_description'  => $request->longDescription,
         'is_public'         => $request->isPublic,
@@ -170,8 +171,8 @@ class ExperimentsController extends Controller
           {
             if ($step['type'] === 'imageSet') // TODO: check that the user owns the image set
             {
-              # random within image set
-              if ($request->algorithm === 1) // save algo in experiment table and use $experiment->algorithm instead?
+              # random within image set OR within and between image sets
+              if ($experiment->picture_sequence_algorithm === 1 || $experiment->picture_sequence_algorithm === 2)
               {
                 if ($experiment->experiment_type_id == 1)
                 {
@@ -380,7 +381,8 @@ class ExperimentsController extends Controller
         ->get(); // Add this?: ORDER BY experiment_sequences.id ASC;
 
       $all = [];
-      foreach ($sequences as $sequence)
+      $nounce = 0;
+      foreach ($sequences as $key => $sequence)
       {
         if ($sequence->picture_queue_id !== null)
         {
@@ -390,11 +392,10 @@ class ExperimentsController extends Controller
             ->where('experiment_sequences.id', $sequence->id)
             ->get();
 
-          # algorithm that shuffle the picture queue every time we fetch it,
+          // future: if $experiment->experiment_algorithm = 1 or 2
+
+          # shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different queue.
-
-          // TODO: if $experiment->experiment_algorithm = random
-
           if ($experiment->experiment_type_id == 1) {
             $Algorithms = new \App\Classes\Algorithms;
             $result = $Algorithms->shuffle_the_cards($result);
@@ -402,24 +403,22 @@ class ExperimentsController extends Controller
             $result = $result->shuffle();
           }
 
-          # add a property to the first object in the sequence,
-          # this will be used by the frontend to understand when to check for a original image
-          $result[0]->start = true;
-
-          // take the picture_set_id of first picture in the sequence and find the original in that set,
-
-          // take the id of first image in the sequence, then the picture_set_id from that image, then find the orginal with that id
-
+          # take the id of first image in the sequence, then the picture_set_id from that image, then find the orginal with that id
           $picture = \App\Picture::where('id', $result[0]->picture_id)->first();
           $picture_set = \App\PictureSet::where('id', $picture->picture_set_id)->first();
           $original = \App\Picture::where([
             ['picture_set_id', $picture_set->id],
             ['is_original', 1]
           ])->first();
-
           $result[0]->original = $original;
 
-          array_push($all, [ 'picture_queue' => $result ]);
+          # shuffle the order of image sets, make sure order of instructions is not affected (only shuffle inbetween instructions)
+          if ($experiment->picture_sequence_algorithm == 2) {
+            $all[$nounce][$key] = [ 'picture_queue' => $result ];
+            shuffle($all[$nounce]);
+          } else {
+            $all[] = [ 'picture_queue' => $result ];
+          }
         }
 
         if ($sequence->instruction_id !== null)
@@ -430,33 +429,18 @@ class ExperimentsController extends Controller
             ->where('experiment_sequences.id', $sequence->id)
             ->get(); // ->first();
 
-          array_push($all, [ 'instructions' => $result ]);
+          if ($experiment->picture_sequence_algorithm == 2) {
+            ++$nounce;
+            $all[$nounce] = [ 'instructions' => $result ];
+            ++$nounce;
+          } else {
+            $all[] = [ 'instructions' => $result ];
+          }
         }
       }
 
-      // return response($collection, 200);
-
-      # shuffle the order of image sets
-      // WARNING!!! THIS RANDOMIZES INSTRUCTIONS
-      // if (we have only 1 instruction) {
-        // if ($experiment->algorithm == 1) {
-        //   $flattened = $flattened->shuffle(); // do we need to re-assign?
-        // }
-      // }
-
-
-      // if picture_queue run until no more picture queue... shuffle that... run again
-
-      // if ($experiment->algorithm == 2) {
-      // $w = [];
-
-      // foreach ($all as $one) {
-      //   if ($one->picture_queue) {
-          
-      //   }
-      // }
-      // }
-      
+      // return response($all, 200);
+      // $flattened = $flattened->shuffle();
 
       $collection = collect($all);
       $flattened = $collection->flatten();
@@ -541,6 +525,7 @@ class ExperimentsController extends Controller
         'user_id'           => auth()->user()->id,
         'title'             => $request->title,
         'experiment_type_id'=> $request->experimentType,
+        'picture_sequence_algorithm' => $request->algorithm,
         'short_description' => $request->shortDescription,
         'long_description'  => $request->longDescription,
         'is_public'         => $request->isPublic,
@@ -613,8 +598,8 @@ class ExperimentsController extends Controller
           {
             if ($step['type'] === 'imageSet') // TODO: check that the user owns the image set
             {
-              # random within image set
-              if ($request->algorithm === 1) // save algo in experiment table and use $experiment->algorithm instead?
+              # random within image set OR within and between image sets
+              if ($experiment->picture_sequence_algorithm === 1 || $experiment->picture_sequence_algorithm === 2)
               {
                 if ($experiment->experiment_type_id == 1)
                 {
