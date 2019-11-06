@@ -4,7 +4,7 @@
       <v-menu open-on-hover bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn
-            depressed
+            color="info"
             v-on="on"
             class="text-none"
           >
@@ -81,18 +81,22 @@ export default {
   },
 
   watch: {
-    metas (values) {
-      values.forEach((item) => {
-        this.events.push({
-          id: this.nonce++,
-          value: item.meta,
-          type: 'meta'
+    metas: {
+      // immediate: true,
+      handler (values) {
+        console.log('hehe4535')
+        values.forEach((item) => {
+          this.events.push({
+            id: this.nonce++,
+            value: item.meta,
+            type: 'meta'
+          })
+
+          // this.input = null
+
+          this.$emit('added', this.events)
         })
-
-        this.input = null
-
-        this.$emit('added', this.events)
-      })
+      }
     }
   },
 

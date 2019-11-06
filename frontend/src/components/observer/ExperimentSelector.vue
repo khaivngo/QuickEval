@@ -21,7 +21,7 @@
           <div class=" mr-2 ml-2 pt-3 pr-5 pl-4">
             <v-text-field
               v-model="searchTerm"
-              @keyup.enter="findExperiment"
+              @keyup.enter="searchExperiments"
               label="Search"
               prepend-inner-icon="search"
             ></v-text-field>
@@ -183,6 +183,21 @@ export default {
         // Onward!
         this.$router.push(`/experiment/${selected.experiment_type_id}/${selected.id}`)
       }
+    },
+
+    searchExperiments () {
+      if (this.searchTerm === '') {
+        this.$axios.get(`/experiment/public`).then((response) => {
+          console.log(response)
+          this.experiments = response.data
+        })
+        return
+      }
+
+      this.$axios.get(`/experiment/${this.searchTerm}/search/public`).then((response) => {
+        console.log(response)
+        this.experiments = response.data
+      })
     }
   }
 }

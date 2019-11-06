@@ -64,7 +64,7 @@
     </v-timeline>
 
     <v-layout class="mb-5" justify-center wrap>
-      <v-flex>
+      <!-- <v-flex style="background: red;"> -->
         <v-menu open-on-hover bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -92,9 +92,9 @@
             </v-list-tile>
           </v-list>
         </v-menu>
-      </v-flex>
+      <!-- </v-flex> -->
 
-      <v-flex>
+      <!-- <v-flex> -->
         <!-- <v-btn outline @click="add('uploadImageSet')">
           upload image set <v-icon class="ml-2" small>create</v-icon>
         </v-btn> -->
@@ -150,7 +150,7 @@
             </v-list-tile>
           </v-list>
         </v-menu>
-      </v-flex>
+      <!-- </v-flex> -->
     </v-layout>
   </v-container>
 </template>
@@ -163,7 +163,6 @@ export default {
   //   CreateImageSet
   // },
   props: {
-    editMode: String,
     sequences: {
       type: Array,
       default: function () {
@@ -173,21 +172,25 @@ export default {
   },
 
   watch: {
-    sequences (values) {
-      values.forEach((item) => {
-        let type  = (item.picture_queue_id != null) ? 'imageSet' : 'instruction'
-        let value = (item.picture_queue_id != null) ? item.picture_set_id : item.description
+    sequences: {
+      // immediate: true,
+      handler (values) {
+        console.log('hehe1')
+        values.forEach((item) => {
+          let type  = (item.picture_queue_id != null) ? 'imageSet' : 'instruction'
+          let value = (item.picture_queue_id != null) ? item.picture_set_id : item.description
 
-        this.events.push({
-          id: this.nonce++,
-          value: value,
-          type: type
+          this.events.push({
+            id: this.nonce++,
+            value: value,
+            type: type
+          })
+
+          // this.input = null
+
+          this.$emit('added', this.events)
         })
-
-        this.input = null
-
-        this.$emit('added', this.events)
-      })
+      }
     }
   },
 
@@ -200,8 +203,6 @@ export default {
     events: [],
     input: null,
     nonce: 0,
-
-    edit: [],
 
     newImageSet: false
   }),

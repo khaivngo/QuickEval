@@ -4,7 +4,7 @@
       <v-menu open-on-hover bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn
-            depressed
+            color="info"
             v-on="on"
             class="text-none"
           >
@@ -71,6 +71,35 @@
 
 <script>
 export default {
+  props: {
+    categories: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
+
+  watch: {
+    categories: {
+      immediate: true,
+      handler (values) {
+        console.log('hehe')
+        values.forEach((item) => {
+          this.events.push({
+            id: this.nonce++,
+            value: item.title,
+            type: 'category'
+          })
+
+          // this.input = null
+
+          this.$emit('added', this.events)
+        })
+      }
+    }
+  },
+
   data: () => ({
     items: [], // existing categories
     events: [], // it all goes here
@@ -84,29 +113,21 @@ export default {
     }
   },
 
-  created () {
-    this.$axios.get('/categories')
-      .then(json => { this.items = json.data })
-      .catch(err => console.warn(err))
-
-    if (this.$route.params.id !== undefined) {
-      this.editCategories()
-    }
+  async created () {
+    // populate the exisiting categories dropdowns
+    const categories = await this.getCategories()
+    this.items = categories.data
   },
 
   methods: {
-    editCategories () {
-      this.$axios.get(`/experiment/${this.$route.params.id}/categories`)
-        .then(json => {
-          json.data.forEach((item) => {
-            this.events.push({
-              id: this.nonce++,
-              value: item.title,
-              type: 'category'
-            })
-          })
-        })
-        .catch(err => console.warn(err))
+    // Since axios returns a promise the async/await can be omitted for the getData function
+    getCategories () {
+      try {
+        return this.$axios.get('/categories')
+      } catch (error) {
+        console.log(error)
+        return null
+      }
     },
 
     add (type) {

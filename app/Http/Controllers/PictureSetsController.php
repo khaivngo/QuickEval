@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 class PictureSetsController extends Controller
 {
     public function index () {
-      return PictureSet::where('user_id', auth()->user()->id)
+      return PictureSet
+        ::where('user_id', auth()->user()->id)
+        ->orderBy('id', 'desc')
         ->get();
     }
 

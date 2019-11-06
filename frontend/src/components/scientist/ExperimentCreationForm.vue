@@ -1,5 +1,5 @@
 <template>
-  <div style="max-width: 900px;">
+  <div style="width: 900px;">
     <v-layout mb-5>
       <h2 class="display-1">
         Create Experiment
@@ -11,7 +11,7 @@
 
       <v-stepper-header class="elevation-0">
         <template v-for="(item, i) in steps">
-          <v-stepper-step :step="i + 1" :key="i" editable>
+          <v-stepper-step :step="item.id" :key="i" editable>
             {{ item.title }}
             <!-- <small v-if="item.subText">
               {{ item.subText }}
@@ -23,7 +23,7 @@
       </v-stepper-header>
 
       <v-stepper-items class="no-transition">
-        <v-stepper-content step="1">
+        <v-stepper-content :step="showBasicDetails.id">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[0].title }}</h2>
 
@@ -102,12 +102,24 @@
                   v-model="form.algorithm"
                   :items="[
                     { id: 1, text: 'Order of images within image sets' },
-                    { id: 2, text: 'Order of images within image sets AND order of the image sets' }
+                    {
+                      id: 2,
+                      text: 'Order of images within image sets AND order of the image sets',
+                      caption: 'Note: sets will only be randomized between instructions as to maintain the relationships between sets and instructions.'
+                    }
                   ]"
                   item-text="text"
                   item-value="id"
+                  :menu-props="{maxHeight:'auto'}"
                   label="Randomization Algorithm"
-                ></v-select>
+                >
+                  <template slot="item" slot-scope="{ item }">
+                    <v-list-tile-content>
+                      <v-list-tile-title v-html="item.text"></v-list-tile-title>
+                      <v-list-tile-sub-title v-html="item.caption"></v-list-tile-sub-title>
+                    </v-list-tile-content>
+                  </template>
+                </v-select>
               </v-flex>
             </v-layout>
 
@@ -160,9 +172,9 @@
           </v-card>
         </v-stepper-content>
 
-        <v-stepper-content step="2">
+        <v-stepper-content :step="showSettings.id">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-4">{{ steps[1].title }}</h2>
+            <h2 class="mb-4">{{ showSettings.title }}</h2>
             <!-- <v-checkbox
               v-model="form.timer"
               color="success"
@@ -227,34 +239,48 @@
           </v-card>
         </v-stepper-content>
 
-        <v-stepper-content step="3">
+        <v-stepper-content :step="showExperimentSteps.id">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-1">{{ steps[2].title }}</h2>
+            <h2 class="mb-1">{{ showExperimentSteps.title }}</h2>
             <p class="body-1">
               Add instructions and image sets in the order they should appear in your experiment.
             </p>
-
-            <v-layout justify-center v-if="form.experimentType === 3 || form.experimentType === 5">
-              <Categories @added="onCategory"/>
-            </v-layout>
-
-            <Sequence @added="onSequence" :edit-mode="mode" :sequences="experiment.sequences"/>
+            <Sequence
+              :sequences="experiment.sequences"
+              @added="onSequence"
+            />
           </v-card>
         </v-stepper-content>
 
-        <v-stepper-content step="4">
+        <v-stepper-content :step="showCategories.id" v-if="showCategories">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-1">{{ steps[3].title }}</h2>
+            <h2 class="mb-1">{{ showCategories.title }}</h2>
             <p class="body-1">
-              Add input fields to collect observer demogrphics.
+              Add the categories the observer use to rate the images.
             </p>
-            <ObserverMetas @added="onObserverMeta" :metas="experiment.metas"/>
+            <Categories
+              :categories="experiment.categories"
+              @added="onCategory"
+            />
           </v-card>
         </v-stepper-content>
 
-        <v-stepper-content step="5">
+        <v-stepper-content :step="showObserverInputs.id">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-4">{{ steps[4].title }}</h2>
+            <h2 class="mb-1">{{ showObserverInputs.title }}</h2>
+            <p class="body-1">
+              Add input fields to collect observer demographics.
+            </p>
+            <ObserverMetas
+              :metas="experiment.metas"
+              @added="onObserverMeta"
+            />
+          </v-card>
+        </v-stepper-content>
+
+        <v-stepper-content :step="showFinish.id">
+          <v-card class="mb-5 pa-5 text-xs-center" flat>
+            <h2 class="mb-4">{{ showFinish.title }}</h2>
 
             <!-- <div v-for="detail in form.basicDetails">
               {{ detail }}
@@ -286,6 +312,7 @@
         </v-flex>
       </v-layout>
 
+      <!-- footer stepper actions -->
       <v-container>
         <v-layout justify-space-between>
           <div>
@@ -296,7 +323,7 @@
 
           <div>
             <v-btn v-if="currentLevel !== steps.length" @click="next" depressed color="primary">
-              Continue<v-icon>keyboard_arrow_right</v-icon>
+              Next <v-icon>keyboard_arrow_right</v-icon>
             </v-btn>
 
             <template v-if="currentLevel === steps.length">
@@ -329,8 +356,6 @@
           </div>
         </v-layout>
       </v-container>
-
-      <!-- <v-btn flat>Cancel</v-btn> -->
     </v-stepper>
   </div>
 </template>
@@ -341,6 +366,7 @@ import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
 import EventBus from '@/eventBus'
 import Back from '@/components/Back'
+import { removeItem } from '@/helpers.js'
 
 export default {
   components: {
@@ -360,9 +386,8 @@ export default {
         { id: 1, title: 'Basic Details' },
         { id: 2, title: 'Settings' },
         { id: 3, title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
-        { id: 4, title: 'Observer Inputs' },
-        // { id: 5, title: 'Categories' },
-        { id: 5, title: 'Finish' } // final checks?
+        { id: 5, title: 'Observer Inputs' },
+        { id: 6, title: 'Finish' } // final checks?
       ],
 
       experiment: {
@@ -400,6 +425,49 @@ export default {
   computed: {
     mode () {
       return (this.$route.params.id !== undefined) ? 'edit' : 'new'
+    },
+
+    experimentType () {
+      return this.form.experimentType
+    },
+
+    showCategories () {
+      return this.steps.find(step => step.title === 'Categories') // .mark = "marked!"
+    },
+
+    showBasicDetails () {
+      return this.steps.find(step => step.title === 'Basic Details')
+    },
+
+    showSettings () {
+      return this.steps.find(step => step.title === 'Settings')
+    },
+
+    showExperimentSteps () {
+      return this.steps.find(step => step.title === 'Experiment Steps')
+    },
+
+    showObserverInputs () {
+      return this.steps.find(step => step.title === 'Observer Inputs')
+    },
+
+    showFinish () {
+      return this.steps.find(step => step.title === 'Finish')
+    }
+  },
+
+  watch: {
+    /**
+     * Some experiment types have extra steps.
+     */
+    experimentType (val) {
+      if (val === 3 || val === 5) {
+        this.steps.splice(3, 0, { id: 4, title: 'Categories' })
+      } else {
+        removeItem(this.steps, function (n) {
+          return n.title === 'Categories'
+        })
+      }
     }
   },
 
@@ -408,10 +476,9 @@ export default {
       this.findExperiment(this.$route.params.id)
     }
 
-    this.$axios.get('/experiment-types')
-      .then(json => {
-        this.experimentTypes = json.data
-      })
+    this.$axios.get('/experiment-types').then(json => {
+      this.experimentTypes = json.data
+    })
   },
 
   methods: {

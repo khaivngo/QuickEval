@@ -27,11 +27,13 @@ Route::middleware('auth:api')->group(function () {
     Route::post(    '/experiment/{original_experiment}/update', 'ExperimentsController@update'      ); // we do not use patch there because we want to create a complete new experiment, and tag the old one with "version 1"
     Route::delete(  '/experiment/{experiment}',             'ExperimentsController@destroy'         );
 
+    Route::get(     '/experiment/{term}/search/public',     'ExperimentsController@search'     );
+
     # picture sets
     Route::get(     '/picture-sets/original/{id}',  'PictureSetsController@original'    );
     Route::post(    '/imageSet',                    'PictureSetsController@store'       );
     Route::get(     '/image-sets',                  'PictureSetsController@index'       );
-    Route::get(     '/picture-sets',                'PictureSetsController@all'         );
+    Route::get(     '/picture-sets',                'PictureSetsController@index'       );
     Route::get(     '/picture-set/images/{id}',     'PictureSetsController@pictures'    );
     Route::delete(  '/picture-set/{id}',            'PictureSetsController@destroy'     );
 

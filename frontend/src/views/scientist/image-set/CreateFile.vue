@@ -32,8 +32,8 @@
 
         <v-layout>
           <p>
-            Upload the original, uncompressed, image of the image set. You'll be able to later select whether this image should
-            be shown in the experiment.
+            Upload the original, uncompressed, image of the image set.
+            During experiment creation you'll be able to select whether or not this image should be shown to the observer.
           </p>
         </v-layout>
 

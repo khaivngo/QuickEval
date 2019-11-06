@@ -86,6 +86,62 @@
         </td>
       </template>
     </v-data-table>
+
+    <!-- <v-card class="mt-3">
+      <v-layout class="pa-4 ma-0" style="border-bottom: 1px solid #ddd;">
+        <v-flex v-for="(header, i) in headers" :key="i">
+          <h6 class="caption">
+            {{ header.text }}
+          </h6>
+        </v-flex>
+      </v-layout>
+
+      <v-progress-linear v-slot:progress color="blue" indeterminate class="ma-0" :height="3"></v-progress-linear>
+
+      <v-layout v-for="(experiment, i) in experiments" :key="i" class="pt-3 pb-3 pr-4 pl-4" style="border-bottom: 1px solid #ddd;">
+        <v-flex grow class="align-center">
+          <router-link :to="`/scientist/experiments/view/${experiment.id}`">
+            {{ experiment.title }}
+          </router-link>
+          <v-chip v-if="experiment.version > 1" small class="ml-2">
+            version {{ experiment.version }}
+          </v-chip>
+        </v-flex>
+        <v-flex shrink>
+          <v-layout justify-center class="public-switch text-xs-right">
+            <v-switch
+              class="ma-0 pa-0"
+              v-model="experiment.is_public"
+              color="success"
+              @change="visibility(experiment)"
+            ></v-switch>
+          </v-layout>
+        </v-flex>
+        <v-flex shrink>
+          <InviteLink :experiment-id="experiment.id"/>
+        </v-flex>
+        <v-flex shrink>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn :to="'/scientist/experiments/edit/' + experiment.id" flat icon v-on="on">
+                <v-icon>edit</v-icon>
+              </v-btn>
+            </template>
+            <span>Edit</span>
+          </v-tooltip>
+
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn flat icon @click="destroy(experiment, i)" v-on="on">
+                <v-icon>delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Delete</span>
+          </v-tooltip>
+        </v-flex>
+      </v-layout>
+    </v-card> -->
+
   </div>
 </template>
 

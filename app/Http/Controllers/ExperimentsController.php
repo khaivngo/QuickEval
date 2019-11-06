@@ -17,6 +17,15 @@ class ExperimentsController extends Controller
         ->get();
     }
 
+    public function search ($term) {
+      $search_term = '%'.$term.'%';
+
+      return Experiment::where([
+        ['is_public', 1],
+        ['title', 'LIKE', $search_term]
+      ])->get();
+    }
+
     public function is_owner (Request $request) {
       $experiment = Experiment::where([
         ['user_id', auth()->user()->id],
@@ -40,15 +49,17 @@ class ExperimentsController extends Controller
       // $concatenated = $experiment->concat($sequences)->concat($metas);
       // return $concatenated->all();
 
-      // if ($experiment->experiment_type_id === 3 || $experiment->experiment_type_id === 5) {
-      //   $experiment_categories = \App\ExperimentCategory::where('experiment_id', $request->id)->get();
+      # category or triplet
+      if ($experiment->experiment_type_id === 3 || $experiment->experiment_type_id === 5) {
+        $experiment_categories = \App\ExperimentCategory::where('experiment_id', $request->id)->get();
 
-      //   $all = [];
-      //   foreach ($experiment_categories as $experiment_category) {
-      //     array_push($all, $experiment_category->category);
-      //   }
-      // }
+        $all = [];
+        foreach ($experiment_categories as $experiment_category) {
+          array_push($all, $experiment_category->category);
+        }
 
+        $experiment['categories'] = $all;
+      }
 
       return $experiment;
     }

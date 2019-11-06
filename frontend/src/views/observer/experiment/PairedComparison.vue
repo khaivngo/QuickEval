@@ -59,8 +59,10 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout mt-3 justify-center v-if="experiment.show_original === 1">
-      <h4 class="subheading font-weight-regular">Original</h4>
+    <v-layout mt-3 justify-center>
+      <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1">
+        Original
+      </h4>
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
