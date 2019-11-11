@@ -8,6 +8,8 @@ use App\ObserverMeta;
 class ObserverMetasController extends Controller
 {
     public function index () {
-      return ObserverMeta::where('user_id', auth()->user()->id)->get();
+      return ObserverMeta
+        ::where('user_id', auth()->user()->id)
+        ->get();
     }
 }

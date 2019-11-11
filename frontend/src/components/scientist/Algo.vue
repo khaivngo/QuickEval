@@ -8,7 +8,7 @@
       </tr>
       <tr>
         <td rowspan="2" style="padding: 4px;">
-          shuffle&nbsp;order
+          shuffle
         </td>
         <td rowspan="2" style="padding-right: 4px;">
           <span style="font-size: 85px; font-weight: 300;">{</span>

@@ -4,7 +4,7 @@ import router from './router'
 import './plugins/vuetify'
 import App from './App.vue'
 
-Vue.prototype.$domain = 'https://quickeval.no'
+Vue.prototype.$DOMAIN = 'https://quickeval.no'
 Vue.prototype.$UPLOADS_FOLDER = 'http://127.0.0.1/QuickEval/storage/app/'
 Vue.prototype.$API_URL = 'http://127.0.0.1/QuickEval/public/api'
 
@@ -15,31 +15,34 @@ if (localStorage.access_token) {
 }
 // localStorage.getItem('access_token') || null,
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    // this route requires auth, check if logged in
-    // if not, redirect to login page.
-    if (!localStorage.access_token) {
-      next({ path: '/' })
-    } else {
-      next()
-    }
-  } else if (to.matched.some(record => record.meta.requiresScientist)) {
-    if (!localStorage.access_token) {
-      next({ path: '/' })
-    } else {
-      next()
-    }
-  } else if (to.matched.some(record => record.meta.requiresAdmin)) {
-    if (!localStorage.access_token) {
-      next({ path: '/' })
-    } else {
-      next()
-    }
-  } else {
-    next() // make sure to always call next()!
-  }
-})
+/**
+ *
+ */
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     // this route requires auth, check if logged in
+//     // if not, redirect to login page.
+//     if (!localStorage.access_token) {
+//       next({ path: '/' })
+//     } else {
+//       next()
+//     }
+//   } else if (to.matched.some(record => record.meta.requiresScientist)) {
+//     if (!localStorage.access_token) {
+//       next({ path: '/' })
+//     } else {
+//       next()
+//     }
+//   } else if (to.matched.some(record => record.meta.requiresAdmin)) {
+//     if (!localStorage.access_token) {
+//       next({ path: '/' })
+//     } else {
+//       next()
+//     }
+//   } else {
+//     next() // make sure to always call next()!
+//   }
+// })
 
 Vue.prototype.$axios = axios
 

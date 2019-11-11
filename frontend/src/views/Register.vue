@@ -68,7 +68,7 @@
     <v-checkbox
       v-model="form.scientist"
       color="success"
-      :label="`Register as scientist`"
+      :label="`Register as scientist (manually approved)`"
     ></v-checkbox>
 
     <p class="caption">Check this box to </p>

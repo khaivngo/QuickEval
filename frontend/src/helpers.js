@@ -1,4 +1,4 @@
-export function removeItem (arr, forEach) {
+export function removeArrayItem (arr, forEach) {
   var i = arr.length
   while (i--) {
     if (forEach(arr[i])) {

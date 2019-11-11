@@ -39,7 +39,7 @@
           <v-flex xs12>
             <v-text-field
               v-if="event.type === 'meta'"
-              label="Write input label"
+              label="Input label"
               v-model="event.value"
               class="m-0"
               item-text="title"
@@ -53,7 +53,7 @@
             <v-select
               v-if="event.type === 'metaFromHistory'"
               :items="items"
-              label="Select input"
+              label="Select input label"
               v-model="event.value"
               item-text="meta"
               item-value="id"
@@ -84,7 +84,6 @@ export default {
     metas: {
       // immediate: true,
       handler (values) {
-        console.log('hehe4535')
         values.forEach((item) => {
           this.events.push({
             id: this.nonce++,
@@ -93,7 +92,6 @@ export default {
           })
 
           // this.input = null
-
           this.$emit('added', this.events)
         })
       }

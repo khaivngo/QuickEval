@@ -39,7 +39,7 @@
           <v-flex xs12>
             <v-text-field
               v-if="event.type === 'category'"
-              label="Write input label"
+              label="Input label"
               v-model="event.value"
               class="m-0"
               item-text="title"
@@ -53,7 +53,7 @@
             <v-select
               v-if="event.type === 'categoryFromHistory'"
               :items="items"
-              label="Select input"
+              label="Select input label"
               v-model="event.value"
               item-text="title"
               item-value="id"
@@ -84,7 +84,6 @@ export default {
     categories: {
       immediate: true,
       handler (values) {
-        console.log('hehe')
         values.forEach((item) => {
           this.events.push({
             id: this.nonce++,
@@ -93,7 +92,6 @@ export default {
           })
 
           // this.input = null
-
           this.$emit('added', this.events)
         })
       }

@@ -1,8 +1,8 @@
 <template>
   <!-- <p class="subheading"> -->
-    <!-- <a :href="`${$domain}/observer/${experimentId}`"> -->
+    <!-- <a :href="`${$DOMAIN}/observer/${experimentId}`"> -->
     <div style="display: flex; align-items: center;">
-      {{ $domain }}/observer/{{ experimentId }}
+      {{ $DOMAIN }}/observer/{{ experimentId }}
       <!-- <v-icon class="ml-1">insert_link</v-icon> -->
     </div>
     <!-- </a> -->

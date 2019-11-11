@@ -16,12 +16,15 @@ class PictureSetsController extends Controller
     }
 
     public function all () {
-      return PictureSet::orderBy('id', 'desc')
+      return PictureSet
+        ::orderBy('id', 'desc')
         ->get();
     }
 
     public function pictures ($picture_set_id) {
-      return \App\Picture::where('picture_set_id', $picture_set_id)->get();
+      return \App\Picture
+        ::where('picture_set_id', $picture_set_id)
+        ->get();
     }
 
     public function original ($picture_set_id) {
@@ -44,6 +47,24 @@ class PictureSetsController extends Controller
       ]);
 
       return response($imageSet, 201);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\PictureSet  $image_set
+     * @return \Illuminate\Http\Response
+     */
+    public function update (Request $request, PictureSet $image_set)
+    {
+        if ($image_set->user_id !== auth()->user()->id) {
+          return response()->json('Unauthorized', 401);
+        }
+
+        $image_set->update();
+
+        return response($image_set, 200);
     }
 
     public function destroy ($id) {

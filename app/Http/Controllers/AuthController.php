@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -100,6 +101,10 @@ class AuthController extends Controller
             'user_id'  => $user->id,
             'accepted' => 0
           ]);
+          // use App\Mail\OrderShipped;
+          Mail::to('robin.vigdal.bekkevold@gmail.com')->send(new \App\Mail\ScientistRequest($user));
+
+          Mail::to($user->email)->send(new \App\Mail\Receipt($user));
         }
 
         return $user;

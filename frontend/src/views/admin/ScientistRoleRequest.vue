@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import EventBus from '@/eventBus'
+
 export default {
   data () {
     return {
@@ -86,6 +88,7 @@ export default {
     async accept (id, index) {
       await this.$axios.post(`/scientist-request/${id}/accept`)
       this.requests.splice(index, 1)
+      EventBus.$emit('success', 'Request accepted successfully.')
     },
 
     async reject (id, index) {

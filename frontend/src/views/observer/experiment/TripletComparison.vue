@@ -13,9 +13,7 @@
               Instructions
             </v-card-title>
 
-            <v-card-text>
-              {{ instructionText }}
-            </v-card-text>
+            <v-card-text v-html="instructionText"></v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>

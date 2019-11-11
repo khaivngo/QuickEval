@@ -15,7 +15,7 @@
             20
           </stat> -->
 
-          <Algo/>
+          <!-- <Algo/> -->
         </v-layout>
       </v-container>
     </v-card>
@@ -24,12 +24,12 @@
 
 <script>
 // import stat from '@/components/Stat'
-import Algo from '@/components/scientist/Algo'
+// import Algo from '@/components/scientist/Algo'
 
 export default {
   components: {
     // stat
-    Algo
+    // Algo
   }
 }
 </script>

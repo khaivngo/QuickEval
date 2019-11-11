@@ -71,11 +71,11 @@ class PairedResultsController extends Controller
   }
 
   public function export_all ($id) {
-    // TODO: check if scientist owns experiment and that results belong to experiment
+      // TODO: check if scientist owns experiment and that results belong to experiment
 
-    // return \App\PairedResult
-    //   ::where('experiment_result_id', $id)
-    //   ->get();
+      // return \App\PairedResult
+      //   ::where('experiment_result_id', $id)
+      //   ->get();
 
       $paired_results = \App\ExperimentResult::where('experiment_id', $id)->get();
       // return $paired_results;

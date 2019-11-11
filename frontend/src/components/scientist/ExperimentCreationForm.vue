@@ -13,9 +13,6 @@
         <template v-for="(item, i) in steps">
           <v-stepper-step :step="item.id" :key="i" editable>
             {{ item.title }}
-            <!-- <small v-if="item.subText">
-              {{ item.subText }}
-            </small> -->
           </v-stepper-step>
 
           <v-divider v-if="i !== steps.length - 1" :key="i + 100"/>
@@ -105,7 +102,7 @@
                     {
                       id: 2,
                       text: 'Order of images within image sets AND order of the image sets',
-                      caption: 'Note: sets will only be randomized between instructions as to maintain the relationships between sets and instructions.'
+                      caption: 'Note: sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.'
                     }
                   ]"
                   item-text="text"
@@ -240,9 +237,9 @@
         </v-stepper-content>
 
         <v-stepper-content :step="showExperimentSteps.id">
-          <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-1">{{ showExperimentSteps.title }}</h2>
-            <p class="body-1">
+          <v-card class="mb-5 pa-5" flat>
+            <h2 class="mb-1 text-xs-center">{{ showExperimentSteps.title }}</h2>
+            <p class="body-1 text-xs-center">
               Add instructions and image sets in the order they should appear in your experiment.
             </p>
             <Sequence
@@ -334,7 +331,7 @@
                 :disable="loaders.saving"
                 :loading="loaders.saving"
               >
-                Finish later
+                Save as hidden
               </v-btn>
 
               <span v-if="mode === 'new'">OR</span>
@@ -366,7 +363,7 @@ import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
 import EventBus from '@/eventBus'
 import Back from '@/components/Back'
-import { removeItem } from '@/helpers.js'
+import { removeArrayItem } from '@/helpers.js'
 
 export default {
   components: {
@@ -386,8 +383,8 @@ export default {
         { id: 1, title: 'Basic Details' },
         { id: 2, title: 'Settings' },
         { id: 3, title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
-        { id: 5, title: 'Observer Inputs' },
-        { id: 6, title: 'Finish' } // final checks?
+        { id: 4, title: 'Observer Inputs' },
+        { id: 5, title: 'Final Checks' }
       ],
 
       experiment: {
@@ -432,7 +429,7 @@ export default {
     },
 
     showCategories () {
-      return this.steps.find(step => step.title === 'Categories') // .mark = "marked!"
+      return this.steps.find(step => step.title === 'Categories')
     },
 
     showBasicDetails () {
@@ -452,21 +449,34 @@ export default {
     },
 
     showFinish () {
-      return this.steps.find(step => step.title === 'Finish')
+      return this.steps.find(step => step.title === 'Final Checks')
     }
   },
 
   watch: {
     /**
      * Some experiment types have extra steps.
+     *
+     * currentLevel is linked with the ID of the object, so we have to
+     * increment/decrement the IDs for the currentLevel to be correct.
      */
-    experimentType (val) {
-      if (val === 3 || val === 5) {
+    experimentType (newVal, oldVal) {
+      // if rating -> non rating
+      if ((oldVal === null || oldVal === 3 || oldVal === 5) && (newVal === 1 || newVal === 2 || newVal === 4)) {
+        // if categories, remove
+        if (this.showCategories) {
+          --this.steps[4].id
+          --this.steps[5].id
+          removeArrayItem(this.steps, function (n) {
+            return n.title === 'Categories'
+          })
+        }
+      // if non rating -> rating
+      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5)) {
+        // if no categories, add
+        ++this.steps[3].id // this.steps.find(step => step.title === 'Categories').id = 4
+        ++this.steps[4].id
         this.steps.splice(3, 0, { id: 4, title: 'Categories' })
-      } else {
-        removeItem(this.steps, function (n) {
-          return n.title === 'Categories'
-        })
       }
     }
   },
@@ -574,7 +584,7 @@ export default {
           this.form.timer            = response.data.title
           this.form.cvd              = response.data.allow_colour_blind
           this.form.bgColour         = response.data.background_colour || '808080'
-          this.form.showOriginal     = response.data.show_original // (response.data.show_original === 0) ? false : true
+          this.form.showOriginal     = (response.data.show_original === 1)
           this.form.samePairTwice    = response.data.same_pair
         })
         .catch(err => console.warn(err))

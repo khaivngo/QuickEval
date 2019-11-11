@@ -26,6 +26,9 @@ class ExperimentsController extends Controller
       ])->get();
     }
 
+    /**
+     *
+     */
     public function is_owner (Request $request) {
       $experiment = Experiment::where([
         ['user_id', auth()->user()->id],
@@ -118,7 +121,7 @@ class ExperimentsController extends Controller
         'is_public'         => $request->isPublic,
         'same_pair'         => $request->samePairTwice,
         'background_colour' => $request->bgColour,
-        'show_original'     => $request->show_original,
+        'show_original'     => $request->showOriginal,
         'version'           => 1
       ]);
 
@@ -369,6 +372,8 @@ class ExperimentsController extends Controller
       if ($experiment->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
       }
+
+      // $request->session()->put('key', 'value');
 
       $data = $request->validate([
         'is_public' => 'required'
@@ -676,7 +681,14 @@ class ExperimentsController extends Controller
       // return response($experiment, 200);
     }
 
-    public function destroy (Request $request, Experiment $experiment) {
+    /**
+     * Remove the specified experiment from storage,
+     * if you're the owner.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy (Request $request, Experiment $experiment)
+    {
       if ($experiment->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
       }

@@ -35,16 +35,18 @@
       <template v-slot:items="props">
         <td align="left">
           <div class="qe-experiment-link-container">
-            <!-- <v-icon left>show_chart</v-icon> -->
-            <!-- <v-icon left>bar_chart</v-icon> -->
-
-            <router-link :to="`/scientist/experiments/view/${props.item.id}`">
-              {{ props.item.title }}
-            </router-link>
+            <!-- <router-link :to="`/scientist/experiments/view/${props.item.id}`"> -->
+            {{ props.item.title }}
+            <!-- </router-link> -->
             <v-chip v-if="props.item.version > 1" small class="ml-2">
               version {{ props.item.version }}
             </v-chip>
           </div>
+        </td>
+        <td align="left">
+          <v-btn :to="`/scientist/experiments/view/${props.item.id}`" flat icon>
+            <v-icon>bar_chart</v-icon> <!-- show_chart -->
+          </v-btn>
         </td>
         <td align="right" class="public-switch text-xs-right">
           <v-layout justify-center>
@@ -62,10 +64,6 @@
           <!-- </div> -->
         </td>
         <td align="right">
-          <!-- <v-btn :to="'/scientist/experiment/edit/' + props.item.id" flat icon>
-            <v-icon>bar_chart</v-icon>
-          </v-btn> -->
-
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn :to="'/scientist/experiments/edit/' + props.item.id" flat icon v-on="on">
@@ -87,60 +85,81 @@
       </template>
     </v-data-table>
 
-    <!-- <v-card class="mt-3">
-      <v-layout class="pa-4 ma-0" style="border-bottom: 1px solid #ddd;">
+    <div class="mt-3">
+      <!-- <v-layout class="pa-4 ma-0" style="border-bottom: 1px solid #ddd;">
         <v-flex v-for="(header, i) in headers" :key="i">
           <h6 class="caption">
             {{ header.text }}
           </h6>
         </v-flex>
-      </v-layout>
+      </v-layout> -->
 
-      <v-progress-linear v-slot:progress color="blue" indeterminate class="ma-0" :height="3"></v-progress-linear>
+      <v-progress-linear v-slot:progress color="blue" indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
 
-      <v-layout v-for="(experiment, i) in experiments" :key="i" class="pt-3 pb-3 pr-4 pl-4" style="border-bottom: 1px solid #ddd;">
-        <v-flex grow class="align-center">
-          <router-link :to="`/scientist/experiments/view/${experiment.id}`">
-            {{ experiment.title }}
-          </router-link>
-          <v-chip v-if="experiment.version > 1" small class="ml-2">
-            version {{ experiment.version }}
-          </v-chip>
-        </v-flex>
-        <v-flex shrink>
-          <v-layout justify-center class="public-switch text-xs-right">
-            <v-switch
-              class="ma-0 pa-0"
-              v-model="experiment.is_public"
-              color="success"
-              @change="visibility(experiment)"
-            ></v-switch>
-          </v-layout>
-        </v-flex>
-        <v-flex shrink>
-          <InviteLink :experiment-id="experiment.id"/>
-        </v-flex>
-        <v-flex shrink>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn :to="'/scientist/experiments/edit/' + experiment.id" flat icon v-on="on">
-                <v-icon>edit</v-icon>
-              </v-btn>
-            </template>
-            <span>Edit</span>
-          </v-tooltip>
+      <v-card fluid v-for="(experiment, i) in experiments" :key="i" class="pt-3 pb-3 pr-4 pl-4 mb-3">
+        <v-layout align-center>
+          <v-flex shrink class="align-center">
+            <!-- <router-link :to="`/scientist/experiments/view/${experiment.id}`"> -->
+            <v-layout align-center>
+              <h3 class="title">
+                {{ experiment.title }}
+              </h3>
+              <!-- </router-link> -->
+              <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
+                version {{ experiment.version }}
+              </v-chip>
+            </v-layout>
+          </v-flex>
+          <v-flex grow pl-3>
+            <v-layout justify-center class="public-switch text-xs-right">
+              <v-switch
+                class="ma-0 pa-0"
+                v-model="experiment.is_public"
+                color="success"
+                @change="visibility(experiment)"
+              ></v-switch>
+            </v-layout>
+          </v-flex>
+          <v-flex shrink>
+            <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
+          </v-flex>
+        </v-layout>
+        <v-layout mt-5 justify-end>
+          <v-flex shrink>
+            <!-- <v-btn :to="`/scientist/experiments/view/${experiment.id}`" flat icon>
+              <v-icon>bar_chart</v-icon>
+            </v-btn> -->
 
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn flat icon @click="destroy(experiment, i)" v-on="on">
-                <v-icon>delete</v-icon>
-              </v-btn>
-            </template>
-            <span>Delete</span>
-          </v-tooltip>
-        </v-flex>
-      </v-layout>
-    </v-card> -->
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :to="`/scientist/experiments/view/${experiment.id}`" v-on="on" depressed class="ml-0">
+                  <v-icon class="mr-2">show_chart</v-icon>results
+                </v-btn>
+              </template>
+              <span>View observer results</span>
+            </v-tooltip>
+
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" depressed>
+                  <v-icon class="mr-2">edit</v-icon> edit
+                </v-btn>
+              </template>
+              <span>Edit experiment</span>
+            </v-tooltip>
+
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn @click="destroy(experiment, i)" v-on="on" depressed>
+                  <v-icon class="mr-2">delete</v-icon> delete
+                </v-btn>
+              </template>
+              <span>Delete experiment</span>
+            </v-tooltip>
+          </v-flex>
+        </v-layout>
+      </v-card>
+    </div>
 
   </div>
 </template>
@@ -148,19 +167,22 @@
 <script>
 import EventBus from '@/eventBus'
 import InviteLink from '@/components/scientist/InviteLink'
+import Clipboard from '@/components/Clipboard'
 
 export default {
   components: {
-    InviteLink
+    InviteLink,
+    Clipboard
   },
 
   data () {
     return {
       headers: [
-        { text: 'Title', value: 'name', align: 'left', sortable: false },
-        { text: 'Visible to the public', value: 'public', sortable: false },
-        { text: 'Shareable link to take part in experiment', value: 'invite', sortable: false },
-        { text: 'Actions', value: 'edit', align: 'right', sortable: false }
+        { value: 'title',   sortable: false,  text: 'Title' },
+        { value: 'results', sortable: false,  text: 'Results' },
+        { value: 'public',  sortable: false,  text: 'Visible to the public' },
+        { value: 'invite',  sortable: false,  text: 'Shareable link to take part in experiment' },
+        { value: 'edit',    sortable: false,  text: 'Actions' }
       ],
 
       experiments: [],

@@ -3,6 +3,19 @@
 use Illuminate\Http\Request;
 
 
+// Route::get('mailable', function () {
+
+//     // $experiment_results = \App\ExperimentResult::find(8);
+//     $observer_metas = \App\ExperimentResult::find(8)->observer_metas;
+
+
+//     // $user = \App\User::find(1);
+
+//     // return new \App\Mail\ScientistRequest($user);
+//     // // return new \App\Mail\Receipt($user);
+// });
+
+
 Route::post('/register',    'AuthController@register' );
 Route::post('/anonymous',   'AuthController@anonymous');
 Route::post('/login',       'AuthController@login'    );

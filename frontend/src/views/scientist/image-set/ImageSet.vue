@@ -10,6 +10,8 @@
       <Back>Back to all image sets</Back>
 
       <v-layout justify-end pr-4 pt-2 pb-2>
+        <!-- <v-text-field value="wwww"></v-text-field> -->
+
         <v-btn class="success" :to="`/scientist/image-sets/${imageSetId}/file-upload`">
           Add Files
         </v-btn>
