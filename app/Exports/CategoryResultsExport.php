@@ -25,6 +25,7 @@ class CategoryResultsExport implements FromCollection, WithHeadings
     {
         return [
             'observer',
+            'session',
             'image',
             'category'
         ];

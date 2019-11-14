@@ -27,6 +27,7 @@ class TripletResultsController extends Controller
         {
           $arr = [];
           $arr['observer'] = $experiment_results->user_id;
+          $arr['session']  = $experiment_results->id;
 
           $arr['picture_left']   = $result->picture_left->name;
           $arr['picture_middle'] = $result->picture_middle->name;
@@ -57,6 +58,7 @@ class TripletResultsController extends Controller
           foreach ($result->triplet_results as $res) {
             $arr = [];
             $arr['observer']       = $result->user_id;
+            $arr['session']        = $result->id;
             $arr['picture_left']   = $res->picture_left->name;
             $arr['picture_middle'] = $res->picture_middle->name;
             $arr['picture_right']  = $res->picture_right->name;

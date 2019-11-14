@@ -16,75 +16,6 @@
       </v-btn>
     </v-layout>
 
-    <v-data-table
-      :headers="headers"
-      :items="experiments"
-      no-data-text=""
-      item-key="id"
-      class="elevation-1"
-      hide-actions
-      :loading="loading"
-    >
-      <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
-      <template v-slot:no-data>
-        <div class="caption text-xs-center" v-if="loading === false">
-          You have no experiments. Yet...
-          <!-- <span style="font-size: 20px;">&#x261D;</span> U+1F9EA U+1F52C -->
-        </div>
-      </template>
-      <template v-slot:items="props">
-        <td align="left">
-          <div class="qe-experiment-link-container">
-            <!-- <router-link :to="`/scientist/experiments/view/${props.item.id}`"> -->
-            {{ props.item.title }}
-            <!-- </router-link> -->
-            <v-chip v-if="props.item.version > 1" small class="ml-2">
-              version {{ props.item.version }}
-            </v-chip>
-          </div>
-        </td>
-        <td align="left">
-          <v-btn :to="`/scientist/experiments/view/${props.item.id}`" flat icon>
-            <v-icon>bar_chart</v-icon> <!-- show_chart -->
-          </v-btn>
-        </td>
-        <td align="right" class="public-switch text-xs-right">
-          <v-layout justify-center>
-            <v-switch
-              class="ma-0 pa-0"
-              v-model="props.item.is_public"
-              color="success"
-              @change="visibility(props.item)"
-            ></v-switch>
-          </v-layout>
-        </td>
-        <td align="left">
-          <!-- <div class="qe-experiment-link-container"> -->
-          <InviteLink :experiment-id="props.item.id"/>
-          <!-- </div> -->
-        </td>
-        <td align="right">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn :to="'/scientist/experiments/edit/' + props.item.id" flat icon v-on="on">
-                <v-icon>edit</v-icon>
-              </v-btn>
-            </template>
-            <span>Edit</span>
-          </v-tooltip>
-
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn flat icon @click="destroy(props.item, props.index)" v-on="on">
-                <v-icon>delete</v-icon>
-              </v-btn>
-            </template>
-            <span>Delete</span>
-          </v-tooltip>
-        </td>
-      </template>
-    </v-data-table>
-
     <div class="mt-3">
       <!-- <v-layout class="pa-4 ma-0" style="border-bottom: 1px solid #ddd;">
         <v-flex v-for="(header, i) in headers" :key="i">
@@ -94,12 +25,13 @@
         </v-flex>
       </v-layout> -->
 
-      <v-progress-linear v-slot:progress color="blue" indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
+      <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
 
       <v-card fluid v-for="(experiment, i) in experiments" :key="i" class="pt-3 pb-3 pr-4 pl-4 mb-3">
         <v-layout align-center>
           <v-flex shrink class="align-center">
             <!-- <router-link :to="`/scientist/experiments/view/${experiment.id}`"> -->
+
             <v-layout align-center>
               <h3 class="title">
                 {{ experiment.title }}
@@ -109,22 +41,49 @@
                 version {{ experiment.version }}
               </v-chip>
             </v-layout>
-          </v-flex>
-          <v-flex grow pl-3>
-            <v-layout justify-center class="public-switch text-xs-right">
-              <v-switch
-                class="ma-0 pa-0"
-                v-model="experiment.is_public"
-                color="success"
-                @change="visibility(experiment)"
-              ></v-switch>
+            <v-layout pt-2>
+              <!-- <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/> -->
             </v-layout>
           </v-flex>
+          <v-flex grow pl-3>
+            <!-- <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/> -->
+          </v-flex>
           <v-flex shrink>
-            <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
+            <v-layout align-center justify-center class="qe-public-switch">
+              <v-flex shrink class="mr-1">
+                <div class="caption" :class="(experiment.is_public === 0 || experiment.is_public === false) ? 'font-weight-bold' : ''">
+                  hidden
+                </div>
+              </v-flex>
+              <v-flex shrink>
+                <v-switch
+                  class="ma-0 pa-0"
+                  v-model="experiment.is_public"
+                  color="success"
+                  @change="visibility(experiment)"
+                >
+                  <!-- <template v-slot:append>
+                    <div>Hello</div>
+                  </template>
+                  <template v-slot:prepend>
+                    hihi
+                  </template> -->
+                </v-switch>
+              </v-flex>
+
+              <v-flex shrink class="ml-1">
+                <div class="caption" :class="(experiment.is_public === 1 || experiment.is_public === true) ? 'font-weight-bold' : ''">
+                  public
+                </div>
+              </v-flex>
+            </v-layout>
           </v-flex>
         </v-layout>
-        <v-layout mt-5 justify-end>
+        <v-layout mt-5 space-between align-center>
+          <v-flex>
+            <!-- <div class="caption">Sharable:</div> -->
+            <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
+          </v-flex>
           <v-flex shrink>
             <!-- <v-btn :to="`/scientist/experiments/view/${experiment.id}`" flat icon>
               <v-icon>bar_chart</v-icon>
@@ -132,8 +91,8 @@
 
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn :to="`/scientist/experiments/view/${experiment.id}`" v-on="on" depressed class="ml-0">
-                  <v-icon class="mr-2">show_chart</v-icon>results
+                <v-btn :to="`/scientist/experiments/view/${experiment.id}`" v-on="on" color="primary" class="ml-0 mr-5">
+                  <v-icon class="mr-2">bar_chart</v-icon>results
                 </v-btn>
               </template>
               <span>View observer results</span>
@@ -141,8 +100,8 @@
 
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" depressed>
-                  <v-icon class="mr-2">edit</v-icon> edit
+                <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="ma-0 mr-1">
+                  <v-icon>edit</v-icon>
                 </v-btn>
               </template>
               <span>Edit experiment</span>
@@ -150,8 +109,8 @@
 
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn @click="destroy(experiment, i)" v-on="on" depressed>
-                  <v-icon class="mr-2">delete</v-icon> delete
+                <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
+                  <v-icon>delete</v-icon>
                 </v-btn>
               </template>
               <span>Delete experiment</span>
@@ -166,12 +125,12 @@
 
 <script>
 import EventBus from '@/eventBus'
-import InviteLink from '@/components/scientist/InviteLink'
+// import InviteLink from '@/components/scientist/InviteLink'
 import Clipboard from '@/components/Clipboard'
 
 export default {
   components: {
-    InviteLink,
+    // InviteLink,
     Clipboard
   },
 
@@ -213,9 +172,9 @@ export default {
         is_public: exp.is_public
       }).then(response => {
         if (response.data.is_public) {
-          EventBus.$emit('success', 'Experiment is now visible to the public')
+          EventBus.$emit('success', 'Experiment is visible to the public')
         } else {
-          EventBus.$emit('success', 'Experiment is now only visible to you')
+          EventBus.$emit('success', 'Experiment is only visible to you')
         }
       })
     },
@@ -241,13 +200,17 @@ export default {
   /* NOTICE: the 'scoped' slot is omitted because it makes overriding Vuetify styles possible (for whatever reason) */
 
   /* Vuetify overriding styles, remove spacing beneath the public/hidden switches */
-  .public-switch .v-input__slot {
+  .qe-public-switch .v-input__slot {
     margin-bottom: 0 !important;
   }
 
-  .public-switch .v-input .v-input__control .v-messages {
+  .qe-public-switch .v-input .v-input__control .v-messages {
     display: none !important;
     height: 0px !important;
+  }
+
+  .qe-public-switch .v-input--selection-controls__input {
+    margin-right: 0px !important;
   }
 
   /*  */

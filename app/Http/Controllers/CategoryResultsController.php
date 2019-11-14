@@ -27,6 +27,7 @@ class CategoryResultsController extends Controller
         {
           $arr = [];
           $arr['observer']  = $experiment_results->user_id;
+          $arr['session']   = $experiment_results->id;
           $arr['picture']   = $result->picture->name;
           $arr['category']  = $result->category->title;
 
@@ -49,6 +50,7 @@ class CategoryResultsController extends Controller
           foreach ($result->category_results as $res) {
             $arr = [];
             $arr['observer']  = $result->user_id;
+            $arr['session']   = $result->id;
             $arr['picture']   = $res->picture->name;
             $arr['category']  = $res->category->title;
             array_push($data, $arr);

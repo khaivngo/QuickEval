@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-layout mb-5>
+    <v-layout mb-5 mt-5>
       <h2 class="display-1">
         Observer Results For {{ experiment.title }}
       </h2>
@@ -37,14 +37,27 @@
                 arrow_downward
               </v-icon>
             </v-btn>
+
+            <v-btn
+              v-if="observerMetas.length"
+              @click="exportObserverMetasForExperiment()"
+              color="primary text-none ma-0 ml-2"
+            >
+              Export ALL demographics
+              <v-icon :size="20" class="ml-2">
+                arrow_downward
+              </v-icon>
+            </v-btn>
           </div>
         </v-layout>
 
         <v-data-table
           :headers="[
-            { text: 'Observer ID', value: 'name', align: 'left', sortable: false },
-            { text: 'Taken At', value: 'takenAt', sortable: false },
-            { text: 'Export raw data', value: 'export', align: 'right', sortable: false }
+            { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
+            { text: 'Session ID', value: 'session', align: 'left', sortable: false,
+              desc: 'If the same observer has completed the experiment multiple times,<br> each attempt will have its own session ID.' },
+            { text: 'Taken At', value: 'takenAt', sortable: false, desc: '' },
+            { text: 'Export raw data', value: 'export', align: 'right', sortable: false, desc: '' }
           ]"
           :items="experimentResults"
           no-data-text=""
@@ -54,6 +67,19 @@
           :loading="loading"
         >
           <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
+          <template slot="headerCell" slot-scope="props">
+            {{ props.header.text }}
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <span v-on="on">
+                  <v-icon small v-if="props.header.value === 'session'">
+                    help
+                  </v-icon>
+                </span>
+              </template>
+              <div style="font-size: 14px; padding: 10px;" v-html="props.header.desc"></div>
+            </v-tooltip>
+          </template>
           <template v-slot:no-data>
             <div class="caption text-xs-center" v-if="loading === false">
               No observer data to show. No one has completed the experiment yet.
@@ -61,8 +87,9 @@
           </template>
           <template v-slot:items="props">
             <tr @click="props.expanded = !props.expanded">
+              <td>{{ props.item.user_id }}</td>
               <td>{{ props.item.id }}</td>
-              <td style="width: 100%;">{{ formatDate(props.item.created_at) }}</td>
+              <td>{{ formatDate(props.item.created_at) }}</td>
               <td class="text-xs-right">
                 <v-btn
                   @click="exportResultsForObserver(props.item)"
@@ -75,6 +102,16 @@
                   </v-icon>
                 </v-btn>
 
+                <!-- <v-btn
+                  @click="exportObserverMetasForObserver(props.item)"
+                  small
+                  color="primary text-none ma-0 ml-2"
+                >
+                  Export observer demographics
+                  <v-icon :size="20" class="ml-2">
+                    arrow_downward
+                  </v-icon>
+                </v-btn> -->
                 <!-- <v-btn
                   @click="getResultsForObserver(props.item)"
                   flat small
@@ -102,6 +139,7 @@
 <script>
 import EventBus from '@/eventBus.js'
 import Back from '@/components/Back'
+import { formatDate } from '@/helpers.js'
 
 export default {
   components: {
@@ -118,7 +156,9 @@ export default {
         experiment_type_id: null
       },
 
-      experimentResults: []
+      experimentResults: [],
+
+      observerMetas: []
     }
   },
 
@@ -127,18 +167,18 @@ export default {
 
     this.getExperiment()
     this.getExperimentResults()
+
+    this.$axios.get(`/experiment-observer-meta-result/find-or-fail/${this.$route.params.id}`)
+      .then(response => {
+        if (response.data !== '') {
+          this.observerMetas.push(response.data)
+        }
+      })
+      .catch(err => console.log(err))
   },
 
   methods: {
-    formatDate (dateTime) {
-      var dateTimeSplit = dateTime.split(' ')
-      var date = dateTimeSplit[0].split('-')
-      var time = dateTimeSplit[1].split(':')
-
-      const months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sept', 'oct', 'nov', 'dec']
-
-      return `${date[2]}. ${months[date[1] - 1]}. ${date[0]}, at ${time[0]}:${time[1]}`
-    },
+    formatDate: formatDate,
 
     getExperiment () {
       this.$axios.get(`/experiment/${this.$route.params.id}`)
@@ -184,6 +224,14 @@ export default {
       } else if (this.experiment.experiment_type_id === 5) {
         window.open(`${this.$API_URL}/${this.$route.params.id}/triplet-result/all/export`, '_blank')
       }
+    },
+
+    exportObserverMetasForExperiment () {
+      window.open(`${this.$API_URL}/experiment-observer-meta-result/${this.$route.params.id}/export`, '_blank')
+    },
+
+    exportObserverMetasForObserver (user) {
+      window.open(`${this.$API_URL}/experiment-observer-meta-result/${this.$route.params.id}/${user.user_id}/export`, '_blank')
     },
 
     wipeAllResults () {

@@ -10,7 +10,7 @@
       v-clipboard:error="onError"
       small
       flat
-      class="ml-2 mt-0 mb-0 mr-0 pa-0"
+      class="ml-0 mt-0 mb-0 mr-0 pa-0 text-none"
     >
       Copy
     </v-btn>

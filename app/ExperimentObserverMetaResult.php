@@ -12,4 +12,12 @@ class ExperimentObserverMetaResult extends Model
         'observer_meta_id',
         'answer'
     ];
+
+    // public function observer_meta () {
+    //   return $this->belongsTo(ObserverMeta::class);
+    // }
+
+    // public function user () {
+    //   return $this->belongsTo(User::class);
+    // }
 }

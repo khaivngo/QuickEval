@@ -97,6 +97,9 @@ export default {
       this.snackbar = true
     })
 
+    // EventBus.$on('registered', (payload) => {
+    //   this.showAuth = false
+    // })
     EventBus.$on('logged', (payload) => {
       this.$axios.get(`/user`).then(response => {
         this.user = response.data

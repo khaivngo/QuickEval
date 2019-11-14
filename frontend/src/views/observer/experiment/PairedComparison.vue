@@ -102,11 +102,19 @@
       <v-icon>keyboard_arrow_right</v-icon>
     </v-btn>
 
+    <FinishedDialog :show="finished"/>
+
   </v-container>
 </template>
 
 <script>
+import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
+
 export default {
+  components: {
+    FinishedDialog
+  },
+
   name: 'experiment-view',
 
   data () {
@@ -136,6 +144,8 @@ export default {
 
       iDialog: false,
       instructionText: '',
+
+      finished: false,
 
       originalImage: '',
       leftImage: '',
@@ -192,10 +202,17 @@ export default {
      */
     next () {
       // have we reached the end?
-      if (this.index === this.stimuli.length - 1) {
-        // update completed in experiments table
-        // display dialog, redirect on close
-        // return
+      // if (this.index === this.stimuli.length - 1) {
+      // update completed in experiments table
+      // display dialog, redirect on close
+      // return
+      // }
+      console.log(this.stimuli[this.index + 1])
+
+      // Have we reached the end?
+      if (this.stimuli[this.index + 1] === undefined) {
+        this.onFinish()
+        return
       }
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
@@ -237,7 +254,7 @@ export default {
             this.rightReproductionActive = false
             this.leftReproductionActive = false
             this.index += 2
-            // localStorage.setItem('index', this.index)
+            localStorage.setItem('index', this.index) // TODO, show finished modal
           })
         }
       } else {
@@ -245,7 +262,7 @@ export default {
         this.iDialog = true
 
         this.index += 1
-        // localStorage.setItem('index', this.index)
+        localStorage.setItem('index', this.index)
 
         this.next()
       }
@@ -282,7 +299,8 @@ export default {
     },
 
     onFinish () {
-      // delete localStorage
+      // delete localStorage? Or keep it so they don't do experiment again
+      this.finished = true
     },
 
     abort () {

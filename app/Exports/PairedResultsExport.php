@@ -25,6 +25,7 @@ class PairedResultsExport implements FromCollection, WithHeadings
     {
         return [
             'observer',
+            'session',
             'left image',
             'right image',
             'selected image',

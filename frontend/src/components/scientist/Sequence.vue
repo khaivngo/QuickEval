@@ -267,8 +267,13 @@ export default {
 }
 </script>
 
-<style>
+<style lang="css">
 .v-text-field__details {
   display: none;
 }
+
+/* remove line through number steps */
+/*.v-timeline:before {
+  width: 0px;
+}*/
 </style>

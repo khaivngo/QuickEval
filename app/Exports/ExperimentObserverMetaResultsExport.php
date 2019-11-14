@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\TripletResult;
+use App\ExperimentObserverMetaResult;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 
-class TripletResultsExport implements FromCollection, WithHeadings
+class ExperimentObserverMetaResultsExport implements FromCollection, WithHeadings
 {
     use Exportable;
 
@@ -25,13 +25,8 @@ class TripletResultsExport implements FromCollection, WithHeadings
     {
         return [
             'observer',
-            'session',
-            'left image',
-            'middle image',
-            'right image',
-            'left category ',
-            'middle category',
-            'right category',
+            'meta',
+            'answer'
         ];
     }
 }

@@ -132,7 +132,8 @@ export default {
       }).then(response => {
         localStorage.setItem('access_token', response.data.access_token)
         this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        EventBus.$emit('logged')
+        EventBus.$emit('success', 'Your account has been created, you may now log in.')
+        // EventBus.$emit('registered')
         this.registering = false
       }).catch((error) => {
         console.log(error)

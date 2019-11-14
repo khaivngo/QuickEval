@@ -57,6 +57,7 @@ class PairedResultsController extends Controller
       {
         $arr = [];
         $arr['observer'] = $experiment_results->user_id;
+        $arr['session']  = $experiment_results->id;
         $arr['left']     = $result->picture_left->name;
         $arr['right']    = $result->picture_right->name;
         $arr['selected'] = $result->picture_selected->name;
@@ -64,7 +65,6 @@ class PairedResultsController extends Controller
       }
 
       $file_ext = 'csv';
-      // TODO: pre/append user_id or created_at to filename
       $filename = 'results-' . $experiment_results->user_id . '.csv';
 
       return Excel::download(new PairedResultsExport($data), $filename);
@@ -78,13 +78,13 @@ class PairedResultsController extends Controller
       //   ->get();
 
       $paired_results = \App\ExperimentResult::where('experiment_id', $id)->get();
-      // return $paired_results;
 
       $data = [];
       foreach ($paired_results as $result) {
         foreach ($result->paired_results as $res) {
           $arr = [];
           $arr['observer']  = $result->user_id;
+          $arr['session']   = $result->id;
           $arr['left']      = $res->picture_left->name;
           $arr['right']     = $res->picture_right->name;
           $arr['selected']  = $res->picture_selected->name;

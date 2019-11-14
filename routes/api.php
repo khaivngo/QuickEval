@@ -15,6 +15,12 @@ use Illuminate\Http\Request;
 //     // // return new \App\Mail\Receipt($user);
 // });
 
+# observer metas export
+Route::get( '/experiment-observer-meta-result/{experiment_id}/{user_id}/export','ExperimentObserverMetaResultsController@export_observer');
+Route::get( '/experiment-observer-meta-result/{experiment_id}/export',          'ExperimentObserverMetaResultsController@export_all');
+
+Route::get( '/experiment-observer-meta-result/find-or-fail/{experiment_id}', 'ExperimentObserverMetaResultsController@find_or_fail');
+
 
 Route::post('/register',    'AuthController@register' );
 Route::post('/anonymous',   'AuthController@anonymous');
@@ -86,7 +92,9 @@ Route::middleware('auth:api')->group(function () {
     // Route::get('/experiment-categories/{id}', 'ExperimentCategoriesController@index');
 
     # experiment observer meta results
-    Route::post('/experiment-observer-meta-result', 'ExperimentObserverMetaResultsController@store');
+    Route::post('/experiment-observer-meta-result',                          'ExperimentObserverMetaResultsController@store');
+    Route::get( '/experiment-observer-meta-result/{experiment_id}/{user_id}','ExperimentObserverMetaResultsController@index');
+    Route::get( '/experiment-observer-meta-result/{experiment_id}',          'ExperimentObserverMetaResultsController@index_all');
 
     # categories
     Route::get('/categories', 'CategoriesController@index');
