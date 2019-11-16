@@ -12,7 +12,7 @@
       flat
       class="ml-0 mt-0 mb-0 mr-0 pa-0 text-none"
     >
-      Copy
+      {{ label }}
     </v-btn>
   </v-layout>
 </template>
@@ -30,10 +30,16 @@ export default {
       default: ''
     }
   },
-
+  data () {
+    return {
+      label: 'Copy'
+    }
+  },
   methods: {
     onCopy (e) {
       // alert('You just copied: ' + e.text)
+      this.label = 'Copied!'
+      window.setTimeout(() => { this.label = 'Copy' }, 3000)
     },
 
     onError (e) {

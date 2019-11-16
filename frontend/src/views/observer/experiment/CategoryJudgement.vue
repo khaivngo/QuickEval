@@ -2,7 +2,7 @@
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar flat height="50" color="#282828">
       <v-toolbar-items>
-        <v-dialog persistent v-model="iDialog" max-width="500">
+        <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="on">
               Instructions
@@ -20,7 +20,7 @@
               <v-btn
                 color="primary darken-1"
                 flat="flat"
-                @click="iDialog = false"
+                @click="instructionDialog = false"
               >
                 Close
               </v-btn>
@@ -131,43 +131,26 @@
       <v-icon>keyboard_arrow_right</v-icon>
     </v-btn>
 
-    <v-dialog persistent v-model="iDialog" max-width="500">
-      <v-card style="background-color: grey; color: #fff;">
-        <v-card-title class="headline">
-          Instructions
-        </v-card-title>
-
-        <v-card-text>
-          {{ instructionText }}
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary darken-1"
-            flat="flat"
-            @click="iDialog = false"
-          >
-            Close
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <FinishedDialog :show="finished"/>
   </v-container>
 </template>
 
 <script>
+import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
+
 export default {
   name: 'category-experiment-view',
 
+  components: {
+    FinishedDialog
+  },
+
   data () {
     return {
-      distance: 20,
-      instructionsText: 'Rate the images.',
-
       experiment: {
         id: null,
         show_original: 1,
+        stimuli_seperation_distance: 20,
         background_colour: '808080'
       },
 
@@ -176,20 +159,16 @@ export default {
       index: 0,
       experimentResult: null,
 
-      categories: [
-        // { id: 3, title: 'Bad' },
-        // { id: 4, title: 'Good' },
-        // { id: 21, title: 'Excellent' }
-      ],
+      categories: [],
       selectedCategory: null,
 
       disableNextBtn: false,
 
-      instructionsDialog: false,
-      abortDialog: false,
+      instructionText: 'Rate the images.',
 
-      iDialog: false,
-      instructionText: '',
+      abortDialog: false,
+      instructionDialog: false,
+      finished: false,
 
       originalImage: '',
       leftImage: '',
@@ -245,52 +224,55 @@ export default {
 
   methods: {
     /**
-     * Load the next image queue stimuli, or instructions.
+     * Load the next image stimuli queue, or instructions.
      */
     next () {
-      // have we reached the end?
-      if (this.index === this.stimuli.length - 1) {
-        // update completed in experiments table
-        // display dialog, redirect on close
-        // return
+      // Have we reached the end?
+      if (this.stimuli[this.index] === undefined) {
+        this.onFinish()
+        return
       }
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
-        /* set original */
+        // set original
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 
-        /* set left reproduction image */
+        // set left reproduction image
         this.getImage(this.stimuli[this.index].picture_id).then(image => {
           this.leftImage = this.$UPLOADS_FOLDER + image.data.path
         })
 
-        /* don't do anything unless category has been selected */
+        // don't do anything unless category has been selected
         if (this.selectedCategory !== null) {
           this.disableNextBtn = true
 
-          // TODO: HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
-
           this.store(this.stimuli[this.index]).then(response => {
             if (response.data !== 'result_stored') {
-              alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
+              alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
             this.disableNextBtn = false
             this.selectedCategory = null
             this.index += 1
-            // localStorage.setItem('index', this.index)
+            localStorage.setItem('index', this.index)
+
+            // Have we reached the end?
+            if (this.stimuli[this.index] === undefined) {
+              this.onFinish()
+            }
           }).catch(() => {
             this.disableNextBtn = false
+            alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
         }
       } else {
         this.instructionText = this.stimuli[this.index].description
-        this.iDialog = true
+        this.instructionDialog = true
 
         this.index += 1
-        // localStorage.setItem('index', this.index)
+        localStorage.setItem('index', this.index)
 
         this.next()
       }
@@ -316,14 +298,16 @@ export default {
     },
 
     onFinish () {
-      // delete localStorage
+      localStorage.removeItem('index')
+      localStorage.removeItem('experimentResult')
+      this.finished = true
     },
 
     abort () {
+      localStorage.removeItem('index')
+      localStorage.removeItem('experimentResult')
       this.abortDialog = true
       this.$router.push('/observer')
-
-      // Maybe do: delete localStorage
     }
   }
 }

@@ -63,7 +63,9 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span>Describe the essence of the experiment.</span>
+                  <span class="pl-2 pr-2 pt-2 pb-2 body-1">
+                    Describe the essence of the experiment.
+                  </span>
                 </v-tooltip>
               </v-flex>
             </v-layout>
@@ -87,7 +89,9 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span>Describe what the experiment is all about.</span>
+                  <span class="pl-2 pr-2 body-1">
+                    Describe what the experiment is all about.
+                  </span>
                 </v-tooltip>
               </v-flex>
             </v-layout>
@@ -135,7 +139,7 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span>
+                  <span class="pl-2 pr-2 body-1">
                     Each pair of images will have their positin flipped in the queue.<br> Leading
                     to double the comparisons for the observer.
                   </span>
@@ -158,7 +162,7 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span>
+                  <span class="pl-2 pr-2 body-1">
                     Display the original image of the image set alongside the reproductions.
                     As a reference for the observer.
                   </span>
@@ -169,9 +173,9 @@
           </v-card>
         </v-stepper-content>
 
-        <v-stepper-content :step="showSettings.id">
+        <v-stepper-content :step="showLayout.id">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-4">{{ showSettings.title }}</h2>
+            <h2 class="mb-4">{{ showLayout.title }}</h2>
             <!-- <v-checkbox
               v-model="form.timer"
               color="success"
@@ -221,7 +225,7 @@
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">help_outline</v-icon>
                       </template>
-                      <span>Distance between stimuli images, in pixels.</span>
+                      <span class="pl-2 pr-2 body-1">Distance between stimuli images, in pixels.</span>
                     </v-tooltip>
                   </template> -->
                 <!-- </v-text-field> -->
@@ -381,8 +385,8 @@ export default {
 
       steps: [
         { id: 1, title: 'Basic Details' },
-        { id: 2, title: 'Settings' },
-        { id: 3, title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
+        { id: 2, title: 'Experiment Steps', subText: 'Instructions and Image Sets' },
+        { id: 3, title: 'Layout' },
         { id: 4, title: 'Observer Inputs' },
         { id: 5, title: 'Final Checks' }
       ],
@@ -436,8 +440,8 @@ export default {
       return this.steps.find(step => step.title === 'Basic Details')
     },
 
-    showSettings () {
-      return this.steps.find(step => step.title === 'Settings')
+    showLayout () {
+      return this.steps.find(step => step.title === 'Layout')
     },
 
     showExperimentSteps () {

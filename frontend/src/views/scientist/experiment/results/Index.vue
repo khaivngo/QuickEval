@@ -10,10 +10,12 @@
       <Back>Back to all experiments</Back>
 
       <v-container pt-5 mt-1>
-        <v-layout justify-space-between align-center mb-3>
-          <h2 class="title">
-            Observer Raw Data
-          </h2>
+        <h2 class="mb-5 text-xs-center">Observer Raw Data</h2>
+
+        <v-layout justify-end align-center mb-3>
+          <!-- <h2 class="title"> -->
+            <!-- Observer Raw Data -->
+          <!-- </h2> -->
 
           <div>
             <!-- <v-btn
@@ -53,9 +55,11 @@
 
         <v-data-table
           :headers="[
+            {
+              text: 'Session ID', value: 'session', align: 'left', sortable: false,
+              desc: 'If the same observer has completed the experiment multiple times,<br> each attempt will have its own session ID.'
+            },
             { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
-            { text: 'Session ID', value: 'session', align: 'left', sortable: false,
-              desc: 'If the same observer has completed the experiment multiple times,<br> each attempt will have its own session ID.' },
             { text: 'Taken At', value: 'takenAt', sortable: false, desc: '' },
             { text: 'Export raw data', value: 'export', align: 'right', sortable: false, desc: '' }
           ]"
@@ -77,7 +81,7 @@
                   </v-icon>
                 </span>
               </template>
-              <div style="font-size: 14px; padding: 10px;" v-html="props.header.desc"></div>
+              <div class="pl-2 pr-2 body-1" v-html="props.header.desc"></div>
             </v-tooltip>
           </template>
           <template v-slot:no-data>

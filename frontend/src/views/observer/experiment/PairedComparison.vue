@@ -2,7 +2,7 @@
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar flat height="50" color="#282828">
       <v-toolbar-items>
-        <v-dialog persistent v-model="iDialog" max-width="500">
+        <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="on">
               Instructions
@@ -20,7 +20,7 @@
               <v-btn
                 color="primary darken-1"
                 flat="flat"
-                @click="iDialog = false"
+                @click="instructionDialog = false"
               >
                 Close
               </v-btn>
@@ -103,7 +103,6 @@
     </v-btn>
 
     <FinishedDialog :show="finished"/>
-
   </v-container>
 </template>
 
@@ -111,20 +110,18 @@
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 
 export default {
+  name: 'experiment-view',
+
   components: {
     FinishedDialog
   },
 
-  name: 'experiment-view',
-
   data () {
     return {
-      distance: 20,
-      instructionsText: '',
-
       experiment: {
         id: null,
         show_original: null,
+        stimuli_seperation_distance: 20,
         background_colour: '808080'
       },
 
@@ -139,12 +136,10 @@ export default {
       leftReproductionActive: false,
       disableNextBtn: false,
 
-      instructionsDialog: false,
-      abortDialog: false,
-
-      iDialog: false,
       instructionText: '',
 
+      abortDialog: false,
+      instructionDialog: false,
       finished: false,
 
       originalImage: '',
@@ -175,7 +170,6 @@ export default {
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        // console.log(payload)
         if (payload) {
           this.stimuli = payload.data
 
@@ -201,14 +195,6 @@ export default {
      * Load the next image queue stimuli, or instructions.
      */
     next () {
-      // have we reached the end?
-      // if (this.index === this.stimuli.length - 1) {
-      // update completed in experiments table
-      // display dialog, redirect on close
-      // return
-      // }
-      console.log(this.stimuli[this.index + 1])
-
       // Have we reached the end?
       if (this.stimuli[this.index + 1] === undefined) {
         this.onFinish()
@@ -239,27 +225,33 @@ export default {
         if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
           this.disableNextBtn = true
 
-          // TODO: HOW DO WE SAVE IF THEY DO NOT SELECT ANYTHING?
-
           this.store(
             selectedStimuli,
             this.stimuli[this.index],
             this.stimuli[this.index + 1]
           ).then(response => {
             if (response.data !== 'result_stored') {
-              alert('Could not save your answer. Please try again. If the problems consists please contact the researcher.')
+              alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
             this.disableNextBtn = false
             this.rightReproductionActive = false
             this.leftReproductionActive = false
             this.index += 2
-            localStorage.setItem('index', this.index) // TODO, show finished modal
+            localStorage.setItem('index', this.index)
+
+            // Have we reached the end?
+            if (this.stimuli[this.index + 1] === undefined) {
+              this.onFinish()
+            }
+          }).catch(() => {
+            this.disableNextBtn = false
+            alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
         }
       } else {
         this.instructionText = this.stimuli[this.index].description
-        this.iDialog = true
+        this.instructionDialog = true
 
         this.index += 1
         localStorage.setItem('index', this.index)
@@ -299,15 +291,16 @@ export default {
     },
 
     onFinish () {
-      // delete localStorage? Or keep it so they don't do experiment again
+      localStorage.removeItem('index')
+      localStorage.removeItem('experimentResult')
       this.finished = true
     },
 
     abort () {
+      localStorage.removeItem('index')
+      localStorage.removeItem('experimentResult')
       this.abortDialog = true
       this.$router.push('/observer')
-
-      // Maybe do: delete localStorage
     }
   }
 }

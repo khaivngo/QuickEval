@@ -1,20 +1,23 @@
 <template>
   <div>
-    <v-layout justify-space-between mb-5 mt-5>
-      <h2 class="display-1">
+    <v-layout mb-5 mt-5>
+      <h2 class="display-1 mr-5">
         Your Experiments
       </h2>
 
       <!-- <v-btn color="success" class="ma-0" :to="'/scientist/experiments/create'" exact>
         Create new
       </v-btn> -->
-    </v-layout>
-
-    <v-layout justify-end mb-3>
       <v-btn color="success" class="ma-0" :to="'/scientist/experiments/create'" exact>
         Create new
       </v-btn>
     </v-layout>
+
+    <!-- <v-layout justify-end mb-3>
+      <v-btn color="success" class="ma-0" :to="'/scientist/experiments/create'" exact>
+        Create new
+      </v-btn>
+    </v-layout> -->
 
     <div class="mt-3">
       <!-- <v-layout class="pa-4 ma-0" style="border-bottom: 1px solid #ddd;">
@@ -26,27 +29,22 @@
       </v-layout> -->
 
       <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
+      <div class="caption" v-if="loading === false && experiments.length === 0">
+        You have no experiments. Yet...
+        <!-- <span style="font-size: 20px;">&#x261D;</span> U+1F9EA U+1F52C -->
+      </div>
 
       <v-card fluid v-for="(experiment, i) in experiments" :key="i" class="pt-3 pb-3 pr-4 pl-4 mb-3">
         <v-layout align-center>
-          <v-flex shrink class="align-center">
-            <!-- <router-link :to="`/scientist/experiments/view/${experiment.id}`"> -->
-
+          <v-flex grow class="align-center">
             <v-layout align-center>
               <h3 class="title">
                 {{ experiment.title }}
               </h3>
-              <!-- </router-link> -->
               <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
                 version {{ experiment.version }}
               </v-chip>
             </v-layout>
-            <v-layout pt-2>
-              <!-- <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/> -->
-            </v-layout>
-          </v-flex>
-          <v-flex grow pl-3>
-            <!-- <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/> -->
           </v-flex>
           <v-flex shrink>
             <v-layout align-center justify-center class="qe-public-switch">
@@ -125,12 +123,10 @@
 
 <script>
 import EventBus from '@/eventBus'
-// import InviteLink from '@/components/scientist/InviteLink'
 import Clipboard from '@/components/Clipboard'
 
 export default {
   components: {
-    // InviteLink,
     Clipboard
   },
 

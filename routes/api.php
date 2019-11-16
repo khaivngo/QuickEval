@@ -111,7 +111,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', 'AuthController@logout');
 });
 
-// OPEN IN NO SECURITY BROWSER TO SEE DIFFERENT ERROR?!!!!!!!!
+
 // TODO: move this inside... InvalidArgumentException: Route [login] not defined
 Route::post('/file', 'PicturesController@store');
 

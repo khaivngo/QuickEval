@@ -260,6 +260,10 @@ class ExperimentsController extends Controller
         ['is_original', 0]
       ])->get();
 
+      // if (!in_array(count($images), [7, 9, 13, 15, 19, 21, 25, 27])) {
+      //   return response('Only image sets with 7, 9, 13, 15, 19, 21, 25 or 27 images is supported for Triplet Comparison.');
+      // }
+
       $TripletComparison = new \App\Classes\TripletComparison();
       $triplets = $TripletComparison->make_queue($images);
 
