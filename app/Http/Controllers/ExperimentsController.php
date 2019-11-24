@@ -398,7 +398,7 @@ class ExperimentsController extends Controller
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
         ->where('experiment_queues.experiment_id', $experiment->id)
-        ->get(); // Add this?: ORDER BY experiment_sequences.id ASC;
+        ->get();
 
       $all = [];
       $nounce = 0;
@@ -409,13 +409,14 @@ class ExperimentsController extends Controller
           # get all picture sequences
           $result = DB::table('experiment_sequences')
             ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
+            ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
             ->where('experiment_sequences.id', $sequence->id)
-            ->get();
+            ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
 
           // future: if $experiment->experiment_algorithm = 1 or 2
 
           # shuffle the picture queue every time we fetch it,
-          # to make sure every observer gets a different queue.
+          # to make sure every observer gets a different picture queue.
           if ($experiment->experiment_type_id == 1) {
             $Algorithms = new \App\Classes\Algorithms;
             $result = $Algorithms->shuffle_the_cards($result);
@@ -459,14 +460,19 @@ class ExperimentsController extends Controller
         }
       }
 
-      // return response($all, 200);
       // $flattened = $flattened->shuffle();
 
       $collection = collect($all);
+
+      if ($experiment->experiment_type_id == 2) {
+        return response($collection);
+      }
+
       $flattened = $collection->flatten();
 
       return response($flattened->all());
     }
+
 
     /**
      *

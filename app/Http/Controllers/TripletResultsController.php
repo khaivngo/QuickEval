@@ -96,8 +96,6 @@ class TripletResultsController extends Controller
         'chose_none'            => $request->chose_none
       ]);
 
-      if ($result) {
-        return response('result_stored', 201);
-      }
+      return response('result_stored', 201);
     }
 }

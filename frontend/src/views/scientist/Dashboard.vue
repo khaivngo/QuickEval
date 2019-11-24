@@ -16,6 +16,8 @@
           </stat> -->
 
           <!-- <Algo/> -->
+
+          <!-- <DraggableRankingList/> -->
         </v-layout>
       </v-container>
     </v-card>
@@ -25,11 +27,13 @@
 <script>
 // import stat from '@/components/Stat'
 // import Algo from '@/components/scientist/Algo'
+// import DraggableRankingList from '@/components/DraggableRankingList'
 
 export default {
   components: {
     // stat
     // Algo
+    // DraggableRankingList
   }
 }
 </script>

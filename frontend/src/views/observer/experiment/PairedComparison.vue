@@ -136,7 +136,7 @@ export default {
       leftReproductionActive: false,
       disableNextBtn: false,
 
-      instructionText: '',
+      instructionText: 'Rate the images.',
 
       abortDialog: false,
       instructionDialog: false,

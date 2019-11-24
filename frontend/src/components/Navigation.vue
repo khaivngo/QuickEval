@@ -29,6 +29,10 @@
 
     <v-spacer></v-spacer>
 
+    <v-toolbar-items v-if="user.id !== 0">
+      <Logout/>
+    </v-toolbar-items>
+
     <v-toolbar-items>
       <v-btn
         class="text-none"
@@ -40,10 +44,6 @@
         <span class="mr-2 font-weight-regular">Report issues</span>
         <v-icon small>open_in_new</v-icon>
       </v-btn>
-    </v-toolbar-items>
-
-    <v-toolbar-items v-if="user.id !== 0">
-      <Logout/>
     </v-toolbar-items>
   </v-toolbar>
 </template>
