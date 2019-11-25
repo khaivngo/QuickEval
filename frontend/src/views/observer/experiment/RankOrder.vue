@@ -106,11 +106,11 @@
           <img style="width: 100px; display: block;"/>
         </draggable> -->
         <div
-          v-for="(element, i) in rankings"
-          :key="element.id"
-          @click="changeLeftPannerImage(element)"
+          v-for="(label, i) in labels"
+          :key="label"
+          @click="changeLeftPannerImage(label)"
           class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
-          :class="(element.id === activeLeft) ? 'active' : ''"
+          :class="(label === activeLeft) ? 'active' : ''"
         >
           {{ alphabet[i].toUpperCase() }}
         </div>
@@ -125,11 +125,11 @@
       <v-layout justify-center class="ml-2 mr-2">
         <!-- Viewing image <strong>C</strong> -->
         <div
-          v-for="(element, i) in rankings"
-          :key="element.id"
-          @click="changeRightPannerImage(element)"
+          v-for="(label, i) in labels"
+          :key="label"
+          @click="changeRightPannerImage(label)"
           class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
-          :class="(element.id === activeRight) ? 'active' : ''"
+          :class="(label === activeRight) ? 'active' : ''"
         >
           {{ alphabet[i].toUpperCase() }}
         </div>
@@ -194,6 +194,8 @@
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import draggable from 'vuedraggable'
 
+const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+
 export default {
   name: 'experiment-view',
 
@@ -211,13 +213,13 @@ export default {
         background_colour: '808080'
       },
 
-      alphabet: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-
       stimuli: [],
 
       index: 0,
       experimentResult: null,
 
+      alphabet: alphabet,
+      labels: [],
       rankings: [],
       beingDragged: false,
       activeLeft: null,
@@ -302,16 +304,17 @@ export default {
       // e.moved.element.moved = true
     },
 
-    changeLeftPannerImage (element) {
+    changeLeftPannerImage (label) {
       this.isLoadLeft = false
 
+      let elem = this.rankings.find(e => e.id === label)
       this.$nextTick(() => {
-        this.leftImage = this.$UPLOADS_FOLDER + element.path
+        this.leftImage = this.$UPLOADS_FOLDER + elem.path
       })
 
-      this.activeLeft = element.id
+      this.activeLeft = label
       // tag the stimuli as watched
-      this.rankings.find(e => e.id === element.id).watched = true
+      elem.watched = true
     },
 
     loadedLeft () {
@@ -320,22 +323,24 @@ export default {
       }, 200)
     },
 
-    changeRightPannerImage (element) {
+    changeRightPannerImage (label) {
       this.isLoadRight = false
 
+      let elem = this.rankings.find(e => e.id === label)
+
       this.$nextTick(() => {
-        this.rightImage = this.$UPLOADS_FOLDER + element.path
+        this.rightImage = this.$UPLOADS_FOLDER + elem.path
       })
 
-      this.activeRight = element.id
+      this.activeRight = label
       // tag the stimuli as watched
-      this.rankings.find(e => e.id === element.id).watched = true
+      elem.watched = true
     },
 
     loadedRight () {
       window.setTimeout(() => {
         this.isLoadRight = true
-      }, 300)
+      }, 200)
     },
 
     /**
@@ -353,6 +358,7 @@ export default {
       if (this.stimuli[this.index].hasOwnProperty('picture_queue')) {
         //
         this.rankings = this.stimuli[this.index].picture_queue
+        // this.labels = this.stimuli[this.index].picture_queue
         this.activeLeft = this.stimuli[this.index].picture_queue[0].id
         this.activeRight = this.stimuli[this.index].picture_queue[1].id
         this.rankings[0].watched = true
@@ -361,6 +367,7 @@ export default {
         // give each image a letter ID
         this.rankings.forEach((item, i) => {
           this.$set(item, 'letter', this.alphabet[i].toUpperCase())
+          this.labels.push(item.id)
         })
 
         // set original
@@ -401,6 +408,9 @@ export default {
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
         }
+        // else {
+        //   alert('Please evaluate all the images before moving to the next step.')
+        // }
       } else {
         this.instructionText = this.stimuli[this.index].instructions[0].description
         this.instructionDialog = true
