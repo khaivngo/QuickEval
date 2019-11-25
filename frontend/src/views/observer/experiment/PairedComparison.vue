@@ -210,16 +210,8 @@ export default {
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-
-        /* set left reproduction image */
-        this.getImage(this.stimuli[this.index].picture_id).then(image => {
-          this.leftImage = this.$UPLOADS_FOLDER + image.data.path
-        })
-
-        /* set right reproduction image */
-        this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
-          this.rightImage = this.$UPLOADS_FOLDER + image.data.path
-        })
+        this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
 
         /* don't do anything unless stimuli has been selected */
         if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
@@ -262,10 +254,6 @@ export default {
 
     async getExperiment (experimentId) {
       return this.$axios.get(`/experiment/${experimentId}`)
-    },
-
-    async getImage (id) {
-      return this.$axios.get(`/picture/${id}`)
     },
 
     toggleSelected (side) {

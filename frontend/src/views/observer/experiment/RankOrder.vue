@@ -63,6 +63,43 @@
       </h4> -->
     </v-layout>
 
+    <v-layout mt-2>
+      <v-layout justify-center class="ml-2 mr-2">
+        <!-- Viewing image <strong>A</strong> -->
+        <!-- <draggable group="stimuli">
+          <img style="width: 100px; display: block;"/>
+        </draggable> -->
+        <div
+          v-for="(label, i) in labels"
+          :key="label"
+          @click="changeLeftPannerImage(label)"
+          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
+          :class="(label === activeLeft) ? 'active' : ''"
+        >
+          {{ alphabet[i].toUpperCase() }}
+        </div>
+      </v-layout>
+
+      <v-layout justify-center align-center class="text-xs-center ml-2 mr-2" v-if="experiment.show_original === 1">
+        <h4 class="body-1 font-weight-regular">
+          Original
+        </h4>
+      </v-layout>
+
+      <v-layout justify-center class="ml-2 mr-2">
+        <!-- Viewing image <strong>C</strong> -->
+        <div
+          v-for="(label, i) in labels"
+          :key="label"
+          @click="changeRightPannerImage(label)"
+          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
+          :class="(label === activeRight) ? 'active' : ''"
+        >
+          {{ alphabet[i].toUpperCase() }}
+        </div>
+      </v-layout>
+    </v-layout>
+
     <v-layout ml-3 mr-3 pa-0 style="height: 72vh;" justify-center>
       <v-flex class="picture-container" mt-2 mb-1 ml-2 mr-2>
         <div class="panzoom">
@@ -99,53 +136,16 @@
       </v-flex>
     </v-layout>
 
-    <v-layout mb-4>
-      <v-layout justify-center class="ml-2 mr-2">
-        <!-- Viewing image <strong>A</strong> -->
-        <!-- <draggable group="stimuli">
-          <img style="width: 100px; display: block;"/>
-        </draggable> -->
-        <div
-          v-for="(label, i) in labels"
-          :key="label"
-          @click="changeLeftPannerImage(label)"
-          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
-          :class="(label === activeLeft) ? 'active' : ''"
-        >
-          {{ alphabet[i].toUpperCase() }}
-        </div>
-      </v-layout>
-
-      <v-layout justify-center class="text-xs-center ml-2 mr-2" v-if="experiment.show_original === 1">
-        <h4 class="body-1 font-weight-regular">
-          Original
-        </h4>
-      </v-layout>
-
-      <v-layout justify-center class="ml-2 mr-2">
-        <!-- Viewing image <strong>C</strong> -->
-        <div
-          v-for="(label, i) in labels"
-          :key="label"
-          @click="changeRightPannerImage(label)"
-          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
-          :class="(label === activeRight) ? 'active' : ''"
-        >
-          {{ alphabet[i].toUpperCase() }}
-        </div>
-      </v-layout>
-    </v-layout>
-
-    <div class="rating">
+    <div class="rating mt-3">
       <v-layout justify-center align-center class="mt-2 pa-0">
-        <!-- best -->
+        <div class="subheading">best</div>
         <div class="text-xs-center subheading" v-for="(num, i) in rankings.length" :key="i"
           style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
         >
           <!-- #{{ (rankings.length + 1) - num }} -->
-          {{ num }}
+          #{{ num }}
         </div>
-        <!-- worst -->
+        <div class="subheading">worst</div>
       </v-layout>
       <v-layout justify-center class="mt-1 pa-0">
         <draggable
@@ -179,7 +179,7 @@
     </div>
 
     <v-btn fixed bottom right color="#D9D9D9"
-      @click="next()"
+      @click="next('click')"
       :loading="disableNextBtn"
     >
       <span class="ml-1">next</span>
@@ -346,7 +346,7 @@ export default {
     /**
      * Load the next image set stimuli, or instructions.
      */
-    next () {
+    next (action) {
       // Have we reached the end?
       if (this.stimuli[this.index] === undefined) {
         this.onFinish()
@@ -359,13 +359,12 @@ export default {
         //
         this.labels = []
         this.rankings = this.stimuli[this.index].picture_queue
-        // this.labels = this.stimuli[this.index].picture_queue
         this.activeLeft = this.stimuli[this.index].picture_queue[0].id
         this.activeRight = this.stimuli[this.index].picture_queue[1].id
         this.rankings[0].watched = true
         this.rankings[1].watched = true
 
-        // give each image a letter ID
+        // give each image a letter ID, and create labels
         this.rankings.forEach((item, i) => {
           this.$set(item, 'letter', this.alphabet[i].toUpperCase())
           this.labels.push(item.id)
@@ -375,17 +374,10 @@ export default {
         if (this.stimuli[this.index].picture_queue[0].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].original.path
         }
+        this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].path
+        this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[1].path
 
-        // set left reproduction image
-        this.getImage(this.stimuli[this.index].picture_queue[0].picture_id).then(image => {
-          this.leftImage = this.$UPLOADS_FOLDER + image.data.path
-        })
-
-        // set right reproduction image
-        this.getImage(this.stimuli[this.index].picture_queue[1].picture_id).then(image => {
-          this.rightImage = this.$UPLOADS_FOLDER + image.data.path
-        })
-
+        // has every image been viewed in the panner?
         let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
         if (this.rankings.length !== 0 && (watched.length === this.rankings.length)) {
           this.disableNextBtn = true
@@ -408,10 +400,9 @@ export default {
             this.disableNextBtn = false
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
+        } else if (action === 'click') {
+          alert('Please evaluate all the images before moving to the next step.')
         }
-        // else {
-        //   alert('Please evaluate all the images before moving to the next step.')
-        // }
       } else {
         this.instructionText = this.stimuli[this.index].instructions[0].description
         this.instructionDialog = true
@@ -425,10 +416,6 @@ export default {
 
     async getExperiment (experimentId) {
       return this.$axios.get(`/experiment/${experimentId}`)
-    },
-
-    async getImage (id) {
-      return this.$axios.get(`/picture/${id}`)
     },
 
     async store () {

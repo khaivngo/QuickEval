@@ -238,11 +238,7 @@ export default {
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-
-        // set left reproduction image
-        this.getImage(this.stimuli[this.index].picture_id).then(image => {
-          this.leftImage = this.$UPLOADS_FOLDER + image.data.path
-        })
+        this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
 
         // don't do anything unless category has been selected
         if (this.selectedCategory !== null) {
@@ -280,10 +276,6 @@ export default {
 
     async getExperiment (experimentId) {
       return this.$axios.get(`/experiment/${experimentId}`)
-    },
-
-    async getImage (id) {
-      return this.$axios.get(`/picture/${id}`)
     },
 
     async store (pictureIdLeft) {

@@ -267,19 +267,9 @@ export default {
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-
-        /* set left reproduction image */
-        this.getImage(this.stimuli[this.index].picture_id).then(image => {
-          this.imageLeft = this.$UPLOADS_FOLDER + image.data.path
-        })
-
-        this.getImage(this.stimuli[this.index + 1].picture_id).then(image => {
-          this.imageMiddle = this.$UPLOADS_FOLDER + image.data.path
-        })
-
-        this.getImage(this.stimuli[this.index + 2].picture_id).then(image => {
-          this.imageRight = this.$UPLOADS_FOLDER + image.data.path
-        })
+        this.imageLeft = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        this.imageMiddle = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+        this.imageRight = this.$UPLOADS_FOLDER + this.stimuli[this.index + 2].path
 
         /* don't do anything unless all categories has been selected */
         if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
@@ -319,10 +309,6 @@ export default {
 
     async getExperiment (experimentId) {
       return this.$axios.get(`/experiment/${experimentId}`)
-    },
-
-    async getImage (id) {
-      return this.$axios.get(`/picture/${id}`)
     },
 
     async store (pictureIdLeft, pictureIdMiddle, pictureIdRight) {
