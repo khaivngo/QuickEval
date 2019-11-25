@@ -70,6 +70,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get( '/paired-result/{id}',          'PairedResultsController@index');
     // Route::get( '/paired-result/{id}/export',   'PairedResultsController@index_export');
     // Route::get( '/paired-result/export',        'PairedResultsController@export');
+    // Route::get( '/rank-order-result/{id}',      'RankOrderResultsController@show');
 
     Route::post('/paired-result',     'PairedResultsController@store'  );
     Route::post('/category-result',   'CategoryResultsController@store');
@@ -119,6 +120,10 @@ Route::post('/file', 'PicturesController@store');
 # paired export
 Route::get('/paired-result/{id}/export',     'PairedResultsController@export_observer'  );
 Route::get('/{id}/paired-result/all/export', 'PairedResultsController@export_all'       );
+
+# rank order export
+Route::get('/rank-order-result/{id}/export',     'RankOrderResultsController@export_observer'  );
+Route::get('/{id}/rank-order-result/all/export', 'RankOrderResultsController@export_all'       );
 
 # category export
 Route::get('/category-result/{id}/export',     'CategoryResultsController@export_observer'  );

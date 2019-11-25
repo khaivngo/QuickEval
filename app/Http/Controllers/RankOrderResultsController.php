@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
+use App\ExperimentResult;
 use App\RankOrderResult;
+use App\Exports\RankOrderResultsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RankOrderResultsController extends Controller
 {
@@ -14,7 +18,7 @@ class RankOrderResultsController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -46,7 +50,58 @@ class RankOrderResultsController extends Controller
      */
     public function show($id)
     {
-        //
+        return ExperimentResult::find($id)->rank_order_results;
+    }
+
+
+    public function export_observer($id)
+    {
+        $experiment_results = ExperimentResult::find($id);
+        $rank_order_results = ExperimentResult::find($id)->rank_order_results;
+
+        $data = [];
+        foreach ($rank_order_results as $result)
+        {
+            $arr = [];
+            $arr['observer'] = $experiment_results->user_id;
+            $arr['session']  = $experiment_results->id;
+            $arr['ranking']  = $result->ranking;
+            $arr['picture']  = $result->picture->name;
+            $arr['set']      = $result->picture_set->title;
+            array_push($data, $arr);
+        }
+
+        $file_ext = 'csv';
+        $filename = 'results-' . $experiment_results->user_id . '.csv';
+
+        return Excel::download(new RankOrderResultsExport($data), $filename);
+    }
+
+
+    public function export_all($id)
+    {
+        // TODO: check if scientist owns experiment and that results belong to experiment
+
+        $rank_order_results = \App\ExperimentResult::where('experiment_id', $id)->get();
+
+        $data = [];
+        foreach ($rank_order_results as $result) {
+          foreach ($result->rank_order_results as $res) {
+            $arr = [];
+            $arr['observer'] = $result->user_id;
+            $arr['session']  = $result->id;
+            $arr['ranking']  = $res->ranking;
+            $arr['picture']  = $res->picture->name;
+            $arr['set']      = $res->picture_set->title;
+
+            array_push($data, $arr);
+          }
+        }
+
+        $file_ext = 'csv';
+        $filename = 'results.' . $file_ext;
+
+        return Excel::download(new RankOrderResultsExport($data), $filename);
     }
 
     /**

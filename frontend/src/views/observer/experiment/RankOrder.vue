@@ -357,6 +357,7 @@ export default {
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue')) {
         //
+        this.labels = []
         this.rankings = this.stimuli[this.index].picture_queue
         // this.labels = this.stimuli[this.index].picture_queue
         this.activeLeft = this.stimuli[this.index].picture_queue[0].id

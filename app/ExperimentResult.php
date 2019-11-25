@@ -27,6 +27,10 @@ class ExperimentResult extends Model
         return $this->hasMany('App\PairedResult');
     }
 
+    public function rank_order_results () {
+        return $this->hasMany('App\RankOrderResult');
+    }
+
     public function triplet_results () {
         return $this->hasMany('App\TripletResult');
     }

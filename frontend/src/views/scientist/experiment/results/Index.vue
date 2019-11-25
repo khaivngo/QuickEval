@@ -55,11 +55,11 @@
 
         <v-data-table
           :headers="[
+            { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
             {
               text: 'Session ID', value: 'session', align: 'left', sortable: false,
-              desc: 'If the same observer has completed the experiment multiple times,<br> each attempt will have its own session ID.'
+              desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.'
             },
-            { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
             { text: 'Taken At', value: 'takenAt', sortable: false, desc: '' },
             { text: 'Export raw data', value: 'export', align: 'right', sortable: false, desc: '' }
           ]"
@@ -202,17 +202,19 @@ export default {
         .catch(err => console.log(err))
     },
 
-    getResultsForObserver (experimentResult, i) {
-      this.$axios.get(`/paired-result/${experimentResult.id}`)
-        .then(response => {
-          // this.$set(this.experimentResults[i], 'results', response.data)
-        })
-        .catch(err => console.log(err))
-    },
+    // getResultsForObserver (experimentResult, i) {
+    //   this.$axios.get(`/paired-result/${experimentResult.id}`)
+    //     .then(response => {
+    //       // this.$set(this.experimentResults[i], 'results', response.data)
+    //     })
+    //     .catch(err => console.log(err))
+    // },
 
     exportResultsForObserver (experimentResult) {
       if (this.experiment.experiment_type_id === 1) {
         window.open(`${this.$API_URL}/paired-result/${experimentResult.id}/export`, '_blank')
+      } else if (this.experiment.experiment_type_id === 2) {
+        window.open(`${this.$API_URL}/rank-order-result/${experimentResult.id}/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 3) {
         window.open(`${this.$API_URL}/category-result/${experimentResult.id}/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 5) {
@@ -221,8 +223,12 @@ export default {
     },
 
     exportResultsForExperiment () {
+      // window.open(`${this.$API_URL}/${this.$route.params.id}/${this.experiment.experiment_type_id}/all/export`, '_blank')
+
       if (this.experiment.experiment_type_id === 1) {
         window.open(`${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`, '_blank')
+      } else if (this.experiment.experiment_type_id === 2) {
+        window.open(`${this.$API_URL}/${this.$route.params.id}/rank-order-result/all/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 3) {
         window.open(`${this.$API_URL}/${this.$route.params.id}/category-result/all/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 5) {
@@ -244,9 +250,9 @@ export default {
           if (response.data === 'deleted') {
             this.experimentResults = []
 
-            EventBus.$emit('success', 'Experiment has been deleted successfully')
+            EventBus.$emit('success', 'Experiment data has been deleted successfully')
           } else {
-            EventBus.$emit('error', 'Could not delete experiment')
+            EventBus.$emit('error', 'Could not delete experiment data.')
           }
         })
       }
