@@ -84,7 +84,7 @@
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
       <v-flex ma-2 class="picture-container">
         <div class="panzoom">
-          <img id="picture-left" class="picture" :src="leftImage"/>
+          <img id="picture-left" class="picture" :class="isLoadLeft === false ? 'hide' : ''" :src="leftImage"/>
         </div>
       </v-flex>
 
@@ -161,6 +161,7 @@ export default {
 
       categories: [],
       selectedCategory: null,
+      isLoadLeft: false,
 
       disableNextBtn: false,
 
@@ -238,7 +239,17 @@ export default {
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-        this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+
+        const imgLeft = new Image()
+        imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        imgLeft.onload = () => {
+          this.isLoadLeft = false
+          this.leftImage = imgLeft.src
+          window.setTimeout(() => {
+            this.isLoadLeft = true
+          }, 200)
+        }
+        // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
 
         // don't do anything unless category has been selected
         if (this.selectedCategory !== null) {

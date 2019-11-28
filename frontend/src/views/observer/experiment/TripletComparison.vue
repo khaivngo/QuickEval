@@ -129,24 +129,26 @@
 
       <v-flex ma-2 class="picture-container">
         <div class="panzoom">
-          <img id="picture-left" class="picture" :src="imageLeft"/>
+          <img id="picture-left" class="picture" :class="isLoadLeft === false ? 'hide' : ''" :src="imageLeft"/>
         </div>
       </v-flex>
 
       <v-flex ma-2 class="picture-container">
         <div class="panzoom">
-          <img id="picture-right" class="picture" :src="imageMiddle"/>
+          <img id="picture-right" class="picture" :class="isLoadMiddle === false ? 'hide' : ''" :src="imageMiddle"/>
         </div>
       </v-flex>
 
       <v-flex ma-2 class="picture-container">
         <div class="panzoom">
-          <img id="picture-right" class="picture" :src="imageRight"/>
+          <img id="picture-right" class="picture" :class="isLoadRight === false ? 'hide' : ''" :src="imageRight"/>
         </div>
       </v-flex>
     </v-layout>
 
-    <v-btn fixed bottom right color="#D9D9D9"
+    <v-btn
+      fixed bottom right
+      color="#D9D9D9"
       @click="next()"
       :disabled="disableNextBtn || (selectedCategoryLeft === null || selectedCategoryMiddle === null || selectedCategoryRight === null)"
       :loading="disableNextBtn"
@@ -181,6 +183,10 @@ export default {
       selectedCategoryLeft: null,
       selectedCategoryMiddle: null,
       selectedCategoryRight: null,
+
+      isLoadRight: false,
+      isLoadMiddle: false,
+      isLoadLeft: false,
 
       stimuli: [],
 
@@ -267,9 +273,40 @@ export default {
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-        this.imageLeft = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        this.imageMiddle = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
-        this.imageRight = this.$UPLOADS_FOLDER + this.stimuli[this.index + 2].path
+
+        const imgLeft = new Image()
+        imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        imgLeft.onload = () => {
+          this.isLoadLeft = false
+          this.imageLeft = imgLeft.src
+          window.setTimeout(() => {
+            this.isLoadLeft = true
+          }, 200)
+        }
+
+        const imgMiddle = new Image()
+        imgMiddle.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+        imgMiddle.onload = () => {
+          this.isLoadMiddle = false
+          this.imageMiddle = imgMiddle.src
+          window.setTimeout(() => {
+            this.isLoadMiddle = true
+          }, 200)
+        }
+
+        const imgRight = new Image()
+        imgRight.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+        imgRight.onload = () => {
+          this.isLoadRight = false
+          this.imageRight = imgRight.src
+          window.setTimeout(() => {
+            this.isLoadRight = true
+          }, 200)
+        }
+
+        // this.imageLeft = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        // this.imageMiddle = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+        // this.imageRight = this.$UPLOADS_FOLDER + this.stimuli[this.index + 2].path
 
         /* don't do anything unless all categories has been selected */
         if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
@@ -366,5 +403,9 @@ export default {
   .category-select {
     max-width: 250px;
     background-color: #bbb;
+  }
+
+  .hide {
+    opacity: 0;
   }
 </style>

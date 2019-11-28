@@ -130,6 +130,10 @@ html {
   overflow-y: auto;
 }
 
+.hide {
+  opacity: 0;
+}
+
 // *:focus {
   // outline: 2px solid #FFBC42;
   // outline: 2px dashed $dark-yellow;

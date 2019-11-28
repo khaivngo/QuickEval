@@ -138,16 +138,17 @@
 
     <div class="rating mt-3">
       <v-layout justify-center align-center class="mt-2 pa-0">
-        <div class="subheading">best</div>
+        <!-- <div class="subheading">best</div> -->
         <div class="text-xs-center subheading" v-for="(num, i) in rankings.length" :key="i"
           style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
         >
           <!-- #{{ (rankings.length + 1) - num }} -->
           #{{ num }}
         </div>
-        <div class="subheading">worst</div>
+        <!-- <div class="subheading">worst</div> -->
       </v-layout>
-      <v-layout justify-center class="mt-1 pa-0">
+      <v-layout justify-center align-center class="mt-1 pa-0">
+        <div class="subheading mr-2">best</div>
         <draggable
           :list="rankings"
           ghost-class="ghost"
@@ -165,6 +166,7 @@
             </div>
           </transition-group>
         </draggable>
+        <div class="subheading ml-2">worst</div>
       </v-layout>
       <!-- <v-layout justify-center align-center class="mb-2 pa-0"> -->
         <!-- best -->
@@ -400,9 +402,10 @@ export default {
             this.disableNextBtn = false
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
-        } else if (action === 'click') {
-          alert('Please evaluate all the images before moving to the next step.')
         }
+        // else if ((this.rankings.length !== 0 && (watched.length === this.rankings.length)) && action === 'click') {
+        //   alert('Please evaluate all the images before moving to the next step.')
+        // }
       } else {
         this.instructionText = this.stimuli[this.index].instructions[0].description
         this.instructionDialog = true

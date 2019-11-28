@@ -71,13 +71,22 @@
         ma-2
       >
         <div class="panzoom">
-          <img id="picture-left" class="picture" :src="leftImage"/>
+          <img
+            id="picture-left"
+            class="picture"
+            :class="isLoadLeft === false ? 'hide' : ''"
+            :src="leftImage"
+          />
         </div>
       </v-flex>
 
       <v-flex ma-2 class="picture-container" v-if="experiment.show_original === 1">
         <div class="panzoom">
-          <img id="picture-original" class="picture" :src="originalImage"/>
+          <img
+            id="picture-original"
+            class="picture"
+            :src="originalImage"
+          />
         </div>
       </v-flex>
 
@@ -88,15 +97,22 @@
         ma-2
       >
         <div class="panzoom">
-          <img id="picture-right" class="picture" :src="rightImage"/>
+          <img
+            id="picture-right"
+            class="picture"
+            :class="isLoadRight === false ? 'hide' : ''"
+            :src="rightImage"
+          />
         </div>
       </v-flex>
     </v-layout>
 
-    <v-btn fixed bottom right color="#D9D9D9"
-      @click="next()"
-      :disabled="disableNextBtn || (rightReproductionActive === false && leftReproductionActive === false)"
+    <v-btn
+      @click="next('click')"
+      :disabled="noneSelected"
       :loading="disableNextBtn"
+      fixed bottom right
+      color="#D9D9D9"
     >
       <span class="ml-1">next</span>
       <v-icon>keyboard_arrow_right</v-icon>
@@ -130,6 +146,9 @@ export default {
       index: 0,
       experimentResult: null,
 
+      isLoadLeft: false,
+      isLoadRight: false,
+
       selectedStimuli: null,
 
       rightReproductionActive: false,
@@ -145,6 +164,12 @@ export default {
       originalImage: '',
       leftImage: '',
       rightImage: ''
+    }
+  },
+
+  computed: {
+    noneSelected () {
+      return this.disableNextBtn || (this.rightReproductionActive === false && this.leftReproductionActive === false)
     }
   },
 
@@ -204,14 +229,35 @@ export default {
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
         let selectedStimuli = 0
         if (this.rightReproductionActive === true) selectedStimuli = this.stimuli[this.index]
-        if (this.leftReproductionActive === true) selectedStimuli = this.stimuli[this.index + 1]
+        if (this.leftReproductionActive === true)  selectedStimuli = this.stimuli[this.index + 1]
 
         /* set original */
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
-        this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+
+        const img = new Image()
+        img.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        img.onload = () => {
+          this.isLoadLeft = false
+          this.leftImage = img.src
+          window.setTimeout(() => {
+            this.isLoadLeft = true
+          }, 200)
+        }
+
+        const imgRight = new Image()
+        imgRight.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+        imgRight.onload = () => {
+          this.isLoadRight = false
+          this.rightImage = imgRight.src
+          window.setTimeout(() => {
+            this.isLoadRight = true
+          }, 200)
+        }
+
+        // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        // this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
 
         /* don't do anything unless stimuli has been selected */
         if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
@@ -309,6 +355,10 @@ export default {
 
 .selected {
   outline: solid 5px #282828;
+}
+
+.hide {
+  opacity: 0;
 }
 
 // .parent {

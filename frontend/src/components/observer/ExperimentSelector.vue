@@ -38,6 +38,7 @@
             activatable
             open-on-click
             item-text="title"
+            style="height: 60vh; overflow: auto;"
           >
             <!-- active-class="primary--text font-weight-black" -->
             <template v-slot:prepend="{ item, active }">
