@@ -8,6 +8,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 use App\PairedResult;
+use App\ExperimentResult;
+
+use DB;
 
 class PairedResultsController extends Controller
 {
@@ -48,8 +51,8 @@ class PairedResultsController extends Controller
    */
   public function export_observer ($id)
   {
-      $experiment_results = \App\ExperimentResult::find($id);
-      $paired_results = \App\ExperimentResult::find($id)->paired_results;
+      $experiment_results = ExperimentResult::find($id);
+      $paired_results = ExperimentResult::find($id)->paired_results;
 
       // TODO: get rid of the loop
       $data = [];
@@ -77,7 +80,7 @@ class PairedResultsController extends Controller
       //   ::where('experiment_result_id', $id)
       //   ->get();
 
-      $paired_results = \App\ExperimentResult::where('experiment_id', $id)->get();
+      $paired_results = ExperimentResult::where('experiment_id', $id)->get();
 
       $data = [];
       foreach ($paired_results as $result) {
@@ -106,6 +109,99 @@ class PairedResultsController extends Controller
     // definerer reletationship i model... mange til mange forhold?
   }
 
+  public function statistics ($id) {
+    $results = [];
+
+    # get the image sets used in a experiment
+    $sets = DB::table('experiment_queues')
+      ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
+      ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
+      ->where([
+        ['experiment_queues.experiment_id', '=', $id],
+        ['experiment_sequences.picture_queue_id', '!=', null]
+      ])
+      ->get();
+    $results['imageSets'] = $sets;
+
+
+    # each image set with belonging images
+    $d = [];
+    foreach ($sets as $set) {
+      $dd = \App\Picture::where([
+        ['picture_set_id', '=', $set->picture_set_id],
+        ['is_original', '=', 0]
+      ])->get();
+
+      array_push($d, $dd);
+    }
+    $results['imagesForEachImageSet'] = $d;
+
+
+    # original images
+    foreach ($sets as $key => $set) {
+      $dd = \App\Picture::where([
+        ['picture_set_id', '=', $set->picture_set_id],
+        ['is_original', '=', 1]
+      ])->first();
+
+      $results['imageUrl'][$key] = $dd;
+    }
+
+
+    $paired_results = ExperimentResult::where('experiment_id', $id)->get();
+    $data = [];
+    foreach ($paired_results as $result)
+    {
+      foreach ($result->paired_results as $res)
+      {
+        $arr = [];
+        // $arr['observer']  = $result->user_id;
+        // $arr['session']   = $result->id;
+        $arr['left']  = $res->picture_left->id;
+        $arr['right'] = $res->picture_right->id;
+
+        // $arr['imageSet'] = $res->picture_selected->id;
+
+        // selected image
+        $arr['pictureId'] = $res->picture_selected->id;
+        $arr['name']      = $res->picture_selected->name;
+
+        $arr['won'] = 1;
+        // $arr['po'] = 3;
+
+        // if right was selected, it won against left
+        if ($arr['pictureId'] == $arr['right']) {
+          $arr['wonAgainst'] = $res->picture_left->id;
+          $arr['wonAgainstName'] = $res->picture_left->name;
+        } else {
+          $arr['wonAgainst'] = $res->picture_right->id;
+          $arr['wonAgainstName'] = $res->picture_right->name;
+        }
+
+        array_push($data, $arr);
+      }
+    }
+
+    $new = [];
+    foreach ($data as $result) {
+      foreach ($results['imagesForEachImageSet'] as $key => $images) {
+        foreach ($images as $image) {
+          if ($result['pictureId'] == $image['id']) {
+            $new[$key][] = $result;
+          }
+        }
+      }
+    }
+    $results['resultsForEachImageSet'] = $new;
+
+
+    return response($results);
+  }
+
+
+  /**
+   *
+   */
   public function store (Request $request) {
     $result = PairedResult::create([
       'experiment_result_id'  => $request->experiment_result_id,

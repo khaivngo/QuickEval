@@ -37,6 +37,23 @@ class ExperimentResultsController extends Controller
       }
     }
 
+    public function completed (Request $request, \App\ExperimentResult $result) {
+      if ($result->user_id !== auth()->user()->id) {
+        return response()->json('Unauthorized', 401);
+      }
+
+      // $data = $request->validate([
+      //   'is_public' => 'required'
+      // ]);
+
+      $result->update([
+        'completed' => 1,
+        'end_time' => time()
+      ]);
+
+      return response($result, 200);
+    }
+
     public function destroy ($id) {
       // check that scientist owns experiment
 

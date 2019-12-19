@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
-    <v-toolbar flat height="50" color="#282828">
+    <v-toolbar flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -65,10 +65,11 @@
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
       <v-flex
+        mt-2 mb-2
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         :class="leftReproductionActive ? 'selected' : ''"
         @click="toggleSelected('left')"
-        ma-2
       >
         <div class="panzoom">
           <img
@@ -80,7 +81,12 @@
         </div>
       </v-flex>
 
-      <v-flex ma-2 class="picture-container" v-if="experiment.show_original === 1">
+      <v-flex
+        mt-2 mb-2
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+        class="picture-container"
+        v-if="experiment.show_original === 1"
+      >
         <div class="panzoom">
           <img
             id="picture-original"
@@ -94,7 +100,7 @@
         class="picture-container"
         :class="rightReproductionActive ? 'selected' : ''"
         @click="toggleSelected('right')"
-        ma-2
+        mt-2 mb-2
       >
         <div class="panzoom">
           <img
@@ -111,8 +117,10 @@
       @click="next('click')"
       :disabled="noneSelected"
       :loading="disableNextBtn"
-      fixed bottom right
       color="#D9D9D9"
+      fixed
+      bottom
+      right
     >
       <span class="ml-1">next</span>
       <v-icon>keyboard_arrow_right</v-icon>
@@ -137,8 +145,9 @@ export default {
       experiment: {
         id: null,
         show_original: null,
-        stimuli_seperation_distance: 20,
-        background_colour: '808080'
+        stimuli_spacing: 15,
+        background_colour: '808080',
+        delay: 200
       },
 
       stimuli: [],
@@ -243,7 +252,7 @@ export default {
           this.leftImage = img.src
           window.setTimeout(() => {
             this.isLoadLeft = true
-          }, 200)
+          }, this.experiment.delay)
         }
 
         const imgRight = new Image()
@@ -253,7 +262,7 @@ export default {
           this.rightImage = imgRight.src
           window.setTimeout(() => {
             this.isLoadRight = true
-          }, 200)
+          }, this.experiment.delay)
         }
 
         // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
@@ -325,6 +334,8 @@ export default {
     },
 
     onFinish () {
+      this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
+
       localStorage.removeItem('index')
       localStorage.removeItem('experimentResult')
       this.finished = true

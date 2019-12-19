@@ -1,16 +1,19 @@
 <template>
   <div>
-    <v-layout mb-5 mt-5>
+    <v-layout mb-5 mt-5 column>
       <h2 class="display-1">
-        Observer Results For {{ experiment.title }}
+        Observer Results
       </h2>
+      <h3 class="headline">
+        {{ experiment.title }}
+      </h3>
     </v-layout>
 
     <v-card>
       <Back>Back to all experiments</Back>
 
       <v-container pt-5 mt-1>
-        <h2 class="mb-5 text-xs-center">Observer Raw Data</h2>
+        <h2 class="mb-5 text-xs-center">Observers</h2>
 
         <v-layout justify-end align-center mb-3>
           <!-- <h2 class="title"> -->
@@ -136,6 +139,38 @@
           <!-- </template> -->
         </v-data-table>
       </v-container>
+
+      <v-data-table
+        :headers="[
+          { text: 'Title', value: 'title', sortable: false, desc: '' },
+          { text: 'Low CI limit', value: 'lowCiLimit', sortable: false, desc: '' },
+          { text: 'Mean z-score', value: 'meanZscore', align: 'right', sortable: false, desc: '' },
+          { text: 'High CI limit', value: 'highCiLimit', sortable: false },
+        ]"
+        :items="experimentResults"
+        no-data-text=""
+        :expand="false"
+        item-key="id"
+        hide-actions
+        :loading="loading"
+      >
+        <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
+        <template v-slot:no-data>
+          <div class="caption text-xs-center" v-if="loading === false">
+            No observer data to show. No one has completed the experiment yet.
+          </div>
+        </template>
+        <template v-slot:items="props">
+          <tr @click="props.expanded = !props.expanded">
+            <td>{{ props.item.user_id }}</td>
+            <td>{{ props.item.id }}</td>
+            <td class="text-xs-right">
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+
+      <Plot/>
     </v-card>
   </div>
 </template>
@@ -143,11 +178,14 @@
 <script>
 import EventBus from '@/eventBus.js'
 import Back from '@/components/Back'
+import Plot from '@/components/Plot'
 import { formatDate } from '@/helpers.js'
+// import '@/math.js'
 
 export default {
   components: {
-    Back
+    Back,
+    Plot
   },
 
   data () {

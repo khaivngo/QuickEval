@@ -15,6 +15,8 @@ class Experiment extends Model
         'short_description',
         'long_description',
         'picture_sequence_algorithm',
+        'delay',
+        'stimuli_spacing',
         'is_public',
         'allow_colour_blind',
         'timer',

@@ -110,7 +110,7 @@
           image set <v-icon class="ml-2" :size="20">add</v-icon>
         </v-btn> -->
 
-        <v-dialog v-model="newImageSet" max-width="800">
+        <v-dialog v-model="openNewImageSet" max-width="800">
           <!-- <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="{ on }">
               Create new
@@ -119,14 +119,63 @@
           <v-card class="pa-4">
             <v-card-title class="headline">Create Image Set</v-card-title>
             <v-card-text>
-              <!-- <CreateImageSet/> -->
+              <v-layout align-center>
+                <v-text-field
+                  v-model="newImageSet.name"
+                  label="Title"
+                ></v-text-field>
+
+                <v-btn
+                  :disabled="newImageSet.name === '' || creating"
+                  :loading="creating"
+                  color="success"
+                  class="ma-0 ml-3"
+                  @click="createNew"
+                >
+                  Create
+                </v-btn>
+              </v-layout>
+
+              <div class="mt-5" :class="(!newImageSet.imageSetId) ? 'not-interactable' : ''">
+                <v-layout mb-3>
+                  <h2 class="title">
+                    Original/reference image
+                    <span class="subheading">(optional)</span>
+                  </h2>
+                </v-layout>
+
+                <v-layout>
+                  <p>
+                    Upload the original, uncompressed, image of the image set.
+                    During experiment creation you'll be able to select whether or not this image should be shown to the observer.
+                  </p>
+                </v-layout>
+
+                <v-layout mb-5>
+                  <UppyOriginal :imagesetid="newImageSet.imageSetId" :width="300" :height="200"/>
+                </v-layout>
+
+                <v-layout mb-3>
+                  <h2 class="title">Reproduction images</h2>
+                </v-layout>
+
+                <div>
+                  <Uppy :imagesetid="newImageSet.imageSetId"/>
+                </div>
+
+                <!-- <v-layout mt-5 justify-end>
+                  <v-btn class="success" @click="openNewImageSet = false">
+                    Done
+                  </v-btn>
+                </v-layout> -->
+              </div>
             </v-card-text>
-            <!-- <v-card-actions>
+            <v-card-actions class="mt-5">
               <v-spacer></v-spacer>
-              <v-btn flat @click="newImageSet = false">
-                Close
+              <v-btn flat @click="closeNewImageSet()">
+                Done
               </v-btn>
-            </v-card-actions> -->
+            </v-card-actions>
           </v-card>
         </v-dialog>
 
@@ -143,14 +192,14 @@
           </template>
 
           <v-list>
-            <v-list-tile @click.stop="newImageSet = true">
+            <v-list-tile @click.stop="openNewImageSet = true">
               <v-list-tile-title class="pr-3">
                 <v-icon left small>create</v-icon>
                 Create new
               </v-list-tile-title>
             </v-list-tile>
             <v-list-tile @click="add('imageSet')">
-              <v-list-tile-title class="pr-3">
+              <v-list-tile-title class="pr-3 align-center">
                 <v-icon left small>add</v-icon>
                 Add existing
               </v-list-tile-title>
@@ -163,12 +212,16 @@
 </template>
 
 <script>
-// import CreateImageSet from '@/components/scientist/CreateImageSet'
+// import CreateImageSet from '@/views/scientist/image-set/CreateFile'
+import UppyOriginal from '@/components/scientist/UppyOriginal'
+import Uppy from '@/components/scientist/Uppy'
 import Tiptap from '@/components/Tiptap'
 
 export default {
   components: {
-    // CreateImageSet
+    // CreateImageSet,
+    UppyOriginal,
+    Uppy,
     Tiptap
   },
 
@@ -212,7 +265,13 @@ export default {
     input: null,
     nonce: 0,
 
-    newImageSet: false
+    openNewImageSet: false,
+    newImageSet: {
+      name: null,
+      imageSetId: null,
+      description: ''
+    },
+    creating: false
   }),
 
   async created () {
@@ -260,8 +319,35 @@ export default {
       this.events.splice(id, 1)
     },
 
-    createNewImageSet () {
-      //
+    closeNewImageSet () {
+      this.openNewImageSet = false
+      // this.newImageSet.imageSetId = null
+      // this.newImageSet.name = null
+
+      // removeFile in uppy
+    },
+
+    createNew () {
+      this.creating = true
+
+      const data = {
+        title: this.newImageSet.name,
+        description: this.newImageSet.description
+      }
+
+      this.$axios.post('/imageSet', data).then((response) => {
+        this.newImageSet.imageSetId = response.data.id
+        this.imageSets.push(response.data)
+
+        this.events.push({
+          id: this.nonce++,
+          value: response.data.id,
+          type: 'imageSet'
+        })
+        this.$emit('added', this.events)
+
+        this.creating = false
+      })
     }
   }
 }
@@ -276,4 +362,11 @@ export default {
 /*.v-timeline:before {
   width: 0px;
 }*/
+</style>
+
+<style scoped lang="css">
+  .not-interactable {
+    pointer-events: none;
+    opacity: 0.3;
+  }
 </style>

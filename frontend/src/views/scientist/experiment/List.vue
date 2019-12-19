@@ -117,7 +117,6 @@
         </v-layout>
       </v-card>
     </div>
-
   </div>
 </template>
 
@@ -170,7 +169,7 @@ export default {
         if (response.data.is_public) {
           EventBus.$emit('success', 'Experiment is visible to the public')
         } else {
-          EventBus.$emit('success', 'Experiment is only visible to you')
+          EventBus.$emit('info', 'Experiment is hidden from the public.')
         }
       })
     },

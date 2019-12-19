@@ -93,6 +93,14 @@ export default {
   mounted () {
     EventBus.$on('success', (payload) => {
       this.text = payload
+      this.color = 'success'
+
+      this.snackbar = true
+    })
+
+    EventBus.$on('info', (payload) => {
+      this.text = payload
+      this.color = 'info'
 
       this.snackbar = true
     })

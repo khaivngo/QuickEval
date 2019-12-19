@@ -19,8 +19,9 @@
 
 <script>
 // import the component and the necessary extensions
-import { TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, CodeBlock, Paragraph, BulletList, OrderedList,
-  ListItem, Link, Blockquote, HardBreak, HorizontalRule, History
+import {
+  TiptapVuetify, Heading, Bold, Italic, Strike, Underline, Code, CodeBlock, Paragraph, BulletList,
+  OrderedList, ListItem, Link, Blockquote, HardBreak, HorizontalRule, History
 } from 'tiptap-vuetify'
 
 export default {

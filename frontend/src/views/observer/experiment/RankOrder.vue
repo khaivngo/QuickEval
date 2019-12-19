@@ -63,7 +63,75 @@
       </h4> -->
     </v-layout>
 
-    <v-layout mt-2>
+    <!-- <v-layout mt-2>
+      <v-layout justify-center class="ml-2 mr-2">
+        <div
+          v-for="(label, i) in labels"
+          :key="label"
+          @click="changeLeftPannerImage(label)"
+          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
+          :class="(label === activeLeft) ? 'active' : ''"
+        >
+          {{ alphabet[i].toUpperCase() }}
+        </div>
+      </v-layout>
+
+      <v-layout justify-center align-center class="text-xs-center ml-2 mr-2" v-if="experiment.show_original === 1">
+        <h4 class="body-1 font-weight-regular">
+          Original
+        </h4>
+      </v-layout>
+
+      <v-layout justify-center class="ml-2 mr-2">
+        <div
+          v-for="(label, i) in labels"
+          :key="label"
+          @click="changeRightPannerImage(label)"
+          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
+          :class="(label === activeRight) ? 'active' : ''"
+        >
+          {{ alphabet[i].toUpperCase() }}
+        </div>
+      </v-layout>
+    </v-layout> -->
+
+    <v-layout ml-3 mr-3 pa-0 style="height: 72vh;" justify-center>
+      <v-flex class="picture-container" mt-2 mb-1 ml-2 :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+        <div class="panzoom">
+          <img
+            id="picture-left"
+            class="picture"
+            :class="isLoadLeft === false ? 'hide' : ''"
+            @load="loadedLeft"
+            :src="leftImage"
+          />
+        </div>
+      </v-flex>
+
+      <v-flex class="picture-container" mt-2 mb-1 v-if="experiment.show_original === 1" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+        <div class="panzoom">
+          <img
+            id="picture-original"
+            class="picture"
+            :src="originalImage"
+          />
+        </div>
+      </v-flex>
+
+      <v-flex class="picture-container" mt-2 mb-1 mr-2>
+        <div class="panzoom">
+          <img
+            id="picture-right"
+            class="picture"
+            :class="isLoadRight === false ? 'hide' : ''"
+            @load="loadedRight"
+            :src="rightImage"
+          />
+        </div>
+      </v-flex>
+    </v-layout>
+
+    <v-layout mb-2>
       <v-layout justify-center class="ml-2 mr-2">
         <!-- Viewing image <strong>A</strong> -->
         <!-- <draggable group="stimuli">
@@ -75,6 +143,8 @@
           @click="changeLeftPannerImage(label)"
           class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
           :class="(label === activeLeft) ? 'active' : ''"
+          tabindex="0"
+          @keyup.enter="changeLeftPannerImage(label)"
         >
           {{ alphabet[i].toUpperCase() }}
         </div>
@@ -94,46 +164,12 @@
           @click="changeRightPannerImage(label)"
           class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
           :class="(label === activeRight) ? 'active' : ''"
+          tabindex="0"
+          @keyup.enter="changeLeftPannerImage(label)"
         >
           {{ alphabet[i].toUpperCase() }}
         </div>
       </v-layout>
-    </v-layout>
-
-    <v-layout ml-3 mr-3 pa-0 style="height: 72vh;" justify-center>
-      <v-flex class="picture-container" mt-2 mb-1 ml-2 mr-2>
-        <div class="panzoom">
-          <img
-            id="picture-left"
-            class="picture"
-            :class="isLoadLeft === false ? 'hide' : ''"
-            @load="loadedLeft"
-            :src="leftImage"
-          />
-        </div>
-      </v-flex>
-
-      <v-flex class="picture-container" mt-2 mb-1 ml-2 mr-2 v-if="experiment.show_original === 1">
-        <div class="panzoom">
-          <img
-            id="picture-original"
-            class="picture"
-            :src="originalImage"
-          />
-        </div>
-      </v-flex>
-
-      <v-flex class="picture-container" mt-2 mb-1 ml-2 mr-2>
-        <div class="panzoom">
-          <img
-            id="picture-right"
-            class="picture"
-            :class="isLoadRight === false ? 'hide' : ''"
-            @load="loadedRight"
-            :src="rightImage"
-          />
-        </div>
-      </v-flex>
     </v-layout>
 
     <div class="rating mt-3">
@@ -148,7 +184,7 @@
         <!-- <div class="subheading">worst</div> -->
       </v-layout>
       <v-layout justify-center align-center class="mt-1 pa-0">
-        <div class="subheading mr-2">best</div>
+        <!-- <div class="subheading mr-2">best</div> -->
         <draggable
           :list="rankings"
           ghost-class="ghost"
@@ -166,7 +202,7 @@
             </div>
           </transition-group>
         </draggable>
-        <div class="subheading ml-2">worst</div>
+        <!-- <div class="subheading ml-2">worst</div> -->
       </v-layout>
       <!-- <v-layout justify-center align-center class="mb-2 pa-0"> -->
         <!-- best -->
@@ -211,8 +247,9 @@ export default {
       experiment: {
         id: null,
         show_original: null,
-        stimuli_seperation_distance: 20,
-        background_colour: '808080'
+        stimuli_spacing: 15,
+        background_colour: '808080',
+        delay: 200
       },
 
       stimuli: [],
@@ -322,7 +359,7 @@ export default {
     loadedLeft () {
       window.setTimeout(() => {
         this.isLoadLeft = true
-      }, 200)
+      }, this.experiment.delay)
     },
 
     changeRightPannerImage (label) {
@@ -342,7 +379,7 @@ export default {
     loadedRight () {
       window.setTimeout(() => {
         this.isLoadRight = true
-      }, 200)
+      }, this.experiment.delay)
     },
 
     /**
@@ -431,6 +468,8 @@ export default {
     },
 
     onFinish () {
+      this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
+
       localStorage.removeItem('index')
       localStorage.removeItem('experimentResult')
       this.finished = true
@@ -445,6 +484,12 @@ export default {
   }
 }
 </script>
+
+<style>
+  /*html {
+    overflow-y: auto;
+  }*/
+</style>
 
 <style scoped lang="scss">
 .qe-wrapper {

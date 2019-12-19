@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
-    <v-toolbar flat height="50" color="#282828">
+    <v-toolbar flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -68,6 +68,7 @@
             <v-select
               v-model="selectedCategoryLeft"
               :items="categories"
+              :disabled="disableNextBtn"
               menu-props="auto"
               label="Select category"
               item-text="title"
@@ -87,6 +88,7 @@
             <v-select
               v-model="selectedCategoryMiddle"
               :items="categories"
+              :disabled="disableNextBtn"
               menu-props="auto"
               label="Select category"
               item-text="title"
@@ -106,6 +108,7 @@
             <v-select
               v-model="selectedCategoryRight"
               :items="categories"
+              :disabled="disableNextBtn"
               menu-props="auto"
               label="Select category"
               item-text="title"
@@ -121,25 +124,25 @@
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
-      <v-flex ma-2 class="picture-container" v-if="experiment.show_original === 1">
+      <v-flex mt-2 mb-2 class="picture-container" v-if="experiment.show_original === 1" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
         <div class="panzoom">
           <img id="picture-original" class="picture" :src="imageLeft"/>
         </div>
       </v-flex>
 
-      <v-flex ma-2 class="picture-container">
+      <v-flex mt-2 mb-2 class="picture-container" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
         <div class="panzoom">
           <img id="picture-left" class="picture" :class="isLoadLeft === false ? 'hide' : ''" :src="imageLeft"/>
         </div>
       </v-flex>
 
-      <v-flex ma-2 class="picture-container">
+      <v-flex mt-2 mb-2 class="picture-container" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
         <div class="panzoom">
           <img id="picture-right" class="picture" :class="isLoadMiddle === false ? 'hide' : ''" :src="imageMiddle"/>
         </div>
       </v-flex>
 
-      <v-flex ma-2 class="picture-container">
+      <v-flex mt-2 mb-2 class="picture-container">
         <div class="panzoom">
           <img id="picture-right" class="picture" :class="isLoadRight === false ? 'hide' : ''" :src="imageRight"/>
         </div>
@@ -176,8 +179,9 @@ export default {
       experiment: {
         id: null,
         show_original: 1,
-        stimuli_seperation_distance: 20,
-        background_colour: '808080'
+        stimuli_spacing: 15,
+        background_colour: '808080',
+        delay: 200
       },
 
       selectedCategoryLeft: null,
@@ -281,7 +285,7 @@ export default {
           this.imageLeft = imgLeft.src
           window.setTimeout(() => {
             this.isLoadLeft = true
-          }, 200)
+          }, this.experiment.delay)
         }
 
         const imgMiddle = new Image()
@@ -291,7 +295,7 @@ export default {
           this.imageMiddle = imgMiddle.src
           window.setTimeout(() => {
             this.isLoadMiddle = true
-          }, 200)
+          }, this.experiment.delay)
         }
 
         const imgRight = new Image()
@@ -301,7 +305,7 @@ export default {
           this.imageRight = imgRight.src
           window.setTimeout(() => {
             this.isLoadRight = true
-          }, 200)
+          }, this.experiment.delay)
         }
 
         // this.imageLeft = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
@@ -366,7 +370,7 @@ export default {
     },
 
     onFinish () {
-      // TODO: update completed in experiment table?
+      this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
       localStorage.removeItem('index')
       localStorage.removeItem('experimentResult')

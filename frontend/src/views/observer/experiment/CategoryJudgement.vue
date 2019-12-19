@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
-    <v-toolbar flat height="50" color="#282828">
+    <v-toolbar flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -64,6 +64,7 @@
             <v-select
               v-model="selectedCategory"
               :items="categories"
+              :disabled="disableNextBtn"
               menu-props="auto"
               label="Select category"
               item-text="title"
@@ -150,8 +151,9 @@ export default {
       experiment: {
         id: null,
         show_original: 1,
-        stimuli_seperation_distance: 20,
-        background_colour: '808080'
+        stimuli_spacing: 15,
+        background_colour: '808080',
+        delay: 200
       },
 
       stimuli: [],
@@ -247,7 +249,7 @@ export default {
           this.leftImage = imgLeft.src
           window.setTimeout(() => {
             this.isLoadLeft = true
-          }, 200)
+          }, this.experiment.delay)
         }
         // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
 
@@ -301,6 +303,8 @@ export default {
     },
 
     onFinish () {
+      this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
+
       localStorage.removeItem('index')
       localStorage.removeItem('experimentResult')
       this.finished = true

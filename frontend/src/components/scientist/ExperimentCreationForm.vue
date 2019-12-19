@@ -48,7 +48,7 @@
               </v-flex>
             </v-layout>
 
-            <v-layout align-center>
+            <!-- <v-layout align-center>
               <v-flex grow>
                 <v-text-field
                   class="mt-4"
@@ -68,7 +68,7 @@
                   </span>
                 </v-tooltip>
               </v-flex>
-            </v-layout>
+            </v-layout> -->
 
             <v-layout align-center>
               <v-flex grow>
@@ -78,7 +78,7 @@
                   label="Long Description - (optional)"
                 >
                   <template v-slot:label>
-                    Long Description -<span class="caption"> (optional)</span>
+                    Description -<span class="caption"> (optional)</span>
                   </template>
                 </v-textarea>
               </v-flex>
@@ -89,9 +89,10 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span class="pl-2 pr-2 body-1">
-                    Describe what the experiment is all about.
-                  </span>
+                  <div class="pl-2 pr-2 body-1">
+                    Describe what the experiment is all about.<br>
+                    This description will be available to the observers.
+                  </div>
                 </v-tooltip>
               </v-flex>
             </v-layout>
@@ -139,10 +140,10 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span class="pl-2 pr-2 body-1">
-                    Each pair of images will have their positin flipped in the queue.<br> Leading
-                    to double the comparisons for the observer.
-                  </span>
+                  <div class="pl-2 pr-2 body-1">
+                    Each pair of images will have their positin flipped in the queue.<br>
+                    Leading to double the comparisons for the observer.
+                  </div>
                 </v-tooltip>
               </v-flex>
             </v-layout>
@@ -194,7 +195,7 @@
               :label="`Forced choice`"
             ></v-checkbox> -->
 
-            <v-layout class="mt-3" align-center>
+            <v-layout class="mt-5" align-center>
               <v-flex xs3>
                 <v-text-field
                   v-model="form.bgColour"
@@ -208,27 +209,50 @@
                 xs1
                 shrink
                 class="ml-2"
-                :style="'border-radius: 2px; height: 30px; background: #' + form.bgColour"
+                :style="'border-radius: 2px; height: 30px; width: 30px; background: #' + form.bgColour"
               ></v-flex>
             </v-layout>
 
-            <v-layout class="mt-3">
-              <v-flex xs3>
-                <!-- <v-text-field
-                  v-model="form.stimuliSpacing"
-                  label="Stimuli separation distance"
-                  suffix="px"
-                  type="text"
-                > -->
-                  <!-- <template v-slot:append-outer>
+            <v-layout mt-5>
+              <v-flex xs4>
+                <v-text-field
+                  v-model="form.delay"
+                  label="Delay between stimuli (gray screen)"
+                  suffix="milliseconds"
+                  placeholder="200"
+                  style="width: 200px;"
+                >
+                  <!-- <template v-slot:prepend-outer>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">help_outline</v-icon>
                       </template>
                       <span class="pl-2 pr-2 body-1">Distance between stimuli images, in pixels.</span>
                     </v-tooltip>
+                    <span>milliseconds</span>
                   </template> -->
-                <!-- </v-text-field> -->
+                </v-text-field>
+              </v-flex>
+            </v-layout>
+
+            <v-layout class="mt-5">
+              <v-flex xs3>
+                <v-text-field
+                  v-model="form.stimuliSpacing"
+                  label="Stimuli separation distance"
+                  suffix="pixels"
+                  type="text"
+                  v-if="form.experimentType !== 3"
+                >
+                  <template v-slot:append-outer>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">help_outline</v-icon>
+                      </template>
+                      <span class="pl-2 pr-2 body-1">Spacing in pixels between stimuli images.</span>
+                    </v-tooltip>
+                  </template>
+                </v-text-field>
               </v-flex>
 
               <!-- <v-layout align-center ml-3>
@@ -281,7 +305,7 @@
 
         <v-stepper-content :step="showFinish.id">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-4">{{ showFinish.title }}</h2>
+            <!-- <h2 class="mb-4">{{ showFinish.title }}</h2> -->
 
             <!-- <div v-for="detail in form.basicDetails">
               {{ detail }}
@@ -295,11 +319,11 @@
               <code class="mb-1">v * 23 / 34 + 1</code>
             </div> -->
 
-            <div class="mt-5">
+            <!-- <div class="mt-5">
               <h3 class="title mb-2">System details</h3>
               <div class="mb-1">Delay of 0.6 milliseconds inbetween stimuli</div>
               <div class="mb-1">Algorithm for making random queue. 2 * 2</div>
-            </div>
+            </div> -->
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -328,15 +352,23 @@
             </v-btn>
 
             <template v-if="currentLevel === steps.length">
-              <v-btn
-                v-if="mode === 'new'"
-                @click="mode === 'new' ? store('hidden') : update()"
-                color="secondary" flat outline
-                :disable="loaders.saving"
-                :loading="loaders.saving"
-              >
-                Save as hidden
-              </v-btn>
+              <v-tooltip left>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    v-if="mode === 'new'"
+                    @click="mode === 'new' ? store('hidden') : update()"
+                    color="secondary" flat outline
+                    :disable="loaders.saving"
+                    :loading="loaders.saving"
+                  >
+                    Save as hidden
+                  </v-btn>
+                </template>
+                <div class="pa-1 body-1">
+                  Experiment will only be visible to you.<br>You can publish later when you're ready.
+                </div>
+              </v-tooltip>
 
               <span v-if="mode === 'new'">OR</span>
 
@@ -408,7 +440,8 @@ export default {
         forcedChoice: false,
         samePairTwice: false,
         bgColour: '808080',
-        stimuliSpacing: 20,
+        delay: 200,
+        stimuliSpacing: 15,
         showOriginal: false,
         isPublic: 0,
         sequences: [],
