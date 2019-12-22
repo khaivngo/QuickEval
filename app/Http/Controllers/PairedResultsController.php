@@ -166,7 +166,7 @@ class PairedResultsController extends Controller
         $arr['pictureId'] = $res->picture_selected->id;
         $arr['name']      = $res->picture_selected->name;
 
-        $arr['won'] = 1;
+        $arr['won'] = 1; // if none chosen = 0?
         // $arr['po'] = 3;
 
         // if right was selected, it won against left

@@ -330,10 +330,12 @@
 
       <v-layout justify-end v-if="currentLevel === steps.length && mode === 'edit'">
         <v-flex xs6 class="caption">
-          Note: Saving changes will create a new experiment AND keep the original experiment.
+          <!-- Note: Saving changes will create a new experiment AND keep the original experiment.
           This is in order to keep the version history and clarify that possible collected observer data is
           collected under different versions of the experiment.
-          Delete the old expriment from the experiments list later if you don't need it.
+          Delete the old expriment from the experiments list later if you don't need it. -->
+          Note: The original version will be kept untouched and a new version will be created with a "version 2"-tag.
+          Delete the old version from the experiments list later if you don't need it.
         </v-flex>
       </v-layout>
 

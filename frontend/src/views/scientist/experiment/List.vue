@@ -74,6 +74,25 @@
                   public
                 </div>
               </v-flex>
+
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="ma-0 mr-1 ml-5">
+                    <v-icon>edit</v-icon>
+                  </v-btn>
+                </template>
+                <span>Edit experiment</span>
+              </v-tooltip>
+
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </template>
+                <span>Delete experiment</span>
+              </v-tooltip>
+
             </v-layout>
           </v-flex>
         </v-layout>
@@ -89,30 +108,13 @@
 
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <v-btn :to="`/scientist/experiments/view/${experiment.id}`" v-on="on" color="primary" class="ml-0 mr-5">
+                <v-btn :to="`/scientist/experiments/view/${experiment.id}`" v-on="on" color="primary" class="ml-0">
                   <v-icon class="mr-2">bar_chart</v-icon>results
                 </v-btn>
               </template>
               <span>View observer results</span>
             </v-tooltip>
 
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="ma-0 mr-1">
-                  <v-icon>edit</v-icon>
-                </v-btn>
-              </template>
-              <span>Edit experiment</span>
-            </v-tooltip>
-
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </template>
-              <span>Delete experiment</span>
-            </v-tooltip>
           </v-flex>
         </v-layout>
       </v-card>

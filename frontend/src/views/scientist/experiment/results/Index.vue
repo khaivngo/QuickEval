@@ -12,7 +12,7 @@
     <v-card>
       <Back>Back to all experiments</Back>
 
-      <v-container pt-5 mt-1>
+      <v-container pt-5 pl-5 pr-5 mt-1>
         <h2 class="mb-5 text-xs-center">Observers</h2>
 
         <v-layout justify-end align-center mb-3>
@@ -138,9 +138,11 @@
             </v-layout> -->
           <!-- </template> -->
         </v-data-table>
+
+        <Plot/>
       </v-container>
 
-      <v-data-table
+      <!-- <v-data-table
         :headers="[
           { text: 'Title', value: 'title', sortable: false, desc: '' },
           { text: 'Low CI limit', value: 'lowCiLimit', sortable: false, desc: '' },
@@ -168,9 +170,7 @@
             </td>
           </tr>
         </template>
-      </v-data-table>
-
-      <Plot/>
+      </v-data-table> -->
     </v-card>
   </div>
 </template>
@@ -180,7 +180,6 @@ import EventBus from '@/eventBus.js'
 import Back from '@/components/Back'
 import Plot from '@/components/Plot'
 import { formatDate } from '@/helpers.js'
-// import '@/math.js'
 
 export default {
   components: {

@@ -351,6 +351,13 @@ export default {
 }
 </script>
 
+<!-- <style>
+  #app {
+    /*height: 80%;*/
+    background: red;
+  }
+</style> -->
+
 <style scoped lang="scss">
 .qe-wrapper {
   background-color: #808080;
