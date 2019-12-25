@@ -22,13 +22,35 @@
       <!-- <button id="submit-labels">Submit</button> -->
     </div>
 
-    <!-- <div v-for="(imageSet, i) in results.imageSets" :key="i">
-      <div>{{ imageSet.title }}</div>
+    <div v-for="(imageSet, i) in hello" :key="i">
+      <div :id="'raw-' + i">
+        <h2>Raw data</h2>
+        <table class="table bordered hovered">
+          <thead>
+            <tr :class="'header-list' + i">
+              <th><span></span></th>
 
-      <div v-for="(image, j) in results.imagesForEachImageSet">
-        <div>{{ image }}</div>
+              <th v-for="(y, j) in results.imagesForEachImageSet[i]" :key="j" :imageId="y.id">
+                {{ y.name }}
+              </th>
+            </tr>
+          </thead>
+          <tbody :class="'result-list' + i">
+
+            <tr v-for="(y, j) in results.imagesForEachImageSet[i]" :key="j" :imageId="y.id">
+              <th>{{ y.name }}</th>
+
+              <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
+                <span v-if="score > 0">
+                  {{ score }}
+                </span>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
       </div>
-    </div> -->
+    </div>
 
   </div>
 </template>
@@ -65,7 +87,9 @@ export default {
       results: [],
       resultsArray: null,
       imageSets: [],
-      tableId: 0
+      tableId: 0,
+      hello: [],
+      hey: []
     }
   },
   created () {
@@ -74,15 +98,11 @@ export default {
       this.results = data.data
       var self = this
 
-      // var experimentType = 2;
-      // var experimentResults = data[1];
-
       var data = data.data
-      // console.log(data);
-      // var resultsArray
+      var experimentType = 2
       var imageTitleArray = []
 
-      // if (paired) {
+      if (experimentType === 2) {
         this.loadHighChartsBoxPlot()
 
         $('#box-plot').after('<div id="zScores-container"></div>')
@@ -106,8 +126,6 @@ export default {
             '</tbody>' +
           '</table>');
 
-
-          //Iterates through all images for the corresponding imageset
           data['imagesForEachImageSet'][i].forEach((y, j) => {
             //Adds imagename to table
             $('.header-list' + i).append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>')
@@ -121,21 +139,23 @@ export default {
                 tableRow += '<td></td>'
             }
             //Appends row
-            $('.result-list' + i + '').append(tableRow + '</tr>')
+            $('.result-list' + i).append(tableRow + '</tr>')
           })
 
+          // create an empty this.resultsArray array with the length of data['imagesForEachImageSet'][i].length
+          // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
+          // push a 0 value in every slot of the sub arrays
+          this.resultsArray = new Array(data['imagesForEachImageSet'][i].length)
+          for (var it = 0; it < this.resultsArray.length; it++) {
+            this.resultsArray[it] = new Array(data['imagesForEachImageSet'][i].length)
 
-          self.resultsArray = new Array(data['imagesForEachImageSet'][i].length) // create an array with the length of data['imagesForEachImageSet'][i].length
-          for (var it = 0; it < self.resultsArray.length; it++) {
-            self.resultsArray[it] = new Array(data['imagesForEachImageSet'][i].length)
-
-            for (var ita = 0; ita < self.resultsArray[it].length; ita++) {
-              self.resultsArray[it][ita] = 0
+            for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
+              this.resultsArray[it][ita] = 0
             }
           }
 
-          // for each observer result
           data['resultsForEachImageSet'][i].forEach((result, index) => {
+            // is this only used for updating DOM? in that case we can delete...
             this.pairAddPoints(
               result['won'],
               result['pictureId'],
@@ -144,13 +164,17 @@ export default {
               i
             )
 
-            var row    = arrayObjectIndexOf(data['imagesForEachImageSet'][i], result['pictureId'], 'id')
+            var row    = arrayObjectIndexOf(data['imagesForEachImageSet'][i], result['pictureId'],  'id')
             var column = arrayObjectIndexOf(data['imagesForEachImageSet'][i], result['wonAgainst'], 'id')
-
-            self.resultsArray[row][column] += 1
+            this.resultsArray[row][column] += 1 // result['won'] here?
           })
 
-          var zScoreArray = self.calculatePlots(self.resultsArray) //stores calculated data for one picture set
+          //
+          this.hello.push(this.resultsArray)
+
+          //stores calculated data for one picture set
+          var zScoreArray = this.calculatePlots(this.resultsArray)
+          this.hey.push(zScoreArray)
 
           //add experiments data to highcharts graph
           this.addSeries(imageTitleArray, zScoreArray, imageSet['title'])
@@ -167,10 +191,8 @@ export default {
           //prepareEditLabels();
           $('#experiment-results').append(div)
         })
-
-      })
-
-    // }
+      }
+    })
   },
   methods: {
     calculatePlots ($frequencyMatrix, $category) {
@@ -794,10 +816,12 @@ export default {
         var imageIndex = arrayObjectIndexOf($array, $firstImage, 'id')
         var wonAgainstIndex = arrayObjectIndexOf($array, $secondImage, 'id')
 
-        var resultList = $('.result-list' + $roundIterator + '')
+        var resultList = $('.result-list' + $roundIterator)
         var cell = resultList.find('tr:eq(' + imageIndex + ')').children().eq(wonAgainstIndex + 1)
 
+        // if cell empty -> add 1, else add 1 to whatever value is there
         cell.html((cell.html() == "") ? parseFloat($points) : +cell.html() + parseFloat($points))
+        // console.log(+cell.html() + parseFloat($points)) // convert empty cell to 0 and add 1
     }
   }
   /* eslint-enable */
