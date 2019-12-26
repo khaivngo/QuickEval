@@ -22,22 +22,23 @@
       <!-- <button id="submit-labels">Submit</button> -->
     </div>
 
-    <div v-for="(imageSet, i) in hello" :key="i">
-      <div :id="'raw-' + i">
-        <h2>Raw data</h2>
+    <div v-for="(imageSet, i) in rawDataMap" :key="i">
+      <div>
+        <h3 class="headline">Raw data: {{ results.imageSets[i].title }}</h3>
+
         <table class="table bordered hovered">
           <thead>
             <tr :class="'header-list' + i">
               <th><span></span></th>
 
-              <th v-for="(y, j) in results.imagesForEachImageSet[i]" :key="j" :imageId="y.id">
+              <th v-for="(y, j) in results.imagesForEachImageSet[i]" :key="j">
                 {{ y.name }}
               </th>
             </tr>
           </thead>
           <tbody :class="'result-list' + i">
 
-            <tr v-for="(y, j) in results.imagesForEachImageSet[i]" :key="j" :imageId="y.id">
+            <tr v-for="(y, j) in results.imagesForEachImageSet[i]" :key="j">
               <th>{{ y.name }}</th>
 
               <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
@@ -47,6 +48,40 @@
               </td>
             </tr>
 
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div v-for="(zScores, f) in zScoreMap" :key="f + 100">
+      <div>
+        <h3 class="headline">Z-Scores: {{ results.imageSets[f].title }}</h3>
+
+        <div style="width: 150px;">
+          <v-img :src="$UPLOADS_FOLDER + results.imageUrl[f].path" alt="" contain></v-img>
+        </div>
+
+        <div v-if="zScoreMap[f][3] == 1">
+          Need more observer-data to be calculated properly.
+        </div>
+
+        <table class="table bordered hovered">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Low CI limit</th>
+              <th>Mean z-score</th>
+              <th>High CI limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
+              <td><b>{{ y.name }}</b></td>
+
+              <td>{{ zScoreMap[f][0][j] }}</td>
+              <td>{{ zScoreMap[f][1][j] }}</td>
+              <td>{{ zScoreMap[f][2][j] }}</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -87,109 +122,61 @@ export default {
       results: [],
       resultsArray: null,
       imageSets: [],
-      tableId: 0,
-      hello: [],
-      hey: []
+      rawDataMap: [],
+      zScoreMap: []
     }
   },
   created () {
     /* eslint-disable */
     this.$axios.get(`/paired-result/${this.$route.params.id}/statistics`).then(data => {
       this.results = data.data
-      var self = this
 
-      var data = data.data
       var experimentType = 2
       var imageTitleArray = []
 
       if (experimentType === 2) {
         this.loadHighChartsBoxPlot()
 
-        $('#box-plot').after('<div id="zScores-container"></div>')
-        //used to identify each round and the belonging divs and elements
-        // var roundCounter = 0;
-        // iterates through all image sets and creates a table for each
-        data['imageSets'].forEach((imageSet, i) => {
-          var div = $('<div></div>')
+        this.results.imageSets.forEach((imageSet, i) => {
 
-          $("#zScores-container").append('</br></br><div id=raw-' + i + '><h2>Raw data</h2></div>');
-          $("#raw-" + i).append('<table class="table bordered hovered">' +
-            '<thead>' +
-              '<tr class="header-list' + i + '">' +
-                '<th>' +
-                  '<span class="hint-trigger icon-help" data-hint="Images on the y-axis are the images picked. For example if the value of image x and image y is 2,' +
-                  'the image on the y axis is the one picked twice." data-hint-position="right" style="margin: 0 auto"></span>' +
-                '</th>' +
-              '</tr>' +
-            '</thead>' +
-            '<tbody class="result-list' + i + '">' +
-            '</tbody>' +
-          '</table>');
-
-          data['imagesForEachImageSet'][i].forEach((y, j) => {
-            //Adds imagename to table
-            $('.header-list' + i).append('<th class="text-left" imageId=' + y['id'] + '>' + y['name'] + '</th>')
-
-            var tableRow = '<tr imageId=' + y['id'] + '><th>' + y['name'] + '</th>'
-
-            imageTitleArray.push(y['name'])
-
-            //Adds empty cells for data
-            for (var td = 0; td < data['imagesForEachImageSet'][i].length; td++) {
-                tableRow += '<td></td>'
-            }
-            //Appends row
-            $('.result-list' + i).append(tableRow + '</tr>')
+          this.results.imagesForEachImageSet[i].forEach((y, j) => {
+            imageTitleArray.push(y.name)
           })
 
           // create an empty this.resultsArray array with the length of data['imagesForEachImageSet'][i].length
           // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
           // push a 0 value in every slot of the sub arrays
-          this.resultsArray = new Array(data['imagesForEachImageSet'][i].length)
+          this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
           for (var it = 0; it < this.resultsArray.length; it++) {
-            this.resultsArray[it] = new Array(data['imagesForEachImageSet'][i].length)
+            this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
 
             for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
               this.resultsArray[it][ita] = 0
             }
           }
 
-          data['resultsForEachImageSet'][i].forEach((result, index) => {
-            // is this only used for updating DOM? in that case we can delete...
-            this.pairAddPoints(
-              result['won'],
-              result['pictureId'],
-              result['wonAgainst'],
-              data['imagesForEachImageSet'][i],
-              i
-            )
-
-            var row    = arrayObjectIndexOf(data['imagesForEachImageSet'][i], result['pictureId'],  'id')
-            var column = arrayObjectIndexOf(data['imagesForEachImageSet'][i], result['wonAgainst'], 'id')
+          this.results.resultsForEachImageSet[i].forEach((result, index) => {
+            let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
+            let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
             this.resultsArray[row][column] += 1 // result['won'] here?
           })
 
-          //
-          this.hello.push(this.resultsArray)
+          //save all raw data maps
+          this.rawDataMap.push(this.resultsArray)
 
           //stores calculated data for one picture set
-          var zScoreArray = this.calculatePlots(this.resultsArray)
-          this.hey.push(zScoreArray)
+          let zScoreArray = this.calculatePlots(this.resultsArray)
+          this.zScoreMap.push(zScoreArray)
 
           //add experiments data to highcharts graph
-          this.addSeries(imageTitleArray, zScoreArray, imageSet['title'])
+          this.addSeries(imageTitleArray, zScoreArray, imageSet.title)
 
-          $("#zScores-container").append('</br></br><h2>Z-Scores</h2>')
-          this.setZScores(imageTitleArray, zScoreArray, imageSet['title'], data['imageUrl'][i]['path'])
-
-          this.highLightFirstTable()
+          // this.highLightFirstTable()
           this.activeSeriesClickListener()
 
           imageTitleArray = [] //empties array for next picture set
-          // roundCounter++
 
           //prepareEditLabels();
-          $('#experiment-results').append(div)
         })
       }
     })
@@ -717,111 +704,6 @@ export default {
         '<div class="input-control text span4" data-role="input-control">' +
         '<input type="text" id="subTitleInput" value="' + plotSubTitle + '" placeholder=""/>' +
         '</div> <br/>')
-    },
-
-    /**
-     * Goes through analyzed results for one picture set and sets them into a table
-     * @param imageTitleArray contains all pictures for one picture set
-     * @param zScoresArray contains all calculated data for each picture in the picture set
-     * @param pictureSetTitle the title of the picture set
-     */
-    setZScores (imageTitleArray, zScoresArray, pictureSetTitle, imageUrl) {
-        //inserts new table with picture set title
-        this.tableDivHeader(this.tableId, pictureSetTitle, zScoresArray[3], imageUrl)
-
-        //count whether there is any existing rows in table
-        var rowCount = $('#z-scores tr').length
-        if (rowCount > 0) {
-            //appends a empty row to distinguish between multiple picture sets
-            $('#z-scores').append('<tr><td class="right">---</td><td class="right">---</td><td class="right">---</td><td class="right">---</td></tr>');
-        }
-
-        //loops through array and for each picture prints title, low ci limit, mean z-score and high ci limit
-        for (var i = 0; i < imageTitleArray.length; i++) {
-            $('#' + this.tableId).append('<tr>' +
-              '<td><b>' + imageTitleArray[i] + '</b></td>' +
-              '<td>' + zScoresArray[0][i] + '</td>' +
-              '<td>' + zScoresArray[1][i] + '</td>' +
-              '<td>' + zScoresArray[2][i] + '</td>' +
-              '</tr>'
-            );
-        }
-
-        this.tableId++;
-    },
-
-    /**
-     * Function adds table and title of table each time it is called.
-     * @param tableId the identifier of the table, used to insert data.
-     * @param pictureSetTitle title of the picture set.
-     */
-    tableDivHeader (tableId, pictureSetTitle, check, imageUrl) {
-        //when there is not enough data to properly calculate z-scores it sets a hint to explain it to the user
-        if (check == 1) {
-            //appends the table right before the title of the table displaying raw data
-            $("#zScores-container").append('<div>' +
-            '<h4>' +
-              'Z-Scores: ' + pictureSetTitle +
-              '<span class="hint-trigger" data-hint="Need more observer-data to be calculated properly" data-hint-position="right"><i class="icon-info on-right"></i>' +
-            '</h4>' +
-            '<img src="http://127.0.0.1/QuickEval/storage/app/' + imageUrl + '" alt="Original picture" height="20%" width="20%"> ' +
-            '<br/>' +
-            '<br/>' +
-            '<table class="table bordered hovered z-scores">' +
-              '<thead>' +
-                '<tr>' +
-                  '<th class="text-left">Title</th>' +
-                  '<th class="text-left">Low CI limit</th>' +
-                  '<th class="text-left">Mean z-score</th>' +
-                  '<th class="text-left">High CI limit</th>' +
-                '</tr>' +
-              '</thead>' +
-              '<tbody id="' + tableId + '">' +
-              '</tbody>' +
-              '<tfoot></tfoot>' +
-            '</table>' +
-            '</div>');
-        }
-        else { //when there is enough data to properly calculate z-scores
-            $("#zScores-container").append('<div>' +
-            '<h4>Z-Scores: ' + pictureSetTitle + '</h4>' +
-            '<img src="http://127.0.0.1/QuickEval/storage/app/' + imageUrl + '" alt="Original picture" height="20%" width="20%"> ' +
-            '<br/>' +
-            '<table class="table bordered hovered z-scores">' +
-              '<thead>' +
-                '<tr>' +
-                  '<th class="text-left">Title</th>' +
-                  '<th class="text-left">Low CI limit</th>' +
-                  '<th class="text-left">Mean z-score</th>' +
-                  '<th class="text-left">High CI limit</th>' +
-                '</tr>' +
-              '</thead>' +
-              '<tbody id="' + tableId + '">' +
-              '</tbody>' +
-              // '<tfoot></tfoot>' +
-            '</table>' +
-            '</div>');
-        }
-    },
-
-    /**
-     * Adds points to table based on parameters
-     *
-     * @param  {int} $points            amount of points to add
-     * @param  {int} $firstImage        id of image who won
-     * @param  {int} $secondImage       id of image who lost
-     * @param  {array} $array           array of image ids
-     */
-    pairAddPoints ($points, $firstImage, $secondImage, $array, $roundIterator) {
-        var imageIndex = arrayObjectIndexOf($array, $firstImage, 'id')
-        var wonAgainstIndex = arrayObjectIndexOf($array, $secondImage, 'id')
-
-        var resultList = $('.result-list' + $roundIterator)
-        var cell = resultList.find('tr:eq(' + imageIndex + ')').children().eq(wonAgainstIndex + 1)
-
-        // if cell empty -> add 1, else add 1 to whatever value is there
-        cell.html((cell.html() == "") ? parseFloat($points) : +cell.html() + parseFloat($points))
-        // console.log(+cell.html() + parseFloat($points)) // convert empty cell to 0 and add 1
     }
   }
   /* eslint-enable */
