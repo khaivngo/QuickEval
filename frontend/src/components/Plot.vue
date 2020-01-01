@@ -1,6 +1,6 @@
 <template>
   <div style="padding-bottom: 100px;">
-    <h2 style="margin-top: 150px; margin-bottom: 50px;" class="text-xs-center">
+    <h2 style="margin-top: 150px; margin-bottom: 90px;" class="headline text-xs-center">
       Statistics
     </h2>
 
@@ -40,24 +40,35 @@
       >
         <v-card flat>
           <v-card-text>
-            <div class="mt-5">
+            <div class="mt-3">
               <h3 class="title mb-3">Raw data</h3>
               <!-- {{ results.imageSets[f].title }} -->
 
               <table class="table bordered hovered">
                 <thead>
                   <tr>
-                    <th><span></span></th>
+                    <th>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn icon v-on="on">
+                            <v-icon color="grey lighten-1">help_outline</v-icon>
+                          </v-btn>
+                        </template>
+                        <div class="pl-2 pr-2 body-1">
+                          Images on the y-axis are the images picked.<br>
+                          For example if the value of image x and image y is 2, the image on the y axis is the one picked twice.
+                        </div>
+                      </v-tooltip>
+                    </th>
 
-                    <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
+                    <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
                       {{ y.name }}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-
                   <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
-                    <th>{{ y.name }}</th>
+                    <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
                     <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
                       <span v-if="score > 0">
@@ -65,7 +76,6 @@
                       </span>
                     </td>
                   </tr>
-
                 </tbody>
               </table>
             </div>
@@ -85,19 +95,19 @@
               <table class="table bordered hovered">
                 <thead>
                   <tr>
-                    <th>Title</th>
-                    <th>Low CI limit</th>
-                    <th>Mean z-score</th>
-                    <th>High CI limit</th>
+                    <th class="overflow-wrap">Title</th>
+                    <th class="overflow-wrap">Low CI limit</th>
+                    <th class="overflow-wrap">Mean z-score</th>
+                    <th class="overflow-wrap">High CI limit</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
-                    <td><b>{{ y.name }}</b></td>
+                    <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
-                    <td>{{ zScoreMap[f][0][j] }}</td>
-                    <td>{{ zScoreMap[f][1][j] }}</td>
-                    <td>{{ zScoreMap[f][2][j] }}</td>
+                    <td>{{ ifNotNaN(zScoreMap[f][0][j]) }}</td>
+                    <td>{{ ifNotNaN(zScoreMap[f][1][j]) }}</td>
+                    <td>{{ ifNotNaN(zScoreMap[f][2][j]) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -139,7 +149,9 @@ const config = {}
 const math = create(all, config)
 
 export default {
-  components: { ScatterPlot },
+  components: {
+    ScatterPlot
+  },
   data () {
     return {
       results: [],
@@ -204,6 +216,10 @@ export default {
     })
   },
   methods: {
+    ifNotNaN (value) {
+      return !Number.isNaN(value) ? value : ''
+    },
+
     /* eslint-disable */
     calculatePlots ($frequencyMatrix, $category) {
       // $frequencyMatrix = transpose($frequencyMatrix); //transposing in order to get correct z-score calculation
@@ -488,9 +504,12 @@ export default {
       border-bottom: 1px solid rgba(0,0,0,0.12);
       padding: 10px;
       max-width: 50px;
-      overflow: hidden;
   }
   .v-tabs__item--active {
     font-weight: bold;
+  }
+  .overflow-wrap {
+    /*overflow: hidden;*/
+    overflow-wrap: break-word;
   }
 </style>

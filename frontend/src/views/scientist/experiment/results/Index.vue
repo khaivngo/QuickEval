@@ -13,7 +13,7 @@
       <Back>Back to all experiments</Back>
 
       <v-container pt-5 pl-5 pr-5 mt-1>
-        <h2 class="mb-5 text-xs-center">Observers</h2>
+        <h2 class="headline mb-5 text-xs-center">Observers</h2>
 
         <v-layout justify-end align-center mb-3>
           <!-- <h2 class="title"> -->

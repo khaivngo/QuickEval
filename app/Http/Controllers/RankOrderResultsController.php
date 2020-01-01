@@ -48,16 +48,19 @@ class RankOrderResultsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(int $id)
     {
         return ExperimentResult::find($id)->rank_order_results;
     }
 
 
-    public function export_observer($id)
+    public function export_observer(int $id)
     {
         $experiment_results = ExperimentResult::find($id);
-        $rank_order_results = ExperimentResult::find($id)->rank_order_results;
+        $rank_order_results = ExperimentResult
+            ::with('rank_order_results.ranking', 'rank_order_results.picture', 'rank_order_results.picture_set')
+            ->find($id)
+            ->rank_order_results;
 
         $data = [];
         foreach ($rank_order_results as $result)
@@ -78,11 +81,14 @@ class RankOrderResultsController extends Controller
     }
 
 
-    public function export_all($id)
+    public function export_all(int $id)
     {
         // TODO: check if scientist owns experiment and that results belong to experiment
 
-        $rank_order_results = \App\ExperimentResult::where('experiment_id', $id)->get();
+        $rank_order_results = ExperimentResult
+            ::with('rank_order_results.ranking', 'rank_order_results.picture', 'rank_order_results.picture_set')
+            ->where('experiment_id', $id)
+            ->get();
 
         $data = [];
         foreach ($rank_order_results as $result) {

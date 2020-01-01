@@ -8,6 +8,7 @@ use App\Exports\CategoryResultsExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 use App\CategoryResult;
+use App\ExperimentResult;
 
 class CategoryResultsController extends Controller
 {
@@ -18,10 +19,12 @@ class CategoryResultsController extends Controller
      */
     public function export_observer ($id)
     {
-        $experiment_results = \App\ExperimentResult::find($id);
-        $category_results = \App\ExperimentResult::find($id)->category_results;
+        $experiment_results = ExperimentResult::find($id);
+        $category_results = ExperimentResult
+          ::with('category_results.picture', 'category_results.category')
+          ->find($id)
+          ->category_results;
 
-        // TODO: get rid of the loop
         $data = [];
         foreach ($category_results as $result)
         {
@@ -42,8 +45,10 @@ class CategoryResultsController extends Controller
     public function export_all ($id) {
         // TODO: check if scientist owns experiment and that results belong to experiment
 
-        $category_results = \App\ExperimentResult::where('experiment_id', $id)->get();
-        // return $paired_results;
+        $category_results = ExperimentResult
+          ::with('category_results.picture', 'category_results.category')
+          ->where('experiment_id', $id)
+          ->get();
 
         $data = [];
         foreach ($category_results as $result) {
@@ -64,7 +69,7 @@ class CategoryResultsController extends Controller
     }
 
     public function all () {
-      return TripletResult::where('experiment_result_id', $id)->get();
+      return CategoryResult::where('experiment_result_id', $id)->get();
 
       // get alle som tilhører en experiment results som har experiment_id = value
       // definerer reletationship i model... mange til mange forhold?

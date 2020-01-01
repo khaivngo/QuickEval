@@ -54,19 +54,19 @@
                 </div>
               </v-flex>
               <v-flex shrink>
-                <v-switch
-                  class="ma-0 pa-0"
-                  v-model="experiment.is_public"
-                  color="success"
-                  @change="visibility(experiment)"
-                >
-                  <!-- <template v-slot:append>
-                    <div>Hello</div>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-switch
+                      v-on="on"
+                      class="ma-0 pa-0"
+                      v-model="experiment.is_public"
+                      color="success"
+                      @change="visibility(experiment)"
+                    >
+                    </v-switch>
                   </template>
-                  <template v-slot:prepend>
-                    hihi
-                  </template> -->
-                </v-switch>
+                  <span>Toggle public visibility of experiment.</span>
+                </v-tooltip>
               </v-flex>
 
               <v-flex shrink class="ml-1">
@@ -92,7 +92,6 @@
                 </template>
                 <span>Delete experiment</span>
               </v-tooltip>
-
             </v-layout>
           </v-flex>
         </v-layout>

@@ -52,9 +52,11 @@ class PairedResultsController extends Controller
   public function export_observer ($id)
   {
       $experiment_results = ExperimentResult::find($id);
-      $paired_results = ExperimentResult::find($id)->paired_results;
+      $paired_results = ExperimentResult
+        ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+        ->find($id)
+        ->paired_results;
 
-      // TODO: get rid of the loop
       $data = [];
       foreach ($paired_results as $result)
       {
@@ -80,7 +82,10 @@ class PairedResultsController extends Controller
       //   ::where('experiment_result_id', $id)
       //   ->get();
 
-      $paired_results = ExperimentResult::where('experiment_id', $id)->get();
+      $paired_results = ExperimentResult
+        ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+        ->where('experiment_id', $id)
+        ->get();
 
       $data = [];
       foreach ($paired_results as $result) {
@@ -109,7 +114,7 @@ class PairedResultsController extends Controller
     // definerer reletationship i model... mange til mange forhold?
   }
 
-  public function statistics ($id) {
+  public function statistics (int $id) {
     $results = [];
 
     # get the image sets used in a experiment
@@ -148,28 +153,28 @@ class PairedResultsController extends Controller
     }
 
 
-    $paired_results = ExperimentResult::where('experiment_id', $id)->get();
+    $paired_results = ExperimentResult
+      ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+      ->where('experiment_id', $id)
+      ->get();
+
     $data = [];
     foreach ($paired_results as $result)
     {
       foreach ($result->paired_results as $res)
       {
         $arr = [];
-        // $arr['observer']  = $result->user_id;
-        // $arr['session']   = $result->id;
         $arr['left']  = $res->picture_left->id;
         $arr['right'] = $res->picture_right->id;
 
-        // $arr['imageSet'] = $res->picture_selected->id;
-
-        // selected image
+        # selected image
         $arr['pictureId'] = $res->picture_selected->id;
         $arr['name']      = $res->picture_selected->name;
 
         $arr['won'] = 1; // if none chosen = 0?     @param  {int} $points   amount of points to add... 1 for paired?
         // $arr['po'] = 3;
 
-        // if right was selected, it won against left
+        # if right was selected, it won against left
         if ($arr['pictureId'] == $arr['right']) {
           $arr['wonAgainst'] = $res->picture_left->id;
           $arr['wonAgainstName'] = $res->picture_left->name;
@@ -182,6 +187,7 @@ class PairedResultsController extends Controller
       }
     }
 
+    # group selected image results by image set
     $new = [];
     foreach ($data as $result) {
       foreach ($results['imagesForEachImageSet'] as $key => $images) {

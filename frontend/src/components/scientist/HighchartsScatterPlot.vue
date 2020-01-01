@@ -1,6 +1,6 @@
 <template>
-  <div style="height: 400px; margin: auto; min-width: 400px;"> <!-- max-width: 600px -->
-    <highcharts :options="chartOptions"></highcharts>
+  <div class="qe-highcharts-container">
+    <highcharts v-if="chartOptions.series.length !== 0" :options="chartOptions"></highcharts>
   </div>
 </template>
 
@@ -104,15 +104,11 @@ export default {
   },
   methods: {
     changeCategories (event) {
-      console.log(event)
-      // this.series.label.filter((label) => label.name === event.target.userOptions.name)
-      // if (event.target.visible === true) {
-      //   this.chartOptions.xAxis.categories = this.series[event.target.userOptions.labelId].label
-      // } else {
-      //   this.chartOptions.xAxis.categories = []
-      // }
-      // this.chartOptions.xAxis.categories = this.series[event.target.userOptions.labelId].label
-      // console.log(this.chartOptions)
+      if (this.chartOptions.xAxis[event.target.userOptions.labelId].visible === true) {
+        this.chartOptions.xAxis[event.target.userOptions.labelId].visible = false
+      } else {
+        this.chartOptions.xAxis[event.target.userOptions.labelId].visible = true
+      }
     },
     addSeries (zScoreArray, index) {
       var meanValues = []
@@ -147,11 +143,16 @@ export default {
         stemWidth: 2,
         whiskerWidth: 2,
         tooltip: {
-          headerFormat: '<em>{point.key}</em><br/>',
-          pointFormat: 'Limit high: <b>{point.high}</b> <br>Limit low: <b>{point.low}</b>'
+          // headerFormat: '<em>{point.name}</em><br/>',
+          headerFormat: '',
+          pointFormat: `
+            Limit high: <b>{point.high}</b><br>
+            Limit low: <b>{point.low}</b>
+          `
         }
       })
 
+      // push the xAxis filename labels, one row for each image set
       this.chartOptions.xAxis.push({
         categories: zScoreArray.label,
         title: {
@@ -182,3 +183,26 @@ export default {
   }
 }
 </script>
+
+<style lang="css">
+  .qe-highcharts-container {
+    height: 400px;
+    margin: auto;
+    min-width: 400px;
+    /*max-width: 600px*/
+  }
+  .highcharts-title {
+    font-size: 16px !important;
+    font-weight: 400;
+    line-height: 1 !important;
+    letter-spacing: 0.02em !important;
+    font-family: 'Roboto', sans-serif !important;
+    text-align: left;
+  }
+  .highcharts-axis-labels,
+  .highcharts-axis-title,
+  .highcharts-legend-item  {
+    font-family: 'Roboto' !important;
+    /*font-size: 16px !important;*/
+  }
+</style>

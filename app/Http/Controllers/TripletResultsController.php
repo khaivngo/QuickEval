@@ -8,6 +8,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 use App\TripletResult;
+use App\ExperimentResult;
 
 class TripletResultsController extends Controller
 {
@@ -16,10 +17,16 @@ class TripletResultsController extends Controller
      * See: https://docs.laravel-excel.com/3.1/exports/
      * Also see files in the app/Exports folder.
      */
-    public function export_observer ($id)
+    public function export_observer (int $id)
     {
-        $experiment_results = \App\ExperimentResult::find($id);
-        $triplet_results = \App\ExperimentResult::find($id)->triplet_results;
+        $experiment_results = ExperimentResult::find($id);
+        $triplet_results = ExperimentResult
+          ::with(
+            'triplet_results.picture_left', 'triplet_results.picture_middle', 'triplet_results.picture_right',
+            'triplet_results.category_left', 'triplet_results.category_middle', 'triplet_results.category_right'
+          )
+          ->find($id)
+          ->triplet_results;
 
         // TODO: get rid of the loop
         $data = [];
@@ -47,11 +54,16 @@ class TripletResultsController extends Controller
         return Excel::download(new TripletResultsExport($data), $filename);
     }
 
-    public function export_all ($id) {
+    public function export_all (int $id) {
         // TODO: check if scientist owns experiment and that results belong to experiment
 
-        $triplet_results = \App\ExperimentResult::where('experiment_id', $id)->get();
-        // return $paired_results;
+        $triplet_results = ExperimentResult
+          ::with(
+            'triplet_results.picture_left', 'triplet_results.picture_middle', 'triplet_results.picture_right',
+            'triplet_results.category_left', 'triplet_results.category_middle', 'triplet_results.category_right'
+          )
+          ->where('experiment_id', $id)
+          ->get();
 
         $data = [];
         foreach ($triplet_results as $result) {
