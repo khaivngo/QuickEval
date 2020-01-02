@@ -58,7 +58,7 @@ class RankOrderResultsController extends Controller
     {
         $experiment_results = ExperimentResult::find($id);
         $rank_order_results = ExperimentResult
-            ::with('rank_order_results.ranking', 'rank_order_results.picture', 'rank_order_results.picture_set')
+            ::with('rank_order_results.picture', 'rank_order_results.picture_set')
             ->find($id)
             ->rank_order_results;
 
@@ -86,7 +86,7 @@ class RankOrderResultsController extends Controller
         // TODO: check if scientist owns experiment and that results belong to experiment
 
         $rank_order_results = ExperimentResult
-            ::with('rank_order_results.ranking', 'rank_order_results.picture', 'rank_order_results.picture_set')
+            ::with('rank_order_results.picture', 'rank_order_results.picture_set')
             ->where('experiment_id', $id)
             ->get();
 
