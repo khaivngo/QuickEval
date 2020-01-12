@@ -42,11 +42,11 @@ class AuthController extends Controller
     public function anonymous () {
       $auth_id = uniqid();
       $anonymous = \App\User::create([
-        'name'          => 'anonymous',
-        'email'         => $auth_id . '@anonymous.com',
-        'password'      => '',
-        'auth_id'       => $auth_id,
-        'role'          => 3
+        'name'     => 'anonymous',
+        'email'    => $auth_id . '@anonymous.com',
+        'password' => '',
+        'auth_id'  => $auth_id,
+        'role'     => 3
       ]);
 
       $http = new \GuzzleHttp\Client;
@@ -96,16 +96,16 @@ class AuthController extends Controller
             'nationality'   => $request->nationality
         ]);
 
-        // if ($request->scientist === true) {
-        //   \App\ScientistRequest::create([
-        //     'user_id'  => $user->id,
-        //     'accepted' => 0
-        //   ]);
-        //   // use App\Mail\OrderShipped;
-        //   Mail::to('robin.vigdal.bekkevold@gmail.com')->send(new \App\Mail\ScientistRequest($user));
+        if ($request->scientist === true) {
+          \App\ScientistRequest::create([
+            'user_id'  => $user->id,
+            'accepted' => 0
+          ]);
+          // use App\Mail\OrderShipped;
+          // Mail::to('robin.vigdal.bekkevold@gmail.com')->send(new \App\Mail\ScientistRequest($user));
 
-        //   Mail::to($user->email)->send(new \App\Mail\Receipt($user));
-        // }
+          // Mail::to($user->email)->send(new \App\Mail\Receipt($user));
+        }
 
         return $user;
     }

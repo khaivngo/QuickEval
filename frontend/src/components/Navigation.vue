@@ -45,6 +45,26 @@
         <v-icon small>open_in_new</v-icon>
       </v-btn>
     </v-toolbar-items>
+
+    <v-toolbar-items>
+      <!-- <v-menu bottom left>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            dark
+            icon
+            v-on="on"
+          >
+            <v-icon>more_vert</v-icon>
+          </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-tile @click="">
+            <v-list-tile-title>account settings</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu> -->
+    </v-toolbar-items>
   </v-toolbar>
 </template>
 

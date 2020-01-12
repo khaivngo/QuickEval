@@ -94,7 +94,7 @@
           </v-layout>
 
           <div>
-            <Register v-if="registerIntent"/>
+            <Register v-if="registerIntent" @success="registered"/>
             <Login v-if="loginIntent"/>
           </div>
         </v-layout>
@@ -149,6 +149,11 @@ export default {
         // push notification
         this.anonymousIntent = false
       })
+    },
+
+    registered () {
+      this.registerIntent = false
+      this.loginIntent = true
     }
   }
 }

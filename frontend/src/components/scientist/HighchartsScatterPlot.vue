@@ -186,9 +186,9 @@ export default {
 
 <style lang="css">
   .qe-highcharts-container {
-    height: 400px;
+    /*height: 400px;*/
     margin: auto;
-    min-width: 400px;
+    /*min-width: 400px;*/
     /*max-width: 600px*/
   }
   .highcharts-title {

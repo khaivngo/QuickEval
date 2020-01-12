@@ -32,7 +32,7 @@
 
         <v-layout>
           <p>
-            Upload the original, uncompressed, image of the image set.
+            Upload the original, uncompressed, image of the image set.<br>
             During experiment creation you'll be able to select whether or not this image should be shown to the observer.
           </p>
         </v-layout>
@@ -45,9 +45,9 @@
           <h2 class="title">Reproduction images</h2>
         </v-layout>
 
-        <div>
-          <Uppy :imagesetid="imageSet.imageSetId"/>
-        </div>
+        <v-layout>
+          <Uppy :imagesetid="imageSet.imageSetId" style="width: 100%;"/>
+        </v-layout>
 
         <v-layout mt-5 justify-end>
           <v-btn class="success" @click="$router.back()">

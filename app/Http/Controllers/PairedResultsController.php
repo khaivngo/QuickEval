@@ -32,16 +32,6 @@ class PairedResultsController extends Controller
     }
 
     return response($data, 200);
-
-        // ->picture_selected
-        // ->picture_selected_left
-        // ->picture_selected_right;
-      // ->pictures
-      // ->join(
-      //   'paired_results.picture_id_selected',
-      //   '=',
-      //   'pictures', 'pictures.id'
-      // );
   }
 
   /**
@@ -77,10 +67,6 @@ class PairedResultsController extends Controller
 
   public function export_all ($id) {
       // TODO: check if scientist owns experiment and that results belong to experiment
-
-      // return \App\PairedResult
-      //   ::where('experiment_result_id', $id)
-      //   ->get();
 
       $paired_results = ExperimentResult
         ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')

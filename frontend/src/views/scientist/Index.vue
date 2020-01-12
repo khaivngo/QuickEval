@@ -1,6 +1,6 @@
 <template>
   <v-container mt-3 fluid style="max-width: 1400px;">
-    <v-layout>
+    <v-layout justify-center wrap>
       <v-flex shrink mr-3 mt-5 mb-5>
         <Navigation/>
       </v-flex>

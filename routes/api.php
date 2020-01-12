@@ -29,7 +29,8 @@ Route::post('/login',       'AuthController@login'    );
 # auth:api middleware gives access to user object
 Route::middleware('auth:api')->group(function () {
     # user
-    Route::get('/user', function (Request $request) { return $request->user(); });
+    Route::get(  '/user', function (Request $request) { return $request->user(); });
+    Route::patch('/user', 'UserController@update');
 
     # experiments
     Route::get(     '/experiment/{experiment}/start',       'ExperimentsController@start'           );
@@ -78,6 +79,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/category-result',   'CategoryResultsController@store');
     Route::post('/triplet-result',    'TripletResultsController@store' );
     Route::post('/rank-order-result', 'RankOrderResultsController@store' );
+    Route::get( '/rank-order-result/{id}/statistics', 'RankOrderResultsController@statistics' );
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');

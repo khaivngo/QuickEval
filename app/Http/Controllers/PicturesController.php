@@ -28,9 +28,8 @@ class PicturesController extends Controller
 
       if (! empty($files)) {
         foreach ($files as $file) {
-          $path = $file->store('uploads/' . $image_set_id);
-          // $path = $file->store('uploads'); // store() will automatically generate a unique file name
-
+          $path = $file->store('public/' . $image_set_id); // store() will automatically generate a unique file name
+          $path = str_replace('public/', "", $path);
           $picture = Picture::create([
             // 'user_id' => auth()->user()->id,
             'name' => $file->getClientOriginalName(),

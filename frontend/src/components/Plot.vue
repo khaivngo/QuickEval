@@ -1,29 +1,12 @@
 <template>
-  <div style="padding-bottom: 100px;">
-    <h2 style="margin-top: 150px; margin-bottom: 90px;" class="headline text-xs-center">
+  <div class="qe-statistics-container">
+    <h2 class="headline text-xs-center" style="margin-bottom: 90px;">
       Statistics
     </h2>
 
-    <!-- <div id="box-plot-container" style="height: 400px; margin-right: 20px;"></div> -->
-    <!-- <button id="change-label" class="primary" style="...">Change labels</button> -->
-
-    <div id="experiment-results">
-      <!--  -->
-    </div>
-
-    <div id="graph-labels">
-      <!-- <fieldset> -->
-        <!-- <br/> -->
-        <!--<div class="input-control text span2" data-role="input-control">-->
-        <!--<input type="text" value="" placeholder="input text"/>-->
-        <!--<button class="btn-clear"></button>-->
-        <!--</div> <br/>-->
-      <!-- </fieldset> -->
-      <!-- <button id="submit-labels">Submit</button> -->
-    </div>
-
     <ScatterPlot :series="plotData"/>
 
+    <!-- v-if="rawDataMap.length > 0 && zScoreMap.length > 0" -->
     <v-tabs v-model="activeTab" centered style="margin-top: 100px;">
       <v-tab
         v-for="(imageSet, index) in results.imageSets"
@@ -112,11 +95,33 @@
                 </tbody>
               </table>
             </div>
-
           </v-card-text>
         </v-card>
       </v-tab-item>
     </v-tabs>
+
+    <!-- <div>
+      <h3 class="title mb-3">Raw data</h3>
+
+      <table class="table bordered hovered">
+        <thead>
+          <tr>
+            <th></th>
+            <th v-for="(rRes, m) in rankedResults.resultsForEachImageSet[0]" :key="m" class="overflow-wrap">
+              {{ rRes.name }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(y, c) in rankedResults.resultsForEachImageSet">
+            <tr>
+              <td class="overflow-wrap"><b>{{ y[c].user }}</b></td>
+              <td v-for="(g, h) in y">{{ g.ranking }}</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div> -->
 
   </div>
 </template>
@@ -141,7 +146,7 @@ import {
   calculateMeanZScore,
   calculateSDMatrix,
   arrayObjectIndexOf
-  // ,convertRankToPair
+  // convertRankToPair
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
 
@@ -160,60 +165,80 @@ export default {
       rawDataMap: [],
       zScoreMap: [],
       activeTab: null,
-      plotData: []
+      plotData: [],
+
+      rankedResults: []
     }
   },
   created () {
+    // var experimentType = 2
+
+    // if (experimentType === 1) {
     this.$axios.get(`/paired-result/${this.$route.params.id}/statistics`).then(data => {
       this.results = data.data
 
-      var experimentType = 2
+      this.results.imageSets.forEach((imageSet, i) => {
+        // create an empty this.resultsArray array with the length of data['imagesForEachImageSet'][i].length
+        // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
+        // push a 0 value in every slot of the sub arrays
+        this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
+        for (var it = 0; it < this.resultsArray.length; it++) {
+          this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
 
-      if (experimentType === 2) {
-        // this.loadHighChartsBoxPlot()
-
-        this.results.imageSets.forEach((imageSet, i) => {
-          // create an empty this.resultsArray array with the length of data['imagesForEachImageSet'][i].length
-          // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
-          // push a 0 value in every slot of the sub arrays
-          this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
-          for (var it = 0; it < this.resultsArray.length; it++) {
-            this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
-
-            for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
-              this.resultsArray[it][ita] = 0
-            }
+          for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
+            this.resultsArray[it][ita] = 0
           }
+        }
 
-          this.results.resultsForEachImageSet[i].forEach((result, index) => {
-            let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
-            let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
-            this.resultsArray[row][column] += 1 // result['won'] here?
-          })
-
-          // save all raw data maps
-          this.rawDataMap.push(this.resultsArray)
-
-          // stores calculated data for one picture set
-          let zScoreArray = this.calculatePlots(this.resultsArray)
-          this.zScoreMap.push(zScoreArray)
-
-          this.plotData.push({
-            imageSet: imageSet,
-            label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
-            zScores: zScoreArray
-          })
-
-          // add experiments data to highcharts graph
-          // this.addSeries(imageTitleArray, zScoreArray, imageSet.title)
-
-          // this.highLightFirstTable()
-          // this.activeSeriesClickListener()
-
-          // prepareEditLabels()
+        this.results.resultsForEachImageSet[i].forEach((result, index) => {
+          let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
+          let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
+          this.resultsArray[row][column] += 1 // result['won'] here?
         })
-      }
+
+        // save all raw data maps
+        this.rawDataMap.push(this.resultsArray)
+
+        // stores calculated data for one picture set
+        let zScoreArray = this.calculatePlots(this.resultsArray)
+        this.zScoreMap.push(zScoreArray)
+
+        this.plotData.push({
+          imageSet: imageSet,
+          label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
+          zScores: zScoreArray
+        })
+      })
     })
+    // } else if (experimentType === 2) {
+    //   this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
+    //     this.results = data.data
+    //     this.rankedResults = data.data
+
+    //     this.results.imageSets.forEach((imageSet, i) => {
+
+    //       // <template v-for="(y, c) in rankedResults.resultsForEachImageSet">
+    //       //   <tr>
+    //       //     <td class="overflow-wrap"><b>{{ y[c].user }}</b></td>
+    //       //     <td v-for="(g, h) in y">{{ g.ranking }}</td>
+    //       //   </tr>
+    //       // </template>
+
+    //       // var resultTable = convertRankToPair(this.rankedResults.resultsForEach[i])
+    //       // calculatePlots(resultTable)
+    //       // zScoreArray = calculatePlots(resultTable)
+
+    //       // addSeries(imageTitleArray, zScoreArray, t['name'])
+
+    //       // $("#zScores-container").append('</br></br><div id=zscore-' + roundCounter + '><h1>Z-Scores</h1><hr></div>')
+
+    //       // //sends all imagestitles, calculated results and the name of picture set
+    //       // setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url'])
+    //     })
+    //   })
+    // } else if (experimentType === 3) {
+    //   //
+    // }
   },
   methods: {
     ifNotNaN (value) {
@@ -475,41 +500,48 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
+  .qe-statistics-container {
+    padding-bottom: 100px;
+    margin-top: 150px;
+  }
   .table td, .table tr {
-    padding: 10px;
+    padding: 10px 5px;
   }
   .table tr {
     border: 1px solid #ddd;
   }
   .table.bordered {
-    /*border: 1px #eaeaea solid;*/
     border: 1px solid rgba(0,0,0,0.12);
     border-left: 0;
   }
   .table {
-      width: 100%;
-      margin-bottom: 14pt;
+    width: 100%;
+    margin-bottom: 14pt;
   }
   .table {
-      max-width: 100%;
-      background-color: #ffffff;
-      border-collapse: collapse;
-      border-spacing: 0;
+    max-width: 100%;
+    background-color: #ffffff;
+    border-collapse: collapse;
+    border-spacing: 0;
   }
   .table.bordered td, .table.bordered th {
-      /*border-left: 1px #eaeaea solid;
-      border-bottom: 1px #eaeaea solid;*/
-      border-left: 1px solid rgba(0,0,0,0.12);
-      border-bottom: 1px solid rgba(0,0,0,0.12);
-      padding: 10px;
-      max-width: 50px;
+    border-left: 1px solid rgba(0,0,0,0.12);
+    border-bottom: 1px solid rgba(0,0,0,0.12);
+    padding: 10px;
+    max-width: 50px;
   }
-  .v-tabs__item--active {
-    font-weight: bold;
+  .table.bordered tr:hover {
+    background: #eee;
   }
   .overflow-wrap {
     /*overflow: hidden;*/
     overflow-wrap: break-word;
+  }
+</style>
+
+<style lang="css">
+  .v-tabs__item--active {
+    font-weight: bold;
   }
 </style>

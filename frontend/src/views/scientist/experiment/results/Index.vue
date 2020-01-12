@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-layout mb-5 mt-5 column>
-      <h2 class="display-1">
+      <h2 class="display-1 mb-1">
         Observer Results
       </h2>
       <h3 class="headline">
@@ -16,10 +16,6 @@
         <h2 class="headline mb-5 text-xs-center">Observers</h2>
 
         <v-layout justify-end align-center mb-3>
-          <!-- <h2 class="title"> -->
-            <!-- Observer Raw Data -->
-          <!-- </h2> -->
-
           <div>
             <!-- <v-btn
               outline
@@ -108,69 +104,13 @@
                     arrow_downward
                   </v-icon>
                 </v-btn>
-
-                <!-- <v-btn
-                  @click="exportObserverMetasForObserver(props.item)"
-                  small
-                  color="primary text-none ma-0 ml-2"
-                >
-                  Export observer demographics
-                  <v-icon :size="20" class="ml-2">
-                    arrow_downward
-                  </v-icon>
-                </v-btn> -->
-                <!-- <v-btn
-                  @click="getResultsForObserver(props.item)"
-                  flat small
-                  color="pa-0 text-none ma-0"
-                >
-                  <v-icon :size="20" class="ml-2">delete</v-icon>
-                </v-btn> -->
               </td>
             </tr>
           </template>
-          <!-- <template v-slot:expand="props"> -->
-            <!-- @click="getResultsForObserver(experimentResult, i)" -->
-            <!-- <v-layout v-for="(result, i) in props.results" :key="i" class="pa-2">
-              <v-card flat>
-                <v-card-text>{{ result.name }}</v-card-text>
-              </v-card>
-            </v-layout> -->
-          <!-- </template> -->
         </v-data-table>
 
-        <Plot/>
+        <Plot v-if="experimentResults.length > 0"/>
       </v-container>
-
-      <!-- <v-data-table
-        :headers="[
-          { text: 'Title', value: 'title', sortable: false, desc: '' },
-          { text: 'Low CI limit', value: 'lowCiLimit', sortable: false, desc: '' },
-          { text: 'Mean z-score', value: 'meanZscore', align: 'right', sortable: false, desc: '' },
-          { text: 'High CI limit', value: 'highCiLimit', sortable: false },
-        ]"
-        :items="experimentResults"
-        no-data-text=""
-        :expand="false"
-        item-key="id"
-        hide-actions
-        :loading="loading"
-      >
-        <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
-        <template v-slot:no-data>
-          <div class="caption text-xs-center" v-if="loading === false">
-            No observer data to show. No one has completed the experiment yet.
-          </div>
-        </template>
-        <template v-slot:items="props">
-          <tr @click="props.expanded = !props.expanded">
-            <td>{{ props.item.user_id }}</td>
-            <td>{{ props.item.id }}</td>
-            <td class="text-xs-right">
-            </td>
-          </tr>
-        </template>
-      </v-data-table> -->
     </v-card>
   </div>
 </template>

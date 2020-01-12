@@ -7,76 +7,90 @@
       </div>
     </v-card-title>
 
-    <v-text-field
-      class="mt-3"
-      v-model.trim="email"
-      label="Email"
-    ></v-text-field>
+    <v-form v-model="valid">
+      <v-text-field
+        class="mt-3"
+        v-model.trim="email"
+        :rules="[rules.required]"
+        validate-on-blur
+        label="Email"
+      ></v-text-field>
 
-    <v-text-field
-      class="mt-3"
-      v-model.trim="password"
-      label="Password"
-      type="password"
-    ></v-text-field>
+      <v-text-field
+        class="mt-3"
+        v-model.trim="password"
+        :rules="[rules.required, rules.min]"
+        validate-on-blur
+        :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+        :type="showPassword ? 'text' : 'password'"
+        @click:append="showPassword = !showPassword"
+        label="Password"
+      ></v-text-field>
 
-    <v-text-field
-      class="mt-3"
-      v-model.trim="name"
-      label="Name"
-    ></v-text-field>
+      <v-text-field
+        class="mt-3"
+        v-model.trim="name"
+        label="Name"
+      ></v-text-field>
 
-    <v-select
-      class="mt-3"
-      v-model="gender"
-      :items="['Female', 'Male', 'Other', 'Rather not say']"
-      label="Gender"
-    ></v-select>
+      <v-select
+        class="mt-3"
+        v-model="gender"
+        :items="['Female', 'Male', 'Other', 'Rather not say']"
+        label="Gender"
+      ></v-select>
 
-    <v-text-field
-      class="mt-3"
-      v-model.trim="yob"
-      label="Year of Birth"
-      placeholder="yyyy"
-    ></v-text-field>
+      <v-text-field
+        class="mt-3"
+        v-model.trim="yob"
+        label="Year of Birth"
+        placeholder="yyyy"
+      ></v-text-field>
 
-    <v-autocomplete
-      v-model.trim="institution"
-      :items="institutions"
-      :filter="customFilter"
-      item-text="name"
-      label="Institution"
-    ></v-autocomplete>
+      <v-autocomplete
+        v-model.trim="institution"
+        :items="institutions"
+        :filter="customFilter"
+        item-text="name"
+        label="Institution"
+      ></v-autocomplete>
 
-    <v-autocomplete
-      v-model.trim="nationality"
-      :items="states"
-      :filter="customFilter"
-      item-text="name"
-      label="Nationality"
-    ></v-autocomplete>
+      <v-autocomplete
+        v-model.trim="nationality"
+        :items="states"
+        :filter="customFilter"
+        item-text="name"
+        label="Country"
+      ></v-autocomplete>
 
-    <v-checkbox
-      v-model="scientist"
-      color="success"
-      :label="`Register as scientist`"
-    ></v-checkbox>
+      <v-checkbox
+        v-model="scientist"
+        color="success"
+        :label="`Register as scientist`"
+      ></v-checkbox>
 
-    <p class="caption">
-      Check the box above to be eligible for scientist role.
-      Your account will be manually approved as soon as possible.
-      An email will automatically be sent to you when this is done.
-    </p>
+      <p class="caption">
+        Check the box above to be eligible for scientist role.
+        Your account will be manually approved as soon as possible.
+        An email will automatically be sent to you when this is done.
+      </p>
 
-    <v-card-actions>
-      <v-btn @click="register" depressed color="#78AA1C" :loading="registering" large class="white--text mt-5" :disabled="email === ''">
-        Register
-      </v-btn>
+      <div v-if="serverErrors !== ''">
+        <p class="red--text" v-for="(error, i) in serverErrors.errors.email" :key="i">
+          {{ error }}
+        </p>
+      </div>
 
-      <!-- <div v-for="err in errors.errors">
-        <span>{{ err }}</span>
-      </div> -->
-    </v-card-actions>
+      <v-card-actions>
+        <v-btn @click="register" depressed color="#78AA1C" :loading="registering" large class="white--text mt-5" :disabled="email === ''">
+          Register
+        </v-btn>
+
+        <!-- <div v-for="err in errors.errors">
+          <span>{{ err }}</span>
+        </div> -->
+      </v-card-actions>
+    </v-form>
   </v-card>
 </template>
 
@@ -86,6 +100,8 @@ import EventBus from '@/eventBus'
 export default {
   data () {
     return {
+      valid: false,
+
       email: '',
       name: '',
       password: '',
@@ -100,7 +116,16 @@ export default {
       errors: {},
       success: false,
 
+      showPassword: false,
+
       registering: false,
+
+      serverErrors: '',
+
+      rules: {
+        required: value => !!value || 'Required.',
+        min: v => v.length >= 8 || 'Min 8 characters'
+      },
 
       states: [
         { name: 'Norway' },
@@ -118,28 +143,34 @@ export default {
 
   methods: {
     register () {
-      this.registering = true
+      if (this.valid === true) {
+        this.registering = true
 
-      this.$axios.post('/register', {
-        email: this.email,
-        password: this.password,
-        name: this.name,
-        gender: this.gender,
-        yob: this.yob,
-        institution: this.institution,
-        nationality: this.nationality,
-        scientist: this.scientist
-      }).then(response => {
-        localStorage.setItem('access_token', response.data.access_token)
-        this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        EventBus.$emit('success', 'Your account has been created, you may now log in.')
-        // EventBus.$emit('registered')
-        this.registering = false
-      }).catch((error) => {
-        console.log(error)
-        // this.errors = error
-        this.registering = false
-      })
+        this.$axios.post('/register', {
+          email: this.email,
+          password: this.password,
+          name: this.name,
+          gender: this.gender,
+          yob: this.yob,
+          institution: this.institution,
+          nationality: this.nationality,
+          scientist: this.scientist
+        }).then(response => {
+          localStorage.setItem('access_token', response.data.access_token)
+          this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
+          EventBus.$emit('success', 'Your account has been created, you may now log in.')
+          // EventBus.$emit('registered')
+          this.serverErrors = ''
+          this.registering = false
+          this.$emit('success')
+        }).catch((error) => {
+          console.log(error)
+          // this.errors = error
+          this.serverErrors = ''
+          this.serverErrors = error.response.data
+          this.registering = false
+        })
+      }
     },
 
     // filter out possible matches when user types in nationality field

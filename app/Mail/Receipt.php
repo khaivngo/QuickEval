@@ -33,7 +33,7 @@ class Receipt extends Mailable
     public function build()
     {
         return $this
-            ->from('quickeval@quickeval.no')
+            ->from('no-reply@quickeval.no')
             ->view('mail.receipt');
     }
 }

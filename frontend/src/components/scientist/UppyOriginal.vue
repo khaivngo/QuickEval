@@ -36,7 +36,7 @@ export default {
     return {
       uppy: null,
       uppySettings: {
-        endpoint: 'http://127.0.0.1/QuickEval/public/api/file',
+        endpoint: `${this.$API_URL}/file`,
         headers: {
           'authorization': `Bearer ${localStorage.access_token}`
         }

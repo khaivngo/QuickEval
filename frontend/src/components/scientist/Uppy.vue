@@ -1,5 +1,5 @@
 <template>
-  <div id="drag-drop-area-reproductions"></div>
+  <div id="drag-drop-area-reproductions" style="max-width: 100%;"></div>
 </template>
 
 <script>
@@ -36,7 +36,7 @@ export default {
     return {
       uppy: null,
       uppySettings: {
-        endpoint: 'http://127.0.0.1/QuickEval/public/api/file',
+        endpoint: `${this.$API_URL}/file`,
         headers: {
           'authorization': `Bearer ${localStorage.access_token}`
         }

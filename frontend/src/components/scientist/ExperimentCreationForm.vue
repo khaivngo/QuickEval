@@ -141,7 +141,7 @@
                     </v-btn>
                   </template>
                   <div class="pl-2 pr-2 body-1">
-                    Each pair of images will have their positin flipped in the queue.<br>
+                    Each pair of images will have their position flipped in the queue.<br>
                     Leading to double the comparisons for the observer.
                   </div>
                 </v-tooltip>

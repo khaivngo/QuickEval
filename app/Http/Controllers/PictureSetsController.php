@@ -72,7 +72,7 @@ class PictureSetsController extends Controller
 
       if ($picture_set->delete()) {
         # deleteDirectory: remove the $id directory and all of its files
-        Storage::deleteDirectory('uploads/' . $id);
+        Storage::deleteDirectory('public/' . $id);
       }
 
       return response('deleted_picture_set', 201);
