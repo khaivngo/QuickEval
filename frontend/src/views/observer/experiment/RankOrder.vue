@@ -165,7 +165,7 @@
           class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
           :class="(label === activeRight) ? 'active' : ''"
           tabindex="0"
-          @keyup.enter="changeLeftPannerImage(label)"
+          @keyup.enter="changeRightPannerImage(label)"
         >
           {{ alphabet[i].toUpperCase() }}
         </div>
@@ -313,6 +313,7 @@ export default {
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        console.log(payload)
         if (payload) {
           this.stimuli = payload.data
 
@@ -396,25 +397,7 @@ export default {
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue')) {
         //
-        this.labels = []
-        this.rankings = this.stimuli[this.index].picture_queue
-        this.activeLeft = this.stimuli[this.index].picture_queue[0].id
-        this.activeRight = this.stimuli[this.index].picture_queue[1].id
-        this.rankings[0].watched = true
-        this.rankings[1].watched = true
-
-        // give each image a letter ID, and create labels
-        this.rankings.forEach((item, i) => {
-          this.$set(item, 'letter', this.alphabet[i].toUpperCase())
-          this.labels.push(item.id)
-        })
-
-        // set original
-        if (this.stimuli[this.index].picture_queue[0].hasOwnProperty('original')) {
-          this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].original.path
-        }
-        this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].path
-        this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[1].path
+        this.changeStimuli()
 
         // has every image been viewed in the panner?
         let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
@@ -422,22 +405,24 @@ export default {
           this.disableNextBtn = true
 
           this.store().then(response => {
-            if (response.data !== 'result_stored') {
-              alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
-            }
+            // if (response.data !== 'result_stored') {
+            //   alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
+            // }
 
             this.disableNextBtn = false
             this.index += 1
             localStorage.setItem('index', this.index)
 
             // Have we reached the end?
-            console.log(this.stimuli[this.index])
             if (this.stimuli[this.index] === undefined) {
               this.onFinish()
             }
-          }).catch(() => {
+            // this.next()
+            this.changeStimuli()
+          }).catch((error) => {
             this.disableNextBtn = false
-            alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
+            // alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
+            console.log(error)
           })
         }
         // else if ((this.rankings.length !== 0 && (watched.length === this.rankings.length)) && action === 'click') {
@@ -452,6 +437,31 @@ export default {
 
         this.next()
       }
+    },
+
+    /**
+     * Set stimuli images and labels, based on current index.
+     */
+    changeStimuli () {
+      this.labels = []
+      this.rankings    = this.stimuli[this.index].picture_queue
+      this.activeLeft  = this.stimuli[this.index].picture_queue[0].id
+      this.activeRight = this.stimuli[this.index].picture_queue[1].id
+      this.rankings[0].watched = true
+      this.rankings[1].watched = true
+
+      // give each image a letter ID, and create labels
+      this.rankings.forEach((item, i) => {
+        this.$set(item, 'letter', this.alphabet[i].toUpperCase())
+        this.labels.push(item.id)
+      })
+
+      // set original
+      if (this.stimuli[this.index].picture_queue[0].hasOwnProperty('original')) {
+        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].original.path
+      }
+      this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].path
+      this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[1].path
     },
 
     async getExperiment (experimentId) {

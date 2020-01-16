@@ -4,6 +4,7 @@
 /public/js
 /public/css
 /public/img
+/public_html
 /storage/*.key
 /vendor
 .env

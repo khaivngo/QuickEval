@@ -77,7 +77,7 @@
                 wrap
               >
                 <!-- text-xs-left -->
-                <v-flex>{{ selected.short_description }}</v-flex>
+                <v-flex>{{ selected.long_description }}</v-flex>
               </v-layout>
 
               <!-- <v-divider></v-divider> -->

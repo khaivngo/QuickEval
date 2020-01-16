@@ -406,6 +406,7 @@ class ExperimentsController extends Controller
       $nounce = 0;
       foreach ($sequences as $key => $sequence)
       {
+        # if picture sequence
         if ($sequence->picture_queue_id !== null)
         {
           # get all picture sequences
@@ -463,10 +464,28 @@ class ExperimentsController extends Controller
       }
 
       // $flattened = $flattened->shuffle();
-
       $collection = collect($all);
 
+      # if rank order
       if ($experiment->experiment_type_id == 2) {
+        # if random between image sets
+        # flatten arrays by one level
+        if ($experiment->picture_sequence_algorithm == 2) {
+          $hello = [];
+          foreach ($all as $one) {
+            $key = key($one);
+            if ($key == 'picture_queue'){
+              foreach ($one as $b) {
+                $hello[] = $b;
+              }
+            } else if ($key == 'instructions') {
+              $hello[] = $one;
+            }
+          }
+          $collection = collect($hello);
+          return response($collection);
+        }
+
         return response($collection);
       }
 
@@ -701,7 +720,7 @@ class ExperimentsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function destroy (Request $request, Experiment $experiment)
+    public function destroy (Experiment $experiment)
     {
       if ($experiment->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
