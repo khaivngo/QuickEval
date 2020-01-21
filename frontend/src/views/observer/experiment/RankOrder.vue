@@ -57,45 +57,7 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout mt-3 justify-center>
-      <!-- <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1">
-        Original
-      </h4> -->
-    </v-layout>
-
-    <!-- <v-layout mt-2>
-      <v-layout justify-center class="ml-2 mr-2">
-        <div
-          v-for="(label, i) in labels"
-          :key="label"
-          @click="changeLeftPannerImage(label)"
-          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
-          :class="(label === activeLeft) ? 'active' : ''"
-        >
-          {{ alphabet[i].toUpperCase() }}
-        </div>
-      </v-layout>
-
-      <v-layout justify-center align-center class="text-xs-center ml-2 mr-2" v-if="experiment.show_original === 1">
-        <h4 class="body-1 font-weight-regular">
-          Original
-        </h4>
-      </v-layout>
-
-      <v-layout justify-center class="ml-2 mr-2">
-        <div
-          v-for="(label, i) in labels"
-          :key="label"
-          @click="changeRightPannerImage(label)"
-          class="letter subheading pt-1 pb-1 pl-2 pr-2 ma-1"
-          :class="(label === activeRight) ? 'active' : ''"
-        >
-          {{ alphabet[i].toUpperCase() }}
-        </div>
-      </v-layout>
-    </v-layout> -->
-
-    <v-layout ml-3 mr-3 pa-0 style="height: 72vh;" justify-center>
+    <v-layout ml-3 mr-3 mt-3 pa-0 style="height: 72vh;" justify-center>
       <v-flex class="picture-container" mt-2 mb-1 ml-2 :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
         <div class="panzoom">
           <img
@@ -108,7 +70,12 @@
         </div>
       </v-flex>
 
-      <v-flex class="picture-container" mt-2 mb-1 v-if="experiment.show_original === 1" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+      <v-flex
+        class="picture-container"
+        mt-2 mb-1
+        v-if="experiment.show_original === 1"
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+      >
         <div class="panzoom">
           <img
             id="picture-original"
@@ -133,10 +100,6 @@
 
     <v-layout mb-2>
       <v-layout justify-center class="ml-2 mr-2">
-        <!-- Viewing image <strong>A</strong> -->
-        <!-- <draggable group="stimuli">
-          <img style="width: 100px; display: block;"/>
-        </draggable> -->
         <div
           v-for="(label, i) in labels"
           :key="label"
@@ -157,7 +120,6 @@
       </v-layout>
 
       <v-layout justify-center class="ml-2 mr-2">
-        <!-- Viewing image <strong>C</strong> -->
         <div
           v-for="(label, i) in labels"
           :key="label"
@@ -174,17 +136,16 @@
 
     <div class="rating mt-3">
       <v-layout justify-center align-center class="mt-2 pa-0">
-        <!-- <div class="subheading">best</div> -->
-        <div class="text-xs-center subheading" v-for="(num, i) in rankings.length" :key="i"
-          style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
-        >
-          <!-- #{{ (rankings.length + 1) - num }} -->
-          #{{ num }}
-        </div>
-        <!-- <div class="subheading">worst</div> -->
+        <template v-if="rankings">
+          <div class="text-xs-center subheading" v-for="(num, i) in rankings.length" :key="i"
+            style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
+          >
+            #{{ num }}
+          </div>
+        </template>
       </v-layout>
+
       <v-layout justify-center align-center class="mt-1 pa-0">
-        <!-- <div class="subheading mr-2">best</div> -->
         <draggable
           :list="rankings"
           ghost-class="ghost"
@@ -202,23 +163,14 @@
             </div>
           </transition-group>
         </draggable>
-        <!-- <div class="subheading ml-2">worst</div> -->
       </v-layout>
-      <!-- <v-layout justify-center align-center class="mb-2 pa-0"> -->
-        <!-- best -->
-        <!-- <div class="text-xs-center subheading" v-for="(num, i) in rankings.length" :key="i"
-          style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
-        > -->
-          <!-- #{{ (rankings.length + 1) - num }} -->
-          <!-- #{{ num }} -->
-        <!-- </div> -->
-        <!-- worst -->
-      <!-- </v-layout> -->
     </div>
 
-    <v-btn fixed bottom right color="#D9D9D9"
+    <v-btn
       @click="next('click')"
       :loading="disableNextBtn"
+      fixed bottom right
+      color="#D9D9D9"
     >
       <span class="ml-1">next</span>
       <v-icon>keyboard_arrow_right</v-icon>
@@ -253,6 +205,7 @@ export default {
       },
 
       stimuli: [],
+      currentStimuli: [],
 
       index: 0,
       experimentResult: null,
@@ -314,30 +267,23 @@ export default {
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         console.log(payload)
-        if (payload) {
-          this.stimuli = payload.data
+        this.stimuli = payload.data
 
-          if (localStorage.getItem('index') === null) {
-            localStorage.setItem('index', 0)
-          }
-
-          this.index = Number(localStorage.getItem('index'))
-          this.experimentResult = Number(localStorage.getItem('experimentResult'))
-
-          this.next()
-        } else {
-          alert('Something went wrong. Could not start the experiment.')
+        if (localStorage.getItem('index') === null) {
+          localStorage.setItem('index', 0)
         }
-      }).catch(err => {
-        alert(err)
+
+        this.index = Number(localStorage.getItem('index'))
+        this.experimentResult = Number(localStorage.getItem('experimentResult'))
+
+        this.next()
+      }).catch((err) => {
+        window.alert(err)
       })
     })
   },
 
   methods: {
-    /**
-     * Tag touched images. Used to decide if every image has been looked at.
-     */
     dragEnd (e) {
       this.beingDragged = false
       // this.rankings[e.newIndex].moved = true
@@ -367,7 +313,6 @@ export default {
       this.isLoadRight = false
 
       let elem = this.rankings.find(e => e.id === label)
-
       this.$nextTick(() => {
         this.rightImage = this.$UPLOADS_FOLDER + elem.path
       })
@@ -393,23 +338,29 @@ export default {
         return
       }
 
-      // this.disableNextBtn = true
-
       if (this.stimuli[this.index].hasOwnProperty('picture_queue')) {
-        //
+      // && this.stimuli[this.index].picture_queue[0].picture_queue_id !== null
+
         this.changeStimuli()
+
+        // if this is the first set we want to load the images even though not everything has been watched
+        var firstRound = 1
+        if (firstRound === 1) {
+          this.index += 1
+          localStorage.setItem('index', this.index)
+          firstRound += 1
+        }
 
         // has every image been viewed in the panner?
         let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
-        if (this.rankings.length !== 0 && (watched.length === this.rankings.length)) {
+        // if rankings array exists, and is not empty, and every item in the array has been opened in the panner
+        if ((this.rankings) && (this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
           this.disableNextBtn = true
 
           this.store().then(response => {
-            // if (response.data !== 'result_stored') {
-            //   alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
-            // }
+            this.labels = []
+            this.rankings = []
 
-            this.disableNextBtn = false
             this.index += 1
             localStorage.setItem('index', this.index)
 
@@ -417,17 +368,14 @@ export default {
             if (this.stimuli[this.index] === undefined) {
               this.onFinish()
             }
-            // this.next()
-            this.changeStimuli()
-          }).catch((error) => {
+
+            this.disableNextBtn = false
+          }).catch(() => {
             this.disableNextBtn = false
             // alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
-            console.log(error)
+            // console.log(error)
           })
         }
-        // else if ((this.rankings.length !== 0 && (watched.length === this.rankings.length)) && action === 'click') {
-        //   alert('Please evaluate all the images before moving to the next step.')
-        // }
       } else {
         this.instructionText = this.stimuli[this.index].instructions[0].description
         this.instructionDialog = true
@@ -443,13 +391,15 @@ export default {
      * Set stimuli images and labels, based on current index.
      */
     changeStimuli () {
-      this.labels = []
-      this.rankings    = this.stimuli[this.index].picture_queue
+      this.rankings = this.stimuli[this.index].picture_queue
+      // put the two first images in the left and right panner
       this.activeLeft  = this.stimuli[this.index].picture_queue[0].id
       this.activeRight = this.stimuli[this.index].picture_queue[1].id
+      // mark the two first images as watched
       this.rankings[0].watched = true
       this.rankings[1].watched = true
 
+      this.labels = []
       // give each image a letter ID, and create labels
       this.rankings.forEach((item, i) => {
         this.$set(item, 'letter', this.alphabet[i].toUpperCase())

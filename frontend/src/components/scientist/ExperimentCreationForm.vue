@@ -625,6 +625,7 @@ export default {
           this.form.bgColour         = response.data.background_colour || '808080'
           this.form.showOriginal     = (response.data.show_original === 1)
           this.form.samePairTwice    = response.data.same_pair
+          this.form.algorithm        = response.data.picture_sequence_algorithm
         })
         .catch(err => console.warn(err))
     }

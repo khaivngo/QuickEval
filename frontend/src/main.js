@@ -7,7 +7,7 @@ import App from './App.vue'
 // Vue.prototype.$DOMAIN         = 'https://quickeval.no'
 // Vue.prototype.$UPLOADS_FOLDER = 'https://quickeval.no/uploads/public/'
 // Vue.prototype.$API_URL        = 'https://quickeval.no/api'
-// axios.defaults.baseURL = Vue.prototype.$API_URL
+// axios.defaults.baseURL        = Vue.prototype.$API_URL
 
 Vue.prototype.$DOMAIN = 'https://quickeval.no'
 Vue.prototype.$UPLOADS_FOLDER = 'http://127.0.0.1/QuickEval/public/storage/'
