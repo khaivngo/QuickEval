@@ -67,11 +67,22 @@ class PictureSetsController extends Controller
         return response($image_set, 200);
     }
 
-    public function destroy ($id) {
+    /**
+     * Remove the specified experiment from storage, if you are the rightful owner.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy ($id)
+    {
       $picture_set = PictureSet::find($id);
 
+      # return if not owner of image set
+      if ($picture_set->user_id != auth()->user()->id) {
+        return response('Unauthorized', 401);
+      }
+
       if ($picture_set->delete()) {
-        # deleteDirectory: remove the $id directory and all of its files
+        # remove the $id directory and all of its files
         Storage::deleteDirectory('public/' . $id);
       }
 

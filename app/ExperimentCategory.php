@@ -11,6 +11,12 @@ class ExperimentCategory extends Model
         'experiment_id'
     ];
 
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'experiment_id' => 'integer',
+    //   'category_id' => 'integer'
+    // ];
+
     public function category() {
         return $this->belongsTo('App\Category');
     }

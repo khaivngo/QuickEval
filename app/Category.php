@@ -10,4 +10,9 @@ class Category extends Model
         'user_id',
         'title'
     ];
+
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'user_id' => 'integer'
+    // ];
 }

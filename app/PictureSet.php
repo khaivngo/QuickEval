@@ -12,6 +12,12 @@ class PictureSet extends Model
         'description'
     ];
 
+    // protected $casts = [
+    //     'id' => 'integer',
+    //     'user_id' => 'integer',
+    //     'picture_set_id' => 'integer'
+    // ];
+
     // public function experiments () {
     //     return $this->hasMany('App\Picture');
     // }

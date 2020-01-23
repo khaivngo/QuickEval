@@ -10,4 +10,9 @@ class Instruction extends Model
         'user_id',
         'description'
     ];
+
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'user_id' => 'integer'
+    // ];
 }

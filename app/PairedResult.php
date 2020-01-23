@@ -14,6 +14,15 @@ class PairedResult extends Model
         'chose_none'
     ];
 
+    // protected $casts = [
+    //   'id'                   => 'integer',
+    //   'experiment_result_id' => 'integer',
+    //   'picture_id_selected'  => 'integer',
+    //   'picture_id_left'      => 'integer',
+    //   'picture_id_right'     => 'integer',
+    //   'chose_none'           => 'integer'
+    // ];
+
     public function experiment_result () {
         return $this->belongsTo('App\ExperimentResult');
     }

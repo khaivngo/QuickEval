@@ -11,6 +11,12 @@ class ExperimentObserverMeta extends Model
     'observer_meta_id'
   ];
 
+  // protected $casts = [
+  //   'id' => 'integer',
+  //   'experiment_id' => 'integer',
+  //   'observer_meta_id' => 'integer'
+  // ];
+
   public function experiment () {
     return $this->belongsTo('App\Experiment');
   }

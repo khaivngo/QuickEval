@@ -11,6 +11,12 @@ class ScientistRequest extends Model
     'accepted'
   ];
 
+  // protected $casts = [
+  //     'id'       => 'integer',
+  //     'user_id'  => 'integer',
+  //     'accepted' => 'integer'
+  // ];
+
   public function user () {
     return $this->belongsTo('App\User');
   }

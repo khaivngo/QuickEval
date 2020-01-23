@@ -11,4 +11,11 @@ class PictureSequence extends Model
         'picture_id',
         'picture_queue_id'
     ];
+
+    // protected $casts = [
+    //   'id'               => 'integer',
+    //   'picture_order'    => 'integer',
+    //   'picture_id'       => 'integer',
+    //   'picture_queue_id' => 'integer'
+    // ];
 }

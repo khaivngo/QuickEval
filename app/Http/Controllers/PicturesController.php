@@ -83,9 +83,14 @@ class PicturesController extends Controller
     public function destroy ($id) {
       $picture = Picture::find($id);
       // $picture = Picture::destroy($id);
-      $path = $picture->path;
+
+      # return if not owner of image set
+      // if ($picture_set->user_id != auth()->user()->id) {
+      //   return response('Unauthorized', 401);
+      // }
 
       if ($picture->delete()) {
+        $path = 'public/' . $picture->path;
         Storage::delete($path);
       }
 

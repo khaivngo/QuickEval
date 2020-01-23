@@ -13,6 +13,13 @@ class ExperimentObserverMetaResult extends Model
         'answer'
     ];
 
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'experiment_id' => 'integer',
+    //   'user_id' => 'integer',
+    //   'observer_meta_id' => 'integer'
+    // ];
+
     // public function observer_meta () {
     //   return $this->belongsTo(ObserverMeta::class);
     // }

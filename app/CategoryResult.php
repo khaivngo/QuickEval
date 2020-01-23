@@ -13,6 +13,14 @@ class CategoryResult extends Model
         'chose_none'
     ];
 
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'experiment_result_id' => 'integer',
+    //   'picture_id_left' => 'integer',
+    //   'category_id' => 'integer',
+    //   'category_id' => 'chose_none'
+    // ];
+
     public function experiment_result () {
         return $this->belongsTo('App\ExperimentResult');
     }

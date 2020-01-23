@@ -18,6 +18,17 @@ class ExperimentResult extends Model
         'completed'
     ];
 
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'experiment_id' => 'integer',
+    //   'user_id' => 'integer',
+    //   'x' => 'integer',
+    //   'y' => 'integer',
+    //   'start_time' => 'integer',
+    //   'end_time' => 'integer',
+    //   'completed' => 'integer'
+    // ];
+
     // public function results ()
     // {
     //     return $this->hasMany('App\Result', 'user_id', 'experiment_id'); # GJØR OM DISSE TIL foreign KEY

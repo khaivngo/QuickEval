@@ -10,4 +10,9 @@ class ObserverMeta extends Model
         'user_id',
         'meta'
     ];
+
+    // protected $casts = [
+    //   'id' => 'integer',
+    //   'user_id' => 'integer'
+    // ];
 }

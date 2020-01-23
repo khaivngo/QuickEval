@@ -34,4 +34,23 @@ class Experiment extends Model
         'white_point_room',
         'ambient_illumination'
     ];
+
+    // protected $casts = [
+    //     'id' => 'integer',
+    //     'user_id' => 'integer',
+    //     'first_version_id' => 'integer',
+    //     'version' => 'integer',
+    //     'experiment_type_id' => 'integer',
+    //     'picture_sequence_algorithm' => 'integer',
+    //     'delay' => 'integer',
+    //     'stimuli_spacing' => 'integer',
+    //     'is_public' => 'integer',
+    //     'allow_colour_blind' => 'integer',
+    //     'timer' => 'integer',
+    //     'allow_ties' => 'integer',
+    //     'show_original' => 'integer',
+    //     'same_pair' => 'integer',
+    //     'horizontal_flip' => 'integer',
+    //     'natural_lighting' => 'integer'
+    // ];
 }

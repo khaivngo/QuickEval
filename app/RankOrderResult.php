@@ -13,6 +13,14 @@ class RankOrderResult extends Model
         'ranking'
     ];
 
+    // protected $casts = [
+    //   'id'                    => 'integer',
+    //   'experiment_result_id'  => 'integer',
+    //   'picture_set_id'        => 'integer',
+    //   'picture_id'            => 'integer',
+    //   'ranking'               => 'integer'
+    // ];
+
     public function experiment_result () {
         return $this->belongsTo('App\ExperimentResult');
     }

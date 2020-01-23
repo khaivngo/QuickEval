@@ -715,15 +715,14 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Remove the specified experiment from storage,
-     * if you're the owner.
+     * Remove the specified experiment from storage, if you are the rightful owner.
      *
      * @return \Illuminate\Http\Response
      */
     public function destroy (Experiment $experiment)
     {
-      if ($experiment->user_id !== auth()->user()->id) {
-        return response()->json('Unauthorized', 401);
+      if ($experiment->user_id != auth()->user()->id) {
+        return response('Unauthorized', 401);
       }
 
       $experiment->delete();

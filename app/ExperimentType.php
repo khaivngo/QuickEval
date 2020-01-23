@@ -10,4 +10,8 @@ class ExperimentType extends Model
         'name',
         'description'
     ];
+
+    // protected $casts = [
+    //   'id' => 'integer'
+    // ];
 }
