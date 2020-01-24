@@ -14,6 +14,7 @@
           <v-stepper-step :step="item.id" :key="i" editable>
             {{ item.title }}
           </v-stepper-step>
+          <!-- :rules="[() => false]" -->
 
           <v-divider v-if="i !== steps.length - 1" :key="i + 100"/>
         </template>
@@ -324,6 +325,10 @@
               <div class="mb-1">Delay of 0.6 milliseconds inbetween stimuli</div>
               <div class="mb-1">Algorithm for making random queue. 2 * 2</div>
             </div> -->
+
+            <div v-for="(error, i) in errors.errors" :key="i" style="color: red;" class="mb-3">
+              {{ error[0] }}
+            </div>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -454,7 +459,9 @@ export default {
       loaders: {
         storing: false,
         saving: false
-      }
+      },
+
+      errors: []
     }
   },
 
@@ -577,7 +584,9 @@ export default {
 
         this.$router.push('/scientist/experiments')
         // }
-      }).catch(() => {
+      }).catch((error) => {
+        this.errors = error.response.data
+        console.log(error.response.data)
         this.loaders.storing = false
         this.loaders.saving = false
       })
@@ -603,7 +612,7 @@ export default {
 
         this.$router.push('/scientist/experiments')
       }).catch((error) => {
-        console.log(error)
+        this.errors = error.response.data
         EventBus.$emit('error', error.data)
 
         this.loaders.storing = false

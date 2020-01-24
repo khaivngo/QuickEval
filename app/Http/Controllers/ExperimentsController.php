@@ -8,6 +8,11 @@ use DB;
 use App\Experiment;
 use App\ObserverMeta;
 use App\ExperimentObserverMeta;
+use App\Picture;
+
+use App\Classes\Algorithms;
+
+use App\Rules\AllowedTripletCount;
 
 class ExperimentsController extends Controller
 {
@@ -106,10 +111,41 @@ class ExperimentsController extends Controller
         return response()->json('Unauthorized', 401);
       }
 
-      $data = $request->validate([
+      $request->validate([
         'title'          => 'required|string',
         'experimentType' => 'required'
       ]);
+
+      if ($request->experimentType == 3) // category
+      {
+        $request->validate([
+          'categories' => 'required'
+        ]);
+      }
+
+      if ($request->experimentType == 5) // Triplet
+      {
+        foreach ($request->sequences as $step)
+        {
+          if ($step['type'] === 'imageSet')
+          {
+            $images = Picture::where([
+              ['picture_set_id', $step['value']],
+              ['is_original', 0]
+            ])->get();
+
+            # generating triplets queue only work with a certain number of images
+            $data = new Request(['imageCount' => $images->count()]);
+            $this->validate($data, ['imageCount' => new AllowedTripletCount]);
+
+            // Validator::make(
+            //   ['num' => $images->count()],
+            //   ['num' => new AllowedTripletCount]
+            // );
+          }
+        }
+      }
+
 
       $experiment = Experiment::create([
         'user_id'           => auth()->user()->id,
@@ -257,14 +293,10 @@ class ExperimentsController extends Controller
      */
     protected function random_triplet_queue ($imageSetId)
     {
-      $images = \App\Picture::where([
+      $images = Picture::where([
         ['picture_set_id', $imageSetId],
         ['is_original', 0]
       ])->get();
-
-      // if (!in_array(count($images), [7, 9, 13, 15, 19, 21, 25, 27])) {
-      //   return response('Only image sets with 7, 9, 13, 15, 19, 21, 25 or 27 images is supported for Triplet Comparison.');
-      // }
 
       $TripletComparison = new \App\Classes\TripletComparison();
       $triplets = $TripletComparison->make_queue($images);
@@ -297,7 +329,7 @@ class ExperimentsController extends Controller
      */
     protected function random_paired_queue ($imageSetId, $twice)
     {
-      $images = \App\Picture::where([
+      $images = Picture::where([
         ['picture_set_id', $imageSetId],
         ['is_original', 0]
       ])->get();
@@ -337,7 +369,7 @@ class ExperimentsController extends Controller
         'title' => NULL
       ]);
 
-      $images = \App\Picture::where([
+      $images = Picture::where([
         ['picture_set_id', $image_set_id],
         ['is_original', 0]
       ])->get();
@@ -421,16 +453,16 @@ class ExperimentsController extends Controller
           # shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different picture queue.
           if ($experiment->experiment_type_id == 1) {
-            $Algorithms = new \App\Classes\Algorithms;
+            $Algorithms = new Algorithms;
             $result = $Algorithms->shuffle_the_cards($result);
           } else {
             $result = $result->shuffle();
           }
 
           # take the id of first image in the sequence, then the picture_set_id from that image, then find the orginal with that id
-          $picture = \App\Picture::where('id', $result[0]->picture_id)->first();
-          $picture_set = \App\PictureSet::where('id', $picture->picture_set_id)->first();
-          $original = \App\Picture::where([
+          $picture = Picture::where('id', $result[0]->picture_id)->first();
+          $picture_set = PictureSet::where('id', $picture->picture_set_id)->first();
+          $original = Picture::where([
             ['picture_set_id', $picture_set->id],
             ['is_original', 1]
           ])->first();

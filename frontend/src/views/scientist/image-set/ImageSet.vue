@@ -20,7 +20,7 @@
       <v-layout pl-4 pr-4 pb-4 wrap>
         <v-flex
           v-for="(image, i) in images" :key="i"
-          xs6 sm3 md3 lg3 xl3
+          xs6 sm6 md3 lg3 xl3
           pa-1
         >
           <div class="qe-actions">
