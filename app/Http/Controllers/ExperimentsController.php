@@ -116,7 +116,7 @@ class ExperimentsController extends Controller
         'experimentType' => 'required'
       ]);
 
-      if ($request->experimentType == 3) // category
+      if ($request->experimentType == 3 || $request->experimentType == 5) // Category and Triplet
       {
         $request->validate([
           'categories' => 'required'
