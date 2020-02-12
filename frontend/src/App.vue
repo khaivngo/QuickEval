@@ -5,26 +5,6 @@
       :user="user"
     />
 
-    <!-- <v-breadcrumbs :items="[
-      {
-        text: 'Dashboard',
-        href: 'breadcrumbs_dashboard'
-      },
-      {
-        text: 'Link 1',
-        href: '/scientist'
-      },
-      {
-        text: 'Link 2',
-        disabled: true,
-        href: 'breadcrumbs_link_2'
-      }
-    ]">
-      <template v-slot:divider>
-        <v-icon>chevron_right</v-icon>
-      </template>
-    </v-breadcrumbs> -->
-
     <v-content>
       <router-view/>
     </v-content>

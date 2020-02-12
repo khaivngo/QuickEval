@@ -57,6 +57,12 @@ export default new VueRouter({
       ]
     },
 
+    /* user */
+    {
+      path: '/user/profile',
+      component: loadView('Profile')
+    },
+
     /* experiment */
     { path: '/experiment/1/:id', component: loadView('observer/experiment/PairedComparison'),   name: 'Paired Comparison' },
     { path: '/experiment/2/:id', component: loadView('observer/experiment/RankOrder'),          name: 'Rank Order' },

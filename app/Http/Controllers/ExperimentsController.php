@@ -461,7 +461,7 @@ class ExperimentsController extends Controller
 
           # take the id of first image in the sequence, then the picture_set_id from that image, then find the orginal with that id
           $picture = Picture::where('id', $result[0]->picture_id)->first();
-          $picture_set = PictureSet::where('id', $picture->picture_set_id)->first();
+          $picture_set = \App\PictureSet::where('id', $picture->picture_set_id)->first();
           $original = Picture::where([
             ['picture_set_id', $picture_set->id],
             ['is_original', 1]

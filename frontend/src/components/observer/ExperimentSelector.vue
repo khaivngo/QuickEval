@@ -42,12 +42,15 @@
           >
             <!-- active-class="primary--text font-weight-black" -->
             <template v-slot:prepend="{ item, active }">
-              <v-icon
-                v-if="!item.children"
+              <!-- <v-icon
                 :color="active ? 'primary' : ''"
               >
-                mdi-account
-              </v-icon>
+                account_circle
+              </v-icon> -->
+
+              <v-chip v-if="item.version > 1" disabled text-color="#222" small class="ml-2">
+                {{ item.version }}
+              </v-chip>
             </template>
           </v-treeview>
         </v-flex>

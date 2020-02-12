@@ -262,8 +262,19 @@ export default {
           this.rightImage = imgRight.src
           window.setTimeout(() => {
             this.isLoadRight = true
+            // this.startTime = new Date()
           }, this.experiment.delay)
         }
+
+        let endTime = new Date()
+        let startTime = new Date()
+        var timeDiff = endTime - startTime // in ms
+        // strip the ms
+        timeDiff /= 1000
+
+        // get seconds
+        var seconds = Math.round(timeDiff)
+        console.log(seconds + ' seconds')
 
         // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
         // this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path

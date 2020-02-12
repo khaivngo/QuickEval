@@ -46,7 +46,7 @@ class AuthController extends Controller
         'email'    => $auth_id . '@anonymous.com',
         'password' => '',
         'auth_id'  => $auth_id,
-        'role'     => 3
+        'role'     => 1
       ]);
 
       $http = new \GuzzleHttp\Client;

@@ -56,6 +56,7 @@
         // { text: 'Visible to the public', value: 'public' },
         { text: 'Actions', value: 'edit', align: 'right', sortable: false }
       ]"
+      :custom-sort="customSort"
       :items="imageSets"
       no-data-text=""
       item-key="id"
@@ -102,6 +103,10 @@ export default {
       newImageSet: {
         name: '',
         description: ''
+      },
+
+      pagination: {
+        sortBy: 'name'
       }
     }
   },
@@ -118,6 +123,15 @@ export default {
   },
 
   methods: {
+    customSort (items, index, isDesc) {
+      // console.log(isDesc)
+      if (isDesc === true) {
+        return items.reverse()
+      } else {
+        return items.sort()
+      }
+    },
+
     createNew () {
       this.creating = true
 

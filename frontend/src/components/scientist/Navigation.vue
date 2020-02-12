@@ -51,6 +51,8 @@ export default {
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
         { title: 'Your Image Sets', url: '/scientist/image-sets/create', icon: 'photo' },
         { title: 'Your Experiments', url: '/scientist/experiments', icon: 'folder' }
+        // { divider: true },
+        // { title: 'Your profile', url: '/scientist/profile', icon: 'folder' }
       ]
     }
   },

@@ -29,10 +29,6 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-items v-if="user.id !== 0">
-      <Logout/>
-    </v-toolbar-items>
-
     <v-toolbar-items>
       <v-btn
         class="text-none"
@@ -46,8 +42,8 @@
       </v-btn>
     </v-toolbar-items>
 
-    <v-toolbar-items>
-      <!-- <v-menu bottom left>
+    <v-toolbar-items v-if="user.id !== 0">
+      <v-menu bottom left>
         <template v-slot:activator="{ on }">
           <v-btn
             dark
@@ -59,11 +55,22 @@
         </template>
 
         <v-list>
-          <v-list-tile @click="">
-            <v-list-tile-title>account settings</v-list-tile-title>
+          <v-list-tile @click="$router.push('/user/profile')">
+            <v-list-tile-title class="d-flex">
+              Account settings
+              <v-icon right>account_circle</v-icon>
+            </v-list-tile-title>
+          </v-list-tile>
+
+          <v-divider></v-divider>
+
+          <v-list-tile>
+            <v-list-tile-title>
+              <Logout/>
+            </v-list-tile-title>
           </v-list-tile>
         </v-list>
-      </v-menu> -->
+      </v-menu>
     </v-toolbar-items>
   </v-toolbar>
 </template>

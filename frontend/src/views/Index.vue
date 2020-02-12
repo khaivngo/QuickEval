@@ -1,64 +1,51 @@
 <template>
-  <v-container>
-    <v-layout>
-      <v-flex>
-        <v-layout
-          text-xs-center
-          wrap
-          justify-center
-        >
-          <v-flex xs12>
-            <v-img
-              :src="require('../assets/logo.png')"
-              class="my-3"
-              contain
-              height="200"
-            ></v-img>
-          </v-flex>
+  <v-container class="mt-5">
+    <v-layout wrap justify-center>
+      <v-flex shrink class="pr-5">
+        <v-img
+          :src="require('@/assets/logo.png')"
+          contain
+          max-width="200"
+        ></v-img>
 
-          <v-flex mb-4>
-            <h1 class="display-2 font-weight-bold mb-3">
-              QuickEval
-            </h1>
-            <p class="subheading font-weight-regular">
-              A web-based tool for <strong>psychometric image evaluation.</strong>
-            </p>
+        <h1 class="display-2 font-weight-bold mb-3 mt-5">
+          QuickEval
+        </h1>
 
-            <h3 class="subheading">supports:</h3>
-            <div>
-              <h3>rank order</h3>
-              <h3>paired comparison</h3>
-              <h3>triplet comparison</h3>
-              <h3>category judgement</h3>
-              <h3>artifact marking</h3>
-            </div>
+        <p class="headline font-weight-regular">
+          A web-based tool for psychometric image evaluation.
+        </p>
 
-            <p class="mt-5 mb-0">
-              The tool is provided by the<br>
-              Norwegian Colour and Visual Computing Laboratory.
-            </p>
-          </v-flex>
-        </v-layout>
+        <h3>supports:</h3>
+        <ul class="mb-5">
+          <li>rank order</li>
+          <li>paired comparison</li>
+          <li>triplet comparison</li>
+          <li>category judgement</li>
+          <li>artifact marking</li>
+        </ul>
 
-        <v-layout justify-center mb-3>
-          <!-- <v-flex justify-center align-self-center xs12 mb-5 style="background-color: red;"> -->
-          <v-img
-            :src="require('@/assets/colourlab-logo.png')"
-            contain
-            max-width="200"
-          ></v-img>
-        </v-layout>
+        <p class="mt-5 mb-0">
+          The tool is provided by the<br>
+          Norwegian Colour and Visual Computing Laboratory.
+        </p>
 
-        <v-layout justify-center>
-          <v-img
-            :src="require('@/assets/ntnu-logo-slogan.png')"
-            contain
-            max-width="200"
-          ></v-img>
-        </v-layout>
+        <v-img
+          :src="require('@/assets/colourlab-logo.png')"
+          contain
+          class="mt-4"
+          max-width="200"
+        ></v-img>
+
+        <v-img
+          :src="require('@/assets/ntnu-logo-slogan.png')"
+          contain
+          class="mt-4"
+          max-width="200"
+        ></v-img>
       </v-flex>
 
-      <v-flex align-self-center>
+      <v-flex class="mt-5" shrink>
         <v-layout column justify-center>
           <v-layout justify-center>
             <v-btn

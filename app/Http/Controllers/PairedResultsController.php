@@ -48,7 +48,7 @@ class PairedResultsController extends Controller
         ->paired_results;
 
       $data = [];
-      foreach ($paired_results as $result)
+      foreach ($paired_results as $key => $result)
       {
         $arr = [];
         $arr['observer'] = $experiment_results->user_id;
@@ -56,6 +56,19 @@ class PairedResultsController extends Controller
         $arr['left']     = $result->picture_left->name;
         $arr['right']    = $result->picture_right->name;
         $arr['selected'] = $result->picture_selected->name;
+
+        $t = explode(' ', $result->created_at);
+        $arr['answered_at'] = $t[1];
+
+        if (isset($paired_results[$key - 1])) {
+          $timeFirst  = strtotime($paired_results[$key - 1]->created_at);
+        } else {
+          $timeFirst  = strtotime($experiment_results->created_at);
+        }
+        $timeSecond = strtotime($result->created_at);
+        $differenceInSeconds = $timeSecond - $timeFirst;
+        $arr['time_spent'] = $differenceInSeconds;
+
         array_push($data, $arr);
       }
 
