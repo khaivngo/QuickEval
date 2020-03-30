@@ -1,9 +1,9 @@
 <template>
   <div @click.prevent="logout" class="d-flex">
   <!-- <v-btn @click.prevent="logout" flat class="text-none" :loading="loggingOut"> -->
+    <v-icon left>logout</v-icon>
     <span class="mr-2 font-weight-regular">Sign out</span>
     <!-- <v-icon small>power_settings_new</v-icon> -->
-    <v-icon right>logout</v-icon>
   <!-- </v-btn> -->
   </div>
 </template>

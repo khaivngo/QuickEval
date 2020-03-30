@@ -16,7 +16,7 @@
           A web-based tool for psychometric image evaluation.
         </p>
 
-        <h3>supports:</h3>
+        <h3 class="mt-5">Supports</h3>
         <ul class="mb-5">
           <li>rank order</li>
           <li>paired comparison</li>
@@ -46,7 +46,7 @@
       </v-flex>
 
       <v-flex class="mt-5" shrink>
-        <v-layout column justify-center>
+        <v-layout column>
           <v-layout justify-center>
             <v-btn
               @click="loginAsAnonymous()"
@@ -80,7 +80,7 @@
             </v-btn>
           </v-layout>
 
-          <div>
+          <div style="width: 400px;" class="mt-4">
             <Register v-if="registerIntent" @success="registered"/>
             <Login v-if="loginIntent"/>
           </div>

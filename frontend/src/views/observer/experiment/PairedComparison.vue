@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
+  <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour" @keydown.esc="alert('esc')">
     <v-toolbar flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
@@ -41,7 +41,8 @@
         <v-dialog v-model="abortDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="on">
-              Quit Experiment
+              Quit
+              <!-- <v-icon right small>logout</v-icon> -->
             </v-btn>
           </template>
           <v-card>
@@ -77,6 +78,7 @@
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
+            tabindex="0"
           />
         </div>
       </v-flex>
@@ -108,6 +110,8 @@
             class="picture"
             :class="isLoadRight === false ? 'hide' : ''"
             :src="rightImage"
+            tabindex="0"
+            @focus="toggleSelected('right')"
           />
         </div>
       </v-flex>
@@ -172,11 +176,14 @@ export default {
 
       originalImage: '',
       leftImage: '',
-      rightImage: ''
+      rightImage: '',
+
+      timeElapsed: null
     }
   },
 
   computed: {
+    // returns true if no image has been selected, or if the "next" button is disabled.
     noneSelected () {
       return this.disableNextBtn || (this.rightReproductionActive === false && this.leftReproductionActive === false)
     }
@@ -222,6 +229,23 @@ export default {
         console.warn(err)
       })
     })
+
+    window.addEventListener('keydown', (e) => {
+      // esc
+      if (e.keyCode === 27) {
+        this.abort()
+      }
+      // arrow right
+      if (e.keyCode === 39) {
+        if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
+          this.next()
+        }
+      }
+    })
+  },
+
+  destroyed () {
+    // window.removeEventListener('keydown')
   },
 
   methods: {
@@ -229,6 +253,8 @@ export default {
      * Load the next image queue stimuli, or instructions.
      */
     next () {
+      // var endTime = new Date()
+
       // Have we reached the end?
       if (this.stimuli[this.index + 1] === undefined) {
         this.onFinish()
@@ -236,6 +262,7 @@ export default {
       }
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
+        // if (this.timeElapsed === null) this.timeElapsed = new Date()
         let selectedStimuli = 0
         if (this.rightReproductionActive === true) selectedStimuli = this.stimuli[this.index]
         if (this.leftReproductionActive === true)  selectedStimuli = this.stimuli[this.index + 1]
@@ -245,43 +272,48 @@ export default {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 
-        const img = new Image()
-        img.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        img.onload = () => {
-          this.isLoadLeft = false
-          this.leftImage = img.src
-          window.setTimeout(() => {
-            this.isLoadLeft = true
-          }, this.experiment.delay)
+        var images = [
+          { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index].path },
+          { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path }
+        ]
+        var imageCount = images.length
+        var imagesLoaded = 0
+
+        for (var i = 0; i < imageCount; i++) {
+          images[i].img.src = images[i].path
+          images[i].img.onload = () => {
+            imagesLoaded++
+            // all images loaded?
+            if (imagesLoaded === imageCount) {
+              // hide right image, then set source
+              this.isLoadRight = false
+              this.rightImage = images[0].img.src
+              // hide left image, then set source
+              this.isLoadLeft = false
+              this.leftImage = images[1].img.src
+
+              // show a blank screen inbetween image switching,
+              // if scientist set up delay
+              window.setTimeout(() => {
+                // show left and right image
+                this.isLoadLeft = true
+                this.isLoadRight = true
+                // starts or overrides existing timer
+                this.timeElapsed = new Date()
+              }, this.experiment.delay)
+            }
+          }
         }
 
-        const imgRight = new Image()
-        imgRight.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
-        imgRight.onload = () => {
-          this.isLoadRight = false
-          this.rightImage = imgRight.src
-          window.setTimeout(() => {
-            this.isLoadRight = true
-            // this.startTime = new Date()
-          }, this.experiment.delay)
-        }
-
-        let endTime = new Date()
-        let startTime = new Date()
-        var timeDiff = endTime - startTime // in ms
-        // strip the ms
-        timeDiff /= 1000
-
-        // get seconds
-        var seconds = Math.round(timeDiff)
-        console.log(seconds + ' seconds')
-
-        // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        // this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
-
-        /* don't do anything unless stimuli has been selected */
+        /* only do stuff if stimuli has been selected */
         if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
           this.disableNextBtn = true
+
+          let endTime = new Date()
+          let timeDiff = endTime - this.timeElapsed // in ms
+          // strip the ms and get seconds
+          timeDiff /= 1000
+          let seconds = Math.round(timeDiff)
 
           this.store(
             selectedStimuli,
@@ -353,9 +385,9 @@ export default {
     },
 
     abort () {
+      this.abortDialog = true
       localStorage.removeItem('index')
       localStorage.removeItem('experimentResult')
-      this.abortDialog = true
       this.$router.push('/observer')
     }
   }

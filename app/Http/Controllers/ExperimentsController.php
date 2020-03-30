@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use DB;
 
@@ -16,8 +16,15 @@ use App\Rules\AllowedTripletCount;
 
 class ExperimentsController extends Controller
 {
+    /**
+     * Get all experiments owned by the user. With the count of total experiments results,
+     * and completed results.
+     */
     public function index () {
-      return Experiment::where('user_id', auth()->user()->id)
+      return Experiment
+        ::where('user_id', auth()->user()->id)
+        ->withCount('results')
+        ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
         ->orderBy('id', 'desc')
         ->get();
     }
@@ -32,7 +39,8 @@ class ExperimentsController extends Controller
     }
 
     /**
-     *
+     * Return experiment if user is owner. With experiment queues, experiment observer metas,
+     * and experiment categories if category or triplet exmperiment type.
      */
     public function is_owner (Request $request) {
       $experiment = Experiment::where([
@@ -72,10 +80,16 @@ class ExperimentsController extends Controller
       return $experiment;
     }
 
+    /**
+     *
+     */
     public function find (Request $request) {
       return Experiment::find($request->id);
     }
 
+    /**
+     * Find FIRST experiment that matches provided ID. The experimet must be public.
+     */
     public function find_public (Request $request) {
       return Experiment::where([
         ['id', $request->id],

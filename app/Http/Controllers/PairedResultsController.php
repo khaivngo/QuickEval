@@ -39,6 +39,101 @@ class PairedResultsController extends Controller
    * See: https://docs.laravel-excel.com/3.1/exports/
    * Also see files in the app/Exports folder.
    */
+  public function export (Request $request) {
+    // TODO: check if scientist owns experiment and that results belong to experiment
+
+    # get all paired results for each observer
+    $observers =
+      ExperimentResult
+        ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+        // ->where('experiment_id', $request->experiment)
+        ->whereIn('id', $request->selected)
+        ->get();
+
+    # get image sets with images, belonging to experiment
+    // $sequences = DB::table('experiment_queues')
+    //   ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
+    //   ->where('experiment_queues.experiment_id', $experiment_results->experiment_id)
+    //   ->get();
+
+    // foreach ($sequences as $key => $sequence)
+    // {
+    //   # if picture sequence
+    //   if ($sequence->picture_queue_id !== null)
+    //   {
+    //     # get all picture sequences
+    //     $result = DB::table('experiment_sequences')
+    //     ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
+    //     ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
+    //     ->where('experiment_sequences.id', $sequence->id)
+    //     ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
+    //   }
+    // }
+
+    # construct and array with result data for exporting
+    $data = [];
+    foreach ($observers as $observer) {
+      foreach ($observer->paired_results as $key => $result) {
+        $arr = [];
+        $arr['observer']    = $observer->user_id;
+        $arr['session']     = $observer->id;
+        $arr['left']        = $result->picture_left->name;
+        $arr['right']       = $result->picture_right->name;
+        $arr['selected']    = $result->picture_selected->name;
+        $arr['answered_at'] = explode(' ', $result->created_at)[1]; # get the time part of the answer datetime (hour, minute, second)
+        $arr['time_spent']  = $this->calcTimeDiff($observer, $observer->paired_results, $result, $key);
+
+        // TODO!!!!!!!!!!!!!!!!!!!!!
+        //
+        // reset time calulation when new observer/session
+            // use js instead
+        // save timestamp in db
+        // use time in every experiment
+        // use same image loading technique every experiment
+
+        //fullføre export
+        //oppdater for de andre
+        //opdate api endpoints
+        //slette de gamle export metodene
+
+        // replace observer metas export, put in same file as other export?
+
+        // wait until all images loaded, before showing, preload 3 steps ahead
+
+        array_push($data, $arr);
+      }
+    }
+
+    $file_ext = 'csv';
+    // TODO: pre/append user_id or created_at to filename
+    $filename = 'results.' . $file_ext;
+
+    # see: https://docs.laravel-excel.com/3.1/exports/
+    return Excel::download(new PairedResultsExport($data), $filename);
+  }
+
+  private function calcTimeDiff ($observer, $results, $result, $key) {
+    # if NOT the first result
+    if (isset($results[$key - 1])) {
+      # save the time of the previous result
+      $timeFirst = strtotime($results[$key - 1]->created_at);
+    } else {
+      # save the time of when experiment started
+      $timeFirst = strtotime($observer->created_at);
+    }
+    # calculate differece in seconds between current result timestamp and
+    # previous result timestamp or timestamp of experiment start
+    $timeSecond = strtotime($result->created_at);
+    $differenceInSeconds = $timeSecond - $timeFirst;
+
+    return $differenceInSeconds;
+  }
+
+  /**
+   * The \Maatwebsite\Excel package is used for creating exports.
+   * See: https://docs.laravel-excel.com/3.1/exports/
+   * Also see files in the app/Exports folder.
+   */
   public function export_observer ($id)
   {
       $experiment_results = ExperimentResult::find($id);
@@ -46,6 +141,27 @@ class PairedResultsController extends Controller
         ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
         ->find($id)
         ->paired_results;
+
+      # get image sets with images, belonging to experiment
+      // $sequences = DB::table('experiment_queues')
+      //   ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
+      //   ->where('experiment_queues.experiment_id', $experiment_results->experiment_id)
+      //   ->get();
+
+      // foreach ($sequences as $key => $sequence)
+      // {
+      //   # if picture sequence
+      //   if ($sequence->picture_queue_id !== null)
+      //   {
+      //     # get all picture sequences
+      //     $result = DB::table('experiment_sequences')
+      //     ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
+      //     ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
+      //     ->where('experiment_sequences.id', $sequence->id)
+      //     ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
+      //   }
+      // }
+
 
       $data = [];
       foreach ($paired_results as $key => $result)
@@ -78,7 +194,8 @@ class PairedResultsController extends Controller
       return Excel::download(new PairedResultsExport($data), $filename);
   }
 
-  public function export_all ($id) {
+  public function export_all ($id, Request $request) {
+      return $request;
       // TODO: check if scientist owns experiment and that results belong to experiment
 
       $paired_results = ExperimentResult

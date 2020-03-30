@@ -56,17 +56,18 @@
 
         <v-list>
           <v-list-tile @click="$router.push('/user/profile')">
-            <v-list-tile-title class="d-flex">
+            <v-list-tile-title style="display: flex;">
+              <v-icon left>account_circle</v-icon>
               Account settings
-              <v-icon right>account_circle</v-icon>
             </v-list-tile-title>
           </v-list-tile>
 
           <v-divider></v-divider>
 
-          <v-list-tile>
-            <v-list-tile-title>
-              <Logout/>
+          <v-list-tile @click="logout">
+            <v-list-tile-title style="display: flex;">
+              <v-icon left>logout</v-icon>
+              Sign out
             </v-list-tile-title>
           </v-list-tile>
         </v-list>
@@ -76,8 +77,8 @@
 </template>
 
 <script>
-import Logout from '@/components/Logout'
-
+// import Logout from '@/components/Logout'
+import EventBus from '@/eventBus'
 export default {
   props: {
     user: {
@@ -90,9 +91,30 @@ export default {
       }
     }
   },
+  data () {
+    return {
+      loggingOut: false
+    }
+  },
+  // components: {
+  //   Logout
+  // },
+  methods: {
+    logout () {
+      this.loggingOut = true
 
-  components: {
-    Logout
+      this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
+      this.$axios.post('/logout').then(response => {
+        localStorage.removeItem('access_token')
+        EventBus.$emit('logged', { id: 0, role: 0 })
+        this.$router.push('/')
+        this.loggingOut = false
+      }).catch(() => {
+        localStorage.removeItem('access_token')
+        // push notification
+        this.loggingOut = false
+      })
+    }
   }
 }
 </script>

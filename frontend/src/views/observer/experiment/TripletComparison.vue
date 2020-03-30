@@ -41,7 +41,7 @@
         <v-dialog v-model="abortDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="on">
-              Quit Experiment
+              Quit
             </v-btn>
           </template>
           <v-card>
@@ -256,6 +256,19 @@ export default {
         }
       }).catch(err => {
         console.warn(err)
+      })
+
+      window.addEventListener('keydown', (e) => {
+        // esc
+        if (e.keyCode === 27) {
+          this.abort()
+        }
+        // arrow right
+        if (e.keyCode === 39) {
+          if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
+            this.next()
+          }
+        }
       })
     })
   },

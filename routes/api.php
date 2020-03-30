@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 //     // // return new \App\Mail\Receipt($user);
 // });
 
+Route::post('/paired-result/export', 'PairedResultsController@export');
+
 # observer metas export
 Route::get( '/experiment-observer-meta-result/{experiment_id}/{user_id}/export','ExperimentObserverMetaResultsController@export_observer');
 Route::get( '/experiment-observer-meta-result/{experiment_id}/export',          'ExperimentObserverMetaResultsController@export_all');
@@ -122,8 +124,8 @@ Route::middleware('auth:api')->group(function () {
 Route::post('/file', 'PicturesController@store');
 
 # paired export
-Route::get('/paired-result/{id}/export',     'PairedResultsController@export_observer'  );
-Route::get('/{id}/paired-result/all/export', 'PairedResultsController@export_all'       );
+// Route::get('/paired-result/{id}/export',     'PairedResultsController@export_observer'  );
+// Route::post('/{id}/paired-result/all/export', 'PairedResultsController@export_all'      );
 
 # rank order export
 Route::get('/rank-order-result/{id}/export',     'RankOrderResultsController@export_observer'  );

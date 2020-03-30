@@ -41,7 +41,7 @@
         <v-dialog v-model="abortDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn flat dark color="#D9D9D9" v-on="on">
-              Quit Experiment
+              Quit
             </v-btn>
           </template>
           <v-card>

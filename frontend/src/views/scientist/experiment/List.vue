@@ -105,6 +105,10 @@
               <v-icon>bar_chart</v-icon>
             </v-btn> -->
 
+            <div>
+              completed: {{ experiment.completed_results_count }}
+            </div>
+
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-btn :to="`/scientist/experiments/view/${experiment.id}`" v-on="on" color="primary" class="ml-0">

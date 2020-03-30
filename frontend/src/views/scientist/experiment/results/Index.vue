@@ -15,25 +15,17 @@
       <v-container pt-5 pl-5 pr-5 mt-1>
         <h2 class="headline mb-5 text-xs-center">Observers</h2>
 
-        <v-layout justify-end align-center mb-3>
+        <v-layout align-center mb-3>
           <div>
-            <!-- <v-btn
-              outline
-              color="error text-none mt-0 mb-0 mr-2"
-              @click="wipeAllResults"
-            >
-              Wipe ALL data
-              <v-icon :size="20" class="ml-2">
-                delete
-              </v-icon>
-            </v-btn> -->
-
             <v-btn
               v-if="experimentResults.length"
-              @click="exportResultsForExperiment()"
-              color="primary text-none ma-0"
+              :disabled="selected.length === 0"
+              @click="exportResults()"
+              :loading="exporting"
+              color="primary"
+              type="submit"
             >
-              Export ALL observers
+              Export
               <v-icon :size="20" class="ml-2">
                 arrow_downward
               </v-icon>
@@ -53,58 +45,57 @@
         </v-layout>
 
         <v-data-table
-          :headers="[
-            { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
-            {
-              text: 'Session ID', value: 'session', align: 'left', sortable: false,
-              desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.'
-            },
-            { text: 'Taken At', value: 'takenAt', sortable: false, desc: '' },
-            { text: 'Export raw data', value: 'export', align: 'right', sortable: false, desc: '' }
-          ]"
+          v-model="selected"
+          :headers="headers"
           :items="experimentResults"
-          no-data-text=""
-          :expand="false"
           item-key="id"
+          select-all
+          class="elevation-0"
+          :expand="false"
           hide-actions
           :loading="loading"
+          no-data-text=""
         >
           <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear>
-          <template slot="headerCell" slot-scope="props">
-            {{ props.header.text }}
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <span v-on="on">
-                  <v-icon small v-if="props.header.value === 'session'">
-                    help
-                  </v-icon>
-                </span>
-              </template>
-              <div class="pl-2 pr-2 body-1" v-html="props.header.desc"></div>
-            </v-tooltip>
-          </template>
+
           <template v-slot:no-data>
             <div class="caption text-xs-center" v-if="loading === false">
               No observer data to show. No one has completed the experiment yet.
             </div>
           </template>
+
+          <template v-slot:headers="props">
+            <tr>
+              <th>
+                <v-checkbox
+                  :input-value="props.all"
+                  :indeterminate="props.indeterminate"
+                  color="primary"
+                  hide-details
+                  @click.stop="toggleAll"
+                ></v-checkbox>
+              </th>
+              <th
+                v-for="header in props.headers"
+                :key="header.text"
+              >
+                <v-icon small>arrow_upward</v-icon>
+                {{ header.text }}
+              </th>
+            </tr>
+          </template>
           <template v-slot:items="props">
-            <tr @click="props.expanded = !props.expanded">
-              <td>{{ props.item.user_id }}</td>
-              <td>{{ props.item.id }}</td>
-              <td>{{ formatDate(props.item.created_at) }}</td>
-              <td class="text-xs-right">
-                <v-btn
-                  @click="exportResultsForObserver(props.item)"
-                  small
-                  color="primary text-none ma-0"
-                >
-                  Export observer
-                  <v-icon :size="20" class="ml-2">
-                    arrow_downward
-                  </v-icon>
-                </v-btn>
+            <tr :active="props.selected" @click="props.selected = !props.selected">
+              <td>
+                <v-checkbox
+                  :input-value="props.selected"
+                  color="primary"
+                  hide-details
+                ></v-checkbox>
               </td>
+              <td>{{ props.item.user_id }}</td>
+              <td class="text-xs-right">{{ props.item.id }}</td>
+              <td>{{ formatDate(props.item.created_at) }}</td>
             </tr>
           </template>
         </v-data-table>
@@ -130,6 +121,15 @@ export default {
   data () {
     return {
       loading: false,
+      exporting: false,
+
+      headers: [
+        { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
+        { text: 'Session ID', value: 'session', align: 'left', sortable: false, desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.' },
+        { text: 'Taken At', value: 'takenAt', sortable: false, desc: '' }
+      ],
+
+      selected: [],
 
       experiment: {
         id: null,
@@ -160,6 +160,39 @@ export default {
 
   methods: {
     formatDate: formatDate,
+
+    exportResults () {
+      this.exporting = true
+
+      // create new array with only IDs of the selected objects
+      let ids = this.selected.map(selected => {
+        return selected.id
+      })
+
+      this.$axios({
+        url: '/paired-result/export',
+        method: 'POST',
+        responseType: 'blob', // important
+        data: {
+          selected: ids
+        }
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'results.csv')
+        document.body.appendChild(link)
+        link.click()
+        this.exporting = false
+      }).catch(() => {
+        this.exporting = false
+      })
+    },
+
+    toggleAll () {
+      if (this.selected.length) this.selected = []
+      else this.selected = this.experimentResults.slice()
+    },
 
     getExperiment () {
       this.$axios.get(`/experiment/${this.$route.params.id}`)
@@ -199,17 +232,25 @@ export default {
       }
     },
 
+    // exportResults (experimentResult) {
+    //   window.open(`${this.$API_URL}/paired-result/${experimentResult.id}/export`, '_blank')
+    // },
+
     exportResultsForExperiment () {
       // window.open(`${this.$API_URL}/${this.$route.params.id}/${this.experiment.experiment_type_id}/all/export`, '_blank')
 
       if (this.experiment.experiment_type_id === 1) {
-        window.open(`${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`, '_blank')
+        document.location.href = `${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`
+        // window.open(`${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 2) {
-        window.open(`${this.$API_URL}/${this.$route.params.id}/rank-order-result/all/export`, '_blank')
+        document.location.href = `${this.$API_URL}/${this.$route.params.id}/rank-order-result/all/export`
+        // window.open(`${this.$API_URL}/${this.$route.params.id}/rank-order-result/all/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 3) {
-        window.open(`${this.$API_URL}/${this.$route.params.id}/category-result/all/export`, '_blank')
+        document.location.href = `${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`
+        // window.open(`${this.$API_URL}/${this.$route.params.id}/category-result/all/export`, '_blank')
       } else if (this.experiment.experiment_type_id === 5) {
-        window.open(`${this.$API_URL}/${this.$route.params.id}/triplet-result/all/export`, '_blank')
+        document.location.href = `${this.$API_URL}/${this.$route.params.id}/triplet-result/all/export`
+        // window.open(`${this.$API_URL}/${this.$route.params.id}/triplet-result/all/export`, '_blank')
       }
     },
 
