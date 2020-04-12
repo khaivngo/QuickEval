@@ -6,30 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class CategoryResult extends Model
 {
-    protected $fillable = [
-        'experiment_result_id',
-        'picture_id_left',
-        'category_id',
-        'chose_none'
-    ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
-    // protected $casts = [
-    //   'id' => 'integer',
-    //   'experiment_result_id' => 'integer',
-    //   'picture_id_left' => 'integer',
-    //   'category_id' => 'integer',
-    //   'category_id' => 'chose_none'
-    // ];
 
     public function experiment_result () {
-        return $this->belongsTo('App\ExperimentResult');
+        return $this->belongsTo(ExperimentResult::class);
     }
 
     public function category () {
-      return $this->belongsTo('App\Category', 'category_id');
+      return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function picture () {
-      return $this->belongsTo('App\Picture', 'picture_id_left');
+      return $this->belongsTo(Picture::class, 'picture_id_left');
     }
 }

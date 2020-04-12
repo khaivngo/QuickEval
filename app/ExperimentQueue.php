@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExperimentQueue extends Model
 {
-    protected $fillable = [
-        'experiment_id'
-    ];
-
-    // protected $casts = [
-    //   'id' => 'integer',
-    //   'experiment_id' => 'integer'
-    // ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 }

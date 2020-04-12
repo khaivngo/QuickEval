@@ -6,17 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Result extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'experiment_id',
-        'experiment_result_id',
-        'picture_order_id',
-        'category_id',
-        'chose_none'
-    ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
-    public function experiment ()
-    {
-        return $this->belongsTo('App\Experiment');
+    public function experiment () {
+        return $this->belongsTo(Experiment::class);
     }
 }

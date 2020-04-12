@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExperimentType extends Model
 {
-    protected $fillable = [
-        'name',
-        'description'
-    ];
-
-    // protected $casts = [
-    //   'id' => 'integer'
-    // ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 }

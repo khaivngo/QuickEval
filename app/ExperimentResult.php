@@ -6,47 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExperimentResult extends Model
 {
-    protected $fillable = [
-        'experiment_id',
-        'user_id',
-        'browser',
-        'os',
-        'x',
-        'y',
-        'start_time',
-        'end_time',
-        'completed'
-    ];
-
-    // protected $casts = [
-    //   'id' => 'integer',
-    //   'experiment_id' => 'integer',
-    //   'user_id' => 'integer',
-    //   'x' => 'integer',
-    //   'y' => 'integer',
-    //   'start_time' => 'integer',
-    //   'end_time' => 'integer',
-    //   'completed' => 'integer'
-    // ];
-
-    // public function results ()
-    // {
-    //     return $this->hasMany('App\Result', 'user_id', 'experiment_id'); # GJØR OM DISSE TIL foreign KEY
-    // }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 
     public function paired_results () {
-        return $this->hasMany('App\PairedResult');
+        return $this->hasMany(PairedResult::class);
     }
 
     public function rank_order_results () {
-        return $this->hasMany('App\RankOrderResult');
+        return $this->hasMany(RankOrderResult::class);
     }
 
     public function triplet_results () {
-        return $this->hasMany('App\TripletResult');
+        return $this->hasMany(TripletResult::class);
     }
 
     public function category_results () {
-        return $this->hasMany('App\CategoryResult');
+        return $this->hasMany(CategoryResult::class);
     }
 }

@@ -6,13 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ObserverMeta extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'meta'
-    ];
-
-    // protected $casts = [
-    //   'id' => 'integer',
-    //   'user_id' => 'integer'
-    // ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 }

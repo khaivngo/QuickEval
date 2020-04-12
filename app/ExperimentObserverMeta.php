@@ -6,18 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExperimentObserverMeta extends Model
 {
-  protected $fillable = [
-    'experiment_id',
-    'observer_meta_id'
-  ];
-
-  // protected $casts = [
-  //   'id' => 'integer',
-  //   'experiment_id' => 'integer',
-  //   'observer_meta_id' => 'integer'
-  // ];
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array
+   */
+  protected $guarded = [];
 
   public function experiment () {
-    return $this->belongsTo('App\Experiment');
+    return $this->belongsTo(Experiment::class);
   }
 }

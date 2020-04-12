@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class PictureQueue extends Model
 {
-    protected $fillable = [
-        'title'
-    ];
-
-    // protected $casts = [
-    //     'id' => 'integer'
-    // ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [];
 }

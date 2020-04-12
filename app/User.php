@@ -37,10 +37,10 @@ class User extends Authenticatable
     ];
 
     public function experiments () {
-        return $this->hasMany('App\Experiment');
+        return $this->hasMany(Experiment::class);
     }
 
     public function scientist_request () {
-        return $this->hasOne('App\ScientistRequest');
+        return $this->hasOne(ScientistRequest::class);
     }
 }

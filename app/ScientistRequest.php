@@ -6,18 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScientistRequest extends Model
 {
-  protected $fillable = [
-    'user_id',
-    'accepted'
-  ];
-
-  // protected $casts = [
-  //     'id'       => 'integer',
-  //     'user_id'  => 'integer',
-  //     'accepted' => 'integer'
-  // ];
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array
+   */
+  protected $guarded = [];
 
   public function user () {
-    return $this->belongsTo('App\User');
+    return $this->belongsTo(User::class);
   }
 }
