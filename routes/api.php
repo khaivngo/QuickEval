@@ -15,7 +15,10 @@ use Illuminate\Http\Request;
 //     // // return new \App\Mail\Receipt($user);
 // });
 
-Route::post('/paired-result/export', 'PairedResultsController@export');
+Route::post('/paired-result/export',     'ResultPairsController@export'   );
+Route::post('/triplet-result/export',    'ResultTripletsController@export'  );
+Route::post('/rank-order-result/export', 'ResultRankOrdersController@export');
+Route::post('/category-result/export',   'ResultCategoriesController@export' );
 
 # observer metas export
 Route::get( '/experiment-observer-meta-result/{experiment_id}/{user_id}/export','ExperimentObserverMetaResultsController@export_observer');
@@ -71,17 +74,14 @@ Route::middleware('auth:api')->group(function () {
     Route::delete(  '/experiment-result/{id}/wipe',         'ExperimentResultsController@destroy'   );
 
     # paired results
-    Route::get( '/paired-result/{id}',            'PairedResultsController@index'      );
-    Route::get( '/paired-result/{id}/statistics', 'PairedResultsController@statistics' );
-    // Route::get( '/paired-result/{id}/export',   'PairedResultsController@index_export');
-    // Route::get( '/paired-result/export',        'PairedResultsController@export');
-    // Route::get( '/rank-order-result/{id}',      'RankOrderResultsController@show');
+    Route::get( '/paired-result/{id}',            'ResultPairsController@index'      );
+    Route::get( '/paired-result/{id}/statistics', 'ResultPairsController@statistics' );
 
-    Route::post('/paired-result',     'PairedResultsController@store'  );
-    Route::post('/category-result',   'CategoryResultsController@store');
-    Route::post('/triplet-result',    'TripletResultsController@store' );
-    Route::post('/rank-order-result', 'RankOrderResultsController@store' );
-    Route::get( '/rank-order-result/{id}/statistics', 'RankOrderResultsController@statistics' );
+    Route::post('/paired-result',     'ResultPairsController@store'  );
+    Route::post('/category-result',   'ResultCategoriesController@store');
+    Route::post('/triplet-result',    'ResultTripletsController@store' );
+    Route::post('/rank-order-result', 'ResultRankOrdersController@store' );
+    Route::get( '/rank-order-result/{id}/statistics', 'ResultRankOrdersController@statistics' );
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');
@@ -111,9 +111,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/experiment-types', 'ExperimentTypesController@all');
 
     # scientist requests
-    Route::get( '/scientist-request',             'ScientistRequestsController@index' ); // REPLACE WITH ADMIN
-    Route::post('/scientist-request/{id}/accept', 'ScientistRequestsController@accept'); // REPLACE WITH ADMIN
-    Route::post('/scientist-request/{id}/reject', 'ScientistRequestsController@reject'); // REPLACE WITH ADMIN
+    Route::get( '/scientist-request',             'ScientistRequestsController@index' );
+    Route::post('/scientist-request/{id}/accept', 'ScientistRequestsController@accept');
+    Route::post('/scientist-request/{id}/reject', 'ScientistRequestsController@reject');
 
     # misc
     Route::post('/logout', 'AuthController@logout');
@@ -122,19 +122,3 @@ Route::middleware('auth:api')->group(function () {
 
 // TODO: move this inside... InvalidArgumentException: Route [login] not defined
 Route::post('/file', 'PicturesController@store');
-
-# paired export
-// Route::get('/paired-result/{id}/export',     'PairedResultsController@export_observer'  );
-// Route::post('/{id}/paired-result/all/export', 'PairedResultsController@export_all'      );
-
-# rank order export
-Route::get('/rank-order-result/{id}/export',     'RankOrderResultsController@export_observer'  );
-Route::get('/{id}/rank-order-result/all/export', 'RankOrderResultsController@export_all'       );
-
-# category export
-Route::get('/category-result/{id}/export',     'CategoryResultsController@export_observer'  );
-Route::get('/{id}/category-result/all/export', 'CategoryResultsController@export_all'       );
-
-# triplet export
-Route::get('/triplet-result/{id}/export',     'TripletResultsController@export_observer');
-Route::get('/{id}/triplet-result/all/export', 'TripletResultsController@export_all'     );

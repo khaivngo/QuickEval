@@ -88,7 +88,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Find FIRST experiment that matches provided ID. The experimet must be public.
+     * Find the first public experiment that matches the provided ID.
      */
     public function find_public (Request $request) {
       return Experiment::where([

@@ -253,8 +253,6 @@ export default {
      * Load the next image queue stimuli, or instructions.
      */
     next () {
-      // var endTime = new Date()
-
       // Have we reached the end?
       if (this.stimuli[this.index + 1] === undefined) {
         this.onFinish()
@@ -267,23 +265,24 @@ export default {
         if (this.rightReproductionActive === true) selectedStimuli = this.stimuli[this.index]
         if (this.leftReproductionActive === true)  selectedStimuli = this.stimuli[this.index + 1]
 
-        /* set original */
+        // set original
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 
+        // prepare to load reproduction images
         var images = [
           { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index].path },
           { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path }
         ]
         var imageCount = images.length
         var imagesLoaded = 0
-
+        // attach onload events to every reproduction image
         for (var i = 0; i < imageCount; i++) {
           images[i].img.src = images[i].path
           images[i].img.onload = () => {
             imagesLoaded++
-            // all images loaded?
+            // when all images loaded
             if (imagesLoaded === imageCount) {
               // hide right image, then set source
               this.isLoadRight = false
@@ -305,11 +304,13 @@ export default {
           }
         }
 
-        /* only do stuff if stimuli has been selected */
+        // only do stuff if stimuli has been selected
         if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
           this.disableNextBtn = true
 
+          // record the current time
           let endTime = new Date()
+          // subtract the current time with the start time (when images completed loading)
           let timeDiff = endTime - this.timeElapsed // in ms
           // strip the ms and get seconds
           timeDiff /= 1000
@@ -318,7 +319,8 @@ export default {
           this.store(
             selectedStimuli,
             this.stimuli[this.index],
-            this.stimuli[this.index + 1]
+            this.stimuli[this.index + 1],
+            seconds
           ).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
@@ -364,12 +366,13 @@ export default {
       }
     },
 
-    async store (pictureIdSelected, pictureIdLeft, pictureIdRight) {
+    async store (pictureIdSelected, pictureIdLeft, pictureIdRight, clientSideTimer) {
       let data = {
         experiment_result_id: this.experimentResult,
         picture_id_selected: pictureIdSelected.picture_id,
         picture_id_left: pictureIdLeft.picture_id,
         picture_id_right: pictureIdRight.picture_id,
+        client_side_timer: clientSideTimer,
         chose_none: 0
       }
 

@@ -79,7 +79,7 @@
                 v-for="header in props.headers"
                 :key="header.text"
               >
-                <v-icon small>arrow_upward</v-icon>
+                <!-- <v-icon small>arrow_upward</v-icon> -->
                 {{ header.text }}
               </th>
             </tr>
@@ -94,7 +94,7 @@
                 ></v-checkbox>
               </td>
               <td>{{ props.item.user_id }}</td>
-              <td class="text-xs-right">{{ props.item.id }}</td>
+              <td>{{ props.item.id }}</td>
               <td>{{ formatDate(props.item.created_at) }}</td>
             </tr>
           </template>
@@ -124,7 +124,7 @@ export default {
       exporting: false,
 
       headers: [
-        { text: 'Observer ID', value: 'name', align: 'left', sortable: false, desc: '' },
+        { text: 'Observer ID', value: 'name', sortable: false, desc: '' },
         { text: 'Session ID', value: 'session', align: 'left', sortable: false, desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.' },
         { text: 'Taken At', value: 'takenAt', sortable: false, desc: '' }
       ],
@@ -136,6 +136,8 @@ export default {
         title: null,
         experiment_type_id: null
       },
+
+      experimentTypeSlug: '',
 
       experimentResults: [],
 
@@ -161,6 +163,7 @@ export default {
   methods: {
     formatDate: formatDate,
 
+    // export results in CSV format
     exportResults () {
       this.exporting = true
 
@@ -170,7 +173,7 @@ export default {
       })
 
       this.$axios({
-        url: '/paired-result/export',
+        url: `/${this.experimentTypeSlug}-result/export`,
         method: 'POST',
         responseType: 'blob', // important
         data: {
@@ -199,6 +202,11 @@ export default {
         .then(response => {
           this.experiment = response.data
           this.loading = false
+
+          if (this.experiment.experiment_type_id === 1) this.experimentTypeSlug = 'paired'
+          if (this.experiment.experiment_type_id === 2) this.experimentTypeSlug = 'rank-order'
+          if (this.experiment.experiment_type_id === 3) this.experimentTypeSlug = 'category'
+          if (this.experiment.experiment_type_id === 5) this.experimentTypeSlug = 'triplet'
         })
         .catch(err => console.log(err))
     },
@@ -210,48 +218,6 @@ export default {
           this.loading = false
         })
         .catch(err => console.log(err))
-    },
-
-    // getResultsForObserver (experimentResult, i) {
-    //   this.$axios.get(`/paired-result/${experimentResult.id}`)
-    //     .then(response => {
-    //       // this.$set(this.experimentResults[i], 'results', response.data)
-    //     })
-    //     .catch(err => console.log(err))
-    // },
-
-    exportResultsForObserver (experimentResult) {
-      if (this.experiment.experiment_type_id === 1) {
-        window.open(`${this.$API_URL}/paired-result/${experimentResult.id}/export`, '_blank')
-      } else if (this.experiment.experiment_type_id === 2) {
-        window.open(`${this.$API_URL}/rank-order-result/${experimentResult.id}/export`, '_blank')
-      } else if (this.experiment.experiment_type_id === 3) {
-        window.open(`${this.$API_URL}/category-result/${experimentResult.id}/export`, '_blank')
-      } else if (this.experiment.experiment_type_id === 5) {
-        window.open(`${this.$API_URL}/triplet-result/${experimentResult.id}/export`, '_blank')
-      }
-    },
-
-    // exportResults (experimentResult) {
-    //   window.open(`${this.$API_URL}/paired-result/${experimentResult.id}/export`, '_blank')
-    // },
-
-    exportResultsForExperiment () {
-      // window.open(`${this.$API_URL}/${this.$route.params.id}/${this.experiment.experiment_type_id}/all/export`, '_blank')
-
-      if (this.experiment.experiment_type_id === 1) {
-        document.location.href = `${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`
-        // window.open(`${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`, '_blank')
-      } else if (this.experiment.experiment_type_id === 2) {
-        document.location.href = `${this.$API_URL}/${this.$route.params.id}/rank-order-result/all/export`
-        // window.open(`${this.$API_URL}/${this.$route.params.id}/rank-order-result/all/export`, '_blank')
-      } else if (this.experiment.experiment_type_id === 3) {
-        document.location.href = `${this.$API_URL}/${this.$route.params.id}/paired-result/all/export`
-        // window.open(`${this.$API_URL}/${this.$route.params.id}/category-result/all/export`, '_blank')
-      } else if (this.experiment.experiment_type_id === 5) {
-        document.location.href = `${this.$API_URL}/${this.$route.params.id}/triplet-result/all/export`
-        // window.open(`${this.$API_URL}/${this.$route.params.id}/triplet-result/all/export`, '_blank')
-      }
     },
 
     exportObserverMetasForExperiment () {

@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\CategoryResult;
+use App\ResultRankOrder; // remove
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 
-class CategoryResultsExport implements FromCollection, WithHeadings
+class ResultRankOrdersExport implements FromCollection, WithHeadings
 {
     use Exportable;
 
@@ -26,8 +26,10 @@ class CategoryResultsExport implements FromCollection, WithHeadings
         return [
             'observer',
             'session',
-            'image',
-            'category'
+            'ranking',
+            'picture',
+            'picture set',
+            'time spent (in seconds)',
         ];
     }
 }

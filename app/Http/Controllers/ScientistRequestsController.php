@@ -27,6 +27,9 @@ class ScientistRequestsController extends Controller
     return response($all, 200);
   }
 
+  /**
+   *
+   */
   public function accept ($id)
   {
     if (auth()->user()->role != 3) {

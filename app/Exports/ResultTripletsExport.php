@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\RankOrderResult; // remove
+use App\ResultTriplet;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 
-class RankOrderResultsExport implements FromCollection, WithHeadings
+class ResultTripletsExport implements FromCollection, WithHeadings
 {
     use Exportable;
 
@@ -26,9 +26,13 @@ class RankOrderResultsExport implements FromCollection, WithHeadings
         return [
             'observer',
             'session',
-            'ranking',
-            'picture',
-            'picture set',
+            'left image',
+            'middle image',
+            'right image',
+            'left category ',
+            'middle category',
+            'right category',
+            'time spent (in seconds)',
         ];
     }
 }

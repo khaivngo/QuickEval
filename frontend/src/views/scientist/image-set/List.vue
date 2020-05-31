@@ -1,47 +1,32 @@
 <template>
   <div>
     <v-layout mb-4 mt-5 space-between align-center>
-      <!-- <v-flex shrink> -->
       <h2 class="display-1 mr-5">
         Your Image Sets
       </h2>
-      <!-- </v-flex> -->
-      <!-- <v-flex shrink>
-        <v-text-field
-          v-model="newImageSet.name"
-          label="Title"
-          style="max-width: 250px;"
-        ></v-text-field>
-      </v-flex>
-      <v-flex shrink>
-        <v-btn
-          :disabled="newImageSet.name === '' || creating === true"
-          :loading="creating"
-          color="success" class="ma-0 ml-3"
-          @click="createNew"
-        >
-          Create New
-        </v-btn>
-      </v-flex> -->
     </v-layout>
 
     <v-layout justify-end mb-3>
       <v-layout align-center justify-end>
-        <v-text-field
-          v-model="newImageSet.name"
-          label="Title"
-          style="max-width: 300px;"
-        ></v-text-field>
+        <v-form lazy-validation ref="form" v-model="valid">
+          <div style="display: flex; align-items: center;">
+            <v-text-field
+              v-model="newImageSet.name"
+              label="Title"
+              :rules="[rules.required]"
+              style="max-width: 300px;"
+            ></v-text-field>
 
-        <v-btn
-          :disabled="newImageSet.name === '' || creating === true"
-          :loading="creating"
-          color="success"
-          class="ma-0 ml-3"
-          @click="createNew"
-        >
-          Create New
-        </v-btn>
+            <v-btn
+              :loading="creating"
+              color="success"
+              class="ma-0 ml-3"
+              @click="createNew"
+            >
+              Create New
+            </v-btn>
+          </div>
+        </v-form>
 
         <!-- <v-text-field
           v-model="newImageSet.description"
@@ -99,6 +84,11 @@ export default {
       loading: false,
       imageSets: [],
 
+      valid: false,
+      rules: {
+        required: value => !!value || 'Required.'
+      },
+
       creating: false,
       newImageSet: {
         name: '',
@@ -124,7 +114,6 @@ export default {
 
   methods: {
     customSort (items, index, isDesc) {
-      // console.log(isDesc)
       if (isDesc === true) {
         return items.reverse()
       } else {
@@ -133,6 +122,10 @@ export default {
     },
 
     createNew () {
+      if (this.$refs.form.validate() === false) {
+        return
+      }
+
       this.creating = true
 
       const data = {

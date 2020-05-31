@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRankOrderResultsTable extends Migration
+class CreateResultRankOrdersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateRankOrderResultsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rank_order_results', function (Blueprint $table) {
+        Schema::create('result_rank_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
 
             $table->bigInteger('experiment_result_id');
@@ -21,6 +21,8 @@ class CreateRankOrderResultsTable extends Migration
             $table->bigInteger('picture_set_id');
             $table->bigInteger('picture_id');
             $table->integer('ranking');
+
+            $table->integer('client_side_timer')->nullable();
 
             $table->timestamps();
         });
@@ -33,6 +35,6 @@ class CreateRankOrderResultsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rank_order_results');
+        Schema::dropIfExists('result_rank_orders');
     }
 }

@@ -2,14 +2,12 @@
 
 namespace App\Exports;
 
-use App\PairedResult;
-
+use App\ResultCategory;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class PairedResultsExport implements FromCollection, WithHeadings, ShouldAutoSize
+class ResultCategoriesExport implements FromCollection, WithHeadings
 {
     use Exportable;
 
@@ -28,11 +26,9 @@ class PairedResultsExport implements FromCollection, WithHeadings, ShouldAutoSiz
         return [
             'observer',
             'session',
-            'left image',
-            'right image',
-            'selected image',
-            'answered at',
-            'time spent (in seconds)'
+            'image',
+            'category',
+            'time spent (in seconds)',
         ];
     }
 }

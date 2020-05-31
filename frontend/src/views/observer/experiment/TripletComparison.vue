@@ -166,6 +166,7 @@
 
 <script>
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
+import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 
 export default {
   name: 'triplet-experiment-view',
@@ -210,7 +211,9 @@ export default {
       originalImage: '',
       imageLeft: '',
       imageMiddle: '',
-      imageRight: ''
+      imageRight: '',
+
+      startTime: null
     }
   },
 
@@ -274,6 +277,8 @@ export default {
   },
 
   methods: {
+    datetimeToSeconds: datetimeToSeconds,
+
     /**
      * Load the next image queue stimuli, or instructions.
      */
@@ -286,7 +291,7 @@ export default {
 
       // is the next stimuli of type image?
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
-        /* set original */
+        // set original
         if (this.stimuli[this.index].hasOwnProperty('original')) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
@@ -298,6 +303,8 @@ export default {
           this.imageLeft = imgLeft.src
           window.setTimeout(() => {
             this.isLoadLeft = true
+            // starts or overrides existing timer
+            this.startTime = new Date()
           }, this.experiment.delay)
         }
 
@@ -308,6 +315,8 @@ export default {
           this.imageMiddle = imgMiddle.src
           window.setTimeout(() => {
             this.isLoadMiddle = true
+            // starts or overrides existing timer
+            this.startTime = new Date()
           }, this.experiment.delay)
         }
 
@@ -318,18 +327,21 @@ export default {
           this.imageRight = imgRight.src
           window.setTimeout(() => {
             this.isLoadRight = true
+            // starts or overrides existing timer
+            this.startTime = new Date()
           }, this.experiment.delay)
         }
-
-        // this.imageLeft = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        // this.imageMiddle = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
-        // this.imageRight = this.$UPLOADS_FOLDER + this.stimuli[this.index + 2].path
 
         /* don't do anything unless all categories has been selected */
         if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
           this.disableNextBtn = true
 
-          this.store(this.stimuli[this.index], this.stimuli[this.index + 1], this.stimuli[this.index + 2]).then(response => {
+          // record the current time
+          let endTime = new Date()
+          // get the number of seconds between endTime and startTime
+          let seconds = datetimeToSeconds(this.startTime, endTime)
+
+          this.store(this.stimuli[this.index], this.stimuli[this.index + 1], this.stimuli[this.index + 2], seconds).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
@@ -365,7 +377,7 @@ export default {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
-    async store (pictureIdLeft, pictureIdMiddle, pictureIdRight) {
+    async store (pictureIdLeft, pictureIdMiddle, pictureIdRight, clientSideTimer) {
       /* eslint-disable */
       let data = {
         experiment_result_id: this.experimentResult,
@@ -375,6 +387,7 @@ export default {
         picture_id_left:      pictureIdLeft.picture_id,
         picture_id_middle:    pictureIdMiddle.picture_id,
         picture_id_right:     pictureIdRight.picture_id,
+        client_side_timer:    clientSideTimer,
         chose_none: 0
       }
       /* eslint-enable */

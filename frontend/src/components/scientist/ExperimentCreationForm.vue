@@ -234,6 +234,19 @@
                   </template> -->
                 </v-text-field>
               </v-flex>
+              <v-flex shrink pb-1>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span class="pl-2 pr-2 body-1">
+                    Avoid instant loading of new stimuli by adding a blank screen inbetween stimuli switching.<br>
+                    Reducing memory effects from previous stimuli.
+                  </span>
+                </v-tooltip>
+              </v-flex>
             </v-layout>
 
             <v-layout class="mt-5">

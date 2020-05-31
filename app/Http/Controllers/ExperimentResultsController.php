@@ -10,9 +10,6 @@ use App\ExperimentResult;
 
 class ExperimentResultsController extends Controller
 {
-    /**
-     *
-     */
     public function index ($experiment_id) {
       return \App\Experiment::find($experiment_id)
         ->results()
@@ -29,7 +26,7 @@ class ExperimentResultsController extends Controller
       $experimentResult = ExperimentResult::create([
         'user_id' => auth()->user()->id,
         'experiment_id' => $request->experimentId,
-        'start_time' => time() // or microtime()
+        'start_time' => time() // or microtime()?
       ]);
 
       if ($experimentResult) {

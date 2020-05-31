@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTripletResultsTable extends Migration
+class CreateResultTripletsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTripletResultsTable extends Migration
      */
     public function up()
     {
-        Schema::create('triplet_results', function (Blueprint $table) {
+        Schema::create('result_triplets', function (Blueprint $table) {
             $table->bigIncrements('id');
 
             $table->integer('experiment_result_id')->nullable();
@@ -28,6 +28,8 @@ class CreateTripletResultsTable extends Migration
 
             $table->tinyInteger('chose_none')->nullable();
 
+            $table->integer('client_side_timer')->nullable();
+
             $table->timestamps();
         });
     }
@@ -39,6 +41,6 @@ class CreateTripletResultsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('triplet_results');
+        Schema::dropIfExists('result_triplets');
     }
 }

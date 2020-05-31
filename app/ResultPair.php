@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PairedResult extends Model
+class ResultPair extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,6 +12,8 @@ class PairedResult extends Model
      * @var array
      */
     protected $guarded = [];
+
+    // protected $table = 'my_flights';
 
     public function experiment_result () {
         return $this->belongsTo(ExperimentResult::class);

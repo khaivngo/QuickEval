@@ -183,6 +183,7 @@
 <script>
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import draggable from 'vuedraggable'
+import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -229,7 +230,11 @@ export default {
 
       originalImage: '',
       leftImage: '',
-      rightImage: ''
+      rightImage: '',
+
+      timeElapsed: null
+
+      // firstRound: 1
     }
   },
 
@@ -266,7 +271,6 @@ export default {
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        console.log(payload)
         this.stimuli = payload.data
 
         if (localStorage.getItem('index') === null) {
@@ -284,6 +288,8 @@ export default {
   },
 
   methods: {
+    datetimeToSeconds: datetimeToSeconds,
+
     dragEnd (e) {
       this.beingDragged = false
       // this.rankings[e.newIndex].moved = true
@@ -306,6 +312,8 @@ export default {
     loadedLeft () {
       window.setTimeout(() => {
         this.isLoadLeft = true
+        // starts or overrides existing timer
+        this.timeElapsed = new Date()
       }, this.experiment.delay)
     },
 
@@ -325,6 +333,7 @@ export default {
     loadedRight () {
       window.setTimeout(() => {
         this.isLoadRight = true
+        this.timeElapsed = new Date()
       }, this.experiment.delay)
     },
 
@@ -338,26 +347,32 @@ export default {
         return
       }
 
-      if (this.stimuli[this.index].hasOwnProperty('picture_queue')) {
-      // && this.stimuli[this.index].picture_queue[0].picture_queue_id !== null
-
+      if (this.stimuli[this.index].hasOwnProperty('picture_queue') && this.stimuli[this.index].picture_queue[0].picture_queue_id !== null) {
+        // set the new images
         this.changeStimuli()
 
         // if this is the first set we want to load the images even though not everything has been watched
-        var firstRound = 1
-        if (firstRound === 1) {
-          this.index += 1
-          localStorage.setItem('index', this.index)
-          firstRound += 1
-        }
+        // var firstRound = 1
+        // if (this.firstRound === 1) {
+        //   this.index += 1
+        //   localStorage.setItem('index', this.index)
+        //   this.firstRound = 0
+        // }
 
         // has every image been viewed in the panner?
         let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
-        // if rankings array exists, and is not empty, and every item in the array has been opened in the panner
-        if ((this.rankings) && (this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
+        console.log(watched)
+        console.log(this.rankings)
+        // if rankings array is not empty, and every item in the array has been opened in the panner
+        if ((this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
           this.disableNextBtn = true
 
-          this.store().then(response => {
+          // record the current time
+          let endTime = new Date()
+          // get the number of seconds between endTime and startTime
+          let seconds = datetimeToSeconds(this.timeElapsed, endTime)
+          console.log('inside')
+          this.store(seconds).then(response => {
             this.labels = []
             this.rankings = []
 
@@ -370,6 +385,8 @@ export default {
             }
 
             this.disableNextBtn = false
+
+            this.next()
           }).catch(() => {
             this.disableNextBtn = false
             // alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
@@ -418,12 +435,13 @@ export default {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
-    async store () {
+    async store (clientSideTimer) {
       let data = {
         experiment_result_id: this.experimentResult,
-        rankings: this.rankings
+        rankings: this.rankings,
+        client_side_timer: clientSideTimer
       }
-
+      console.log(data)
       return this.$axios.post('/rank-order-result', data)
     },
 

@@ -3,6 +3,9 @@
 namespace App\Classes;
 
 class Algorithms {
+  /**
+   *
+   */
   public function make_queue ($images, $imagesShownRightAndLeft) {
     $pairs = [];
     $index = 1;
@@ -27,7 +30,7 @@ class Algorithms {
   }
 
   /**
-   * 
+   *
    */
   public function shuffle_the_cards ($cards) {
     $sorted = [];
@@ -54,7 +57,10 @@ class Algorithms {
     return $final;
   }
 
-  private function trade_card (&$card1, &$card2) {
+  /**
+   *
+   */
+  private function trade_card(&$card1, &$card2) {
     if ( $card1[0] == $card2[0] && $card1[1] == $card2[1] ) {
         return true;
     } else {

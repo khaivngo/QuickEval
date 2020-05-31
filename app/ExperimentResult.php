@@ -14,18 +14,18 @@ class ExperimentResult extends Model
     protected $guarded = [];
 
     public function paired_results () {
-        return $this->hasMany(PairedResult::class);
+        return $this->hasMany(ResultPair::class);
     }
 
     public function rank_order_results () {
-        return $this->hasMany(RankOrderResult::class);
+        return $this->hasMany(ResultRankOrder::class);
     }
 
     public function triplet_results () {
-        return $this->hasMany(TripletResult::class);
+        return $this->hasMany(ResultTriplet::class);
     }
 
     public function category_results () {
-        return $this->hasMany(CategoryResult::class);
+        return $this->hasMany(ResultCategory::class);
     }
 }

@@ -138,6 +138,7 @@
 
 <script>
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
+import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 
 export default {
   name: 'category-experiment-view',
@@ -175,7 +176,9 @@ export default {
 
       originalImage: '',
       leftImage: '',
-      rightImage: ''
+      rightImage: '',
+
+      startTime: null
     }
   },
 
@@ -239,6 +242,8 @@ export default {
   },
 
   methods: {
+    datetimeToSeconds: datetimeToSeconds,
+
     /**
      * Load the next image stimuli queue, or instructions.
      */
@@ -262,6 +267,7 @@ export default {
           this.leftImage = imgLeft.src
           window.setTimeout(() => {
             this.isLoadLeft = true
+            this.startTime = new Date()
           }, this.experiment.delay)
         }
         // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
@@ -270,7 +276,12 @@ export default {
         if (this.selectedCategory !== null) {
           this.disableNextBtn = true
 
-          this.store(this.stimuli[this.index]).then(response => {
+          // record the current time
+          let endTime = new Date()
+          // get the number of seconds between endTime and startTime
+          let seconds = datetimeToSeconds(this.startTime, endTime)
+
+          this.store(this.stimuli[this.index], seconds).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
@@ -304,11 +315,12 @@ export default {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
-    async store (pictureIdLeft) {
+    async store (pictureIdLeft, clientSideTimer) {
       let data = {
         experiment_result_id: this.experimentResult,
         category_id: this.selectedCategory,
         picture_id_left: pictureIdLeft.picture_id,
+        client_side_timer: clientSideTimer,
         chose_none: 0
       }
 

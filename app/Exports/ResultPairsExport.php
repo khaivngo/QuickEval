@@ -2,12 +2,14 @@
 
 namespace App\Exports;
 
-use App\TripletResult;
+use App\ResultPair;
+
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class TripletResultsExport implements FromCollection, WithHeadings
+class ResultPairsExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
     use Exportable;
 
@@ -27,11 +29,9 @@ class TripletResultsExport implements FromCollection, WithHeadings
             'observer',
             'session',
             'left image',
-            'middle image',
             'right image',
-            'left category ',
-            'middle category',
-            'right category',
+            'selected image',
+            'time spent (in seconds)'
         ];
     }
 }

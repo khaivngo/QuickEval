@@ -50,7 +50,7 @@
             icon
             v-on="on"
           >
-            <v-icon>more_vert</v-icon>
+            <v-icon>account_circle</v-icon>
           </v-btn>
         </template>
 
