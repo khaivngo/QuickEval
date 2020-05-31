@@ -29,6 +29,11 @@ cd path/to/folder
 php artisan migrate
 ```
 
+#### Add some needed data to tables
+```
+php artisan db:seed
+```
+
 #### Generate keys for laravel passport
 ```
 php artisan passport:install
