@@ -5,7 +5,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.bold" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.bold() }">
+            <v-btn text icon small @click="commands.bold" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.bold() }">
               <v-icon>format_bold</v-icon>
             </v-btn>
           </template>
@@ -14,7 +14,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.italic" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.italic() }">
+            <v-btn text icon small @click="commands.italic" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.italic() }">
               <v-icon>format_italic</v-icon>
             </v-btn>
           </template>
@@ -23,7 +23,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.strike" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.strike() }">
+            <v-btn text icon small @click="commands.strike" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.strike() }">
               <v-icon>format_strikethrough</v-icon>
             </v-btn>
           </template>
@@ -32,7 +32,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.underline" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.underline() }">
+            <v-btn text icon small @click="commands.underline" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.underline() }">
               <v-icon>format_underline</v-icon>
             </v-btn>
           </template>
@@ -41,7 +41,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.code" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.code() }">
+            <v-btn text icon small @click="commands.code" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.code() }">
               <v-icon>code</v-icon>
             </v-btn>
           </template>
@@ -50,7 +50,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.paragraph" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.paragraph() }">
+            <v-btn text icon small @click="commands.paragraph" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.paragraph() }">
               <v-icon>format_textdirection_l_to_r</v-icon>
             </v-btn>
           </template>
@@ -59,7 +59,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.heading({ level: 1 })" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.heading({ level: 1 }) }">
+            <v-btn text icon small @click="commands.heading({ level: 1 })" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.heading({ level: 1 }) }">
               H1
             </v-btn>
           </template>
@@ -68,7 +68,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.heading({ level: 2 })" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.heading({ level: 2 }) }">
+            <v-btn text icon small @click="commands.heading({ level: 2 })" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.heading({ level: 2 }) }">
               H2
             </v-btn>
           </template>
@@ -77,7 +77,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.heading({ level: 3 })" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.heading({ level: 3 }) }">
+            <v-btn text icon small @click="commands.heading({ level: 3 })" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.heading({ level: 3 }) }">
               H3
             </v-btn>
           </template>
@@ -86,7 +86,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.bullet_list" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.bullet_list() }">
+            <v-btn text icon small @click="commands.bullet_list" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.bullet_list() }">
               <v-icon>format_list_bulleted</v-icon>
             </v-btn>
           </template>
@@ -95,7 +95,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.ordered_list" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.ordered_list() }">
+            <v-btn text icon small @click="commands.ordered_list" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.ordered_list() }">
               <v-icon>format_list_numbered</v-icon>
             </v-btn>
           </template>
@@ -104,7 +104,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.blockquote" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.blockquote() }">
+            <v-btn text icon small @click="commands.blockquote" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.blockquote() }">
               <v-icon>format_quote</v-icon>
             </v-btn>
           </template>
@@ -113,7 +113,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.code_block" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.code_block() }">
+            <v-btn text icon small @click="commands.code_block" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.code_block() }">
               <v-icon>code</v-icon>
             </v-btn>
           </template>
@@ -122,7 +122,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.horizontal_rule" v-on="on" class="menubar__button ma-1">
+            <v-btn text icon small @click="commands.horizontal_rule" v-on="on" class="menubar__button ma-1">
               —
             </v-btn>
           </template>
@@ -131,7 +131,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.undo" v-on="on" class="menubar__button ma-1">
+            <v-btn text icon small @click="commands.undo" v-on="on" class="menubar__button ma-1">
               <v-icon>undo</v-icon>
             </v-btn>
           </template>
@@ -140,7 +140,7 @@
 
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn flat icon small @click="commands.redo" v-on="on" class="menubar__button ma-1">
+            <v-btn text icon small @click="commands.redo" v-on="on" class="menubar__button ma-1">
               <v-icon>redo</v-icon>
             </v-btn>
           </template>

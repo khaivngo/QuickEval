@@ -28,7 +28,7 @@
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn flat @click="dialog = false">
+                <v-btn text @click="dialog = false">
                   cancel
                 </v-btn>
 

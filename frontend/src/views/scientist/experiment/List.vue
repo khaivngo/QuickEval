@@ -101,7 +101,7 @@
             <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
           </v-flex>
           <v-flex shrink>
-            <!-- <v-btn :to="`/scientist/experiments/view/${experiment.id}`" flat icon>
+            <!-- <v-btn :to="`/scientist/experiments/view/${experiment.id}`" text icon>
               <v-icon>bar_chart</v-icon>
             </v-btn> -->
 

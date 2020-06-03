@@ -9,7 +9,7 @@
       v-clipboard:success="onCopy"
       v-clipboard:error="onError"
       small
-      flat
+      text
       class="ml-0 mt-0 mb-0 mr-0 pa-0 text-none"
     >
       {{ label }}

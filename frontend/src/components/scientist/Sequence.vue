@@ -112,7 +112,7 @@
 
         <v-dialog v-model="openNewImageSet" max-width="800">
           <!-- <template v-slot:activator="{ on }">
-            <v-btn flat dark color="#D9D9D9" v-on="{ on }">
+            <v-btn text dark color="#D9D9D9" v-on="{ on }">
               Create new
             </v-btn>
           </template> -->
@@ -172,7 +172,7 @@
             </v-card-text>
             <v-card-actions class="mt-5">
               <v-spacer></v-spacer>
-              <v-btn flat @click="closeNewImageSet()">
+              <v-btn text @click="closeNewImageSet()">
                 Done
               </v-btn>
             </v-card-actions>

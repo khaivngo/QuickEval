@@ -52,7 +52,7 @@
           select-all
           class="elevation-0"
           :expand="false"
-          hide-actions
+          hide-default-footer
           :loading="loading"
           no-data-text=""
         >

@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\ExperimentObserverMetaResult;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ExperimentObserverMetaResultsExport implements FromCollection, WithHeadings
+class ExperimentObserverMetaResultsExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
     use Exportable;
 

@@ -11,7 +11,7 @@
         <v-spacer></v-spacer>
         <v-btn
           color="primary darken-1"
-          flat="flat"
+          text
           @click="exit"
         >
           Close

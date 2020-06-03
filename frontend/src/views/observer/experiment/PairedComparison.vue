@@ -4,7 +4,7 @@
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
-            <v-btn flat dark color="#D9D9D9" v-on="on">
+            <v-btn text dark color="#D9D9D9" v-on="on">
               Instructions
             </v-btn>
           </template>
@@ -19,7 +19,7 @@
               <v-spacer></v-spacer>
               <v-btn
                 color="primary darken-1"
-                flat="flat"
+                text
                 @click="instructionDialog = false"
               >
                 Close
@@ -30,7 +30,7 @@
       </v-toolbar-items>
 
       <v-toolbar-items>
-        <v-btn color="#D9D9D9" flat dark left class="panning-reset">
+        <v-btn color="#D9D9D9" text dark left class="panning-reset">
           <span>Reset image panning</span>
         </v-btn>
       </v-toolbar-items>
@@ -40,7 +40,7 @@
       <v-toolbar-items>
         <v-dialog v-model="abortDialog" max-width="500">
           <template v-slot:activator="{ on }">
-            <v-btn flat dark color="#D9D9D9" v-on="on">
+            <v-btn text dark color="#D9D9D9" v-on="on">
               Quit
               <!-- <v-icon right small>logout</v-icon> -->
             </v-btn>
@@ -50,8 +50,8 @@
             <v-card-text></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="default darken-1" flat @click="abortDialog = false">Continue</v-btn>
-              <v-btn color="red darken-1" flat @click="abort">Quit</v-btn>
+              <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
+              <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>

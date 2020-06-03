@@ -12,7 +12,7 @@
         :loading="loadingRequests"
         :headers="headers"
         :items="requests"
-        :hide-actions="true"
+        hide-default-footer
         no-data-text=""
       >
         <template v-slot:no-data>

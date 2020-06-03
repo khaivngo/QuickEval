@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import axios from 'axios'
 import router from './router'
-import './plugins/vuetify'
+import vuetify from './plugins/vuetify'
 import App from './App.vue'
 
 if (process.env.NODE_ENV === 'development') {
@@ -26,5 +26,6 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  vuetify,
   render: h => h(App)
 }).$mount('#app')

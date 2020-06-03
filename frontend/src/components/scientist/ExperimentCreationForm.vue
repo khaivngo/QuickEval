@@ -49,28 +49,6 @@
               </v-flex>
             </v-layout>
 
-            <!-- <v-layout align-center>
-              <v-flex grow>
-                <v-text-field
-                  class="mt-4"
-                  v-model.trim="form.shortDescription"
-                  label="Short Description"
-                ></v-text-field>
-              </v-flex>
-              <v-flex shrink>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">help_outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <span class="pl-2 pr-2 pt-2 pb-2 body-1">
-                    Describe the essence of the experiment.
-                  </span>
-                </v-tooltip>
-              </v-flex>
-            </v-layout> -->
-
             <v-layout align-center>
               <v-flex grow>
                 <v-textarea
@@ -90,7 +68,7 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pl-2 pr-2 body-1">
+                  <div class="pa-2 body-1">
                     Describe what the experiment is all about.<br>
                     This description will be available to the observers.
                   </div>
@@ -141,7 +119,7 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pl-2 pr-2 body-1">
+                  <div class="pa-2 body-1">
                     Each pair of images will have their position flipped in the queue.<br>
                     Leading to double the comparisons for the observer.
                   </div>
@@ -164,10 +142,10 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span class="pl-2 pr-2 body-1">
+                  <div class="pa-1 body-1">
                     Display the original image of the image set alongside the reproductions.
                     As a reference for the observer.
-                  </span>
+                  </div>
                 </v-tooltip>
               </v-flex>
             </v-layout>
@@ -222,17 +200,7 @@
                   suffix="milliseconds"
                   placeholder="200"
                   style="width: 200px;"
-                >
-                  <!-- <template v-slot:prepend-outer>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">help_outline</v-icon>
-                      </template>
-                      <span class="pl-2 pr-2 body-1">Distance between stimuli images, in pixels.</span>
-                    </v-tooltip>
-                    <span>milliseconds</span>
-                  </template> -->
-                </v-text-field>
+                ></v-text-field>
               </v-flex>
               <v-flex shrink pb-1>
                 <v-tooltip top>
@@ -241,10 +209,10 @@
                       <v-icon color="grey lighten-1">help_outline</v-icon>
                     </v-btn>
                   </template>
-                  <span class="pl-2 pr-2 body-1">
+                  <div class="pa-1 body-1">
                     Avoid instant loading of new stimuli by adding a blank screen inbetween stimuli switching.<br>
                     Reducing memory effects from previous stimuli.
-                  </span>
+                  </div>
                 </v-tooltip>
               </v-flex>
             </v-layout>
@@ -263,17 +231,11 @@
                       <template v-slot:activator="{ on }">
                         <v-icon v-on="on">help_outline</v-icon>
                       </template>
-                      <span class="pl-2 pr-2 body-1">Spacing in pixels between stimuli images.</span>
+                      <span class="pa-2 body-1">Spacing in pixels between stimuli images.</span>
                     </v-tooltip>
                   </template>
                 </v-text-field>
               </v-flex>
-
-              <!-- <v-layout align-center ml-3>
-                <div style="border-radius: 2px; padding: 5px; background-color: #ddd;">image 1</div>
-                <div style="border-radius: 2px; height: 30px; width: 40px"></div>
-                <div style="border-radius: 2px; padding: 5px; background-color: #ddd;">image 2</div>
-              </v-layout> -->
             </v-layout>
           </v-card>
         </v-stepper-content>
@@ -348,10 +310,6 @@
 
       <v-layout justify-end v-if="currentLevel === steps.length && mode === 'edit'">
         <v-flex xs6 class="caption">
-          <!-- Note: Saving changes will create a new experiment AND keep the original experiment.
-          This is in order to keep the version history and clarify that possible collected observer data is
-          collected under different versions of the experiment.
-          Delete the old expriment from the experiments list later if you don't need it. -->
           Note: The original version will be kept untouched and a new version will be created with a "version 2"-tag.
           Delete the old version from the experiments list later if you don't need it.
         </v-flex>
@@ -361,7 +319,7 @@
       <v-container>
         <v-layout justify-space-between>
           <div>
-            <v-btn v-if="currentLevel !== 1" @click="previous" flat color="secondary">
+            <v-btn v-if="currentLevel !== 1" @click="previous" text color="secondary">
               <v-icon dark>keyboard_arrow_left</v-icon>Back
             </v-btn>
           </div>
@@ -378,14 +336,14 @@
                     v-on="on"
                     v-if="mode === 'new'"
                     @click="mode === 'new' ? store('hidden') : update()"
-                    color="secondary" flat outline
+                    color="secondary" text outline
                     :disable="loaders.saving"
                     :loading="loaders.saving"
                   >
                     Save as hidden
                   </v-btn>
                 </template>
-                <div class="pa-1 body-1">
+                <div class="pa-2 body-1">
                   Experiment will only be visible to you.<br>You can publish later when you're ready.
                 </div>
               </v-tooltip>

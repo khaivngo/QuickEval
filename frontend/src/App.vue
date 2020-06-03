@@ -24,7 +24,7 @@
     >
       {{ text }}
       <v-btn
-        flat
+        text
         @click="snackbar = false"
       >
         Close

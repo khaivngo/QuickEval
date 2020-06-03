@@ -46,7 +46,7 @@
       no-data-text=""
       item-key="id"
       class="elevation-1"
-      hide-actions
+      hide-default-footer
       :loading="loading"
     >
       <!-- <v-progress-linear v-slot:progress color="blue" indeterminate></v-progress-linear> -->
@@ -66,7 +66,7 @@
             <v-icon>edit</v-icon>
           </v-btn> -->
 
-          <v-btn flat icon @click="destroy(props.item.id, props.index)">
+          <v-btn text icon @click="destroy(props.item.id, props.index)">
             <v-icon>delete</v-icon>
           </v-btn>
         </td>

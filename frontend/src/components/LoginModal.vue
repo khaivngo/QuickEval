@@ -45,11 +45,6 @@
             <Login v-if="loginIntent"/>
           </div>
         </v-card-text>
-        <!-- <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" flat @click="dialog = false">Disagree</v-btn>
-          <v-btn color="green darken-1" flat @click="dialog = false">Agree</v-btn>
-        </v-card-actions> -->
       </v-card>
     </v-dialog>
   </v-layout>

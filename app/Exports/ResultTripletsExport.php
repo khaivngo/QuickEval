@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\ResultTriplet;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ResultTripletsExport implements FromCollection, WithHeadings
+class ResultTripletsExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
     use Exportable;
 

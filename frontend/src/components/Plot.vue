@@ -6,8 +6,11 @@
 
     <ScatterPlot :series="plotData"/>
 
-    <!-- v-if="rawDataMap.length > 0 && zScoreMap.length > 0" -->
-    <v-tabs v-model="activeTab" centered style="margin-top: 100px;">
+    <div v-if="rawDataMap.length === 0 && zScoreMap.length === 0" class="text-xs-center">
+      Not enough data yet to calculate statistics.
+    </div>
+
+    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0" v-model="activeTab" centered style="margin-top: 100px;">
       <v-tab
         v-for="(imageSet, index) in results.imageSets"
         :key="index"

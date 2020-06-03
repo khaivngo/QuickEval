@@ -2,12 +2,12 @@
 
 namespace App\Exports;
 
-use App\ResultRankOrder; // remove
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ResultRankOrdersExport implements FromCollection, WithHeadings
+class ResultRankOrdersExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
     use Exportable;
 
