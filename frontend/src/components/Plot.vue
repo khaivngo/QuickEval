@@ -1,6 +1,6 @@
 <template>
   <div class="qe-statistics-container">
-    <h2 class="headline text-xs-center" style="margin-bottom: 90px;">
+    <h2 class="text-h4 mb-4">
       Statistics
     </h2>
 
@@ -37,7 +37,7 @@
                       <v-tooltip top>
                         <template v-slot:activator="{ on }">
                           <v-btn icon v-on="on">
-                            <v-icon color="grey lighten-1">help_outline</v-icon>
+                            <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                           </v-btn>
                         </template>
                         <div class="pl-2 pr-2 body-1">

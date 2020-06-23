@@ -157,7 +157,7 @@
       :loading="disableNextBtn"
     >
       <span class="ml-1">next</span>
-      <v-icon>keyboard_arrow_right</v-icon>
+      <v-icon>mdi-chevron-right</v-icon>
     </v-btn>
 
     <FinishedDialog :show="finished"/>

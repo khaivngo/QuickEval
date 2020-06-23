@@ -5,10 +5,11 @@
       :user="user"
     />
 
-    <v-content>
-      <router-view/>
-    </v-content>
+    <v-main class="fill-height ma-0" style="padding-top: 64px;">
+      <router-view class="pa-0 ma-0"/>
+    </v-main>
 
+    <!-- Show a login modal if not logged in. Unless we're on the frontpage (already has login form). -->
     <LoginModal :open="showAuth" v-if="$route.path != '/'"/>
 
     <v-snackbar

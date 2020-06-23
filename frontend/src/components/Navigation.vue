@@ -1,94 +1,93 @@
 <template>
-  <v-card
-    flat
-    tile
-  >
-    <v-toolbar color="#1BA1E2" flat dark>
-      <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-      
-      <div class="mr-3" @click="$router.push('/')">
-        <v-img :src="require('@/assets/logo.png')" contain width="30"></v-img>
-      </div>
+  <v-app-bar color="#1BA1E2" flat dark app clipped-left>
+    <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
-      <v-toolbar-title class="pr-12">QuickEval</v-toolbar-title>
+    <div class="mr-3" @click="$router.push('/')">
+      <v-img :src="require('@/assets/logo.png')" contain width="30"></v-img>
+    </div>
 
-      <v-btn to="/observer" dark text class="text-none">
-        <span class="mr-2 font-weight-regular">
-          Observer Mode
-        </span>
-      </v-btn>
+    <v-toolbar-title class="pr-12">QuickEval</v-toolbar-title>
 
-      <v-btn to="/scientist" dark text class="text-none">
-        <span class="mr-2 font-weight-regular">
-          Scientist Mode
-        </span>
-      </v-btn>
+    <v-btn to="/observer" dark text class="mr-2 text-none">
+      <span v-if="user.role > 1" class="mr-2 font-weight-regular">
+        Observer Mode
+      </span>
+      <span v-else class="mr-2 font-weight-regular">
+        Experiments
+      </span>
+    </v-btn>
 
-      <v-btn v-if="user.role > 2" to="/admin" dark text class="text-none">
-        <span class="mr-2 font-weight-regular">
-          Admin Mode
-        </span>
-      </v-btn>
+    <v-btn v-if="user.role > 1" to="/scientist" dark text class="mr-2 text-none">
+      <span class="mr-2 font-weight-regular">
+        Scientist Mode
+      </span>
+    </v-btn>
 
-      <v-spacer></v-spacer>
+    <v-btn v-if="user.role > 2" to="/admin" dark text class="text-none">
+      <span class="mr-2 font-weight-regular">
+        Admin Mode
+      </span>
+    </v-btn>
 
-      <v-btn
-        class="text-none"
-        dark
-        text
-        href="https://github.com/khaivngo/QuickEval/issues"
-        target="_blank"
-      >
-        <span class="mr-2 font-weight-regular">Report issues</span>
-        <v-icon small>open_in_new</v-icon>
-      </v-btn>
+    <v-spacer></v-spacer>
 
-      <v-menu bottom left v-if="user.id !== 0">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            dark
-            icon
-            v-on="on"
-          >
-            <v-icon>account_circle</v-icon>
-          </v-btn>
-        </template>
+    <v-btn
+      class="text-none mr-4"
+      dark
+      text
+      href="https://github.com/khaivngo/QuickEval/issues"
+      target="_blank"
+    >
+      <span class="mr-2 font-weight-regular">Report issues</span>
+      <v-icon small>mdi-open-in-new</v-icon>
+    </v-btn>
 
-        <v-list
-          flat
+    <v-menu bottom left v-if="user.id !== 0">
+      <template v-slot:activator="{ on }">
+        <v-btn
+          dark
+          icon
+          v-on="on"
         >
-          <v-list-item-group color="primary">
-            <v-list-item
-              @click="$router.push('/user/profile')"
-            >
-              <v-list-item-content>
-                <v-list-item-title>
-                  <v-icon left>account_circle</v-icon>
-                  Account settings
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+          <v-icon>mdi-account-circle</v-icon>
+        </v-btn>
+      </template>
 
-            <v-list-item
-              @click="logout"
-            >
-              <v-list-item-content>
-                <v-list-item-title>
-                  <v-icon left>logout</v-icon>
-                  Sign out
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-menu>
-    </v-toolbar>
-  </v-card>
+      <v-list
+        flat
+      >
+        <v-list-item-group color="primary">
+          <v-list-item
+            @click="$router.push('/user/profile')"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon left>mdi-account-circle</v-icon>
+                Account settings
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+            @click="logout"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon left>mdi-logout</v-icon>
+                Sign out
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-menu>
+  </v-app-bar>
 </template>
 
 <script>
 // import Logout from '@/components/Logout'
 import EventBus from '@/eventBus'
+
 export default {
   props: {
     user: {
@@ -129,7 +128,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style scoped lang="css">
   .router-link-active {
     color: #000;
     background: darken(#2196F3, 20%);
@@ -138,14 +137,13 @@ export default {
     padding: 10px;
     text-decoration: none;
     font-size: 1.3em;
+  }
+  .router-link-exact-active {
+    color: #000;
+    background: darken(#2196F3, 20%);
+  }
 
-    &.router-link-exact-active {
-      color: #000;
-      background: darken(#2196F3, 20%);
-    }
-
-    &.router-link-active {
-      color: red;
-    }
+  .router-link-active {
+    color: red;
   }
 </style>

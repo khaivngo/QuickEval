@@ -28,9 +28,11 @@
                 item-text="title"
                 item-value="id"
                 label="Select image set"
+                outlined
+                dense
               >
                 <template v-slot:append-outer>
-                  <v-icon @click="remove(i)">delete</v-icon>
+                  <v-icon @click="remove(i)">mdi-delete</v-icon>
                 </template>
               </v-select>
 
@@ -48,7 +50,7 @@
               <v-layout v-if="event.type === 'instruction'">
                 <Tiptap v-model="event.value"/>
                 <v-icon @click="remove(i)" class="ml-2">
-                  delete <!-- clear -->
+                  mdi-delete <!-- clear -->
                 </v-icon>
               </v-layout>
 
@@ -59,9 +61,11 @@
                 v-model="event.value"
                 item-text="description"
                 item-value="id"
+                outlined
+                dense
               >
                 <template v-slot:append-outer>
-                  <v-icon @click="remove(i)">delete</v-icon>
+                  <v-icon @click="remove(i)">mdi-delete</v-icon>
                 </template>
               </v-select>
             </v-flex>
@@ -80,20 +84,20 @@
               v-on="on"
             >
               Add instruction
-              <v-icon class="ml-2" :size="20">add</v-icon>
+              <v-icon class="ml-2" :size="20">mdi-add</v-icon>
             </v-btn>
           </template>
 
           <v-list>
             <v-list-tile @click="add('instruction')">
               <v-list-tile-title class="pr-3">
-                <v-icon left small>create</v-icon>
+                <v-icon left>mdi-plus</v-icon>
                 Create new
               </v-list-tile-title>
             </v-list-tile>
             <v-list-tile @click="add('instructionFromHistory')">
               <v-list-tile-title class="pr-3">
-                <v-icon left small>add</v-icon>
+                <v-icon left>mdi-history</v-icon>
                 Add from history
               </v-list-tile-title>
             </v-list-tile>
@@ -102,7 +106,7 @@
       <!-- </v-flex> -->
 
       <!-- <v-flex> -->
-        <!-- <v-btn outline @click="add('uploadImageSet')">
+        <!-- <v-btn outlined @click="add('uploadImageSet')">
           upload image set <v-icon class="ml-2" small>create</v-icon>
         </v-btn> -->
 
@@ -123,6 +127,8 @@
                 <v-text-field
                   v-model="newImageSet.name"
                   label="Title"
+                  outlined
+                  dense
                 ></v-text-field>
 
                 <v-btn
@@ -187,20 +193,20 @@
               v-on="on"
             >
               Add image set
-              <v-icon class="ml-2" :size="20">add</v-icon>
+              <v-icon class="ml-2" :size="20">mdi-plus</v-icon>
             </v-btn>
           </template>
 
           <v-list>
             <v-list-tile @click.stop="openNewImageSet = true">
               <v-list-tile-title class="pr-3">
-                <v-icon left small>create</v-icon>
+                <v-icon left small>mdi-pencil</v-icon>
                 Create new
               </v-list-tile-title>
             </v-list-tile>
             <v-list-tile @click="add('imageSet')">
               <v-list-tile-title class="pr-3 align-center">
-                <v-icon left small>add</v-icon>
+                <v-icon left small>mdi-add</v-icon>
                 Add existing
               </v-list-tile-title>
             </v-list-tile>

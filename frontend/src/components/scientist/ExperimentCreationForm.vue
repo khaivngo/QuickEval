@@ -35,6 +35,8 @@
                   item-text="name"
                   item-value="id"
                   label="Experiment Type"
+                  outlined
+                  dense
                 ></v-select>
               </v-flex>
             </v-layout>
@@ -45,6 +47,8 @@
                   class="mt-4"
                   v-model.trim="form.title"
                   label="Experiment Name"
+                  outlined
+                  dense
                 ></v-text-field>
               </v-flex>
             </v-layout>
@@ -55,6 +59,7 @@
                   class="mt-4"
                   v-model.trim="form.longDescription"
                   label="Long Description - (optional)"
+                  outlined
                 >
                   <template v-slot:label>
                     Description -<span class="caption"> (optional)</span>
@@ -65,7 +70,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
                   <div class="pa-2 body-1">
@@ -86,13 +91,15 @@
                     {
                       id: 2,
                       text: 'Order of images within image sets AND order of the image sets',
-                      caption: 'Note: sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.'
+                      caption: '<br>Note: sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.'
                     }
                   ]"
                   item-text="text"
                   item-value="id"
                   :menu-props="{maxHeight:'auto'}"
                   label="Randomization Algorithm"
+                  outlined
+                  dense
                 >
                   <template slot="item" slot-scope="{ item }">
                     <v-list-tile-content>
@@ -116,7 +123,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
                   <div class="pa-2 body-1">
@@ -139,7 +146,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
                   <div class="pa-1 body-1">
@@ -181,6 +188,8 @@
                   label="Background colour"
                   prefix="#"
                   placeholder="808080"
+                  outlined
+                  dense
                 ></v-text-field>
               </v-flex>
 
@@ -197,6 +206,8 @@
                 <v-text-field
                   v-model="form.delay"
                   label="Delay between stimuli (gray screen)"
+                  outlined
+                  dense
                   suffix="milliseconds"
                   placeholder="200"
                   style="width: 200px;"
@@ -206,7 +217,7 @@
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">help_outline</v-icon>
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
                   <div class="pa-1 body-1">
@@ -222,6 +233,8 @@
                 <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
+                  outlined
+                  dense
                   suffix="pixels"
                   type="text"
                   v-if="form.experimentType !== 3"
@@ -229,7 +242,7 @@
                   <template v-slot:append-outer>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">help_outline</v-icon>
+                        <v-icon v-on="on">mdi-help-circle-outline</v-icon>
                       </template>
                       <span class="pa-2 body-1">Spacing in pixels between stimuli images.</span>
                     </v-tooltip>
@@ -320,13 +333,13 @@
         <v-layout justify-space-between>
           <div>
             <v-btn v-if="currentLevel !== 1" @click="previous" text color="secondary">
-              <v-icon dark>keyboard_arrow_left</v-icon>Back
+              <v-icon dark>mdi-chevron-left</v-icon>Back
             </v-btn>
           </div>
 
           <div>
             <v-btn v-if="currentLevel !== steps.length" @click="next" depressed color="primary">
-              Next <v-icon>keyboard_arrow_right</v-icon>
+              Next <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
 
             <template v-if="currentLevel === steps.length">
@@ -336,7 +349,9 @@
                     v-on="on"
                     v-if="mode === 'new'"
                     @click="mode === 'new' ? store('hidden') : update()"
-                    color="secondary" text outline
+                    color="secondary"
+                    text
+                    outlined
                     :disable="loaders.saving"
                     :loading="loaders.saving"
                   >

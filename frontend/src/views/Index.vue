@@ -50,7 +50,7 @@
           <v-layout justify-center>
             <v-btn
               @click="loginAsAnonymous()"
-              outline large
+              outlined large
               color="primary"
               :loading="anonymousIntent"
             >
@@ -65,7 +65,7 @@
           <v-layout justify-center>
             <v-btn
               @click="toggleIntent('login')"
-              outline large
+              outlined large
               color="primary"
             >
               Log in
@@ -73,7 +73,7 @@
 
             <v-btn
               @click="toggleIntent('register')"
-              outline large
+              outlined large
               color="primary"
             >
               Register
@@ -105,7 +105,9 @@ export default {
     return {
       anonymousIntent: false,
       registerIntent: false,
-      loginIntent: false
+      loginIntent: false,
+
+      error: ''
     }
   },
 
@@ -132,9 +134,10 @@ export default {
         EventBus.$emit('logged', response.data)
         this.anonymousIntent = false
         this.$router.push('/observer')
-      }).catch(() => {
+      }).catch((error) => {
         // push notification
         this.anonymousIntent = false
+        this.error = error
       })
     },
 

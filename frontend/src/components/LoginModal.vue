@@ -10,7 +10,7 @@
           <v-layout justify-center>
             <v-btn
               @click="loginAsAnonymous()"
-              outline large
+              outlined large
               color="primary"
               :loading="anonymousIntent"
             >
@@ -25,7 +25,7 @@
           <v-layout justify-center>
             <v-btn
               @click="toggleIntent('login')"
-              outline large
+              outlined large
               color="primary"
             >
               Log in
@@ -33,7 +33,7 @@
 
             <v-btn
               @click="toggleIntent('register')"
-              outline large
+              outlined large
               color="primary"
             >
               Register

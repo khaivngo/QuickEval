@@ -7,7 +7,7 @@
         </h2>
       </v-layout>
 
-      <!-- <v-btn outline @click="findPostsByString">
+      <!-- <v-btn outlined @click="findPostsByString">
         søk
       </v-btn> -->
     </div>

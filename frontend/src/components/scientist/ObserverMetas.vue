@@ -8,20 +8,20 @@
             v-on="on"
             class="text-none"
           >
-            Add input field <v-icon class="ml-2" :size="20">add</v-icon>
+            Add input field <v-icon class="ml-2" :size="20">mdi-add</v-icon>
           </v-btn>
         </template>
 
         <v-list>
           <v-list-tile @click="add('meta')">
             <v-list-tile-title right>
-              <v-icon left small>create</v-icon>
+              <v-icon left small>mdi-pencil</v-icon>
               Create new
             </v-list-tile-title>
           </v-list-tile>
           <v-list-tile @click="add('metaFromHistory')">
             <v-list-tile-title right>
-              <v-icon left small>add</v-icon>
+              <v-icon left small>mdi-add</v-icon>
               Add from history
             </v-list-tile-title>
           </v-list-tile>
@@ -44,9 +44,11 @@
               class="m-0"
               item-text="title"
               item-value="id"
+              outlined
+              dense
             >
               <template v-slot:append-outer>
-                <v-icon @click="remove(i)">delete</v-icon>
+                <v-icon @click="remove(i)">mdi-delete</v-icon>
               </template>
             </v-text-field>
 
@@ -57,9 +59,11 @@
               v-model="event.value"
               item-text="meta"
               item-value="id"
+              outlined
+              dense
             >
               <template v-slot:append-outer>
-                <v-icon @click="remove(i)">delete</v-icon>
+                <v-icon @click="remove(i)">mdi-delete</v-icon>
               </template>
             </v-select>
           </v-flex>

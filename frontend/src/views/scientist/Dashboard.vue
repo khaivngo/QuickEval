@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pl-12 pr-12 mt-6">
     <v-layout mb-5 mt-5>
       <h2 class="display-1">
         Dashboard

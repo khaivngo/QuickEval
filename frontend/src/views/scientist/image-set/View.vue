@@ -1,18 +1,16 @@
 <template>
-  <div>
+  <div class="mb-12">
     <v-layout mb-5 mt-5>
       <h2 class="display-1">
-        Image Set
+        Replace with title of set
       </h2>
     </v-layout>
 
-    <v-card>
-      <Back>Back to all image sets</Back>
-
+    <!-- <v-card> -->
       <v-layout justify-end pr-4 pt-2 pb-2>
         <!-- <v-text-field value="wwww"></v-text-field> -->
 
-        <v-btn class="success" :to="`/scientist/image-sets/${imageSetId}/file-upload`">
+        <v-btn class="success" :to="`/scientist/image-sets/edit/${imageSetId}`">
           Add Files
         </v-btn>
       </v-layout>
@@ -30,7 +28,7 @@
             </h3>
 
             <v-icon @click="deleteImage(image.id, i)">
-              delete
+              mdi-delete
             </v-icon>
           </div>
 
@@ -57,19 +55,14 @@
         </v-flex>
 
       </v-layout>
-    </v-card>
+    <!-- </v-card> -->
   </div>
 </template>
 
 <script>
 import EventBus from '@/eventBus'
-import Back from '@/components/Back'
 
 export default {
-  components: {
-    Back
-  },
-
   data () {
     return {
       imageSetId: null,

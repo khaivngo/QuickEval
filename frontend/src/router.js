@@ -35,15 +35,32 @@ export default new VueRouter({
       path: '/scientist',
       component: loadView('scientist/Index'),
       children: [
-        { path: '',                            component: loadView('scientist/Dashboard'),                meta: { transitionName: 'slide-left' } },
-        { path: 'dashboard',                   component: loadView('scientist/Dashboard'),                meta: { transitionName: 'slide-left' } },
-        { path: 'experiments',                 component: loadView('scientist/experiment/List'),          meta: { transitionName: 'slide-left' } },
-        { path: 'experiments/view/:id',        component: loadView('scientist/experiment/results/Index'), meta: { transitionName: 'slide-right' } },
-        { path: 'experiments/create',          component: loadView('scientist/experiment/Create'),        meta: { transitionName: 'slide-right' } },
-        { path: 'experiments/edit/:id',        component: loadView('scientist/experiment/Edit'),          meta: { transitionName: 'slide-right' } },
-        { path: 'image-sets/view/:id',         component: loadView('scientist/image-set/ImageSet'),       meta: { transitionName: 'slide-right' } },
-        { path: 'image-sets/create',           component: loadView('scientist/image-set/List'),           meta: { transitionName: 'slide-left' } },
-        { path: 'image-sets/:id/file-upload',  component: loadView('scientist/image-set/CreateFile'),     meta: { transitionName: 'slide-right' } }
+        { path: '',          component: loadView('scientist/Dashboard') },
+        { path: 'dashboard', component: loadView('scientist/Dashboard') },
+        {
+          path: 'experiments',
+          component: loadView('scientist/experiment/Index'),
+          children: [
+            { path: 'create',   component: loadView('scientist/experiment/Create') },
+            { path: 'view/:id', component: loadView('scientist/experiment/View') },
+            { path: 'edit/:id', component: loadView('scientist/experiment/Edit') }
+          ]
+        },
+        {
+          path: 'image-sets',
+          component: loadView('scientist/image-set/Index'),
+          children: [
+            // { path: 'create',   component: loadView('scientist/image-set/Create') },
+            { path: 'view/:id', component: loadView('scientist/image-set/View') },
+            { path: 'edit/:id', component: loadView('scientist/image-set/Edit') }
+          ]
+        }
+        // { path: 'experiments/view/:id',        component: loadView('scientist/experiment/results/Index') },
+        // { path: 'experiments/create',          component: loadView('scientist/experiment/Create')        },
+        // { path: 'experiments/edit/:id',        component: loadView('scientist/experiment/Edit')          },
+        // { path: 'image-sets/view/:id',         component: loadView('scientist/image-set/ImageSet')       },
+        // { path: 'image-sets/create',           component: loadView('scientist/image-set/List')           },
+        // { path: 'image-sets/:id/file-upload',  component: loadView('scientist/image-set/CreateFile')     }
       ]
     },
 

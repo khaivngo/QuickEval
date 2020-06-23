@@ -3,7 +3,7 @@
     <v-layout align-center>
       <v-flex>
         <v-btn text @click="$router.back()" class="ma-0 text-none">
-          <v-icon left>arrow_back</v-icon>
+          <v-icon left>mdi-arrow-left</v-icon>
           <span>
             <slot></slot>
           </span>

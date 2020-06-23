@@ -6,7 +6,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.bold" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.bold() }">
-              <v-icon>format_bold</v-icon>
+              <v-icon>mdi-format-bold</v-icon>
             </v-btn>
           </template>
           <span>Bold</span>
@@ -15,7 +15,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.italic" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.italic() }">
-              <v-icon>format_italic</v-icon>
+              <v-icon>mdi-format-italic</v-icon>
             </v-btn>
           </template>
           <span>Italic</span>
@@ -24,7 +24,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.strike" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.strike() }">
-              <v-icon>format_strikethrough</v-icon>
+              <v-icon>mdi-format-strikethrough</v-icon>
             </v-btn>
           </template>
           <span>Strikethrough</span>
@@ -33,7 +33,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.underline" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.underline() }">
-              <v-icon>format_underline</v-icon>
+              <v-icon>mdi-format-underline</v-icon>
             </v-btn>
           </template>
           <span>Underline</span>
@@ -42,7 +42,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.code" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.code() }">
-              <v-icon>code</v-icon>
+              <v-icon>mdi-code-tags</v-icon>
             </v-btn>
           </template>
           <span>Line of code</span>
@@ -51,7 +51,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.paragraph" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.paragraph() }">
-              <v-icon>format_textdirection_l_to_r</v-icon>
+              <v-icon>mdi-format-textdirection-l-to-r</v-icon>
             </v-btn>
           </template>
           <span>Paragraph</span>
@@ -87,7 +87,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.bullet_list" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.bullet_list() }">
-              <v-icon>format_list_bulleted</v-icon>
+              <v-icon>mdi-format-list-bulleted</v-icon>
             </v-btn>
           </template>
           <span>Bullet point list</span>
@@ -96,7 +96,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.ordered_list" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.ordered_list() }">
-              <v-icon>format_list_numbered</v-icon>
+              <v-icon>mdi-format-list-numbered</v-icon>
             </v-btn>
           </template>
           <span>Numbered list</span>
@@ -105,7 +105,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.blockquote" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.blockquote() }">
-              <v-icon>format_quote</v-icon>
+              <v-icon>mdi-format-quote-close</v-icon>
             </v-btn>
           </template>
           <span>Blockquote</span>
@@ -114,7 +114,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.code_block" v-on="on" class="menubar__button ma-1" :class="{ 'is-active': isActive.code_block() }">
-              <v-icon>code</v-icon>
+              <v-icon>mdi-code-tags</v-icon>
             </v-btn>
           </template>
           <span>Block of code</span>
@@ -132,7 +132,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.undo" v-on="on" class="menubar__button ma-1">
-              <v-icon>undo</v-icon>
+              <v-icon>mdi-undo</v-icon>
             </v-btn>
           </template>
           <span>Undo</span>
@@ -141,7 +141,7 @@
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn text icon small @click="commands.redo" v-on="on" class="menubar__button ma-1">
-              <v-icon>redo</v-icon>
+              <v-icon>mdi-redo</v-icon>
             </v-btn>
           </template>
           <span>Redo</span>

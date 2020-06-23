@@ -1,31 +1,27 @@
 <template>
-  <v-card
-    class="mx-auto"
-    max-width="400"
-    tile
-    flat
-  >
+  <v-navigation-drawer permanent app style="z-index: 1;">
     <v-list
-      flat
+      dense
+      style="margin-top: 10px;"
     >
-      <!-- <v-subheader>REPORTS</v-subheader> -->
-      <v-list-item-group color="primary">
+      <v-list-item-group v-model="active" color="primary">
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
-          :class="
-            (parentPage(item.url) === parentPage($route.path)) || ($route.path === '/scientist' && item.url === '/scientist/dashboard') ?
-            'qe-active-nav' : ''
-          "
+          link
           @click="$router.push(item.url)"
         >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
           <v-list-item-content>
-            <v-list-item-title v-html="item.title"></v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
     </v-list>
-  </v-card>
+  </v-navigation-drawer>
 </template>
 
 <script>
@@ -33,31 +29,22 @@ export default {
   data () {
     return {
       items: [
-        { title: 'Dashboard', url: '/scientist/dashboard', icon: 'insert_chart' },
-        { title: 'Your Image Sets', url: '/scientist/image-sets/create', icon: 'photo' },
-        { title: 'Your Experiments', url: '/scientist/experiments', icon: 'folder' }
-      ]
+        { title: 'Dashboard', url: '/scientist/dashboard', icon: 'mdi-view-dashboard-outline' },
+        { title: 'Your Image Sets', url: '/scientist/image-sets', icon: 'mdi-tooltip-image-outline' },
+        { title: 'Your Experiments', url: '/scientist/experiments', icon: 'mdi-folder-outline' }
+      ],
+      active: null
     }
   },
 
-  methods: {
-    parentPage (url) {
-      return url.split('/')[2]
+  created () {
+    if (this.$route.path.split('/')[2] === 'experiments') {
+      this.active = 2
+    } else if (this.$route.path.split('/')[2] === 'image-sets') {
+      this.active = 1
+    } else {
+      this.active = 0
     }
   }
 }
 </script>
-
-<style scoped lang="css">
-.qe-active-nav {
-  font-weight: 900;
-  /*color: rgb(25, 118, 210);*/
-  color: black;
-}
-
-.v-list-item--active, .v-item--active {
-  /*background-color: #FAFAFA;*/
-  /*font-weight: 900;*/
-  /*color: rgb(25, 118, 210);*/
-}
-</style>
