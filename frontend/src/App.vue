@@ -5,7 +5,7 @@
       :user="user"
     />
 
-    <v-main class="fill-height ma-0" style="padding-top: 64px;">
+    <v-main class="fill-height ma-0">
       <router-view class="pa-0 ma-0"/>
     </v-main>
 

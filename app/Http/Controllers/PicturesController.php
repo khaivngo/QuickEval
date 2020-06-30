@@ -26,6 +26,7 @@ class PicturesController extends Controller
       $is_original = ((int)$request->original == 1) ? 1 : 0;
       $files = $request->file('files');
 
+      $pics = [];
       if (! empty($files)) {
         foreach ($files as $file) {
           $path = $file->store('public/' . $image_set_id); // store() will automatically generate a unique file name
@@ -37,10 +38,11 @@ class PicturesController extends Controller
             'is_original' => $is_original,
             'picture_set_id' => $image_set_id
           ]);
+          array_push($pics, $picture);
         }
       }
 
-      return response($request, 201);
+      return response()->json($pics);
     }
 
     protected function upload () {

@@ -1,30 +1,34 @@
 <template>
   <v-container>
     <v-layout class="mb-3 mt-1" justify-center>
-      <v-menu open-on-hover bottom offset-y>
-        <template v-slot:activator="{ on }">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
           <v-btn
             color="info"
             v-on="on"
             class="text-none"
           >
-            Add category <v-icon class="ml-2" :size="20">add</v-icon>
+            Add category <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
           </v-btn>
         </template>
-
         <v-list>
-          <v-list-tile @click="add('category')">
-            <v-list-tile-title right>
+          <v-list-item
+            @click="add('category')"
+          >
+            <v-list-item-title>
               <v-icon left small>mdi-pencil</v-icon>
               Create new
-            </v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile @click="add('categoryFromHistory')">
-            <v-list-tile-title right>
-              <v-icon left small>add</v-icon>
+            </v-list-item-title>
+          </v-list-item>
+
+          <v-list-item
+            @click="add('categoryFromHistory')"
+          >
+            <v-list-item-title>
+              <v-icon left small>mdi-plus-circle</v-icon>
               Add from history
-            </v-list-tile-title>
-          </v-list-tile>
+            </v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-layout>

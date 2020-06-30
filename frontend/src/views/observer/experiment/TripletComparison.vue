@@ -58,7 +58,7 @@
     </v-toolbar>
 
     <v-layout mt-4 mb-1 ml-3 mr-3 pa-0 justify-center align-center>
-      <v-flex ml-2 mr-2 xs6 class="text-xs-center" v-if="experiment.show_original === 1">
+      <v-flex ml-2 mr-2 xs6 class="text-center" v-if="experiment.show_original === 1">
         <h4 class="subheading font-weight-regular">Original</h4>
       </v-flex>
 

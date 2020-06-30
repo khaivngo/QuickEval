@@ -1,6 +1,6 @@
 <template>
   <v-row class="fill-height" no-gutters>
-    <v-col cols="3" class="fill-height" style="background: #fff; border-right: 1px solid #ccc;">
+    <v-col cols="3" class="fill-height" style="background: #fff; border-right: 1px solid #ccc; max-width: 300px;">
       <v-list-item class="mt-2">
         <v-list-item-content>
           <v-list-item-title>
@@ -45,7 +45,7 @@
 
     <v-col class="pr-12 pl-12 pt-6">
       <v-row>
-        <router-view :key="$route.name + ($route.params.id || '')"/>
+        <router-view :key="$route.params.id || ''"/>
       </v-row>
     </v-col>
   </v-row>
@@ -67,19 +67,21 @@ export default {
     }
   },
 
-  watch: {
-    $route (to, from) {
-      // react to route changes...
-      // this.active = to.params.id
-      // console.log(from)
-      // this.experiment.
-    }
-  },
+  // watch: {
+  //   $route (to, from) {
+  //     // react to route changes...
+  //     // this.active = to.params.id
+  //     // console.log(from)
+  //     // this.experiment.
+  //   }
+  // },
 
   created () {
     this.getUsersExperiments()
-    // this.active = 0
-    // this.$route.params.id
+
+    EventBus.$on('experiment-created', (payload) => {
+      this.experiments.unshift(payload)
+    })
   },
 
   methods: {
@@ -96,32 +98,6 @@ export default {
       }).catch(() => {
         this.loading = false
       })
-    },
-
-    visibility (exp) {
-      this.$axios.patch('/experiment/' + exp.id + '/visibility', {
-        is_public: exp.is_public
-      }).then(response => {
-        if (response.data.is_public) {
-          EventBus.$emit('success', 'Experiment is visible to the public')
-        } else {
-          EventBus.$emit('info', 'Experiment is hidden from the public.')
-        }
-      })
-    },
-
-    destroy (exp, arrayIndex) {
-      if (confirm('Do you want to delete the experiment? You will no longer be able to retrive observer data.')) {
-        this.$axios.delete(`/experiment/${exp.id}`).then(response => {
-          if (response.data === 'deleted_experiment') {
-            this.experiments.splice(arrayIndex, 1)
-
-            EventBus.$emit('success', 'Experiment has been deleted successfully')
-          } else {
-            EventBus.$emit('error', 'Could not delete experiment')
-          }
-        })
-      }
     }
   }
 }

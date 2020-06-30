@@ -1,14 +1,12 @@
 <template>
-  <div style="width: 900px;">
-    <v-layout mb-5>
-      <h2 class="display-1">
+  <v-container fluid mb-12 pb-12>
+    <v-row class="mb-12">
+      <h2 class="text-h4">
         Create Experiment
       </h2>
-    </v-layout>
+    </v-row>
 
     <v-stepper v-model="currentLevel" alt-labels non-linear>
-      <Back>Back to your experiments</Back>
-
       <v-stepper-header class="elevation-0">
         <template v-for="(item, i) in steps">
           <v-stepper-step :step="item.id" :key="i" editable>
@@ -22,7 +20,7 @@
 
       <v-stepper-items class="no-transition">
         <v-stepper-content :step="showBasicDetails.id">
-          <v-card class="mb-5 pa-5 text-xs-center" flat>
+          <v-card class="mb-5 text-xs-center" flat>
             <h2 class="mb-4">{{ steps[0].title }}</h2>
 
             <v-layout align-center pr-5>
@@ -91,7 +89,7 @@
                     {
                       id: 2,
                       text: 'Order of images within image sets AND order of the image sets',
-                      caption: '<br>Note: sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.'
+                      caption: 'Note: sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.'
                     }
                   ]"
                   item-text="text"
@@ -101,11 +99,14 @@
                   outlined
                   dense
                 >
-                  <template slot="item" slot-scope="{ item }">
-                    <v-list-tile-content>
-                      <v-list-tile-title v-html="item.text"></v-list-tile-title>
-                      <v-list-tile-sub-title v-html="item.caption"></v-list-tile-sub-title>
-                    </v-list-tile-content>
+                  <template v-slot:item="data">
+                    {{ data.item.text }} - {{ data.item.caption }}
+                    <!-- <v-list-item two-line>
+                      <v-list-item-content>
+                        <v-list-item-title>{{ data.item.text }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ data.item.caption }}</v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item> -->
                   </template>
                 </v-select>
               </v-flex>
@@ -150,7 +151,7 @@
                     </v-btn>
                   </template>
                   <div class="pa-1 body-1">
-                    Display the original image of the image set alongside the reproductions.
+                    Display the original image of the image set alongside the reproductions.<br>
                     As a reference for the observer.
                   </div>
                 </v-tooltip>
@@ -363,7 +364,7 @@
                 </div>
               </v-tooltip>
 
-              <span v-if="mode === 'new'">OR</span>
+              <span v-if="mode === 'new'" class="mr-3 ml-3">OR</span>
 
               <v-btn
                 @click="mode === 'new' ? store('public') : update()"
@@ -383,7 +384,7 @@
         </v-layout>
       </v-container>
     </v-stepper>
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -391,15 +392,13 @@ import Sequence from '@/components/scientist/Sequence'
 import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
 import EventBus from '@/eventBus'
-import Back from '@/components/Back'
 import { removeArrayItem } from '@/helpers.js'
 
 export default {
   components: {
     Sequence,
     ObserverMetas,
-    Categories,
-    Back
+    Categories
   },
 
   data () {
@@ -567,6 +566,8 @@ export default {
 
         this.loaders.storing = false
         this.loaders.saving = false
+
+        EventBus.$emit('experiment-created', response.data)
 
         this.$router.push('/scientist/experiments')
         // }

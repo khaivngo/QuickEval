@@ -113,7 +113,7 @@
         </div>
       </v-layout>
 
-      <v-layout justify-center align-center class="text-xs-center ml-2 mr-2" v-if="experiment.show_original === 1">
+      <v-layout justify-center align-center class="text-center ml-2 mr-2" v-if="experiment.show_original === 1">
         <h4 class="body-1 font-weight-regular">
           Original
         </h4>
@@ -137,7 +137,7 @@
     <div class="rating mt-3">
       <v-layout justify-center align-center class="mt-2 pa-0">
         <template v-if="rankings">
-          <div class="text-xs-center subheading" v-for="(num, i) in rankings.length" :key="i"
+          <div class="text-center subheading" v-for="(num, i) in rankings.length" :key="i"
             style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
           >
             #{{ num }}
@@ -173,7 +173,7 @@
       color="#D9D9D9"
     >
       <span class="ml-1">next</span>
-      <v-icon>keyboard_arrow_right</v-icon>
+      <v-icon>mdi-chevron-right</v-icon>
     </v-btn>
 
     <FinishedDialog :show="finished"/>

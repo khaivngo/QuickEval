@@ -1,5 +1,5 @@
 <template>
-  <v-row class="fill-height">
+  <v-row class="fill-height" style="margin-top: -64px; padding-top: 0;">
     <v-col cols="6" style="border-right: 1px solid #ddd; overflow-y: auto;" class="pa-12">
       <div>
         <v-text-field

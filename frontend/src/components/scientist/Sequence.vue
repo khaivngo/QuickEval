@@ -74,33 +74,38 @@
       </v-slide-x-transition>
     </v-timeline>
 
-    <v-layout class="mb-5" justify-center wrap>
+    <v-layout class="mb-5 ml-0 pl-0" wrap>
       <!-- <v-flex style="background: red;"> -->
-        <v-menu open-on-hover bottom offset-y>
+        <v-menu bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
-              class="text-none"
+              class="text-none mr-4 ml-0"
               color="info"
               v-on="on"
             >
               Add instruction
-              <v-icon class="ml-2" :size="20">mdi-add</v-icon>
+              <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
             </v-btn>
           </template>
 
           <v-list>
-            <v-list-tile @click="add('instruction')">
-              <v-list-tile-title class="pr-3">
+            <v-list-item
+              @click="add('instruction')"
+            >
+              <v-list-item-title>
                 <v-icon left>mdi-plus</v-icon>
                 Create new
-              </v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="add('instructionFromHistory')">
-              <v-list-tile-title class="pr-3">
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              @click="add('instructionFromHistory')"
+            >
+              <v-list-item-title>
                 <v-icon left>mdi-history</v-icon>
                 Add from history
-              </v-list-tile-title>
-            </v-list-tile>
+              </v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       <!-- </v-flex> -->
@@ -185,7 +190,7 @@
           </v-card>
         </v-dialog>
 
-        <v-menu open-on-hover bottom offset-y>
+        <v-menu bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
               class="text-none"
@@ -193,23 +198,28 @@
               v-on="on"
             >
               Add image set
-              <v-icon class="ml-2" :size="20">mdi-plus</v-icon>
+              <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
             </v-btn>
           </template>
 
           <v-list>
-            <v-list-tile @click.stop="openNewImageSet = true">
-              <v-list-tile-title class="pr-3">
+            <v-list-item
+              @click.stop="openNewImageSet = true"
+            >
+              <v-list-item-title>
                 <v-icon left small>mdi-pencil</v-icon>
                 Create new
-              </v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="add('imageSet')">
-              <v-list-tile-title class="pr-3 align-center">
-                <v-icon left small>mdi-add</v-icon>
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              @click="add('imageSet')"
+            >
+              <v-list-item-title>
+                <v-icon left small>mdi-plus-circle</v-icon>
                 Add existing
-              </v-list-tile-title>
-            </v-list-tile>
+              </v-list-item-title>
+            </v-list-item>
           </v-list>
         </v-menu>
       <!-- </v-flex> -->

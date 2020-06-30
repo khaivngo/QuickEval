@@ -1,11 +1,17 @@
 <template>
   <v-row class="fill-height" no-gutters>
-    <v-col cols="3" class="fill-height" style="background: #fff; border-right: 1px solid #ccc;">
+    <v-col class="fill-height" style="background: #fff; border-right: 1px solid #ccc; max-width: 300px;">
       <v-list-item class="mt-2">
         <v-list-item-content>
           <v-list-item-title>
-            <v-btn text class="pl-2" :to="'/scientist/image-sets/edit'">
-              <v-icon color="primary" class="pa-0 ma-0">mdi-plus</v-icon> Create new
+            <v-btn
+              :loading="creating"
+              class="pl-2"
+              text
+              @click="create"
+            >
+              <v-icon color="primary" class="pa-0 ma-0">mdi-plus</v-icon>
+              Create new
             </v-btn>
           </v-list-item-title>
         </v-list-item-content>
@@ -39,7 +45,7 @@
     </v-col>
 
     <v-col class="pr-12 pl-12 pt-6">
-      <router-view :key="$route.name + ($route.params.id || '')"/>
+      <router-view :key="$route.params.id || ''"/>
     </v-col>
   </v-row>
 </template>
@@ -84,26 +90,30 @@ export default {
       this.loading = false
       alert(error)
     })
+
+    EventBus.$on('image-set-created', (payload) => {
+      this.imageSets.unshift(payload)
+    })
   },
 
   methods: {
-    createNew () {
-      if (this.$refs.form.validate() === false) {
-        return
-      }
-
+    create () {
       this.creating = true
 
       const data = {
-        title: this.newImageSet.name,
+        title: 'Untitled image set',
         description: ' '
       }
 
       this.$axios.post('/imageSet', data).then((response) => {
         this.imageSets.unshift(response.data)
-        this.newImageSet.name = ''
+        // set active first item in imageSets array
+        this.active = 0
+        // and redirect
+        this.$router.push(`/scientist/image-sets/view/${this.imageSets[0].id}`)
+        // '/scientist/image-sets/edit'
+
         this.creating = false
-        this.$router.push(`/scientist/image-sets/${response.data.id}/file-upload`)
       }).catch(error => {
         this.creating = false
         alert(error)

@@ -12,4 +12,8 @@ class PictureSet extends Model
      * @var array
      */
     protected $guarded = [];
+
+    public function pictures () {
+        return $this->hasMany(Picture::class);
+    }
 }

@@ -77,7 +77,7 @@
         </v-layout>
       </v-flex>
 
-      <v-flex ml-2 mr-2 xs6 class="text-xs-center" v-if="experiment.show_original === 1">
+      <v-flex ml-2 mr-2 xs6 class="text-center" v-if="experiment.show_original === 1">
         <h4 class="subheading font-weight-regular">Original</h4>
       </v-flex>
     </v-layout>
@@ -129,7 +129,7 @@
       :loading="disableNextBtn"
     >
       <span class="ml-1">next</span>
-      <v-icon>keyboard_arrow_right</v-icon>
+      <v-icon>mdi-chevron-right</v-icon>
     </v-btn>
 
     <FinishedDialog :show="finished"/>

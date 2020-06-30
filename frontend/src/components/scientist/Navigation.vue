@@ -31,7 +31,10 @@ export default {
       items: [
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'mdi-view-dashboard-outline' },
         { title: 'Your Image Sets', url: '/scientist/image-sets', icon: 'mdi-tooltip-image-outline' },
-        { title: 'Your Experiments', url: '/scientist/experiments', icon: 'mdi-folder-outline' }
+        { title: 'Your Experiments', url: '/scientist/experiments', icon: 'mdi-picture-in-picture-top-right-outline' }
+        // picture-in-picture-top-right-outline
+        // form-select
+        // lightbulb-on-outline
       ],
       active: null
     }

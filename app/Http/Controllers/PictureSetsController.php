@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 class PictureSetsController extends Controller
 {
+    /**
+     * All image sets belonging to the user.
+     */
     public function index () {
       return PictureSet
         ::where('user_id', auth()->user()->id)
@@ -21,11 +24,15 @@ class PictureSetsController extends Controller
         ->get();
     }
 
-    public function pictures ($picture_set_id) {
-      return \App\Picture
-        ::where('picture_set_id', $picture_set_id)
-        ->get();
+    public function find ($id) {
+      return PictureSet::with('pictures')->find($id);
     }
+
+    // public function getSet ($picture_set_id) {
+    //   return \App\Picture
+    //     ::where('picture_set_id', $picture_set_id)
+    //     ->get();
+    // }
 
     public function original ($picture_set_id) {
       return \App\Picture::where([

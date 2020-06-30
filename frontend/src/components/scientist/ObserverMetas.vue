@@ -1,30 +1,30 @@
 <template>
   <v-container>
     <v-layout class="mb-3 mt-1" justify-center>
-      <v-menu open-on-hover bottom offset-y>
+      <v-menu bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn
             color="info"
             v-on="on"
             class="text-none"
           >
-            Add input field <v-icon class="ml-2" :size="20">mdi-add</v-icon>
+            Add input field <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
           </v-btn>
         </template>
 
         <v-list>
-          <v-list-tile @click="add('meta')">
-            <v-list-tile-title right>
+          <v-list-item @click="add('meta')">
+            <v-list-item-title>
               <v-icon left small>mdi-pencil</v-icon>
               Create new
-            </v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile @click="add('metaFromHistory')">
-            <v-list-tile-title right>
-              <v-icon left small>mdi-add</v-icon>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="add('metaFromHistory')">
+            <v-list-item-title>
+              <v-icon left small>mdi-plus-circle</v-icon>
               Add from history
-            </v-list-tile-title>
-          </v-list-tile>
+            </v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-layout>

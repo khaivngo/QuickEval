@@ -1,5 +1,10 @@
 <template>
-  <div id="drag-drop-area-original"></div>
+  <div>
+    <div id="UppyModalOpenerBtnOriginal">
+      <v-icon color="primary" large>mdi-plus</v-icon>
+    </div>
+    <div id="drag-drop-area-original"></div>
+  </div>
 </template>
 
 <script>
@@ -46,13 +51,15 @@ export default {
 
   mounted () {
     this.uppy = Uppy({
+      autoProceed: true,
       restrictions: {
         maxNumberOfFiles: 1
       }
     })
 
     this.uppy.use(Dashboard, {
-      inline: true,
+      trigger: '#UppyModalOpenerBtnOriginal',
+      // inline: true,
       target: '#drag-drop-area-original',
       width: this.width,
       height: this.height,
@@ -65,12 +72,12 @@ export default {
       hideCancelButton: false,
       hideProgressAfterFinish: false,
       note: null,
-      closeModalOnClickOutside: false,
+      closeModalOnClickOutside: true,
       closeAfterFinish: false,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
-      disablePageScrollWhenModalOpen: true,
+      disablePageScrollWhenModalOpen: false,
       animateOpenClose: true,
       proudlyDisplayPoweredByUppy: false,
       showSelectedFiles: true,
@@ -86,23 +93,13 @@ export default {
       original: 1
     })
 
-    this.uppy.on('complete', (result) => {
-      console.log('Upload complete! We’ve uploaded these files: ', result.successful)
-      console.log(result)
-
-      // show toast and/or redirect
-
-      // disable name when clicking upload
-      // emit event
+    this.uppy.on('completed', (result, response) => {
+      // wait 2 sec before clearing the files after upload
+      // window.setTimeout(() => { this.uppy.reset() }, 2000)
     })
 
     this.uppy.on('upload-success', (file, response) => {
-      console.log(response.status) // HTTP status code
-      console.log(response.body) // extracted response data
-      // console.log(response.data)
-      console.log(file)
-
-      // do something with file and response
+      this.$emit('success-upload', response.body)
     })
 
     // override Uppy's hardcoded min-height of 450px
@@ -111,3 +108,19 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="css">
+  #UppyModalOpenerBtnOriginal {
+    border: 1px solid #ccc;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 250px;
+    cursor: pointer;
+  }
+  #UppyModalOpenerBtnOriginal:hover {
+    background: #eee;
+  }
+</style>

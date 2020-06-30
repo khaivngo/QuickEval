@@ -1,40 +1,64 @@
 <template>
   <v-container>
-    <v-card>
-      <v-row>
-        <v-col>
-          <h2 class="text-h4">
-            {{ selected.title }}
-          </h2>
-          <v-chip v-if="selected.version > 1" disabled text-color="#222" small class="ml-2">
-            version {{ selected.version }}
-          </v-chip>
-          <Clipboard :url="`${$DOMAIN}/observer/${selected.id}`"/>
-        </v-col>
-      </v-row>
+    <v-row justify="space-between" align="center">
+      <v-col cols="auto">
+        <h2 class="text-h3 mb-3">
+          {{ experiment.title }}
+        </h2>
+        <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
+          version {{ experiment.version }}
+        </v-chip>
+        <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
+      </v-col>
+      <v-col cols="auto">
+        <v-row>
+          <!-- <v-menu bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+              >
+                <v-icon>mdi-dots-vertical</v-icon>
+              </v-btn>
+            </template>
 
-      <v-col>
-        <v-row justify="center">
+            <v-list>
+              <v-list-item
+                @click="destroy(experiment)"
+              >
+                <v-list-item-title>Delete</v-list-item-title>
+              </v-list-item>
+
+              <v-list-item
+                @click="destroy(experiment)"
+              >
+                <v-list-item-title>Delete</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu> -->
+
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-switch
                 v-on="on"
-                class="ma-0 pa-0"
-                v-model="selected.is_public"
+                class="pa-0"
+                style="margin-top: 6px;"
+                v-model="experiment.is_public"
                 color="success"
-                @change="visibility(selected)"
+                @change="visibility(experiment)"
               >
               </v-switch>
             </template>
             <span>Toggle public visibility of experiment.</span>
           </v-tooltip>
-          <div class="caption" style="margin-top: 2px;">
+          <div class="caption" style="margin-top: 8px;">
             public
           </div>
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <v-btn :to="`/scientist/experiments/edit/${selected.id}`" v-on="on" icon class="ma-0 mr-1 ml-5">
+              <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="mr-1 ml-5">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>
@@ -43,7 +67,7 @@
 
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <v-btn @click="destroy(selected, i)" v-on="on" icon class="ma-0">
+              <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
             </template>
@@ -51,7 +75,7 @@
           </v-tooltip>
         </v-row>
       </v-col>
-    </v-card>
+    </v-row>
 
     <!-- <v-row> -->
       <!-- <div>
@@ -59,19 +83,24 @@
       </div>
     </v-row> -->
 
-    <!-- <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <v-btn :to="`/scientist/experiments/view/${selected.id}`" v-on="on" color="primary" class="ml-0">
-          <v-icon class="mr-2">mdi-chart-line</v-icon>results
-        </v-btn>
-      </template>
-      <span>View observer results</span>
-    </v-tooltip> -->
-
-    <h2 class="text-h4 mb-5 mt-12">Observer results</h2>
+    <h2 class="text-h4 mb-5 mt-12">Observers</h2>
     <!-- <p>wwdw awd awdwadadad dddd</p> -->
 
-    <v-layout align-center mb-3>
+    <v-data-table
+      v-model="selected"
+      :headers="headers"
+      :items="experimentResults"
+      item-key="id"
+      show-select
+      class="elevation-0"
+      no-data-text="0 completed"
+      :loading="loading"
+      loading-text="Loading... Please wait"
+      hide-default-footer
+      :items-per-page="100"
+    ></v-data-table>
+
+    <v-layout class="mt-3" align-center>
       <div>
         <v-btn
           v-if="experimentResults.length"
@@ -99,20 +128,6 @@
         </v-btn>
       </div>
     </v-layout>
-
-    <v-data-table
-      v-model="selected"
-      :headers="headers"
-      :items="experimentResults"
-      item-key="id"
-      show-select
-      class="elevation-0"
-      no-data-text=""
-      :loading="loading"
-      loading-text="Loading... Please wait"
-      hide-default-footer
-      :items-per-page="100"
-    ></v-data-table>
 
     <Plot v-if="experimentResults.length > 0"/>
   </v-container >
@@ -247,6 +262,32 @@ export default {
       window.open(`${this.$API_URL}/experiment-observer-meta-result/${this.$route.params.id}/${user.user_id}/export`, '_blank')
     },
 
+    visibility (exp) {
+      this.$axios.patch('/experiment/' + exp.id + '/visibility', {
+        is_public: exp.is_public
+      }).then(response => {
+        if (response.data.is_public) {
+          EventBus.$emit('success', 'Experiment is visible to the public')
+        } else {
+          EventBus.$emit('info', 'Experiment is hidden from the public.')
+        }
+      })
+    },
+
+    destroy (exp, arrayIndex) {
+      if (confirm('Do you want to delete the experiment? You will no longer be able to retrive observer data.')) {
+        this.$axios.delete(`/experiment/${exp.id}`).then(response => {
+          if (response.data === 'deleted_experiment') {
+            this.experiments.splice(arrayIndex, 1)
+
+            EventBus.$emit('success', 'Experiment has been deleted successfully')
+          } else {
+            EventBus.$emit('error', 'Could not delete experiment')
+          }
+        })
+      }
+    },
+
     wipeAllResults () {
       if (confirm('Do you want to delete ALL results data for this experiment?')) {
         this.$axios.delete(`/experiment-result/${this.$route.params.id}/wipe`).then(response => {
@@ -263,15 +304,3 @@ export default {
   }
 }
 </script>
-
-<style scoped lang="css">
-  .qe-observer-results-panels {
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-
-  .qe-box {
-    border-bottom: 1px solid #ddd;
-  }
-</style>
