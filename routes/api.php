@@ -60,6 +60,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get(     '/image-sets',                  'PictureSetsController@index'       );
     Route::get(     '/picture-sets',                'PictureSetsController@index'       );
     Route::get(     '/picture-set/{id}',            'PictureSetsController@find'        );
+    Route::patch(   '/picture-set/{picture_set}',   'PictureSetsController@update'      );
     Route::delete(  '/picture-set/{id}',            'PictureSetsController@destroy'     );
 
     # pictures

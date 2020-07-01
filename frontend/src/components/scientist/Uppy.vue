@@ -88,13 +88,14 @@ export default {
       original: 0
     })
 
-    this.uppy.on('complete', (result) => {
+    this.uppy.on('complete', (result, test) => {
       // wait 2 sec before clearing the files after upload
       // window.setTimeout(() => { this.uppy.reset() }, 2000)
+      // console.log(result)
     })
 
     this.uppy.on('upload-success', (file, response) => {
-      this.$emit('success-upload', response.body)
+      this.$emit('uploaded', response.body)
     })
 
     // override Uppy's hardcoded min-height of 450px

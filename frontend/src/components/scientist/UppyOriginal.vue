@@ -99,7 +99,7 @@ export default {
     })
 
     this.uppy.on('upload-success', (file, response) => {
-      this.$emit('success-upload', response.body)
+      this.$emit('uploaded', response.body)
     })
 
     // override Uppy's hardcoded min-height of 450px

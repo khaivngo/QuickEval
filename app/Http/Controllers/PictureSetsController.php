@@ -60,18 +60,20 @@ class PictureSetsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\PictureSet  $image_set
+     * @param  \App\PictureSet  $set
      * @return \Illuminate\Http\Response
      */
-    public function update (Request $request, PictureSet $image_set)
+    public function update (Request $request, PictureSet $picture_set)
     {
-        if ($image_set->user_id !== auth()->user()->id) {
+        if ($picture_set->user_id !== auth()->user()->id) {
           return response()->json('Unauthorized', 401);
         }
 
-        $image_set->update();
+        $picture_set->title = $request->title;
 
-        return response($image_set, 200);
+        $picture_set->update();
+
+        return response($picture_set, 200);
     }
 
     /**

@@ -1,215 +1,243 @@
 <template>
-  <div class="mb-12" v-if="!loading">
-    <v-row class="mb-12 mt-12">
-      <h2 class="text-h3">
-        {{ imageSet.title }}
-      </h2>
-      <v-spacer></v-spacer>
-      <v-menu offset-y left>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            icon
-            v-bind="attrs"
-            v-on="on"
-            :loading="deleting"
-          >
-            <v-icon>mdi-dots-horizontal</v-icon>
-          </v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item @click="destroy">
-            <v-list-item-title>Delete</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-row>
-    <!-- <v-row class="ma-0 mb-12 pa-0">
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn @click="destroy" v-on="on" icon class="ma-0">
-            <v-icon>mdi-delete</v-icon>
-          </v-btn>
-        </template>
-        <span>Delete image set</span>
-      </v-tooltip>
-    </v-row> -->
-
-    <v-row class="ma-0 pa-0">
-      <v-text-field
-        ref="title"
-        v-model="imageSet.title"
-        label="Title"
-        outlined
-      ></v-text-field>
-
-      <v-btn
-        :disabled="imageSet.name === '' || creating"
-        :loading="creating"
-        color="success"
-        class="ml-3"
-      >
-        save
-      </v-btn>
-    </v-row>
-
+  <div class="mb-12">
     <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
-    <div class="mt-12">
-      <v-row v-if="reproductions.length > 0">
-        <h2 class="text-h4">Images</h2>
-
-        <Uppy :imagesetid="imageSet.id">
-          <v-btn color="primary" id="UppyModalOpenerBtn" outlined icon text class="ml-6 mt-1">
-            <v-icon>mdi-plus</v-icon>
-            <!-- add file -->
-          </v-btn>
-        </Uppy>
-      </v-row>
-
-      <v-row v-if="reproductions.length > 0" wrap>
-
-        <!-- 1. add images button -->
-        <!-- 2. when delete/add reflect in view and menu -->
-        <!-- 3. throttle/debounce title edit -->
-        <v-col
-          v-for="(image, i) in reproductions" :key="i"
-          xs="6" sm="6" md="3" lg="3" xl="3"
-          class="pa-1"
+    <div v-if="!loading">
+      <v-row class="mb-12 mt-12" align="center">
+        <h2 class="text-h3">
+          {{ imageSet.title }}
+          <!-- <v-icon color="primary">mdi-pencil</v-icon> -->
+          <!-- <v-btn color="primary" outlined icon text class="ml-4 mt-1" @click.stop="editTitle = true">
+            <v-icon>mdi-pencil</v-icon>
+            add file
+          </v-btn> -->
+        </h2>
+        <v-dialog
+          v-model="editTitle"
+          width="500"
         >
-          <div style="display: flex; justify-content: flex-end;">
-            <v-menu offset-y left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                  :loading="deleting"
-                >
-                  <v-icon>mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn color="primary" outlined icon text class="ml-5 mt-1" v-on="on">
+              <v-icon>mdi-pencil</v-icon>
+              <!-- add file -->
+            </v-btn>
+          </template>
 
-              <v-list>
-                <v-list-item @click="deleteImage(image.id, i)">
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
+          <v-card>
+            <v-card-title>
+              <!-- <span class="headline">Edit title</span> -->
+            </v-card-title>
 
-          <v-img
-            :src="$UPLOADS_FOLDER + image.path"
-            aspect-ratio="1"
-            class="grey lighten-2"
-          >
-            <template v-slot:placeholder>
-              <v-layout
-                fill-height
-                align-center
-                justify-center
-                ma-0
+            <v-card-text>
+              <v-container class="pt-6" fluid>
+                <v-text-field
+                  ref="title"
+                  v-model="imageSet.title"
+                  label="Title"
+                  outlined
+                  dense
+                ></v-text-field>
+              </v-container>
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                text
+                @click="editTitle = false"
               >
-                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-              </v-layout>
-            </template>
-          </v-img>
+                Cancel
+              </v-btn>
 
-          <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
-            {{ image.name }}
-          </h5>
-        </v-col>
+              <v-spacer></v-spacer>
+
+              <v-btn
+                :disabled="imageSet.title === '' || creating"
+                :loading="creating"
+                color="success"
+                class="ml-3"
+                @click="updateTitle"
+              >
+                save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-spacer></v-spacer>
+
+        <v-menu offset-y left>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              v-bind="attrs"
+              v-on="on"
+              :loading="deleting"
+            >
+              <v-icon>mdi-dots-horizontal</v-icon>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <v-list-item @click="destroy">
+              <v-list-item-title>Delete</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-row>
-      <div v-else>
-        <v-row class="mt-12 mb-3">
-          <h2 class="text-h4">Images</h2>
-        </v-row>
 
-        <v-row>
-          <Uppy :imagesetid="imageSet.id" style="width: 100%;">
-            <div id="UppyModalOpenerBtn" class="default">
-              <v-icon color="primary" large>mdi-plus</v-icon>
-            </div>
+      <div class="mt-12">
+        <v-row v-if="reproductions.length > 0">
+          <h2 class="text-h4">Images</h2>
+
+          <Uppy :imagesetid="imageSet.id" @uploaded="addImage">
+            <v-btn color="primary" id="UppyModalOpenerBtn" outlined icon text class="ml-6 mt-1">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
           </Uppy>
         </v-row>
-      </div>
-    </div>
 
-    <div class="mt-12 pt-12">
-      <v-row>
-        <h3 class="text-h4" v-if="original.length > 0">Reference image</h3>
-      </v-row>
-
-      <v-row v-if="original.length > 0">
-        <v-col
-          xs="6" sm="6" md="3" lg="3" xl="3"
-          class="pa-1"
-        >
-          <!-- <v-icon @click="deleteImage(original[0].id)">
-            mdi-dots-horizontal
-          </v-icon> -->
-          <div style="display: flex; justify-content: flex-end;">
-            <v-menu offset-y left>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-dots-horizontal</v-icon>
-                </v-btn>
-              </template>
-
-              <v-list>
-                <v-list-item @click="deleteImage(original[0].id)">
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-          </div>
-
-          <v-img
-            :src="$UPLOADS_FOLDER + original[0].path"
-            aspect-ratio="1"
-            class="grey lighten-2"
+        <v-row v-if="reproductions.length > 0" wrap>
+          <v-col
+            v-for="(image, i) in reproductions" :key="i"
+            xs="6" sm="6" md="3" lg="3" xl="3"
+            class="pa-1"
           >
-            <template v-slot:placeholder>
-              <v-layout
-                fill-height
-                align-center
-                justify-center
-                ma-0
-              >
-                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-              </v-layout>
-            </template>
-          </v-img>
-          <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
-            {{ original[0].name }}
-          </h5>
-        </v-col>
-      </v-row>
-      <div v-else class="ma-0 pa-0">
-        <v-row mb-3>
-          <h2 class="text-h4 mb-3">
-            Reference image
-            <span class="body-1">(optional)</span>
-          </h2>
+            <div style="display: flex; justify-content: flex-end;">
+              <v-menu offset-y left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    :loading="deleting"
+                  >
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-list>
+                  <v-list-item @click="deleteImage(image.id, i)">
+                    <v-list-item-title>Delete</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+
+            <v-img
+              :src="$UPLOADS_FOLDER + image.path"
+              aspect-ratio="1"
+              class="grey lighten-2"
+            >
+              <template v-slot:placeholder>
+                <v-layout
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
+                >
+                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                </v-layout>
+              </template>
+            </v-img>
+
+            <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
+              {{ image.name }}
+            </h5>
+          </v-col>
+        </v-row>
+        <div v-else>
+          <v-row class="mt-12 mb-3">
+            <h2 class="text-h4">Images</h2>
+          </v-row>
+
+          <v-row>
+            <Uppy :imagesetid="imageSet.id" @uploaded="addImage" style="width: 100%;">
+              <div id="UppyModalOpenerBtn" class="default">
+                <v-icon color="primary" large>mdi-plus</v-icon>
+              </div>
+            </Uppy>
+          </v-row>
+        </div>
+      </div>
+
+      <div class="mt-12 pt-12">
+        <v-row>
+          <h3 class="text-h4" v-if="original.length > 0">Reference image</h3>
         </v-row>
 
-        <v-row class="mb-3">
-          <p>
-            <!-- Upload the original, uncompressed, image of the image set.<br> -->
-            During experiment creation you'll be able to select whether or not this image should be shown to the observer.
-          </p>
-        </v-row>
+        <v-row v-if="original.length > 0">
+          <v-col
+            xs="6" sm="6" md="3" lg="3" xl="3"
+            class="pa-1"
+          >
+            <!-- <v-icon @click="deleteImage(original[0].id)">
+              mdi-dots-horizontal
+            </v-icon> -->
+            <div style="display: flex; justify-content: flex-end;">
+              <v-menu offset-y left>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    <v-icon>mdi-dots-horizontal</v-icon>
+                  </v-btn>
+                </template>
 
-        <v-row class="mb-5">
-          <UppyOriginal :imagesetid="imageSet.id" @success-upload="add" :width="300" :height="200"/>
+                <v-list>
+                  <v-list-item @click="deleteImage(original[0].id)">
+                    <v-list-item-title>Delete</v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
+            </div>
+
+            <v-img
+              :src="$UPLOADS_FOLDER + original[0].path"
+              aspect-ratio="1"
+              class="grey lighten-2"
+            >
+              <template v-slot:placeholder>
+                <v-layout
+                  fill-height
+                  align-center
+                  justify-center
+                  ma-0
+                >
+                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                </v-layout>
+              </template>
+            </v-img>
+            <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
+              {{ original[0].name }}
+            </h5>
+          </v-col>
         </v-row>
+        <div v-else class="ma-0 pa-0">
+          <v-row mb-3>
+            <h2 class="text-h4 mb-3">
+              Reference image
+              <span class="body-1">(optional)</span>
+            </h2>
+          </v-row>
+
+          <v-row class="mb-3">
+            <p>
+              <!-- Upload the original, uncompressed, image of the image set.<br> -->
+              During experiment creation you'll be able to select whether or not this image should be shown to the observer.
+            </p>
+          </v-row>
+
+          <v-row class="mb-5">
+            <UppyOriginal :imagesetid="imageSet.id" @uploaded="add" :width="300" :height="200"/>
+          </v-row>
+        </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -227,12 +255,13 @@ export default {
   data () {
     return {
       imageSetId: null,
-      imageSet: { name: '' },
+      imageSet: {},
       original: [],
       reproductions: [],
       creating: false,
       loading: false,
-      deleting: false
+      deleting: false,
+      editTitle: false
     }
   },
 
@@ -243,7 +272,15 @@ export default {
 
   methods: {
     add (files) {
-      this.imageSet.pictures.push(files[0])
+      this.original.push(files[0])
+    },
+
+    addImage (files) {
+      this.reproductions.push(files[0])
+    },
+
+    removeImage () {
+      //
     },
 
     deleteImage (id, index) {
@@ -268,6 +305,17 @@ export default {
         this.reproductions = this.imageSet.pictures.filter(image => image.is_original === 0)
 
         this.loading = false
+      })
+    },
+
+    updateTitle () {
+      this.creating = true
+
+      this.$axios.patch(`/picture-set/${this.imageSetId}`, { title: this.imageSet.title }).then((response) => {
+        this.creating = false
+        this.editTitle = false
+      }).catch(() => {
+        this.creating = false
       })
     },
 
