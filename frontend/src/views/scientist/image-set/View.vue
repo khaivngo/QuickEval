@@ -189,7 +189,7 @@
                 </template>
 
                 <v-list>
-                  <v-list-item @click="deleteImage(original[0].id)">
+                  <v-list-item @click="deleteOriginal(original[0].id)">
                     <v-list-item-title>Delete</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -272,22 +272,31 @@ export default {
 
   methods: {
     add (files) {
-      this.original.push(files[0])
+      this.original.unshift(files[0])
     },
 
     addImage (files) {
-      this.reproductions.push(files[0])
-    },
-
-    removeImage () {
-      //
+      this.reproductions.unshift(files[0])
     },
 
     deleteImage (id, index) {
       // this.deleting = true
       if (confirm('Delete image?')) {
         this.$axios.delete(`/picture/${id}`).then((response) => {
-          // this.imageSet.splice(index, 1)
+          this.reproductions.splice(index, 1)
+          EventBus.$emit('success', 'Image has been deleted successfully')
+          this.deleting = false
+        }).catch(() => {
+          this.deleting = false
+        })
+      }
+    },
+
+    deleteOriginal (id) {
+      // this.deleting = true
+      if (confirm('Delete image?')) {
+        this.$axios.delete(`/picture/${id}`).then((response) => {
+          this.original.splice(0, 1)
           EventBus.$emit('success', 'Image has been deleted successfully')
           this.deleting = false
         }).catch(() => {
@@ -337,25 +346,7 @@ export default {
 </script>
 
 <style scoped lang="css">
-  .v-input .v-input__control .v-input__slot .v-text-field__slot input {
-    max-height: 200px !important;
-  }
-  /*.v-text-field .v-input__control .v-input__slot {
-    max-height: 200px !important;
-    display: flex !important;
-    align-items: center !important;
-  }*/
   .qe-image-name {
     word-wrap: break-word;
-  }
-
-  .qe-actions {
-    /*border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-    border-top: 1px solid #ddd;*/
-    display: flex;
-    background-color: #efefef;
-    padding: 4px;
-    justify-content: space-between;
   }
 </style>
