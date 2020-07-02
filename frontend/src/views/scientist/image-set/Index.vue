@@ -1,47 +1,49 @@
 <template>
   <v-row class="fill-height" no-gutters>
-    <v-col class="fill-height" style="background: #fff; border-right: 1px solid #ccc; max-width: 300px;">
-      <v-list-item class="mt-2">
-        <v-list-item-content>
-          <v-list-item-title>
-            <v-btn
-              :loading="creating"
-              class="pl-2"
-              text
-              @click="create"
+    <v-col class="fill-height" style="background: #ddd; max-width: 256px;">
+      <v-navigation-drawer permanent app style="z-index: 1; margin-top: 64px; margin-left: 256px; max-width: 300px;">
+        <v-list-item class="mt-2">
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-btn
+                :loading="creating"
+                class="pl-2"
+                text
+                @click="create"
+              >
+                <v-icon color="primary" class="pa-0 ma-0">mdi-plus</v-icon>
+                Create new
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list
+          dense
+        >
+          <v-list-item-group v-model="active" color="primary">
+            <v-list-item
+              v-for="(imageSet, i) in imageSets"
+              :key="i"
+              link
+              @click="$router.push(`/scientist/image-sets/view/${imageSet.id}`)"
+              class="pl-8"
             >
-              <v-icon color="primary" class="pa-0 ma-0">mdi-plus</v-icon>
-              Create new
-            </v-btn>
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ imageSet.title }}
+                </v-list-item-title>
+                <!-- <v-list-item-subtitle>{{ experiment.completed_results_count }} completed</v-list-item-subtitle> -->
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
 
-      <v-list
-        dense
-      >
-        <v-list-item-group v-model="active" color="primary">
-          <v-list-item
-            v-for="(imageSet, i) in imageSets"
-            :key="i"
-            link
-            @click="$router.push(`/scientist/image-sets/view/${imageSet.id}`)"
-            class="pl-8"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ imageSet.title }}
-              </v-list-item-title>
-              <!-- <v-list-item-subtitle>{{ experiment.completed_results_count }} completed</v-list-item-subtitle> -->
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-
-      <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
-      <div class="caption ma-4" v-if="loading === false && imageSets.length === 0">
-        You have no image sets. Yet...
-      </div>
+        <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
+        <div class="caption ma-4" v-if="loading === false && imageSets.length === 0">
+          You have no image sets. Yet...
+        </div>
+      </v-navigation-drawer>
     </v-col>
 
     <v-col class="pr-12 pl-12 pt-6">

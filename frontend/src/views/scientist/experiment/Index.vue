@@ -1,46 +1,49 @@
 <template>
   <v-row class="fill-height" no-gutters>
-    <v-col cols="3" class="fill-height" style="background: #fff; border-right: 1px solid #ccc; max-width: 300px;">
-      <v-list-item class="mt-2">
-        <v-list-item-content>
-          <v-list-item-title>
-            <v-btn text class="pl-2" :to="'/scientist/experiments/create'">
-              <v-icon color="primary" class="pa-0">mdi-plus</v-icon> Create new
-            </v-btn>
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+    <v-col cols="3" class="fill-height" style="background: #ddd; max-width: 256px;">
+      <!-- this navigation drawer is position fixed, so the <v-col> parent must be set to the same width -->
+      <v-navigation-drawer permanent app style="z-index: 1; margin-top: 64px; margin-left: 256px; max-width: 300px;">
+        <v-list-item class="mt-2">
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-btn text class="pl-2" :to="'/scientist/experiments/create'">
+                <v-icon color="primary" class="pa-0">mdi-plus</v-icon> Create new
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
 
-      <v-list
-        dense
-      >
-        <v-list-item-group v-model="active" color="primary">
-          <v-list-item
-            v-for="(experiment, i) in experiments"
-            :key="i"
-            link
-            @click="$router.push(`/scientist/experiments/view/${experiment.id}`)"
-            class="pl-8"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ experiment.title }}
-                <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
-                  version {{ experiment.version }}
-                </v-chip>
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ experiment.completed_results_count }} completed
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+        <v-list
+          dense
+        >
+          <v-list-item-group v-model="active" color="primary">
+            <v-list-item
+              v-for="(experiment, i) in experiments"
+              :key="i"
+              link
+              @click="$router.push(`/scientist/experiments/view/${experiment.id}`)"
+              class="pl-8"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ experiment.title }}
+                  <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
+                    version {{ experiment.version }}
+                  </v-chip>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ experiment.completed_results_count }} completed
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
 
-      <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
-      <div class="caption pa-4" v-if="loading === false && experiments.length === 0">
-        You have no experiments. Yet...
-      </div>
+        <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
+        <div class="caption pa-4" v-if="loading === false && experiments.length === 0">
+          You have no experiments. Yet...
+        </div>
+      </v-navigation-drawer>
     </v-col>
 
     <v-col class="pr-12 pl-12 pt-6">

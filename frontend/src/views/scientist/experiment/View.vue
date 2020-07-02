@@ -1,135 +1,139 @@
 <template>
   <v-container>
-    <v-row justify="space-between" align="center">
-      <v-col cols="auto">
-        <h2 class="text-h3 mb-3">
-          {{ experiment.title }}
-        </h2>
-        <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
-          version {{ experiment.version }}
-        </v-chip>
-        <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
-      </v-col>
-      <v-col cols="auto">
-        <v-row>
-          <!-- <v-menu bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-              >
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </template>
+    <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
 
-            <v-list>
-              <v-list-item
-                @click="destroy(experiment)"
-              >
-                <v-list-item-title>Delete</v-list-item-title>
-              </v-list-item>
+    <div v-if="!loading">
+      <v-row justify="space-between" align="center">
+        <v-col cols="auto">
+          <h2 class="text-h3 mb-3">
+            {{ experiment.title }}
+          </h2>
+          <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
+            version {{ experiment.version }}
+          </v-chip>
+          <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
+        </v-col>
+        <v-col cols="auto">
+          <v-row>
+            <!-- <v-menu bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
 
-              <v-list-item
-                @click="destroy(experiment)"
-              >
-                <v-list-item-title>Delete</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu> -->
+              <v-list>
+                <v-list-item
+                  @click="destroy(experiment)"
+                >
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
 
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-switch
-                v-on="on"
-                class="pa-0"
-                style="margin-top: 6px;"
-                v-model="experiment.is_public"
-                color="success"
-                @change="visibility(experiment)"
-              >
-              </v-switch>
-            </template>
-            <span>Toggle public visibility of experiment.</span>
-          </v-tooltip>
-          <div class="caption" style="margin-top: 8px;">
-            public
-          </div>
+                <v-list-item
+                  @click="destroy(experiment)"
+                >
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu> -->
 
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="mr-1 ml-5">
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-            </template>
-            <span>Edit experiment</span>
-          </v-tooltip>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-switch
+                  v-on="on"
+                  class="pa-0"
+                  style="margin-top: 6px;"
+                  v-model="experiment.is_public"
+                  color="success"
+                  @change="visibility(experiment)"
+                >
+                </v-switch>
+              </template>
+              <span>Toggle public visibility of experiment.</span>
+            </v-tooltip>
+            <div class="caption" style="margin-top: 8px;">
+              public
+            </div>
 
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </template>
-            <span>Delete experiment</span>
-          </v-tooltip>
-        </v-row>
-      </v-col>
-    </v-row>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="mr-1 ml-5">
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit experiment</span>
+            </v-tooltip>
 
-    <!-- <v-row> -->
-      <!-- <div>
-        completed: {{ selected.completed_results_count }}
-      </div>
-    </v-row> -->
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </template>
+              <span>Delete experiment</span>
+            </v-tooltip>
+          </v-row>
+        </v-col>
+      </v-row>
 
-    <h2 class="text-h4 mb-5 mt-12">Observers</h2>
-    <!-- <p>wwdw awd awdwadadad dddd</p> -->
+      <!-- <v-row> -->
+        <!-- <div>
+          completed: {{ selected.completed_results_count }}
+        </div>
+      </v-row> -->
 
-    <v-data-table
-      v-model="selected"
-      :headers="headers"
-      :items="experimentResults"
-      item-key="id"
-      show-select
-      class="elevation-0"
-      no-data-text="0 completed"
-      :loading="loading"
-      loading-text="Loading... Please wait"
-      hide-default-footer
-      :items-per-page="100"
-    ></v-data-table>
+      <h2 class="text-h4 mb-5 mt-12">Observers</h2>
+      <!-- <p>wwdw awd awdwadadad dddd</p> -->
 
-    <v-layout class="mt-3" align-center>
-      <div>
-        <v-btn
-          v-if="experimentResults.length"
-          :disabled="selected.length === 0"
-          @click="exportResults()"
-          :loading="exporting"
-          color="primary"
-          type="submit"
-        >
-          Export
-          <v-icon :size="20" class="ml-2">
-            mdi-download
-          </v-icon>
-        </v-btn>
+      <v-data-table
+        v-model="selected"
+        :headers="headers"
+        :items="experimentResults"
+        item-key="id"
+        show-select
+        class="elevation-0"
+        no-data-text="0 completed"
+        :loading="loading"
+        loading-text="Loading... Please wait"
+        hide-default-footer
+        :items-per-page="100"
+      ></v-data-table>
 
-        <v-btn
-          v-if="observerMetas.length"
-          @click="exportObserverMetasForExperiment()"
-          color="primary text-none ma-0 ml-2"
-        >
-          Export ALL demographics
-          <v-icon :size="20" class="ml-2">
-            mdi-download
-          </v-icon>
-        </v-btn>
-      </div>
-    </v-layout>
+      <v-layout class="mt-3" align-center>
+        <div>
+          <v-btn
+            v-if="experimentResults.length"
+            :disabled="selected.length === 0"
+            @click="exportResults()"
+            :loading="exporting"
+            color="primary"
+            type="submit"
+          >
+            Export
+            <v-icon :size="20" class="ml-2">
+              mdi-download
+            </v-icon>
+          </v-btn>
 
-    <Plot v-if="experimentResults.length > 0"/>
+          <v-btn
+            v-if="observerMetas.length"
+            @click="exportObserverMetasForExperiment()"
+            color="primary text-none ma-0 ml-2"
+          >
+            Export ALL demographics
+            <v-icon :size="20" class="ml-2">
+              mdi-download
+            </v-icon>
+          </v-btn>
+        </div>
+      </v-layout>
+
+      <Plot v-if="experimentResults.length > 0"/>
+    </div>
   </v-container >
 </template>
 
@@ -236,7 +240,9 @@ export default {
 
           this.loading = false
         })
-        .catch(err => console.log(err))
+        .catch(() => {
+          this.loading = false
+        })
     },
 
     getExperimentResults () {

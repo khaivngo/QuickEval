@@ -51,8 +51,8 @@ export default new VueRouter({
           component: loadView('scientist/image-set/Index'),
           children: [
             // { path: 'create',   component: loadView('scientist/image-set/Create') },
-            { path: 'view/:id', component: loadView('scientist/image-set/View') },
-            { path: 'edit/:id', component: loadView('scientist/image-set/Edit') }
+            { path: 'view/:id', component: loadView('scientist/image-set/View') }
+            // { path: 'edit/:id', component: loadView('scientist/image-set/Edit') }
           ]
         }
         // { path: 'experiments/view/:id',        component: loadView('scientist/experiment/results/Index') },

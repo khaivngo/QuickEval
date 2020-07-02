@@ -1,30 +1,29 @@
 <template>
   <div class="pl-12 pr-12 mt-6">
-    <v-layout mb-5 mt-5>
-      <h2 class="display-1">
-        Dashboard
-      </h2>
-    </v-layout>
-    <v-card>
-      <v-container>
-        <table class="table bordered hovered">
-          <thead>
-            <tr>
-              <th class="overflow-wrap">Experiment Title</th>
-              <th class="overflow-wrap">Visitors</th>
-              <th class="overflow-wrap">Visitors Completed</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(experiment, i) in experiments" :key="i">
-              <td class="overflow-wrap">{{ experiment.title }}</td>
-              <td>{{ experiment.results_count }}</td>
-              <td>{{ experiment.completed_results_count }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </v-container>
-    </v-card>
+    <v-container fluid>
+      <div class="mb-8 mt-6">
+        <h2 class="display-1">
+          Dashboard
+        </h2>
+      </div>
+
+      <table class="table bordered hovered">
+        <thead>
+          <tr>
+            <th class="overflow-wrap">Experiment Title</th>
+            <th class="overflow-wrap">Visitors</th>
+            <th class="overflow-wrap">Visitors Completed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(experiment, i) in experiments" :key="i">
+            <td class="overflow-wrap">{{ experiment.title }}</td>
+            <td>{{ experiment.results_count }}</td>
+            <td>{{ experiment.completed_results_count }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </v-container>
   </div>
 </template>
 
