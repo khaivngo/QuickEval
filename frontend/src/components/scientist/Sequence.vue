@@ -74,17 +74,17 @@
       </v-slide-x-transition>
     </v-timeline>
 
-    <v-layout class="mb-5 ml-0 pl-0" wrap>
+    <v-row class="mb-5 pa-0 ma-0">
       <!-- <v-flex style="background: red;"> -->
         <v-menu bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
-              class="text-none mr-4 ml-0"
+              class="mr-4 ml-0"
               color="info"
               v-on="on"
             >
-              Add instruction
-              <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
+              <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon>
+              instruction
             </v-btn>
           </template>
 
@@ -193,12 +193,11 @@
         <v-menu bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
-              class="text-none"
               color="info"
               v-on="on"
             >
-              Add image set
-              <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
+              <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon>
+              image set
             </v-btn>
           </template>
 
@@ -223,7 +222,7 @@
           </v-list>
         </v-menu>
       <!-- </v-flex> -->
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 

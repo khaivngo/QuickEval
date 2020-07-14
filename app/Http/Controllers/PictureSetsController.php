@@ -95,6 +95,6 @@ class PictureSetsController extends Controller
         Storage::deleteDirectory('public/' . $id);
       }
 
-      return response('deleted_picture_set', 201);
+      return response($picture_set, 201);
     }
 }

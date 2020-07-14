@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
+    <!-- <p v-if="loading" class="text-center">It's here somewhere...</p> -->
 
     <div v-if="!loading">
       <v-row justify="space-between" align="center">
@@ -15,32 +16,6 @@
         </v-col>
         <v-col cols="auto">
           <v-row>
-            <!-- <v-menu bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-
-              <v-list>
-                <v-list-item
-                  @click="destroy(experiment)"
-                >
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item>
-
-                <v-list-item
-                  @click="destroy(experiment)"
-                >
-                  <v-list-item-title>Delete</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu> -->
-
             <v-tooltip top>
               <template v-slot:activator="{ on }">
                 <v-switch
@@ -55,27 +30,42 @@
               </template>
               <span>Toggle public visibility of experiment.</span>
             </v-tooltip>
-            <div class="caption" style="margin-top: 8px;">
+            <div class="caption mr-6" style="margin-top: 8px;">
               public
             </div>
 
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn :to="`/scientist/experiments/edit/${experiment.id}`" v-on="on" icon class="mr-1 ml-5">
-                  <v-icon>mdi-pencil</v-icon>
+            <v-menu offset-y left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  :loading="deleting"
+                >
+                  <v-icon>mdi-dots-horizontal</v-icon>
                 </v-btn>
               </template>
-              <span>Edit experiment</span>
-            </v-tooltip>
 
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn @click="destroy(experiment, i)" v-on="on" icon class="ma-0">
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </template>
-              <span>Delete experiment</span>
-            </v-tooltip>
+              <v-list>
+                <v-list-item @click="$router.push(`/scientist/experiments/edit/${experiment.id}`)">
+                  <v-list-item-icon class="mr-4">
+                    <v-icon>mdi-pencil</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="pr-6">Edit experiment</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item @click="destroy(experiment)">
+                  <v-list-item-icon class="mr-4">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="pr-6">Delete experiment</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-row>
         </v-col>
       </v-row>
@@ -95,7 +85,6 @@
         :items="experimentResults"
         item-key="id"
         show-select
-        class="elevation-0"
         no-data-text="0 completed"
         :loading="loading"
         loading-text="Loading... Please wait"
@@ -103,7 +92,7 @@
         :items-per-page="100"
       ></v-data-table>
 
-      <v-layout class="mt-3" align-center>
+      <v-row class="mt-3" align="center">
         <div>
           <v-btn
             v-if="experimentResults.length"
@@ -112,6 +101,7 @@
             :loading="exporting"
             color="primary"
             type="submit"
+            class="mt-6 ml-7"
           >
             Export
             <v-icon :size="20" class="ml-2">
@@ -124,29 +114,29 @@
             @click="exportObserverMetasForExperiment()"
             color="primary text-none ma-0 ml-2"
           >
-            Export ALL demographics
+            Export demographics
             <v-icon :size="20" class="ml-2">
               mdi-download
             </v-icon>
           </v-btn>
         </div>
-      </v-layout>
+      </v-row>
 
-      <Plot v-if="experimentResults.length > 0"/>
+      <Statistics v-if="experimentResults.length > 0"/>
     </div>
   </v-container >
 </template>
 
 <script>
 import EventBus from '@/eventBus.js'
-import Plot from '@/components/Plot'
+import Statistics from '@/components/Statistics'
 import { formatDate } from '@/helpers.js'
 
 import Clipboard from '@/components/Clipboard'
 
 export default {
   components: {
-    Plot,
+    Statistics,
     Clipboard
   },
 
@@ -154,6 +144,7 @@ export default {
     return {
       loading: false,
       exporting: false,
+      deleting: false,
 
       headers: [
         { text: 'Observer ID', value: 'user_id', sortable: false, desc: '' },
@@ -175,10 +166,6 @@ export default {
 
       observerMetas: []
     }
-  },
-
-  watch: {
-
   },
 
   created () {
@@ -280,13 +267,13 @@ export default {
       })
     },
 
-    destroy (exp, arrayIndex) {
+    destroy (exp) {
       if (confirm('Do you want to delete the experiment? You will no longer be able to retrive observer data.')) {
         this.$axios.delete(`/experiment/${exp.id}`).then(response => {
-          if (response.data === 'deleted_experiment') {
-            this.experiments.splice(arrayIndex, 1)
-
+          if (response.data) {
+            EventBus.$emit('experiment-deleted', response.data)
             EventBus.$emit('success', 'Experiment has been deleted successfully')
+            this.$router.push('/scientist/experiments')
           } else {
             EventBus.$emit('error', 'Could not delete experiment')
           }

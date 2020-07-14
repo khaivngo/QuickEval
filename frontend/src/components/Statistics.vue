@@ -4,13 +4,13 @@
       Statistics
     </h2>
 
-    <ScatterPlot :series="plotData"/>
+    <ScatterPlot :series="plotData" v-if="results.resultsForEachImageSet.length > 0"/>
 
     <div v-if="rawDataMap.length === 0 && zScoreMap.length === 0">
       Not enough data yet to calculate statistics.
     </div>
 
-    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0" v-model="activeTab" style="margin-top: 100px;">
+    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0" v-model="activeTab" style="margin-top: 100px;">
       <v-tab
         v-for="(imageSet, index) in results.imageSets"
         :key="index"
@@ -29,7 +29,7 @@
             <h3 class="text-h6 mb-3 mt-8">Raw data</h3>
             <!-- {{ results.imageSets[f].title }} -->
 
-            <table class="table bordered hovered">
+            <table class="table bordered hovered body-1">
               <thead>
                 <tr>
                   <th>
@@ -160,7 +160,9 @@ export default {
   },
   data () {
     return {
-      results: [],
+      results: {
+        resultsForEachImageSet: []
+      },
       resultsArray: null,
       imageSets: [],
       rawDataMap: [],
@@ -191,11 +193,13 @@ export default {
           }
         }
 
-        this.results.resultsForEachImageSet[i].forEach((result, index) => {
-          let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
-          let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
-          this.resultsArray[row][column] += 1 // result['won'] here?
-        })
+        if (this.results.resultsForEachImageSet.length) {
+          this.results.resultsForEachImageSet[i].forEach((result, index) => {
+            let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
+            let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
+            this.resultsArray[row][column] += 1 // result['won'] here?
+          })
+        }
 
         // save all raw data maps
         this.rawDataMap.push(this.resultsArray)

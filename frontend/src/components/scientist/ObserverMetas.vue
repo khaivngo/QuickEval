@@ -6,9 +6,8 @@
           <v-btn
             color="info"
             v-on="on"
-            class="text-none"
           >
-            Add input field <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
+            <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon> input field
           </v-btn>
         </template>
 

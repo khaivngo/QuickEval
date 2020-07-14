@@ -82,15 +82,20 @@
 
           <v-list>
             <v-list-item @click="destroy">
-              <v-list-item-title>Delete</v-list-item-title>
+              <v-list-item-icon class="mr-4">
+                <v-icon>mdi-delete</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title class="pr-6">Delete</v-list-item-title>
+              </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-menu>
       </v-row>
 
       <div class="mt-12">
-        <v-row v-if="reproductions.length > 0">
-          <h2 class="text-h4">Images</h2>
+        <v-row v-if="reproductions.length > 0" align="center">
+          <h2 class="text-h6">Images</h2>
 
           <Uppy :imagesetid="imageSet.id" @uploaded="addImage">
             <v-btn color="primary" id="UppyModalOpenerBtn" outlined icon text class="ml-6 mt-1">
@@ -106,24 +111,7 @@
             class="pa-1"
           >
             <div style="display: flex; justify-content: flex-end;">
-              <v-menu offset-y left>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                    :loading="deleting"
-                  >
-                    <v-icon>mdi-dots-horizontal</v-icon>
-                  </v-btn>
-                </template>
-
-                <v-list>
-                  <v-list-item @click="deleteImage(image.id, i)">
-                    <v-list-item-title>Delete</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              <ActionMenu :image="image" :index="i" @deleted="deleteImage"/>
             </div>
 
             <v-img
@@ -149,8 +137,8 @@
           </v-col>
         </v-row>
         <div v-else>
-          <v-row class="mt-12 mb-3">
-            <h2 class="text-h4">Images</h2>
+          <v-row class="mt-12 mb-3" align="center">
+            <h2 class="text-h6">Images</h2>
           </v-row>
 
           <v-row>
@@ -164,8 +152,8 @@
       </div>
 
       <div class="mt-12 pt-12">
-        <v-row>
-          <h3 class="text-h4" v-if="original.length > 0">Reference image</h3>
+        <v-row align="center">
+          <h3 class="text-h6" v-if="original.length > 0">Reference image</h3>
         </v-row>
 
         <v-row v-if="original.length > 0">
@@ -190,7 +178,12 @@
 
                 <v-list>
                   <v-list-item @click="deleteOriginal(original[0].id)">
-                    <v-list-item-title>Delete</v-list-item-title>
+                    <v-list-item-icon class="mr-4">
+                      <v-icon>mdi-delete</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-item-title class="pr-5">Delete</v-list-item-title>
+                    </v-list-item-content>
                   </v-list-item>
                 </v-list>
               </v-menu>
@@ -218,18 +211,27 @@
           </v-col>
         </v-row>
         <div v-else class="ma-0 pa-0">
-          <v-row mb-3>
-            <h2 class="text-h4 mb-3">
+          <v-row align="center">
+            <h2 class="text-h6 mb-2">
               Reference image
               <span class="body-1">(optional)</span>
             </h2>
           </v-row>
 
-          <v-row class="mb-3">
-            <p>
-              <!-- Upload the original, uncompressed, image of the image set.<br> -->
-              During experiment creation you'll be able to select whether or not this image should be shown to the observer.
+          <v-row class="mb-6" align="center">
+            <p class="ma-0">
+              Upload the original, uncompressed, image of the image set.
             </p>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on">
+                  <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                </v-btn>
+              </template>
+              <div class="pa-2 body-1">
+                During experiment creation you'll be able to select whether or not this image should be shown to the observer.
+              </div>
+            </v-tooltip>
           </v-row>
 
           <v-row class="mb-5">
@@ -244,12 +246,14 @@
 <script>
 import UppyOriginal from '@/components/scientist/UppyOriginal'
 import Uppy from '@/components/scientist/Uppy'
+import ActionMenu from '@/components/scientist/ActionMenu'
 import EventBus from '@/eventBus'
 
 export default {
   components: {
     UppyOriginal,
-    Uppy
+    Uppy,
+    ActionMenu
   },
 
   data () {
@@ -279,17 +283,17 @@ export default {
       this.reproductions.unshift(files[0])
     },
 
-    deleteImage (id, index) {
+    deleteImage (index) {
       // this.deleting = true
-      if (confirm('Delete image?')) {
-        this.$axios.delete(`/picture/${id}`).then((response) => {
-          this.reproductions.splice(index, 1)
-          EventBus.$emit('success', 'Image has been deleted successfully')
-          this.deleting = false
-        }).catch(() => {
-          this.deleting = false
-        })
-      }
+      // if (confirm('Delete image?')) {
+      //   this.$axios.delete(`/picture/${id}`).then((response) => {
+      this.reproductions.splice(index, 1)
+      EventBus.$emit('success', 'Image has been deleted successfully')
+      //   this.deleting = false
+      // }).catch(() => {
+      //   this.deleting = false
+      // })
+      // }
     },
 
     deleteOriginal (id) {
@@ -331,10 +335,10 @@ export default {
     destroy () {
       if (confirm('Delete image set?')) {
         this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
-          if (response.data === 'deleted_picture_set') {
-            // this.imageSets.splice(arrayIndex, 1)
-
+          if (response.data) {
+            EventBus.$emit('image-set-deleted', response.data)
             EventBus.$emit('success', 'Image set has been deleted successfully')
+            this.$router.push('/scientist/image-sets')
           } else {
             EventBus.$emit('error', 'Could not delete image set')
           }

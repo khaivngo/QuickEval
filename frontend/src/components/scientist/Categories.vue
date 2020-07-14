@@ -6,9 +6,8 @@
           <v-btn
             color="info"
             v-on="on"
-            class="text-none"
           >
-            Add category <v-icon class="ml-2" :size="20">mdi-plus-circle-outline</v-icon>
+            <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon> category
           </v-btn>
         </template>
         <v-list>
@@ -47,7 +46,7 @@
               outlined
               dense
               v-model="event.value"
-              class="m-0"
+              class="mt-4"
               item-text="title"
               item-value="id"
             >

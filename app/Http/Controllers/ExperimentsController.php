@@ -773,6 +773,6 @@ class ExperimentsController extends Controller
 
       $experiment->delete();
 
-      return response('deleted_experiment', 200);
+      return response($experiment, 200);
     }
 }

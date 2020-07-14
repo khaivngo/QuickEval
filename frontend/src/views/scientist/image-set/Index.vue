@@ -1,7 +1,7 @@
 <template>
   <v-row class="fill-height" no-gutters>
     <v-col class="fill-height" style="background: #ddd; max-width: 256px;">
-      <v-navigation-drawer permanent app style="z-index: 1; margin-top: 64px; margin-left: 256px; max-width: 300px;">
+      <v-navigation-drawer permanent app style="z-index: 1; padding-top: 64px; margin-left: 256px; max-width: 300px;">
         <v-list-item class="mt-2">
           <v-list-item-content>
             <v-list-item-title>
@@ -95,6 +95,13 @@ export default {
 
     EventBus.$on('image-set-created', (payload) => {
       this.imageSets.unshift(payload)
+    })
+
+    EventBus.$on('image-set-deleted', (payload) => {
+      let exp = this.imageSets.findIndex(exp => exp.id === payload.id)
+      this.imageSets.splice(exp, 1)
+
+      this.active = null
     })
   },
 

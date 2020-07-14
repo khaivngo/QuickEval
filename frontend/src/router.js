@@ -43,7 +43,7 @@ export default new VueRouter({
           children: [
             { path: 'create',   component: loadView('scientist/experiment/Create') },
             { path: 'view/:id', component: loadView('scientist/experiment/View') },
-            { path: 'edit/:id', component: loadView('scientist/experiment/Edit') }
+            { path: 'edit/:id', component: loadView('scientist/experiment/Create') }
           ]
         },
         {

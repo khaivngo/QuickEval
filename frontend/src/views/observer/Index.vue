@@ -121,15 +121,15 @@ export default {
   }),
 
   computed: {
-    selected () {
-      if (Object.keys(this.active).length === 0 && this.active.constructor === Object) {
-        return undefined
-      }
+    // selected () {
+    //   if (Object.keys(this.active).length === 0 && this.active.constructor === Object) {
+    //     return undefined
+    //   }
 
-      const id = this.active.id
+    //   const id = this.active.id
 
-      return this.experiments.find(experiment => experiment.id === id)
-    },
+    //   return this.experiments.find(experiment => experiment.id === id)
+    // },
 
     isActive () {
       return Object.keys(this.active).length !== 0 && this.active.constructor === Object

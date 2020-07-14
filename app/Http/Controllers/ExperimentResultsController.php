@@ -17,7 +17,7 @@ class ExperimentResultsController extends Controller
     }
 
     public function fetch ($id) {
-      return \App\ExperimentResult
+      return ExperimentResult
         ::where('experiment_id', $id)
         ->get();
     }

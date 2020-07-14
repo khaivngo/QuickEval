@@ -2,7 +2,7 @@
   <v-row class="fill-height" no-gutters>
     <v-col cols="3" class="fill-height" style="background: #ddd; max-width: 256px;">
       <!-- this navigation drawer is position fixed, so the <v-col> parent must be set to the same width -->
-      <v-navigation-drawer permanent app style="z-index: 1; margin-top: 64px; margin-left: 256px; max-width: 300px;">
+      <v-navigation-drawer permanent app style="z-index: 1; padding-top: 64px; margin-left: 256px; max-width: 300px;">
         <v-list-item class="mt-2">
           <v-list-item-content>
             <v-list-item-title>
@@ -32,7 +32,7 @@
                   </v-chip>
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                  {{ experiment.completed_results_count }} completed
+                  {{ experiment.completed_results_count }}<span v-if="!experiment.hasOwnProperty('completed_results_count')">0</span> completed
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -84,6 +84,13 @@ export default {
 
     EventBus.$on('experiment-created', (payload) => {
       this.experiments.unshift(payload)
+    })
+
+    EventBus.$on('experiment-deleted', (payload) => {
+      let exp = this.experiments.findIndex(exp => exp.id === payload.id)
+      this.experiments.splice(exp, 1)
+
+      this.active = null
     })
   },
 
