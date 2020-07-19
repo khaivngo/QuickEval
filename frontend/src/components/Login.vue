@@ -1,39 +1,81 @@
 <template>
-  <v-card class="qe-card pa-5">
-    <v-card-title primary-title>
-      <div>
-        <h3 class="headline mb-0">Login</h3>
-        <!-- <div></div> -->
-      </div>
-    </v-card-title>
-
-    <v-text-field
-      class="mt-3"
-      v-model.trim="email"
-      label="Email"
-    ></v-text-field>
-
-    <v-text-field
-      class="mt-3"
-      v-model.trim="password"
-      label="Password"
-      type="password"
-    ></v-text-field>
-
-    <v-card-actions>
+  <v-dialog v-model="dialog" persistent max-width="600px">
+    <template v-slot:activator="{ on, attrs }">
       <v-btn
-        @click="login"
-        :disabled="email === null || password === null"
-        :loading="logging"
-        depressed
-        color="#78AA1C"
+        color="primary"
+        dark
         large
-        class="white--text mt-5"
+        rounded
+        v-bind="attrs"
+        v-on="on"
       >
-        Log in
+        Log in <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
-    </v-card-actions>
-  </v-card>
+    </template>
+    <v-card>
+      <v-card-title>
+        <v-container>
+          <v-row>
+            <v-col>
+              <span class="headline">Login</span>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn icon color="blue darken-1" text @click="dialog = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-row class="mb-0 pb-0">
+            <v-col cols="12" class="pb-0">
+              <v-text-field
+                class="mt-3"
+                v-model.trim="email"
+                label="Email"
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                v-model.trim="password"
+                label="Password"
+                outlined
+                dense
+                :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="showNewPassword ? 'text' : 'password'"
+                @click:append="showNewPassword = !showNewPassword"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <p class="body-1" style="color: red;" v-if="error">{{ error }}</p>
+
+          <v-row class="pt-0 mt-0">
+            <v-col class="mt-0 pt-0">
+              <v-btn
+                @click="login"
+                :disabled="email === null || password === null"
+                :loading="logging"
+                depressed
+                color="#78AA1C"
+                large
+                class="white--text mt-5"
+              >
+                Log in
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -47,8 +89,10 @@ export default {
       email: null,
       password: null,
       has_error: false,
-
-      logging: false
+      dialog: false,
+      logging: false,
+      error: '',
+      showNewPassword: false
     }
   },
 
@@ -64,8 +108,10 @@ export default {
         this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
         EventBus.$emit('logged')
         this.logging = false
-      }).catch(() => {
+        this.dialog = false
+      }).catch((error) => {
         // push notification
+        this.error = error.response.data
         this.logging = false
       })
     }

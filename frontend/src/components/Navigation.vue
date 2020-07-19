@@ -42,7 +42,7 @@
       <v-icon small>mdi-open-in-new</v-icon>
     </v-btn>
 
-    <v-menu bottom left v-if="user.id !== 0">
+    <v-menu bottom v-if="user.id !== 0">
       <template v-slot:activator="{ on }">
         <v-btn
           dark
@@ -60,9 +60,11 @@
           <v-list-item
             @click="$router.push('/user/profile')"
           >
+            <v-list-item-icon class="mr-4">
+              <v-icon>mdi-account-circle</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>
-                <v-icon left>mdi-account-circle</v-icon>
+              <v-list-item-title class="pr-5">
                 Account settings
               </v-list-item-title>
             </v-list-item-content>
@@ -71,9 +73,11 @@
           <v-list-item
             @click="logout"
           >
+            <v-list-item-icon class="mr-4">
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>
-                <v-icon left>mdi-logout</v-icon>
                 Sign out
               </v-list-item-title>
             </v-list-item-content>

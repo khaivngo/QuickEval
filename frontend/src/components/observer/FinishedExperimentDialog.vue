@@ -5,7 +5,7 @@
         You're done!
       </v-card-title>
 
-      <v-card-text>Thank you for completing the experiment.</v-card-text>
+      <v-card-text style="color: #fff;">Thank you for completing the experiment.</v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>

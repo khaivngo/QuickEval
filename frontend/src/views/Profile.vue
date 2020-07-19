@@ -1,5 +1,5 @@
 <template>
-  <v-container style="max-width: 1000px;">
+  <v-container style="max-width: 1000px;" class="pa-12">
     <v-layout mb-5 mt-5>
       <h2 class="display-1">
         Account Settings
@@ -17,7 +17,7 @@
               class="mt-3"
               v-model.trim="oldPassword"
               :rules="[rules.required, rules.min]"
-              :append-icon="showOldPassword ? 'visibility' : 'visibility_off'"
+              :append-icon="showOldPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showOldPassword ? 'text' : 'password'"
               @click:append="showOldPassword = !showOldPassword"
               label="Old Password"
@@ -30,7 +30,7 @@
               class="mt-3"
               v-model.trim="newPassword"
               :rules="[rules.required, rules.min]"
-              :append-icon="showNewPassword ? 'visibility' : 'visibility_off'"
+              :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showNewPassword ? 'text' : 'password'"
               @click:append="showNewPassword = !showNewPassword"
               label="New Password"

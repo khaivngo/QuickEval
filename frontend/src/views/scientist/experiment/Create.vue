@@ -349,7 +349,7 @@
             </v-btn>
 
             <template v-if="currentLevel === steps.length">
-              <v-tooltip left>
+              <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-on="on"

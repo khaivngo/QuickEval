@@ -13,7 +13,7 @@
               Instructions
             </v-card-title>
 
-            <v-card-text v-html="instructionText"></v-card-text>
+            <v-card-text v-html="instructionText" style="color: #fff;"></v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>

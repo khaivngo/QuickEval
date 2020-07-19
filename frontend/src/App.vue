@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <MainNavigation
-      v-if="$route.path.indexOf('/experiment') !== 0"
+      v-if="$route.path.indexOf('/experiment') !== 0 && $route.name !== 'home'"
       :user="user"
     />
 
@@ -49,6 +49,7 @@ export default {
 
   data () {
     return {
+      // storeState: store.state,
       user: { id: 0, role: 0 },
       showAuth: false,
       token: localStorage.getItem('access_token') || null,
@@ -66,6 +67,7 @@ export default {
   created () {
     this.$axios.get(`/user`).then(response => {
       this.user = response.data
+      // store.setUser(response.data)
     }).catch(() => {
       this.showAuth = true
     })

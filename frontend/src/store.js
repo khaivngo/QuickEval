@@ -1,16 +1,20 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export const store = {
+  debug: true,
   state: {
-
+    user: {
+      id: 0,
+      role: 0
+    }
   },
-  mutations: {
-
+  setUser (newValue) {
+    if (this.debug) console.log('setMessageAction triggered with', newValue)
+    this.state.user = newValue
   },
-  actions: {
-
+  clearUser () {
+    if (this.debug) console.log('clearMessageAction triggered')
+    this.state.user = {
+      id: 0,
+      role: 0
+    }
   }
-})
+}

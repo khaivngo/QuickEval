@@ -23,6 +23,7 @@ export default new VueRouter({
     /* home */
     {
       path: '/',
+      name: 'home',
       component: loadView('Index')
     },
 

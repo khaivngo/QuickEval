@@ -1,97 +1,139 @@
 <template>
-  <v-card class="qe-card pa-5">
-    <v-card-title primary-title>
-      <div>
-        <h3 class="headline mb-0">Register</h3>
-        <!-- <div></div> -->
-      </div>
-    </v-card-title>
+  <v-dialog v-model="dialog" persistent max-width="600px">
+    <template v-slot:activator="{ on, attrs }">
+      <v-btn
+        color="primary"
+        class="mr-4"
+        large
+        rounded
+        outlined
+        v-bind="attrs"
+        v-on="on"
+      >
+        <!-- Register -->
+        Sign up to research
+      </v-btn>
+    </template>
+    <v-card>
+      <v-card-title>
+        <v-container>
+          <v-row>
+            <v-col>
+              <span class="headline">Register</span>
+            </v-col>
+            <v-col cols="auto">
+              <v-btn icon color="blue darken-1" text @click="dialog = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-title>
+      <v-card-text>
+        <v-container>
+          <v-form v-model="valid">
+            <v-text-field
+              class="mt-3"
+              v-model.trim="email"
+              :rules="[rules.required]"
+              validate-on-blur
+              label="Email"
+              outlined
+              dense
+            ></v-text-field>
 
-    <v-form v-model="valid">
-      <v-text-field
-        class="mt-3"
-        v-model.trim="email"
-        :rules="[rules.required]"
-        validate-on-blur
-        label="Email"
-      ></v-text-field>
+            <v-text-field
+              class="mt-3"
+              v-model.trim="password"
+              :rules="[rules.required, rules.min]"
+              validate-on-blur
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="showPassword ? 'text' : 'password'"
+              @click:append="showPassword = !showPassword"
+              label="Password"
+              outlined
+              dense
+            ></v-text-field>
 
-      <v-text-field
-        class="mt-3"
-        v-model.trim="password"
-        :rules="[rules.required, rules.min]"
-        validate-on-blur
-        :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-        :type="showPassword ? 'text' : 'password'"
-        @click:append="showPassword = !showPassword"
-        label="Password"
-      ></v-text-field>
+            <v-text-field
+              class="mt-3"
+              v-model.trim="name"
+              label="Name"
+              outlined
+              dense
+            ></v-text-field>
 
-      <v-text-field
-        class="mt-3"
-        v-model.trim="name"
-        label="Name"
-      ></v-text-field>
+            <v-select
+              class="mt-3"
+              v-model="gender"
+              :items="['Female', 'Male', 'Other', 'Rather not say']"
+              label="Gender"
+              outlined
+              dense
+            ></v-select>
 
-      <v-select
-        class="mt-3"
-        v-model="gender"
-        :items="['Female', 'Male', 'Other', 'Rather not say']"
-        label="Gender"
-      ></v-select>
+            <v-text-field
+              class="mt-3"
+              v-model.trim="yob"
+              label="Year of Birth"
+              placeholder="yyyy"
+              outlined
+              dense
+            ></v-text-field>
 
-      <v-text-field
-        class="mt-3"
-        v-model.trim="yob"
-        label="Year of Birth"
-        placeholder="yyyy"
-      ></v-text-field>
+            <v-autocomplete
+              v-model.trim="institution"
+              :items="institutions"
+              :filter="customFilter"
+              item-text="name"
+              label="Institution"
+              outlined
+              dense
+            ></v-autocomplete>
 
-      <v-autocomplete
-        v-model.trim="institution"
-        :items="institutions"
-        :filter="customFilter"
-        item-text="name"
-        label="Institution"
-      ></v-autocomplete>
+            <v-autocomplete
+              v-model.trim="nationality"
+              :items="states"
+              :filter="customFilter"
+              item-text="name"
+              label="Country"
+              outlined
+              dense
+            ></v-autocomplete>
 
-      <v-autocomplete
-        v-model.trim="nationality"
-        :items="states"
-        :filter="customFilter"
-        item-text="name"
-        label="Country"
-      ></v-autocomplete>
+            <v-checkbox
+              v-model="scientist"
+              color="success"
+              :label="`Register as scientist`"
+            ></v-checkbox>
 
-      <v-checkbox
-        v-model="scientist"
-        color="success"
-        :label="`Register as scientist`"
-      ></v-checkbox>
+            <p class="caption">
+              Check the box above to be eligible for scientist role.
+              Your account will be manually approved as soon as possible.
+              An email will automatically be sent to you when this is done.
+            </p>
+          </v-form>
 
-      <p class="caption">
-        Check the box above to be eligible for scientist role.
-        Your account will be manually approved as soon as possible.
-        An email will automatically be sent to you when this is done.
-      </p>
+          <div v-if="serverErrors !== ''">
+            <p class="red--text" v-for="(error, i) in serverErrors.errors.email" :key="i">
+              {{ error }}
+            </p>
+          </div>
 
-      <div v-if="serverErrors !== ''">
-        <p class="red--text" v-for="(error, i) in serverErrors.errors.email" :key="i">
-          {{ error }}
-        </p>
-      </div>
-
+          <v-row class="pt-0 mt-0">
+            <v-col class="mt-0 pt-0">
+              <v-btn @click="register" depressed color="#78AA1C" :loading="registering" large class="white--text mt-5" :disabled="email === ''">
+                Register
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
       <v-card-actions>
-        <v-btn @click="register" depressed color="#78AA1C" :loading="registering" large class="white--text mt-5" :disabled="email === ''">
-          Register
-        </v-btn>
-
-        <!-- <div v-for="err in errors.errors">
-          <span>{{ err }}</span>
-        </div> -->
+        <v-spacer></v-spacer>
       </v-card-actions>
-    </v-form>
-  </v-card>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -115,6 +157,7 @@ export default {
       error: '',
       errors: {},
       success: false,
+      dialog: false,
 
       showPassword: false,
 
