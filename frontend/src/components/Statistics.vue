@@ -1,6 +1,6 @@
 <template>
   <div class="qe-statistics-container">
-    <h2 class="text-h4 mb-4">
+    <h2 class="mb-4">
       Statistics
     </h2>
 
@@ -10,7 +10,7 @@
       Not enough data yet to calculate statistics.
     </div>
 
-    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0" v-model="activeTab" style="margin-top: 100px;">
+    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 1" v-model="activeTab" style="margin-top: 100px;">
       <v-tab
         v-for="(imageSet, index) in results.imageSets"
         :key="index"
@@ -67,7 +67,7 @@
 
           <div class="mt-5">
             <!-- <h3 class="headline">Z-Scores: {{ results.imageSets[f].title }}</h3> -->
-            <h3 class="text-h6 mb-3 mt-8">Z-Scores</h3>
+            <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
 
             <!-- <div style="width: 150px;">
               <v-img :src="$UPLOADS_FOLDER + results.imageUrl[f].path" alt="" contain></v-img>
@@ -123,6 +123,83 @@
         </tbody>
       </table>
     </div> -->
+
+    <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length === 1" style="margin-top: 50px;">
+      <v-card flat>
+        <div class="mt-3">
+          <h3 class="text-h6 mb-3 mt-8">Raw data</h3>
+          <!-- {{ results.imageSets[f].title }} -->
+
+          <table class="table bordered hovered body-1">
+            <thead>
+              <tr>
+                <th>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon v-on="on">
+                        <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <div class="pl-2 pr-2 body-1">
+                      Images on the y-axis are the images picked.<br>
+                      For example if the value of image x and image y is 2, the image on the y axis is the one picked twice.
+                    </div>
+                  </v-tooltip>
+                </th>
+
+                <th v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j" class="overflow-wrap">
+                  {{ y.name }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j">
+                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+                <td v-for="(score, scoreIndex) in rawDataMap[0][j]" :key="scoreIndex">
+                  <span v-if="score > 0">
+                    {{ score }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <!-- <h3 class="headline">Z-Scores: {{ results.imageSets[f].title }}</h3> -->
+          <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
+
+          <!-- <div style="width: 150px;">
+            <v-img :src="$UPLOADS_FOLDER + results.imageUrl[f].path" alt="" contain></v-img>
+          </div> -->
+
+          <p v-if="zScoreMap[0][3] == 1">
+            Warning: Need more observer-data to be calculated properly.
+          </p>
+
+          <table class="table bordered hovered">
+            <thead>
+              <tr>
+                <th class="overflow-wrap">Title</th>
+                <th class="overflow-wrap">Low CI limit</th>
+                <th class="overflow-wrap">Mean z-score</th>
+                <th class="overflow-wrap">High CI limit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j">
+                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+                <td>{{ ifNotNaN(zScoreMap[0][0][j]) }}</td>
+                <td>{{ ifNotNaN(zScoreMap[0][1][j]) }}</td>
+                <td>{{ ifNotNaN(zScoreMap[0][2][j]) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </v-card>
+    </div>
 
   </div>
 </template>

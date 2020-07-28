@@ -25,6 +25,7 @@
                   v-model="experiment.is_public"
                   color="success"
                   @change="visibility(experiment)"
+                  :loading="loadingVisibility"
                 >
                 </v-switch>
               </template>
@@ -76,7 +77,7 @@
         </div>
       </v-row> -->
 
-      <h2 class="text-h4 mb-5 mt-12">Observers</h2>
+      <h2 class="mb-5 mt-12">Observers</h2>
       <!-- <p>wwdw awd awdwadadad dddd</p> -->
 
       <v-data-table
@@ -143,6 +144,7 @@ export default {
   data () {
     return {
       loading: false,
+      loadingVisibility: false,
       exporting: false,
       deleting: false,
 
@@ -256,6 +258,7 @@ export default {
     },
 
     visibility (exp) {
+      this.loadingVisibility = true
       this.$axios.patch('/experiment/' + exp.id + '/visibility', {
         is_public: exp.is_public
       }).then(response => {
@@ -264,11 +267,14 @@ export default {
         } else {
           EventBus.$emit('info', 'Experiment is hidden from the public.')
         }
+        this.loadingVisibility = false
+      }).catch(() => {
+        this.loadingVisibility = false
       })
     },
 
     destroy (exp) {
-      if (confirm('Do you want to delete the experiment? You will no longer be able to retrive observer data.')) {
+      if (confirm('Do you want to delete the experiment? You will no longer be able to retrieve observer data.')) {
         this.$axios.delete(`/experiment/${exp.id}`).then(response => {
           if (response.data) {
             EventBus.$emit('experiment-deleted', response.data)

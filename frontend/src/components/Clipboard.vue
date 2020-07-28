@@ -10,9 +10,14 @@
       v-clipboard:error="onError"
       small
       text
-      class="ml-0 mt-0 mb-0 mr-0 pa-0 text-none"
+      class="ml-4 mt-0 mb-0 mr-0 pa-0"
     >
-      {{ label }}
+      <template v-if="label === 'Copy'">
+        <v-icon class="mr-1" small>mdi-content-copy</v-icon> {{ label }}
+      </template>
+      <template v-if="label === 'Copied!'">
+        <v-icon class="mr-1" small color="green">mdi-checkbox-marked-circle-outline</v-icon> <span style="color: green;">{{ label }}</span>
+      </template>
     </v-btn>
   </v-layout>
 </template>

@@ -1,18 +1,20 @@
 <template>
   <v-container fluid mb-12 pb-12>
     <v-row class="ml-0 mr-0 mb-12 pa-0">
-      <h2 class="text-h4" v-if="mode === 'new'">
-        Create Experiment
-      </h2>
-      <h2 class="text-h4" v-else>
-        Edit Experiment
-        <!-- {{ experiment.title }} -->
-      </h2>
+      <v-col class="pl-4">
+        <h2 class="text-h4" v-if="mode === 'new'">
+          Create Experiment
+        </h2>
+        <h2 class="text-h4" v-else>
+          Edit Experiment
+          <!-- {{ experiment.title }} -->
+        </h2>
+      </v-col>
     </v-row>
 
     <v-progress-linear indeterminate class="ma-0" v-if="loaders.fetching"></v-progress-linear>
 
-    <v-stepper v-model="currentLevel" alt-labels non-linear v-if="!loaders.fetching">
+    <v-stepper v-model="currentLevel" alt-labels non-linear v-if="!loaders.fetching" class="elevation-0">
       <v-stepper-header class="elevation-0">
         <template v-for="(item, i) in steps">
           <v-stepper-step :step="item.id" :key="i" editable>
@@ -94,8 +96,8 @@
                     { id: 1, text: 'Order of images within image sets' },
                     {
                       id: 2,
-                      text: 'Order of images within image sets AND order of the image sets',
-                      caption: 'Note: sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.'
+                      text: 'Order of images within image sets AND order of the image sets.',
+                      caption: '(Sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.)'
                     }
                   ]"
                   item-text="text"
@@ -106,7 +108,7 @@
                   dense
                 >
                   <template v-slot:item="data">
-                    {{ data.item.text }} - {{ data.item.caption }}
+                    {{ data.item.text }} {{ data.item.caption }}
                     <!-- <v-list-item two-line>
                       <v-list-item-content>
                         <v-list-item-title>{{ data.item.text }}</v-list-item-title>
@@ -118,16 +120,16 @@
               </v-flex>
             </v-layout>
 
-            <v-layout align-center v-if="form.experimentType === 1">
-              <v-flex shrink>
+            <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
+              <v-col cols="auto" class="pb-0 pt-0 pr-0">
                 <v-checkbox
                   v-model="form.samePairTwice"
                   color="success"
                   :label="`Same pair twice (flipped)`"
                 ></v-checkbox>
-              </v-flex>
-              <v-flex shrink pb-1>
-                <v-tooltip top>
+              </v-col>
+              <v-col cols="auto" class="pa-0">
+                <v-tooltip top style="background: red;">
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
                       <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
@@ -138,18 +140,18 @@
                     Leading to double the comparisons for the observer.
                   </div>
                 </v-tooltip>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout align-center>
-              <v-flex shrink>
+            <v-row align="center" class="mt-0 pt-0">
+              <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.showOriginal"
                   color="success"
                   :label="`Display original image`"
                 ></v-checkbox>
-              </v-flex>
-              <v-flex shrink pb-1>
+              </v-col>
+              <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -161,8 +163,8 @@
                     As a reference for the observer.
                   </div>
                 </v-tooltip>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
           </v-card>
         </v-stepper-content>
@@ -188,8 +190,8 @@
               :label="`Forced choice`"
             ></v-checkbox> -->
 
-            <v-layout class="mt-6" align-center>
-              <v-flex xs3>
+            <v-row class="mt-6" align="center">
+              <v-col cols="4">
                 <v-text-field
                   v-model="form.bgColour"
                   label="Background colour"
@@ -198,18 +200,16 @@
                   outlined
                   dense
                 ></v-text-field>
-              </v-flex>
+              </v-col>
 
-              <v-flex
-                xs1
-                shrink
-                class="ml-2"
-                :style="'border-radius: 2px; height: 30px; width: 30px; background: #' + form.bgColour"
-              ></v-flex>
-            </v-layout>
+              <v-col
+                cols="auto"
+                :style="'border-radius: 2px; height: 40px; margin-bottom: 5px; width: 50px; background: #' + form.bgColour"
+              ></v-col>
+            </v-row>
 
-            <v-layout class="mt-8">
-              <v-flex xs4>
+            <v-row class="mt-4" align="center">
+              <v-col cols="4">
                 <v-text-field
                   v-model="form.delay"
                   label="Delay between stimuli (gray screen)"
@@ -218,8 +218,8 @@
                   suffix="milliseconds"
                   placeholder="200"
                 ></v-text-field>
-              </v-flex>
-              <v-flex shrink pb-1>
+              </v-col>
+              <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -231,11 +231,11 @@
                     Reducing memory effects from previous stimuli.
                   </div>
                 </v-tooltip>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout class="mt-8">
-              <v-flex xs3>
+            <v-row class="mt-8" align="center">
+              <v-col cols="4">
                 <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
@@ -244,18 +244,21 @@
                   suffix="pixels"
                   type="text"
                   v-if="form.experimentType !== 3"
-                >
-                  <template v-slot:append-outer>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-icon v-on="on">mdi-help-circle-outline</v-icon>
-                      </template>
-                      <span class="pa-2 body-1">Spacing in pixels between stimuli images.</span>
-                    </v-tooltip>
+                ></v-text-field>
+              </v-col>
+              <v-col cols="auto" class="pa-0 mb-1">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
                   </template>
-                </v-text-field>
-              </v-flex>
-            </v-layout>
+                  <div class="pa-1 body-1">
+                    Spacing in pixels between stimuli images.
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
           </v-card>
         </v-stepper-content>
 
@@ -335,16 +338,16 @@
       </v-layout>
 
       <!-- footer stepper actions -->
-      <v-container>
-        <v-layout justify-space-between>
-          <div>
+      <v-container class="pl-12 pr-12">
+        <v-row align="center" justify="space-between" style="border-top: 1px solid #ddd;">
+          <v-col cols="auto" class="pl-0">
             <v-btn v-if="currentLevel !== 1" @click="previous" text color="secondary">
               <v-icon dark>mdi-chevron-left</v-icon>Back
             </v-btn>
-          </div>
+          </v-col>
 
-          <div>
-            <v-btn v-if="currentLevel !== steps.length" @click="next" depressed color="primary">
+          <v-col cols="auto" class="pr-0">
+            <v-btn v-if="currentLevel !== steps.length" @click="next" color="primary">
               Next <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
 
@@ -385,8 +388,8 @@
                 </template>
               </v-btn>
             </template>
-          </div>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-stepper>
   </v-container>

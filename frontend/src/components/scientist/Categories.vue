@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-layout class="mb-3 mt-1" justify-center>
+  <div>
+    <v-layout class="mb-3 mt-1">
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -73,7 +73,7 @@
         </v-layout>
       </div>
     </v-slide-x-transition>
-  </v-container>
+  </div>
 </template>
 
 <script>

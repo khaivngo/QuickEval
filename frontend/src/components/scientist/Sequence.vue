@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid class="pa-0">
     <v-timeline dense clipped v-if="events.length > 0">
       <!-- <v-timeline-item fill-dot class="white--text mb-5" color="grey" large>
         <template v-slot:icon>
@@ -47,12 +47,16 @@
                 </template>
               </v-text-field> -->
 
-              <v-layout v-if="event.type === 'instruction'">
-                <Tiptap v-model="event.value"/>
-                <v-icon @click="remove(i)" class="ml-2">
-                  mdi-delete <!-- clear -->
-                </v-icon>
-              </v-layout>
+              <v-row v-if="event.type === 'instruction'" align="center">
+                <v-col>
+                  <Tiptap v-model="event.value"/>
+                </v-col>
+                <v-col cols="auto">
+                  <v-icon @click="remove(i)">
+                    mdi-delete <!-- clear -->
+                  </v-icon>
+                </v-col>
+              </v-row>
 
               <v-select
                 v-if="event.type === 'instructionFromHistory'"
@@ -75,7 +79,7 @@
     </v-timeline>
 
     <v-row class="mb-5 pa-0 ma-0">
-      <!-- <v-flex style="background: red;"> -->
+      <v-col cols="auto" class="pl-0">
         <v-menu bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -108,9 +112,9 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      <!-- </v-flex> -->
+      </v-col>
 
-      <!-- <v-flex> -->
+      <v-col>
         <!-- <v-btn outlined @click="add('uploadImageSet')">
           upload image set <v-icon class="ml-2" small>create</v-icon>
         </v-btn> -->
@@ -119,7 +123,7 @@
           image set <v-icon class="ml-2" :size="20">add</v-icon>
         </v-btn> -->
 
-        <v-dialog v-model="openNewImageSet" max-width="800">
+        <v-dialog v-model="openNewImageSet" persistent max-width="800">
           <!-- <template v-slot:activator="{ on }">
             <v-btn text dark color="#D9D9D9" v-on="{ on }">
               Create new
@@ -171,7 +175,11 @@
                 </v-layout>
 
                 <div>
-                  <Uppy :imagesetid="newImageSet.imageSetId"/>
+                  <Uppy :imagesetid="newImageSet.imageSetId" style="width: 100%;">
+                    <div id="UppyModalOpenerBtn" class="default">
+                      <v-icon color="primary" large>mdi-plus</v-icon>
+                    </div>
+                  </Uppy>
                 </div>
 
                 <!-- <v-layout mt-5 justify-end>
@@ -221,7 +229,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
-      <!-- </v-flex> -->
+      </v-col>
     </v-row>
   </v-container>
 </template>
