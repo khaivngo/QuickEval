@@ -18,7 +18,8 @@ class ExperimentResultsController extends Controller
 
     public function fetch ($id) {
       return ExperimentResult
-        ::where('experiment_id', $id)
+        ::with('user')
+        ->where('experiment_id', $id)
         ->get();
     }
 

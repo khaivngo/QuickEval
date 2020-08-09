@@ -44,57 +44,115 @@ class ResultPairsController extends Controller
    */
   public function export (Request $request) {
     // TODO: check if scientist owns experiment and that results belong to experiment
+    $results = [];
+    $expID = 8;
 
-    # get all paired results for each observer
-    $observers =
-      ExperimentResult
-        ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
-        // ->where('experiment_id', $request->experiment)
-        ->whereIn('id', $request->selected)
+    if ($request->flags['results']) {
+      # get all paired results for each observer
+      $observers =
+        ExperimentResult
+          ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected', 'user')
+          // ::with('user')
+          // ->where('experiment_id', $request->experiment)
+          ->whereIn('id', $request->selected)
+          ->get();
+
+      # create array in a export ready format
+      $data = [];
+      foreach ($observers as $observer) {
+        foreach ($observer->paired_results as $key => $result) {
+          $arr = [];
+          $arr['observer']    = $observer->user_id;
+          $arr['session']     = $observer->id;
+          $arr['left']        = $result->picture_left->name;
+          $arr['right']       = $result->picture_right->name;
+          $arr['selected']    = $result->picture_selected->name;
+          $arr['time_spent']  = $result->client_side_timer;
+
+          array_push($data, $arr);
+        }
+      }
+
+      $results['results'] = $data;
+    }
+
+    if ($request->flags['observerInputs']) {
+      $experiment_observer_meta_results = DB::table('experiment_observer_meta_results')
+        ->join('observer_metas', 'experiment_observer_meta_results.observer_meta_id', '=', 'observer_metas.id')
+        ->where('experiment_observer_meta_results.experiment_id', $expID)
+        ->get([
+          'experiment_observer_meta_results.user_id',
+          'observer_metas.meta',
+          'experiment_observer_meta_results.answer'
+        ]);
+
+      $data = [];
+      foreach ($experiment_observer_meta_results as $result)
+      {
+        $arr = [];
+        $arr['observer'] = $result->user_id;
+        $arr['meta']     = $result->meta;
+        $arr['answer']   = $result->answer;
+        array_push($data, $arr);
+      }
+
+      $results['observerInputs'] = $data;
+    }
+
+    if ($request->flags['observerMeta']) {
+      // array_push($data, $);
+      // 8
+      // $observers =
+      //   ExperimentResult
+      //     ::with('user')
+      //     // ->where('experiment_id', $request->experiment)
+      //     ->whereIn('id', $request->selected)
+      //     ->get();
+    }
+
+    if ($request->flags['imageSets']) {
+      # get the image sets used in a experiment
+      $sets = DB::table('experiment_queues')
+        ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
+        ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
+        // ->leftJoin('pictures', 'picture_sets.id', '=', 'pictures.picture_set_id')
+        // ->with('pictures')
+        ->where([
+          ['experiment_queues.experiment_id', '=', $expID],
+          ['experiment_sequences.picture_queue_id', '!=', null]
+        ])
         ->get();
 
-    # get image sets with images, belonging to experiment
-    // $sequences = DB::table('experiment_queues')
-    //   ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-    //   ->where('experiment_queues.experiment_id', $experiment_results->experiment_id)
-    //   ->get();
-
-    // foreach ($sequences as $key => $sequence)
-    // {
-    //   # if picture sequence
-    //   if ($sequence->picture_queue_id !== null)
-    //   {
-    //     # get all picture sequences
-    //     $result = DB::table('experiment_sequences')
-    //     ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
-    //     ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
-    //     ->where('experiment_sequences.id', $sequence->id)
-    //     ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
-    //   }
-    // }
-
-    # construct and array with result data for exporting
-    $data = [];
-    foreach ($observers as $observer) {
-      foreach ($observer->paired_results as $key => $result) {
+      $data = [];
+      foreach ($sets as $set) {
         $arr = [];
-        $arr['observer']    = $observer->user_id;
-        $arr['session']     = $observer->id;
-        $arr['left']        = $result->picture_left->name;
-        $arr['right']       = $result->picture_right->name;
-        $arr['selected']    = $result->picture_selected->name;
-        $arr['time_spent']  = $result->client_side_timer;
+        $arr['set'] = $set;
+        $arr['images'] = \App\Picture::where('picture_set_id', $set->id)->get();
 
         array_push($data, $arr);
       }
+
+      $results['imageSets'] = $data;
+
+      // $experiment_sequences = \App\ExperimentQueue::with('experiment_sequences')->where('experiment_id', '=', 8)->get();
+
+      // $result = DB::table('experiment_sequences')
+      //   ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
+      //   ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
+      //   ->where('experiment_sequences.id', $sequence->id)
+      //   ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
+
+      // return response($data, 200);
     }
 
-    $file_ext = 'csv';
+    // return response($results, 200);
+
+    $file_ext = 'xlsx'; //in_array($needle, []) // returns true
     // TODO: pre/append user_id or created_at to filename
     $filename = 'results.' . $file_ext;
 
     # see: https://docs.laravel-excel.com/3.1/exports/
-    return Excel::download(new ResultPairsExport($data), $filename);
+    return Excel::download(new ResultPairsExport($results), $filename);
   }
 
 

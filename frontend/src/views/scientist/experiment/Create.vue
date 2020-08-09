@@ -1,13 +1,12 @@
 <template>
-  <v-container fluid mb-12 pb-12>
+  <v-container fluid class="mb-12 pb-12">
     <v-row class="ml-0 mr-0 mb-12 pa-0">
-      <v-col class="pl-4">
+      <v-col class="pl-9">
         <h2 class="text-h4" v-if="mode === 'new'">
           Create Experiment
         </h2>
         <h2 class="text-h4" v-else>
-          Edit Experiment
-          <!-- {{ experiment.title }} -->
+          Edit {{ experiment.title }}
         </h2>
       </v-col>
     </v-row>
@@ -28,11 +27,11 @@
 
       <v-stepper-items class="no-transition">
         <v-stepper-content :step="showBasicDetails.id">
-          <v-card class="mb-5 text-xs-center" flat>
+          <v-card class="mb-5 pa-5" flat>
             <h2 class="mb-4">{{ steps[0].title }}</h2>
 
-            <v-layout align-center pr-5>
-              <v-flex>
+            <v-row align="center" class="pr-5">
+              <v-col class="pb-0 pt-0 pr-0">
                 <v-select
                   class="mt-6"
                   v-model="form.experimentType"
@@ -44,11 +43,11 @@
                   outlined
                   dense
                 ></v-select>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout align-center pr-5>
-              <v-flex>
+            <v-row align="center" class="pr-5">
+              <v-col class="pb-0 pt-0 pr-0">
                 <v-text-field
                   class="mt-8"
                   v-model.trim="form.title"
@@ -56,11 +55,11 @@
                   outlined
                   dense
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout align-center>
-              <v-flex grow>
+            <v-row align="center">
+              <v-col class="pb-0 pt-0 pr-0">
                 <v-textarea
                   class="mt-8"
                   v-model.trim="form.longDescription"
@@ -71,8 +70,8 @@
                     Description -<span class="caption"> (optional)</span>
                   </template>
                 </v-textarea>
-              </v-flex>
-              <v-flex shrink>
+              </v-col>
+              <v-col cols="auto">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -84,11 +83,11 @@
                     This description will be available to the observers.
                   </div>
                 </v-tooltip>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout align-center pr-5>
-              <v-flex>
+            <v-row align="center" class="pr-5">
+              <v-col class="pb-0 pt-0 pr-0">
                 <v-select
                   class="mt-8"
                   v-model="form.algorithm"
@@ -117,8 +116,8 @@
                     </v-list-item> -->
                   </template>
                 </v-select>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
             <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
               <v-col cols="auto" class="pb-0 pt-0 pr-0">
@@ -170,7 +169,7 @@
         </v-stepper-content>
 
         <v-stepper-content :step="showLayout.id">
-          <v-card class="mb-5 pa-5 text-xs-center" flat>
+          <v-card class="mb-5 pa-5" flat>
             <h2 class="mb-4">{{ showLayout.title }}</h2>
             <!-- <v-checkbox
               v-model="form.timer"
@@ -234,7 +233,7 @@
               </v-col>
             </v-row>
 
-            <v-row class="mt-8" align="center">
+            <v-row class="mt-8" align="center" v-if="form.experimentType !== 3">
               <v-col cols="4">
                 <v-text-field
                   v-model="form.stimuliSpacing"
@@ -243,7 +242,6 @@
                   dense
                   suffix="pixels"
                   type="text"
-                  v-if="form.experimentType !== 3"
                 ></v-text-field>
               </v-col>
               <v-col cols="auto" class="pa-0 mb-1">
@@ -368,7 +366,7 @@
                   </v-btn>
                 </template>
                 <div class="pa-2 body-1">
-                  Experiment will only be visible to you.<br>You can publish later when you're ready.
+                  Experiment will only be visible to you.<br>You can publish later when you are ready.
                 </div>
               </v-tooltip>
 

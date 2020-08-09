@@ -103,7 +103,7 @@
 
             <v-checkbox
               v-model="scientist"
-              color="success"
+              color="primary"
               :label="`Register as scientist`"
             ></v-checkbox>
 

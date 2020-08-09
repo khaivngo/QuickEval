@@ -87,7 +87,7 @@
               color="info"
               v-on="on"
             >
-              <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon>
+              <v-icon class="mr-2" :size="20">mdi-format-list-bulleted</v-icon>
               instruction
             </v-btn>
           </template>
@@ -123,15 +123,15 @@
           image set <v-icon class="ml-2" :size="20">add</v-icon>
         </v-btn> -->
 
-        <v-dialog v-model="openNewImageSet" persistent max-width="800">
+        <v-dialog v-model="openNewImageSet" persistent scrollable max-width="800">
           <!-- <template v-slot:activator="{ on }">
             <v-btn text dark color="#D9D9D9" v-on="{ on }">
               Create new
             </v-btn>
           </template> -->
-          <v-card class="pa-4">
-            <v-card-title class="headline">Create Image Set</v-card-title>
-            <v-card-text>
+          <v-card>
+            <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">Create Image Set</v-card-title>
+            <v-card-text class="pt-8 pb-8">
               <v-layout align-center>
                 <v-text-field
                   v-model="newImageSet.name"
@@ -189,9 +189,9 @@
                 </v-layout> -->
               </div>
             </v-card-text>
-            <v-card-actions class="mt-5">
+            <v-card-actions style="border-top: 1px solid #ddd;">
               <v-spacer></v-spacer>
-              <v-btn text @click="closeNewImageSet()">
+              <v-btn color="#78AA1C" dark @click="closeNewImageSet()">
                 Done
               </v-btn>
             </v-card-actions>
@@ -204,7 +204,7 @@
               color="info"
               v-on="on"
             >
-              <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon>
+              <v-icon class="mr-2" :size="20">mdi-tooltip-image-outline</v-icon>
               image set
             </v-btn>
           </template>

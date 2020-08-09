@@ -45,6 +45,7 @@
     <v-menu bottom v-if="user.id !== 0">
       <template v-slot:activator="{ on }">
         <v-btn
+          class="mr-2"
           dark
           icon
           v-on="on"

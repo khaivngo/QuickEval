@@ -78,7 +78,6 @@
       </v-row> -->
 
       <h2 class="mb-5 mt-12">Observers</h2>
-      <!-- <p>wwdw awd awdwadadad dddd</p> -->
 
       <v-data-table
         v-model="selected"
@@ -93,35 +92,108 @@
         :items-per-page="100"
       ></v-data-table>
 
-      <v-row class="mt-3" align="center">
-        <div>
-          <v-btn
-            v-if="experimentResults.length"
-            :disabled="selected.length === 0"
-            @click="exportResults()"
-            :loading="exporting"
-            color="primary"
-            type="submit"
-            class="mt-6 ml-7"
-          >
-            Export
-            <v-icon :size="20" class="ml-2">
-              mdi-download
-            </v-icon>
-          </v-btn>
+      <div>
+        <v-dialog v-model="exportDialog" persistent max-width="600px" :disabled="selected.length === 0">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              class="mt-2 ml-4"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >
+              Export
+              <v-icon :size="20" class="ml-2">
+                mdi-download
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="headline">Export observer data</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row class="mt-4">
+                  <v-col cols="12" class="pa-0 mb-0">
+                    <p class="pl-0 body-1" style="color: #000;">Include</p>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.results" label="Results" class="mt-0"></v-checkbox>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.expMeta" label="Experiment meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.observerInputs" label="Inputs results (demographics)" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.imageSets" label="Image sets" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.instructions" label="Instructions" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.observerInputsMeta" label="Observer inputs meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.observerMeta" label="Observer meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                  </v-col>
+                </v-row>
+                <div class="pa-0 mt-0">
+                  <v-radio-group v-model="fileFormat" :mandatory="false">
+                    <v-row class="mt-6">
+                      <v-col cols="12" class="pa-0 mb-0">
+                        <p class="pl-0">File format</p>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
+                        <v-radio label="CSV" value="csv"></v-radio>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
+                        <v-radio label="XLSX" value="xlsx"></v-radio>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
+                        <v-radio label="HTML" value="html"></v-radio>
+                      </v-col>
+                    </v-row>
+                  </v-radio-group>
+                </div>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="exportDialog = false">Close</v-btn>
+              <v-btn color="#78AA1C" :loading="exporting" dark @click="exportResults()">Export</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
 
-          <v-btn
-            v-if="observerMetas.length"
-            @click="exportObserverMetasForExperiment()"
-            color="primary text-none ma-0 ml-2"
-          >
-            Export demographics
-            <v-icon :size="20" class="ml-2">
-              mdi-download
-            </v-icon>
-          </v-btn>
-        </div>
-      </v-row>
+        <!-- <v-btn
+          v-if="experimentResults.length"
+          :disabled="selected.length === 0"
+          @click="exportResults()"
+          :loading="exporting"
+          color="primary"
+          type="submit"
+          class="mt-6 ml-7"
+        >
+          Export
+          <v-icon :size="20" class="ml-2">
+            mdi-download
+          </v-icon>
+        </v-btn> -->
+
+        <v-btn
+          v-if="observerMetas.length"
+          @click="exportObserverMetasForExperiment()"
+          color="primary text-none ma-0 ml-2"
+        >
+          Export demographics
+          <v-icon :size="20" class="ml-2">
+            mdi-download
+          </v-icon>
+        </v-btn>
+      </div>
 
       <Statistics v-if="experimentResults.length > 0"/>
     </div>
@@ -147,6 +219,18 @@ export default {
       loadingVisibility: false,
       exporting: false,
       deleting: false,
+      exportDialog: false,
+
+      exportFlags: {
+        results: true,
+        expMeta: false,
+        observerInputs: false,
+        imageSets: false,
+        instructions: false,
+        observerInputsMeta: false,
+        observerMeta: false
+      },
+      fileFormat: 'csv',
 
       headers: [
         { text: 'Observer ID', value: 'user_id', sortable: false, desc: '' },
@@ -202,9 +286,12 @@ export default {
         method: 'POST',
         responseType: 'blob', // important
         data: {
-          selected: ids
+          selected: ids,
+          flags: this.exportFlags,
+          fileFormat: this.fileFormat
         }
       }).then((response) => {
+        console.log(response)
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url

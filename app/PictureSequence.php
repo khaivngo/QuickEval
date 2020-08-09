@@ -12,4 +12,8 @@ class PictureSequence extends Model
      * @var array
      */
     protected $guarded = [];
+
+    // public function experiment_sequence () {
+    //     return $this->belongsTo(ExperimentSequence::class);
+    // }
 }
