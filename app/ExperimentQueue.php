@@ -13,7 +13,7 @@ class ExperimentQueue extends Model
      */
     protected $guarded = [];
 
-    public function experiment_sequences () {
+    public function experiment_sequences() {
         return $this->hasMany(ExperimentSequence::class);
     }
 }

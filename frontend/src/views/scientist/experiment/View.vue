@@ -6,12 +6,18 @@
     <div v-if="!loading">
       <v-row justify="space-between" align="center">
         <v-col cols="auto">
-          <h2 class="text-h3 mb-3">
-            {{ experiment.title }}
-          </h2>
-          <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
-            version {{ experiment.version }}
-          </v-chip>
+          <v-row align="center">
+            <v-col cols="auto">
+              <h2 class="text-h3 mb-3">
+                {{ experiment.title }}
+              </h2>
+            </v-col>
+            <v-col>
+              <v-chip v-if="experiment.version > 1" disabled text-color="#222" small>
+                version {{ experiment.version }}
+              </v-chip>
+            </v-col>
+          </v-row>
           <Clipboard :url="`${$DOMAIN}/observer/${experiment.id}`"/>
         </v-col>
         <v-col cols="auto">
@@ -124,7 +130,7 @@
                   <v-col cols="12" sm="6" md="6" class="pa-0">
                     <v-checkbox v-model="exportFlags.expMeta" label="Experiment meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
                   </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                  <v-col cols="12" sm="6" md="6" class="pa-0" v-if="observerMetas.length">
                     <v-checkbox v-model="exportFlags.observerInputs" label="Inputs results (demographics)" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
@@ -133,11 +139,8 @@
                   <v-col cols="12" sm="6" md="6" class="pa-0">
                     <v-checkbox v-model="exportFlags.instructions" label="Instructions" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
                   </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                  <v-col cols="12" sm="6" md="6" class="pa-0" v-if="observerMetas.length">
                     <v-checkbox v-model="exportFlags.observerInputsMeta" label="Observer inputs meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.observerMeta" label="Observer meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
                   </v-col>
                 </v-row>
                 <div class="pa-0 mt-0">
@@ -182,17 +185,6 @@
             mdi-download
           </v-icon>
         </v-btn> -->
-
-        <v-btn
-          v-if="observerMetas.length"
-          @click="exportObserverMetasForExperiment()"
-          color="primary text-none ma-0 ml-2"
-        >
-          Export demographics
-          <v-icon :size="20" class="ml-2">
-            mdi-download
-          </v-icon>
-        </v-btn>
       </div>
 
       <Statistics v-if="experimentResults.length > 0"/>
@@ -295,7 +287,7 @@ export default {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', 'results.csv')
+        link.setAttribute('download', `results.${this.fileFormat}`)
         document.body.appendChild(link)
         link.click()
         this.exporting = false

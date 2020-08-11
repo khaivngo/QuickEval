@@ -16,4 +16,8 @@ class PictureSet extends Model
     public function pictures () {
         return $this->hasMany(Picture::class);
     }
+
+    public function experiment_sequences () {
+        return $this->hasMany(ExperimentSequence::class);
+    }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ResultPairsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ResultPairsExport;
 
 use Illuminate\Http\Request;
 
 use App\ResultPair;
 use App\ExperimentResult;
+use App\ExperimentQueue;
 
 use DB;
 
@@ -19,7 +20,7 @@ class ResultPairsController extends Controller
    */
   public function index ($id)
   {
-    $paired_results = \App\ExperimentResult
+    $paired_results = ExperimentResult
       // ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
       ::find($id)
       ->paired_results;
@@ -45,14 +46,13 @@ class ResultPairsController extends Controller
   public function export (Request $request) {
     // TODO: check if scientist owns experiment and that results belong to experiment
     $results = [];
-    $expID = 8;
+    $expID = 9;
 
     if ($request->flags['results']) {
       # get all paired results for each observer
       $observers =
         ExperimentResult
           ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected', 'user')
-          // ::with('user')
           // ->where('experiment_id', $request->experiment)
           ->whereIn('id', $request->selected)
           ->get();
@@ -79,12 +79,15 @@ class ResultPairsController extends Controller
     if ($request->flags['observerInputs']) {
       $experiment_observer_meta_results = DB::table('experiment_observer_meta_results')
         ->join('observer_metas', 'experiment_observer_meta_results.observer_meta_id', '=', 'observer_metas.id')
+        // ->whereIn('id', $request->selected)
+        // Get all experiment_id-user_id combinations from experiment results?
         ->where('experiment_observer_meta_results.experiment_id', $expID)
         ->get([
           'experiment_observer_meta_results.user_id',
           'observer_metas.meta',
           'experiment_observer_meta_results.answer'
         ]);
+      // ExperimentObserverMetaResult::with('observer_metas.')
 
       $data = [];
       foreach ($experiment_observer_meta_results as $result)
@@ -111,44 +114,19 @@ class ResultPairsController extends Controller
     }
 
     if ($request->flags['imageSets']) {
-      # get the image sets used in a experiment
-      $sets = DB::table('experiment_queues')
-        ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-        ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
-        // ->leftJoin('pictures', 'picture_sets.id', '=', 'pictures.picture_set_id')
-        // ->with('pictures')
-        ->where([
-          ['experiment_queues.experiment_id', '=', $expID],
-          ['experiment_sequences.picture_queue_id', '!=', null]
-        ])
+      # get image sets and images that belong to the experiment (all the image sets used in the experiment sequences)
+      $data =
+        ExperimentQueue::with(['experiment_sequences' => function ($query) {
+            $query->where('experiment_sequences.picture_queue_id', '!=', NULL)->with('picture_set.pictures');
+        }])
+        ->where('experiment_id', '=', 8)
         ->get();
 
-      $data = [];
-      foreach ($sets as $set) {
-        $arr = [];
-        $arr['set'] = $set;
-        $arr['images'] = \App\Picture::where('picture_set_id', $set->id)->get();
-
-        array_push($data, $arr);
-      }
-
-      $results['imageSets'] = $data;
-
-      // $experiment_sequences = \App\ExperimentQueue::with('experiment_sequences')->where('experiment_id', '=', 8)->get();
-
-      // $result = DB::table('experiment_sequences')
-      //   ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
-      //   ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
-      //   ->where('experiment_sequences.id', $sequence->id)
-      //   ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
-
-      // return response($data, 200);
+      $results['imageSets'] = $data[0]->experiment_sequences;
     }
 
-    // return response($results, 200);
 
-    $file_ext = 'xlsx'; //in_array($needle, []) // returns true
-    // TODO: pre/append user_id or created_at to filename
+    $file_ext = in_array($request->fileFormat, ['csv','xlsx', 'html']) ? $request->fileFormat : 'csv';
     $filename = 'results.' . $file_ext;
 
     # see: https://docs.laravel-excel.com/3.1/exports/

@@ -50,17 +50,15 @@
 <table>
     <thead>
     <tr>
-        <th>id</th>
-        <th>image set id</th>
-        <th>filename</th>
+        <th>image set name</th>
+        <th>image file name</th>
     </tr>
     </thead>
     <tbody>
         @foreach($results['imageSets'] as $imageSet)
-            @foreach($imageSet['images'] as $image)
+            @foreach($imageSet['picture_set']['pictures'] as $image)
                 <tr>
-                    <td>{{ $image['id']}}</td>
-                    <td>{{ $image['picture_set_id']}}</td>
+                    <td>{{ $imageSet['picture_set']['title'] }}</td>
                     <td>{{ $image['name'] }}</td>
                 </tr>
             @endforeach

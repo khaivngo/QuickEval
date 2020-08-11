@@ -12,4 +12,8 @@ class ExperimentSequence extends Model
      * @var array
      */
     protected $guarded = [];
+
+    public function picture_set() {
+        return $this->hasOne(PictureSet::class, 'id', 'picture_set_id');
+    }
 }
