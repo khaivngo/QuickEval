@@ -46,7 +46,7 @@ class ResultPairsController extends Controller
   public function export (Request $request) {
     // TODO: check if scientist owns experiment and that results belong to experiment
     $results = [];
-    $expID = 9;
+    $expID = 13;
 
     if ($request->flags['results']) {
       # get all paired results for each observer
@@ -77,29 +77,13 @@ class ResultPairsController extends Controller
     }
 
     if ($request->flags['observerInputs']) {
-      $experiment_observer_meta_results = DB::table('experiment_observer_meta_results')
-        ->join('observer_metas', 'experiment_observer_meta_results.observer_meta_id', '=', 'observer_metas.id')
-        // ->whereIn('id', $request->selected)
-        // Get all experiment_id-user_id combinations from experiment results?
-        ->where('experiment_observer_meta_results.experiment_id', $expID)
-        ->get([
-          'experiment_observer_meta_results.user_id',
-          'observer_metas.meta',
-          'experiment_observer_meta_results.answer'
-        ]);
-      // ExperimentObserverMetaResult::with('observer_metas.')
+      $experiment_observer_meta_results =
+        \App\ExperimentObserverMetaResult::with('observer_meta')
+          ->whereIn('user_id', $request->selectedUsers)
+          ->where('experiment_id', $expID)
+          ->get();
 
-      $data = [];
-      foreach ($experiment_observer_meta_results as $result)
-      {
-        $arr = [];
-        $arr['observer'] = $result->user_id;
-        $arr['meta']     = $result->meta;
-        $arr['answer']   = $result->answer;
-        array_push($data, $arr);
-      }
-
-      $results['observerInputs'] = $data;
+      $results['observerInputs'] = $experiment_observer_meta_results;
     }
 
     if ($request->flags['observerMeta']) {
@@ -113,19 +97,19 @@ class ResultPairsController extends Controller
       //     ->get();
     }
 
+    # get image sets and images that belong to the experiment (all the image sets used in the experiment sequences)
     if ($request->flags['imageSets']) {
-      # get image sets and images that belong to the experiment (all the image sets used in the experiment sequences)
       $data =
         ExperimentQueue::with(['experiment_sequences' => function ($query) {
             $query->where('experiment_sequences.picture_queue_id', '!=', NULL)->with('picture_set.pictures');
         }])
-        ->where('experiment_id', '=', 8)
+        ->where('experiment_id', '=', $expID)
         ->get();
 
       $results['imageSets'] = $data[0]->experiment_sequences;
     }
 
-
+    # use user selected file format is it exists in whitelist array, else default to CSV
     $file_ext = in_array($request->fileFormat, ['csv','xlsx', 'html']) ? $request->fileFormat : 'csv';
     $filename = 'results.' . $file_ext;
 

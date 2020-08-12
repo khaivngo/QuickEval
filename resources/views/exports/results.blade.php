@@ -37,8 +37,8 @@
     <tbody>
         @foreach($results['observerInputs'] as $input)
             <tr>
-                <td>{{ $input['observer'] }}</td>
-                <td>{{ $input['meta'] }}</td>
+                <td>{{ $input['user_id'] }}</td>
+                <td>{{ $input['observer_meta']['meta'] }}</td>
                 <td>{{ $input['answer'] }}</td>
             </tr>
         @endforeach

@@ -12,4 +12,8 @@ class ExperimentObserverMetaResult extends Model
      * @var array
      */
     protected $guarded = [];
+
+    public function observer_meta () {
+        return $this->hasOne(ObserverMeta::class, 'id', 'observer_meta_id');
+    }
 }

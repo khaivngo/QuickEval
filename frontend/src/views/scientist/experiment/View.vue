@@ -273,12 +273,17 @@ export default {
         return selected.id
       })
 
+      let userIds = this.selected.map(selected => {
+        return selected.user_id
+      })
+
       this.$axios({
         url: `/${this.experimentTypeSlug}-result/export`,
         method: 'POST',
         responseType: 'blob', // important
         data: {
           selected: ids,
+          selectedUsers: userIds,
           flags: this.exportFlags,
           fileFormat: this.fileFormat
         }
