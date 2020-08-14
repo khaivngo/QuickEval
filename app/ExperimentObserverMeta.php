@@ -16,4 +16,8 @@ class ExperimentObserverMeta extends Model
   public function experiment () {
     return $this->belongsTo(Experiment::class);
   }
+
+  public function observer_meta () {
+    return $this->belongsTo(ObserverMeta::class);
+  }
 }

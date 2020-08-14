@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use App\ResultPair;
 use App\ExperimentResult;
 use App\ExperimentQueue;
+use App\Experiment;
+use App\ExperimentObserverMetaResult;
+use App\ExperimentObserverMeta;
 
 use DB;
 
@@ -21,8 +24,8 @@ class ResultPairsController extends Controller
   public function index ($id)
   {
     $paired_results = ExperimentResult
-      // ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
       ::find($id)
+      // ->with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
       ->paired_results;
 
     $data = [];
@@ -46,14 +49,13 @@ class ResultPairsController extends Controller
   public function export (Request $request) {
     // TODO: check if scientist owns experiment and that results belong to experiment
     $results = [];
-    $expID = 13;
+    $expID = $request->experimentId;
 
+    # get all paired results for each selected observer
     if ($request->flags['results']) {
-      # get all paired results for each observer
       $observers =
         ExperimentResult
           ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected', 'user')
-          // ->where('experiment_id', $request->experiment)
           ->whereIn('id', $request->selected)
           ->get();
 
@@ -76,28 +78,7 @@ class ResultPairsController extends Controller
       $results['results'] = $data;
     }
 
-    if ($request->flags['observerInputs']) {
-      $experiment_observer_meta_results =
-        \App\ExperimentObserverMetaResult::with('observer_meta')
-          ->whereIn('user_id', $request->selectedUsers)
-          ->where('experiment_id', $expID)
-          ->get();
-
-      $results['observerInputs'] = $experiment_observer_meta_results;
-    }
-
-    if ($request->flags['observerMeta']) {
-      // array_push($data, $);
-      // 8
-      // $observers =
-      //   ExperimentResult
-      //     ::with('user')
-      //     // ->where('experiment_id', $request->experiment)
-      //     ->whereIn('id', $request->selected)
-      //     ->get();
-    }
-
-    # get image sets and images that belong to the experiment (all the image sets used in the experiment sequences)
+    # get all the image sets, with images, used in the experiments experiment_sequences
     if ($request->flags['imageSets']) {
       $data =
         ExperimentQueue::with(['experiment_sequences' => function ($query) {
@@ -109,7 +90,40 @@ class ResultPairsController extends Controller
       $results['imageSets'] = $data[0]->experiment_sequences;
     }
 
-    # use user selected file format is it exists in whitelist array, else default to CSV
+    # get observer input answers for selected observers
+    if ($request->flags['inputs']) {
+      $experiment_observer_meta_results =
+        ExperimentObserverMetaResult::with('observer_meta')
+          ->whereIn('user_id', $request->selectedUsers)
+          ->where('experiment_id', $expID)
+          ->get();
+
+      $results['inputs'] = $experiment_observer_meta_results;
+    }
+
+    # get all meta data for observer input fields used in the experiment
+    if ($request->flags['inputsMeta']) {
+      $results['inputsMeta'] = ExperimentObserverMeta::with('observer_meta')->where('experiment_id', $expID)->get();
+    }
+
+    # get meta data about experiment
+    if ($request->flags['expMeta']) {
+      $expMeta = Experiment::find($expID);
+
+      # create array in a export ready format
+      $data = [];
+      $data['title']            = ['title', $expMeta->title];
+      $data['delay']            = ['delay between stimuli switching', $expMeta->delay];
+      $data['experiment_type']  = ['experiment type', $expMeta->experiment_type->name];
+      $data['background_colour']= ['Background colour', $expMeta->background_colour];
+      $data['stimuli_spacing']  = ['Stimuli spacing', $expMeta->stimuli_spacing . 'px'];
+      $data['same_pair']        = ['Same pair twice (flipped)', ($expMeta->same_pair == 1) ? 'yes' : 'no'];
+      $data['show_original']    = ['Show original', ($expMeta->show_original == 1) ? 'yes' : 'no'];
+
+      $results['expMeta'] = $data;
+    }
+
+    # use the user selected file format if it exists in whitelist array, else default to CSV
     $file_ext = in_array($request->fileFormat, ['csv','xlsx', 'html']) ? $request->fileFormat : 'csv';
     $filename = 'results.' . $file_ext;
 
@@ -127,6 +141,7 @@ class ResultPairsController extends Controller
   public function statistics (int $id) {
     $results = [];
 
+    # REPLACE WITH RELATIONSHIP QUERY ABOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # get the image sets used in a experiment
     $sets = DB::table('experiment_queues')
       ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
@@ -144,7 +159,7 @@ class ResultPairsController extends Controller
     foreach ($sets as $set) {
       $dd = \App\Picture::where([
         ['picture_set_id', '=', $set->picture_set_id],
-        ['is_original', '=', 0]
+        ['is_original', '=', 0] // filter out any original
       ])->get();
 
       array_push($d, $dd);

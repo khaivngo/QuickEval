@@ -13,8 +13,19 @@ class Experiment extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['experiment_type'];
+
 
     public function results () {
         return $this->hasMany(ExperimentResult::class);
+    }
+
+    public function experiment_type () {
+      return $this->belongsTo(ExperimentType::class);
     }
 }

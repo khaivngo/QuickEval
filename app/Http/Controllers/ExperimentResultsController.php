@@ -12,8 +12,8 @@ class ExperimentResultsController extends Controller
 {
     public function index ($experiment_id) {
       return \App\Experiment::find($experiment_id)
-        ->results()
-        ->get();
+        ->results();
+        // ->get();
     }
 
     public function fetch ($id) {

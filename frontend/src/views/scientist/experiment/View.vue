@@ -108,7 +108,7 @@
               v-bind="attrs"
               v-on="on"
             >
-              Export
+              Export to...
               <v-icon :size="20" class="ml-2">
                 mdi-download
               </v-icon>
@@ -122,25 +122,28 @@
               <v-container>
                 <v-row class="mt-4">
                   <v-col cols="12" class="pa-0 mb-0">
-                    <p class="pl-0 body-1" style="color: #000;">Include</p>
+                    <p class="pl-0 body-1" style="color: #000;">Results</p>
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.results" label="Results" class="mt-0"></v-checkbox>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.expMeta" label="Experiment meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                    <v-checkbox v-model="exportFlags.results" label="Stimuli results" class="mt-0"></v-checkbox>
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0" v-if="observerMetas.length">
-                    <v-checkbox v-model="exportFlags.observerInputs" label="Inputs results (demographics)" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                    <v-checkbox v-model="exportFlags.inputs" label="Inputs results (demographics)" class="mt-0"></v-checkbox>
+                  </v-col>
+                  <v-col cols="12" class="pa-0 mb-0 mt-6">
+                    <p class="pl-0 body-1" style="color: #000;">Meta data</p>
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.imageSets" label="Image sets" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                    <v-checkbox v-model="exportFlags.imageSets" label="Image sets" class="mt-0"></v-checkbox>
                   </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.instructions" label="Instructions" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
-                  </v-col>
+                  <!-- <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.instructions" label="Instructions" class="mt-0"></v-checkbox>
+                  </v-col> -->
                   <v-col cols="12" sm="6" md="6" class="pa-0" v-if="observerMetas.length">
-                    <v-checkbox v-model="exportFlags.observerInputsMeta" label="Observer inputs meta data" class="mt-0"></v-checkbox> <!-- v-model="disabled" -->
+                    <v-checkbox v-model="exportFlags.inputsMeta" label="Inputs (demographics)" class="mt-0"></v-checkbox>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox v-model="exportFlags.expMeta" label="Experiment paramaters" class="mt-0"></v-checkbox>
                   </v-col>
                 </v-row>
                 <div class="pa-0 mt-0">
@@ -215,12 +218,10 @@ export default {
 
       exportFlags: {
         results: true,
-        expMeta: false,
-        observerInputs: false,
-        imageSets: false,
-        instructions: false,
-        observerInputsMeta: false,
-        observerMeta: false
+        expMeta: true,
+        inputs: true,
+        inputsMeta: true,
+        imageSets: true
       },
       fileFormat: 'csv',
 
@@ -283,6 +284,7 @@ export default {
         responseType: 'blob', // important
         data: {
           selected: ids,
+          experimentId: this.experiment.id,
           selectedUsers: userIds,
           flags: this.exportFlags,
           fileFormat: this.fileFormat
