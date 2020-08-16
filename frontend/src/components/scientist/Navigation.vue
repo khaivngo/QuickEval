@@ -3,6 +3,7 @@
     <v-list
       dense
       style="margin-top: 10px;"
+      class="qe-drawer-1"
     >
       <v-list-item-group v-model="active" color="primary">
         <v-list-item

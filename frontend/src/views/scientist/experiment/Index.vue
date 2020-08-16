@@ -3,19 +3,20 @@
     <v-col cols="3" class="fill-height" style="background: #ddd; max-width: 256px;">
       <!-- this navigation drawer is position fixed, so the <v-col> parent must be set to the same width -->
       <v-navigation-drawer permanent app style="z-index: 1; padding-top: 64px; margin-left: 256px; max-width: 300px;">
-        <v-list-item class="mt-2">
-          <v-list-item-content>
-            <v-list-item-title>
-              <v-btn text class="pl-2" :to="'/scientist/experiments/create'">
-                <v-icon color="primary" class="pa-0">mdi-plus</v-icon> Create new
-              </v-btn>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-
         <v-list
           dense
+          class="qe-drawer-2"
         >
+          <v-list-item class="mt-1 mb-2">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-btn text class="pl-2" :to="'/scientist/experiments/create'">
+                  <v-icon color="primary" class="pa-0">mdi-plus</v-icon> Create new
+                </v-btn>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item-group v-model="active" color="primary">
             <v-list-item
               v-for="(experiment, i) in experiments"

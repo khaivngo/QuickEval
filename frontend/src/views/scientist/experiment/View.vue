@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container @mouseenter="fadeOut" @mouseleave="fadeIn">
     <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
     <!-- <p v-if="loading" class="text-center">It's here somewhere...</p> -->
 
@@ -99,14 +99,14 @@
       ></v-data-table>
 
       <div>
-        <v-dialog v-model="exportDialog" persistent max-width="600px" :disabled="selected.length === 0">
+        <v-dialog v-model="exportDialog" persistent max-width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
               class="mt-2 ml-4"
-              dark
               v-bind="attrs"
               v-on="on"
+              :disabled="selected.length === 0"
             >
               Export to...
               <v-icon :size="20" class="ml-2">
@@ -265,7 +265,28 @@ export default {
   methods: {
     formatDate: formatDate,
 
-    // export results in CSV format
+    /**
+     * slowly and discretely fade out the side-menus when mouse enter meny content area
+     * (to decrease visual clutter and direct focus)
+     */
+    fadeOut () {
+      var drawer1 = document.querySelector('.qe-drawer-1')
+      var drawer2 = document.querySelector('.qe-drawer-2')
+
+      var interval = setInterval(function () {
+        if (window.getComputedStyle(drawer1).opacity <= 0.5) {
+          clearInterval(interval)
+        }
+        drawer1.style.opacity = window.getComputedStyle(drawer1).opacity - 0.01
+        drawer2.style.opacity = window.getComputedStyle(drawer2).opacity - 0.01
+      }, 400)
+    },
+
+    fadeIn () {
+      document.querySelector('.qe-drawer-1').style.opacity = 1
+      document.querySelector('.qe-drawer-2').style.opacity = 1
+    },
+
     exportResults () {
       this.exporting = true
 
@@ -294,7 +315,7 @@ export default {
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
-        link.setAttribute('download', `results.${this.fileFormat}`)
+        link.setAttribute('download', `${this.experiment.title.substring(0, 50)}-results.${this.fileFormat}`)
         document.body.appendChild(link)
         link.click()
         this.exporting = false

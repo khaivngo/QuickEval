@@ -1,53 +1,51 @@
 <template>
-  <v-layout row justify-center>
-    <v-dialog v-model="open" persistent max-width="600">
-      <!-- <template v-slot:activator="{ on }">
-        <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
-      </template> -->
-      <v-card>
-        <!-- <v-card-title class="headline">Choose one</v-card-title> -->
-        <v-card-text>
-          <v-layout justify-center>
-            <v-btn
-              @click="loginAsAnonymous()"
-              outlined large
-              color="primary"
-              :loading="anonymousIntent"
-            >
-              Continue as anonymous
-            </v-btn>
-          </v-layout>
+  <v-dialog v-model="open" persistent max-width="600">
+    <!-- <template v-slot:activator="{ on }">
+      <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
+    </template> -->
+    <v-card>
+      <!-- <v-card-title class="headline">Choose one</v-card-title> -->
+      <v-card-text>
+        <v-layout justify-center>
+          <v-btn
+            @click="loginAsAnonymous()"
+            outlined large
+            color="primary"
+            :loading="anonymousIntent"
+          >
+            Continue as anonymous
+          </v-btn>
+        </v-layout>
 
-          <v-layout justify-center mt-3 mb-3>
-            <span>OR</span>
-          </v-layout>
+        <v-layout justify-center mt-3 mb-3>
+          <span>OR</span>
+        </v-layout>
 
-          <v-layout justify-center>
-            <v-btn
-              @click="toggleIntent('login')"
-              outlined large
-              color="primary"
-            >
-              Log in
-            </v-btn>
+        <v-layout justify-center>
+          <v-btn
+            @click="toggleIntent('login')"
+            outlined large
+            color="primary"
+          >
+            Log in
+          </v-btn>
 
-            <v-btn
-              @click="toggleIntent('register')"
-              outlined large
-              color="primary"
-            >
-              Register
-            </v-btn>
-          </v-layout>
+          <v-btn
+            @click="toggleIntent('register')"
+            outlined large
+            color="primary"
+          >
+            Register
+          </v-btn>
+        </v-layout>
 
-          <div>
-            <Register v-if="registerIntent"/>
-            <Login v-if="loginIntent"/>
-          </div>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-  </v-layout>
+        <div>
+          <Register v-if="registerIntent"/>
+          <Login v-if="loginIntent"/>
+        </div>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
