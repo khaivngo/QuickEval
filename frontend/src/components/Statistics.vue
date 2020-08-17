@@ -1,6 +1,6 @@
 <template>
   <div class="qe-statistics-container">
-    <h2 class="mb-4">
+    <h2 class="mb-6">
       Statistics
     </h2>
 
@@ -10,7 +10,7 @@
       Not enough data yet to calculate statistics.
     </div>
 
-    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 1" v-model="activeTab" style="margin-top: 100px;">
+    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 1" v-model="activeTab">
       <v-tab
         v-for="(imageSet, index) in results.imageSets"
         :key="index"

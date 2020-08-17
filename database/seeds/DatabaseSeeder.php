@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Paired Comparison', 'description' => ''],
             ['name' => 'Rank Order', 'description' => ''],
             ['name' => 'Category Judgement', 'description' => ''],
-            ['name' => 'Artifact Marking', 'description' => ''],
+            // ['name' => 'Artifact Marking', 'description' => ''],
             ['name' => 'Triplet Comparison', 'description' => ''],
         ]);
     }

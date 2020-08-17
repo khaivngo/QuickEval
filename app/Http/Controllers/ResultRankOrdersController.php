@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\ExperimentResult;
 use App\ResultRankOrder;
 use App\Exports\ResultRankOrdersExport;
 use Maatwebsite\Excel\Facades\Excel;
+
+use App\ExperimentResult;
+use App\ExperimentQueue;
+use App\Experiment;
+use App\ExperimentObserverMetaResult;
+use App\ExperimentObserverMeta;
 
 class ResultRankOrdersController extends Controller
 {
@@ -61,35 +66,87 @@ class ResultRankOrdersController extends Controller
      */
     public function export (Request $request) {
       // TODO: check if scientist owns experiment and that results belong to experiment
+      $results = [];
+      $expID = $request->experimentId;
 
-      # get all triplet results for each observer
-      $observers = ExperimentResult
-        ::with('rank_order_results.picture', 'rank_order_results.picture_set')
-        ->whereIn('id', $request->selected)
-        ->get();
+      # get all paired results for each selected observer
+      if ($request->flags['results']) {
+        # get all triplet results for each observer
+        $observers = ExperimentResult
+          ::with('rank_order_results.picture', 'rank_order_results.picture_set')
+          ->whereIn('id', $request->selected)
+          ->get();
 
-      # construct and array with result data for exporting
-      $data = [];
-      foreach ($observers as $observer) {
-        foreach ($observer->rank_order_results as $key => $result) {
-          $arr = [];
-          $arr['observer'] = $observer->user_id;
-          $arr['session']  = $observer->id;
-          $arr['ranking']  = $result->ranking;
-          $arr['picture']  = $result->picture->name;
-          $arr['set']      = $result->picture_set->title;
-          $arr['time_spent'] = $result->client_side_timer;
+        # construct and array with result data for exporting
+        $data = [];
+        foreach ($observers as $observer) {
+          foreach ($observer->rank_order_results as $key => $result) {
+            $arr = [];
+            $arr['observer'] = $observer->user_id;
+            $arr['session']  = $observer->id;
+            $arr['ranking']  = $result->ranking;
+            $arr['picture']  = $result->picture->name;
+            $arr['set']      = $result->picture_set->title;
+            $arr['time_spent'] = $result->client_side_timer;
 
-          array_push($data, $arr);
+            array_push($data, $arr);
+          }
         }
+
+        $results['results'] = $data;
       }
 
-      $file_ext = 'csv';
-      // TODO: pre/append user_id or created_at to filename
+      # get all the image sets, with images, used in the experiments experiment_sequences
+      if ($request->flags['imageSets']) {
+        $data =
+          ExperimentQueue::with(['experiment_sequences' => function ($query) {
+              $query->where('experiment_sequences.picture_queue_id', '!=', NULL)->with('picture_set.pictures');
+          }])
+          ->where('experiment_id', '=', $expID)
+          ->get();
+
+        $results['imageSets'] = $data[0]->experiment_sequences;
+      }
+
+      # get observer input answers for selected observers
+      if ($request->flags['inputs']) {
+        $experiment_observer_meta_results =
+          ExperimentObserverMetaResult::with('observer_meta')
+            ->whereIn('user_id', $request->selectedUsers)
+            ->where('experiment_id', $expID)
+            ->get();
+
+        $results['inputs'] = $experiment_observer_meta_results;
+      }
+
+      # get all meta data for observer input fields used in the experiment
+      if ($request->flags['inputsMeta']) {
+        $results['inputsMeta'] = ExperimentObserverMeta::with('observer_meta')->where('experiment_id', $expID)->get();
+      }
+
+      # get meta data about experiment
+      if ($request->flags['expMeta']) {
+        $expMeta = Experiment::find($expID);
+
+        # create array in a export ready format
+        $data = [];
+        $data['title']            = ['title', $expMeta->title];
+        $data['delay']            = ['delay between stimuli switching', $expMeta->delay];
+        $data['experiment_type']  = ['experiment type', $expMeta->experiment_type->name];
+        $data['background_colour']= ['Background colour', $expMeta->background_colour];
+        $data['stimuli_spacing']  = ['Stimuli spacing', $expMeta->stimuli_spacing . 'px'];
+        $data['same_pair']        = ['Same pair twice (flipped)', ($expMeta->same_pair == 1) ? 'yes' : 'no'];
+        $data['show_original']    = ['Show original', ($expMeta->show_original == 1) ? 'yes' : 'no'];
+
+        $results['expMeta'] = $data;
+      }
+
+      # use the user selected file format if it exists in whitelist array, else default to CSV
+      $file_ext = in_array($request->fileFormat, ['csv','xlsx', 'html']) ? $request->fileFormat : 'csv';
       $filename = 'results.' . $file_ext;
 
       # see: https://docs.laravel-excel.com/3.1/exports/
-      return Excel::download(new ResultRankOrdersExport($data), $filename);
+      return Excel::download(new ResultRankOrdersExport($results), $filename);
     }
 
     public function statistics(int $id) {

@@ -2,12 +2,13 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ResultTripletsExport implements FromCollection, WithHeadings, ShouldAutoSize
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+
+class ResultTripletsExport implements FromView, ShouldAutoSize
 {
     use Exportable;
 
@@ -17,22 +18,10 @@ class ResultTripletsExport implements FromCollection, WithHeadings, ShouldAutoSi
         $this->data = $data;
     }
 
-    public function collection() {
-        return collect($this->data);
-    }
-
-    public function headings(): array
+    public function view(): View
     {
-        return [
-            'observer',
-            'session',
-            'left image',
-            'middle image',
-            'right image',
-            'left category ',
-            'middle category',
-            'right category',
-            'time spent (in seconds)',
-        ];
+        return view('exports.triplet', [
+            'results' => $this->data
+        ]);
     }
 }

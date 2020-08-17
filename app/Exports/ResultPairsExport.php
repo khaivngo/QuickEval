@@ -20,7 +20,7 @@ class ResultPairsExport implements FromView, ShouldAutoSize
 
     public function view(): View
     {
-        return view('exports.results', [
+        return view('exports.paired', [
             'results' => $this->data
         ]);
     }

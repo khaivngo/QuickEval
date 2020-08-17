@@ -2,13 +2,13 @@
 
 namespace App\Exports;
 
-use App\ResultCategory;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ResultCategoriesExport implements FromCollection, WithHeadings, ShouldAutoSize
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+
+class ResultCategoriesExport implements FromView, ShouldAutoSize
 {
     use Exportable;
 
@@ -18,18 +18,10 @@ class ResultCategoriesExport implements FromCollection, WithHeadings, ShouldAuto
         $this->data = $data;
     }
 
-    public function collection() {
-        return collect($this->data);
-    }
-
-    public function headings(): array
+    public function view(): View
     {
-        return [
-            'observer',
-            'session',
-            'image',
-            'category',
-            'time spent (in seconds)',
-        ];
+        return view('exports.category', [
+            'results' => $this->data
+        ]);
     }
 }

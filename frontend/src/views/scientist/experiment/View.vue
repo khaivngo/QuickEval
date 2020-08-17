@@ -108,10 +108,10 @@
               v-on="on"
               :disabled="selected.length === 0"
             >
-              Export to...
-              <v-icon :size="20" class="ml-2">
+              <v-icon :size="20" class="mr-2">
                 mdi-download
               </v-icon>
+              Export...
             </v-btn>
           </template>
           <v-card>
@@ -219,8 +219,8 @@ export default {
       exportFlags: {
         results: true,
         expMeta: true,
-        inputs: true,
-        inputsMeta: true,
+        inputs: false,
+        inputsMeta: false,
         imageSets: true
       },
       fileFormat: 'csv',
@@ -253,10 +253,14 @@ export default {
     this.getExperiment()
     this.getExperimentResults()
 
+    // TODO: this can be removed, remember to do something with this.exportFlags.inputs = true
     this.$axios.get(`/experiment-observer-meta-result/find-or-fail/${this.$route.params.id}`)
       .then(response => {
         if (response.data !== '') {
           this.observerMetas.push(response.data)
+
+          this.exportFlags.inputs = true
+          this.exportFlags.inputsMeta = true
         }
       })
       .catch(err => console.log(err))
@@ -274,7 +278,7 @@ export default {
       var drawer2 = document.querySelector('.qe-drawer-2')
 
       var interval = setInterval(function () {
-        if (window.getComputedStyle(drawer1).opacity <= 0.5) {
+        if (window.getComputedStyle(drawer1).opacity <= 0.3) {
           clearInterval(interval)
         }
         drawer1.style.opacity = window.getComputedStyle(drawer1).opacity - 0.01
