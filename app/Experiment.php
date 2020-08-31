@@ -28,4 +28,8 @@ class Experiment extends Model
     public function experiment_type () {
       return $this->belongsTo(ExperimentType::class);
     }
+
+    public function user () {
+      return $this->belongsTo(User::class);
+    }
 }

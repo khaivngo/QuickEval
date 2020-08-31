@@ -1,6 +1,6 @@
 <template>
-  <v-row class="fill-height" style="margin-top: -64px; padding-top: 0;">
-    <v-col cols="6" style="border-right: 1px solid #ddd; overflow-y: auto;" class="pa-12">
+  <v-row class="fill-height" style="padding-top: 0;">
+    <v-col cols="6" style="border-right: 1px solid #ddd; overflow-y: auto; height: 91vh;" class="pa-12">
       <div>
         <v-text-field
           label="Find experiment"
@@ -22,6 +22,7 @@
               v-for="(experiment, i) in experiments"
               :key="i"
               @click="setActive(experiment)"
+              two-line
             >
               <v-list-item-content>
                 <v-list-item-title>
@@ -30,6 +31,7 @@
                     {{ experiment.version }}
                   </v-chip>
                 </v-list-item-title>
+                <v-list-item-subtitle>{{ experiment.user.name }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -76,7 +78,7 @@
               </p>
 
               <div v-if="observerInputs.length > 0" mt-5>
-                <div v-for="(observerInput, i) in observerInputs" :key="i">
+                <div v-for="(observerInput, i) in observerInputs" :key="i" class="mb-4">
                   <v-text-field
                     :label="observerInput.meta"
                     v-model="observerInput.answer"
@@ -177,8 +179,11 @@ export default {
       }
     },
 
-    async saveObserverInputs () {
-      return this.$axios.post('/experiment-observer-meta-result', this.observerInputs)
+    async saveObserverInputs (id) {
+      return this.$axios.post('/result-observer-metas', {
+        resultObserverMetaId: id,
+        inputs: this.observerInputs
+      })
     },
 
     async startExperiment () {
@@ -189,7 +194,7 @@ export default {
 
       if (experimentResult.data) {
         if (this.observerInputs.length > 0) {
-          await this.saveObserverInputs()
+          await this.saveObserverInputs(experimentResult.data.id)
         }
 
         this.prefetch = false

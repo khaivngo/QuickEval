@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use DB;
 
 use App\Experiment;
+use App\ExperimentResult;
 use App\ObserverMeta;
 use App\ExperimentObserverMeta;
 use App\Picture;
@@ -32,10 +34,13 @@ class ExperimentsController extends Controller
     public function search ($term) {
       $search_term = '%'.$term.'%';
 
-      return Experiment::where([
-        ['is_public', 1],
-        ['title', 'LIKE', $search_term]
-      ])->get();
+      // session(['experiment' => 'test']);
+
+      return Experiment::with('user')
+        ->where([
+          ['is_public', 1],
+          ['title', 'LIKE', $search_term]
+        ])->get();
     }
 
     /**
@@ -91,19 +96,44 @@ class ExperimentsController extends Controller
      * Find the first public experiment that matches the provided ID.
      */
     public function find_public (Request $request) {
+
+      // $name = 12 . '_' . auth()->user()->id;
+      // if (session not exists for this experiment_id/user_id combo)
+        // start new with name experiment_id _ user_id auth()->user()->id
+
+      // $value = $request->session()->put('345', 'cake');
+      // $request->session()->save();
+      // session(['test' => 'x']);
+
+      // Specifying a default value...
+      // $value = session('hehe');
+
+      // Store a piece of data in the session...
+      // session(['thedodod' => 'hello world']);
+
+      // $session = $request->session()->all();
+
+      // return response($session);
+
       return Experiment::where([
         ['id', $request->id],
         ['is_public', 1]
-      ])->first();
+      ])
+      ->with('user:id,name')
+      ->first();
     }
 
-    public function all () {
-      return Experiment::orderBy('id', 'asc')
+    public function all ()
+    {
+      return Experiment::with('user:id,name')
+        ->orderBy('id', 'asc')
         ->get();
     }
 
-    public function all_public () {
+    public function all_public ()
+    {
       return Experiment::where('is_public', 1)
+        ->with('user:id,name')
         ->orderBy('id', 'desc')
         ->get();
     }
@@ -130,6 +160,7 @@ class ExperimentsController extends Controller
         'experimentType' => 'required'
       ]);
 
+      // replace with slug
       if ($request->experimentType == 3 || $request->experimentType == 5) // Category and Triplet
       {
         $request->validate([
@@ -148,7 +179,7 @@ class ExperimentsController extends Controller
               ['is_original', 0]
             ])->get();
 
-            # generating triplets queue only work with a certain number of images
+            # generating a triplets queue only work with a certain number of images
             $data = new Request(['imageCount' => $images->count()]);
             $this->validate($data, ['imageCount' => new AllowedTripletCount]);
 
@@ -402,7 +433,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     *
+     * TODO: rename to add experiment_sequence, this function should be elsewhere as well?
      */
     protected function add_queue_to_experiment ($experiment_queue_id, $picture_queue_id = null, $instruction_id = null, $picture_set_id = null)
     {
@@ -424,8 +455,6 @@ class ExperimentsController extends Controller
       if ($experiment->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
       }
-
-      // $request->session()->put('key', 'value');
 
       $data = $request->validate([
         'is_public' => 'required'
@@ -550,7 +579,7 @@ class ExperimentsController extends Controller
       // Retrieve flight by name, or create it if it doesn't exist...
       // $flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
 
-      $experimentResult = \App\ExperimentResult::where([
+      $experimentResult = ExperimentResult::where([
         ['experiment_id', (int)$id],
         ['user_id', auth()->user()->id]
       ])->get();
@@ -558,7 +587,7 @@ class ExperimentsController extends Controller
       if (count($experimentResult) > 0) {
         return response('exists', 200);
       } else {
-        \App\ExperimentResult::create([
+        ExperimentResult::create([
           'experiment_id' => (int)$id,
           'user_id' => auth()->user()->id
         ]);
@@ -569,7 +598,7 @@ class ExperimentsController extends Controller
     /**
      * Set the experiment status to completed.
      */
-    public function completed (Request $request, \App\ExperimentResult $experiment) {
+    public function completed (Request $request, ExperimentResult $experiment) {
       if ($experimentResult->user_id !== auth()->user()->id) {
         return response()->json('Unauthorized', 401);
       }
@@ -749,12 +778,10 @@ class ExperimentsController extends Controller
 
           return response($experiment, 201);
         } else {
-          return response('Experiment queue could not be created.', 404);
-          // IF SOMETHING FAILS WE SHOULD DELETE THE EXPERIMENT
-          // $experiment->delete();
+          return response('Something went wrong. Experiment could not be updated.', 404);
         }
       } else {
-        return response('Experiment could not be created.', 404);
+        return response('Something went wrong. Experiment could not be updated.', 404);
       }
 
       // return response($experiment, 200);

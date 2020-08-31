@@ -1,7 +1,6 @@
 <template>
-  <v-container @mouseenter="fadeOut" @mouseleave="fadeIn">
+  <v-container @mouseenter="fadeOut" @mouseleave="fadeIn" class="pl-12 pr-12">
     <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
-    <!-- <p v-if="loading" class="text-center">It's here somewhere...</p> -->
 
     <div v-if="!loading">
       <v-row justify="space-between" align="center">
@@ -35,7 +34,7 @@
                 >
                 </v-switch>
               </template>
-              <span>Toggle public visibility of experiment.</span>
+              <span>Toggle public visibility of the experiment.</span>
             </v-tooltip>
             <div class="caption mr-6" style="margin-top: 8px;">
               public
@@ -99,7 +98,7 @@
       ></v-data-table>
 
       <div>
-        <v-dialog v-model="exportDialog" persistent max-width="600px">
+        <v-dialog v-model="exportDialog" max-width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               color="primary"
@@ -125,25 +124,42 @@
                     <p class="pl-0 body-1" style="color: #000;">Results</p>
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.results" label="Stimuli results" class="mt-0"></v-checkbox>
+                    <v-checkbox
+                      v-model="exportFlags.results"
+                      label="Stimuli results"
+                      class="mt-0"
+                    ></v-checkbox>
                   </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0" v-if="observerMetas.length">
-                    <v-checkbox v-model="exportFlags.inputs" label="Inputs results (demographics)" class="mt-0"></v-checkbox>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox
+                      v-model="exportFlags.inputs"
+                      label="Inputs results (demographics)"
+                      class="mt-0"
+                    ></v-checkbox>
                   </v-col>
                   <v-col cols="12" class="pa-0 mb-0 mt-6">
                     <p class="pl-0 body-1" style="color: #000;">Meta data</p>
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.imageSets" label="Image sets" class="mt-0"></v-checkbox>
-                  </v-col>
-                  <!-- <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.instructions" label="Instructions" class="mt-0"></v-checkbox>
-                  </v-col> -->
-                  <v-col cols="12" sm="6" md="6" class="pa-0" v-if="observerMetas.length">
-                    <v-checkbox v-model="exportFlags.inputsMeta" label="Inputs (demographics)" class="mt-0"></v-checkbox>
+                    <v-checkbox
+                      v-model="exportFlags.imageSets"
+                      label="Image sets"
+                      class="mt-0"
+                    ></v-checkbox>
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox v-model="exportFlags.expMeta" label="Experiment paramaters" class="mt-0"></v-checkbox>
+                    <v-checkbox
+                      v-model="exportFlags.inputsMeta"
+                      label="Inputs (demographics)"
+                      class="mt-0"
+                    ></v-checkbox>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="6" class="pa-0">
+                    <v-checkbox
+                      v-model="exportFlags.expMeta"
+                      label="Experiment paramaters"
+                      class="mt-0"
+                    ></v-checkbox>
                   </v-col>
                 </v-row>
                 <div class="pa-0 mt-0">
@@ -173,21 +189,6 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-
-        <!-- <v-btn
-          v-if="experimentResults.length"
-          :disabled="selected.length === 0"
-          @click="exportResults()"
-          :loading="exporting"
-          color="primary"
-          type="submit"
-          class="mt-6 ml-7"
-        >
-          Export
-          <v-icon :size="20" class="ml-2">
-            mdi-download
-          </v-icon>
-        </v-btn> -->
       </div>
 
       <Statistics v-if="experimentResults.length > 0"/>
@@ -241,9 +242,7 @@ export default {
 
       experimentTypeSlug: '',
 
-      experimentResults: [],
-
-      observerMetas: []
+      experimentResults: []
     }
   },
 
@@ -252,44 +251,10 @@ export default {
 
     this.getExperiment()
     this.getExperimentResults()
-
-    // TODO: this can be removed, remember to do something with this.exportFlags.inputs = true
-    this.$axios.get(`/experiment-observer-meta-result/find-or-fail/${this.$route.params.id}`)
-      .then(response => {
-        if (response.data !== '') {
-          this.observerMetas.push(response.data)
-
-          this.exportFlags.inputs = true
-          this.exportFlags.inputsMeta = true
-        }
-      })
-      .catch(err => console.log(err))
   },
 
   methods: {
     formatDate: formatDate,
-
-    /**
-     * slowly and discretely fade out the side-menus when mouse enter meny content area
-     * (to decrease visual clutter and direct focus)
-     */
-    fadeOut () {
-      var drawer1 = document.querySelector('.qe-drawer-1')
-      var drawer2 = document.querySelector('.qe-drawer-2')
-
-      var interval = setInterval(function () {
-        if (window.getComputedStyle(drawer1).opacity <= 0.3) {
-          clearInterval(interval)
-        }
-        drawer1.style.opacity = window.getComputedStyle(drawer1).opacity - 0.01
-        drawer2.style.opacity = window.getComputedStyle(drawer2).opacity - 0.01
-      }, 400)
-    },
-
-    fadeIn () {
-      document.querySelector('.qe-drawer-1').style.opacity = 1
-      document.querySelector('.qe-drawer-2').style.opacity = 1
-    },
 
     exportResults () {
       this.exporting = true
@@ -333,10 +298,17 @@ export default {
         .then(response => {
           this.experiment = response.data
 
+          // TODO: use slug form DB
           if (this.experiment.experiment_type_id === 1) this.experimentTypeSlug = 'paired'
           if (this.experiment.experiment_type_id === 2) this.experimentTypeSlug = 'rank-order'
           if (this.experiment.experiment_type_id === 3) this.experimentTypeSlug = 'category'
           if (this.experiment.experiment_type_id === 5) this.experimentTypeSlug = 'triplet'
+
+          // // move this
+          // if () {
+          //   this.exportFlags.inputs = true
+          //   this.exportFlags.inputsMeta = true
+          // }
 
           this.loading = false
         })
@@ -351,26 +323,22 @@ export default {
           this.experimentResults = response.data
 
           // convert all the created_at dates to a more readable format
-          response.data.forEach(item => {
+          this.experimentResults.forEach(item => {
             item.created_at = this.formatDate(item.created_at)
           })
 
           this.loading = false
         })
-        .catch(err => console.log(err))
-    },
-
-    exportObserverMetasForExperiment () {
-      window.open(`${this.$API_URL}/experiment-observer-meta-result/${this.$route.params.id}/export`, '_blank')
-    },
-
-    exportObserverMetasForObserver (user) {
-      window.open(`${this.$API_URL}/experiment-observer-meta-result/${this.$route.params.id}/${user.user_id}/export`, '_blank')
+        .catch(err => {
+          console.log(err)
+          this.loading = false
+        })
     },
 
     visibility (exp) {
       this.loadingVisibility = true
-      this.$axios.patch('/experiment/' + exp.id + '/visibility', {
+
+      this.$axios.patch(`/experiment/${exp.id}/visibility`, {
         is_public: exp.is_public
       }).then(response => {
         if (response.data.is_public) {
@@ -410,6 +378,28 @@ export default {
           }
         })
       }
+    },
+
+    /**
+     * slowly and discretely fade out the side-menus when mouse enter meny content area
+     * (to decrease visual clutter and direct focus)
+     */
+    fadeOut () {
+      var drawer1 = document.querySelector('.qe-drawer-1')
+      var drawer2 = document.querySelector('.qe-drawer-2')
+
+      var interval = setInterval(function () {
+        if (window.getComputedStyle(drawer1).opacity <= 0.3) {
+          clearInterval(interval)
+        }
+        drawer1.style.opacity = window.getComputedStyle(drawer1).opacity - 0.01
+        drawer2.style.opacity = window.getComputedStyle(drawer2).opacity - 0.01
+      }, 400)
+    },
+
+    fadeIn () {
+      document.querySelector('.qe-drawer-1').style.opacity = 1
+      document.querySelector('.qe-drawer-2').style.opacity = 1
     }
   }
 }

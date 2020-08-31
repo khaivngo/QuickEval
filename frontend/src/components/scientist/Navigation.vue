@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer permanent app style="z-index: 1;">
+  <v-navigation-drawer permanent app style="z-index: 1;" :mini-variant.sync="mini">
     <v-list
       dense
       style="margin-top: 10px;"
@@ -37,7 +37,8 @@ export default {
         // form-select
         // lightbulb-on-outline
       ],
-      active: null
+      active: null,
+      mini: false
     }
   },
 

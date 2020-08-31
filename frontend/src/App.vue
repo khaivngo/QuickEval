@@ -111,9 +111,8 @@ export default {
 </script>
 
 <style lang="scss">
-// $light-beige: #553D36;
-// $dark-yellow: #FCCA46;
-// 97CC04
+$scrollbarBG: #CFD8DC;
+$thumbBG: #90A4AE;
 
 // Vuetify by default turns on the html scrollbar. Disable this.
 // https://vuetifyjs.com/en/getting-started/frequently-asked-questions#the-scrollbar-is-showing-even-though-my-content-is-not-overflowing-vertically-
@@ -123,6 +122,22 @@ html {
 
 .hide {
   opacity: 0;
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+body {
+  scrollbar-width: thin;
+  scrollbar-color: $thumbBG $scrollbarBG;
+}
+body::-webkit-scrollbar-track {
+  background: $scrollbarBG;
+}
+body::-webkit-scrollbar-thumb {
+  background-color: $thumbBG;
+  border-radius: 6px;
+  border: 3px solid $scrollbarBG;
 }
 
 // *:focus {

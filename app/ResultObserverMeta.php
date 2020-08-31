@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ExperimentObserverMetaResult extends Model
+class ResultObserverMeta extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -15,5 +15,9 @@ class ExperimentObserverMetaResult extends Model
 
     public function observer_meta () {
         return $this->belongsTo(ObserverMeta::class);
+    }
+
+    public function experiment_result () {
+        return $this->belongsTo(ExperimentResult::class);
     }
 }

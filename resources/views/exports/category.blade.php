@@ -32,7 +32,12 @@
             @foreach($imageSet['picture_set']['pictures'] as $image)
                 <tr>
                     <td>{{ $imageSet['picture_set']['title'] }}</td>
-                    <td>{{ $image['name'] }}</td>
+                    <td>
+                        {{ $image['name'] }}
+                        @if($image['is_original'] == 1)
+                            (reference/original)
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         @endforeach
@@ -99,7 +104,7 @@
     <tbody>
         @foreach($results['inputs'] as $input)
             <tr>
-                <td>{{ $input['user_id'] }}</td>
+                <td>{{ $input['experiment_result']['user']['id'] }}</td>
                 <td>{{ $input['observer_meta']['meta'] }}</td>
                 <td>{{ $input['answer'] }}</td>
             </tr>

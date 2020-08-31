@@ -292,7 +292,7 @@ export default {
       // is the next stimuli of type image?
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
         // set original
-        if (this.stimuli[this.index].hasOwnProperty('original')) {
+        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 

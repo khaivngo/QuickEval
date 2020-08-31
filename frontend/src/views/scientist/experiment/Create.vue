@@ -78,7 +78,7 @@
                       <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pa-2 body-1">
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Describe what the experiment is all about.<br>
                     This description will be available to the observers.
                   </div>
@@ -128,13 +128,13 @@
                 ></v-checkbox>
               </v-col>
               <v-col cols="auto" class="pa-0">
-                <v-tooltip top style="background: red;">
+                <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
                       <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pa-2 body-1">
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Each pair of images will have their position flipped in the queue.<br>
                     Leading to double the comparisons for the observer.
                   </div>
@@ -157,7 +157,7 @@
                       <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pa-1 body-1">
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Display the original image of the image set alongside the reproductions.<br>
                     As a reference for the observer.
                   </div>
@@ -225,7 +225,7 @@
                       <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pa-1 body-1">
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Avoid instant loading of new stimuli by adding a blank screen inbetween stimuli switching.<br>
                     Reducing memory effects from previous stimuli.
                   </div>
@@ -251,7 +251,7 @@
                       <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                     </v-btn>
                   </template>
-                  <div class="pa-1 body-1">
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Spacing in pixels between stimuli images.
                   </div>
                 </v-tooltip>
@@ -365,7 +365,7 @@
                     Save as hidden
                   </v-btn>
                 </template>
-                <div class="pa-2 body-1">
+                <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                   Experiment will only be visible to you.<br>You can publish later when you are ready.
                 </div>
               </v-tooltip>
@@ -566,18 +566,15 @@ export default {
       this.form.isPublic = (type === 'hidden') ? 0 : 1
 
       this.$axios.post('/experiment/store', this.form).then(response => {
-        // if (response.data === 'experiment_stored') {
-        EventBus.$emit('success', 'Experiment successfully created.')
-
         // EMPTY FORM: {}
 
         this.loaders.storing = false
         this.loaders.saving = false
 
+        EventBus.$emit('success', 'Experiment successfully created.')
         EventBus.$emit('experiment-created', response.data)
 
-        this.$router.push('/scientist/experiments')
-        // }
+        this.$router.push(`/scientist/experiments/view/${response.data.id}`)
       }).catch((error) => {
         this.errors = error.response.data
         console.log(error.response.data)

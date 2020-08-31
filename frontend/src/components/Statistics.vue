@@ -4,7 +4,7 @@
       Statistics
     </h2>
 
-    <ScatterPlot :series="plotData" v-if="results.resultsForEachImageSet.length > 0"/>
+    <ScatterPlot :series="plotData"/>
 
     <div v-if="rawDataMap.length === 0 && zScoreMap.length === 0">
       Not enough data yet to calculate statistics.
@@ -29,23 +29,24 @@
             <h3 class="text-h6 mb-3 mt-8">Raw data</h3>
             <!-- {{ results.imageSets[f].title }} -->
 
+            <div class="mb-2 d-flex justify-center align-center">
+              <h4 class="text-center">Chosen image</h4>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn icon v-on="on">
+                    <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                  </v-btn>
+                </template>
+                <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                  Images on the y-axis are the images picked.<br><br>
+                  For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
+                </div>
+              </v-tooltip>
+            </div>
             <table class="table bordered hovered body-1">
               <thead>
                 <tr>
-                  <th>
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <div class="pl-2 pr-2 body-1">
-                        Images on the y-axis are the images picked.<br>
-                        For example if the value of image x and image y is 2, the image on the y axis is the one picked twice.
-                      </div>
-                    </v-tooltip>
-                  </th>
-
+                  <th></th>
                   <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
                     {{ y.name }}
                   </th>
@@ -126,27 +127,28 @@
 
     <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length === 1" style="margin-top: 50px;">
       <v-card flat>
-        <div class="mt-3">
-          <h3 class="text-h6 mb-3 mt-8">Raw data</h3>
+        <div class="mt-12">
+          <h3 class="text-h6 mb-3 mt-12">Raw data</h3>
           <!-- {{ results.imageSets[f].title }} -->
 
+          <div class="mb-2 d-flex justify-center align-center">
+            <h4 class="text-center">Chosen image</h4>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on">
+                  <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                </v-btn>
+              </template>
+              <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                Images on the y-axis are the images picked.<br><br>
+                For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
+              </div>
+            </v-tooltip>
+          </div>
           <table class="table bordered hovered body-1">
             <thead>
               <tr>
-                <th>
-                  <v-tooltip top>
-                    <template v-slot:activator="{ on }">
-                      <v-btn icon v-on="on">
-                        <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                      </v-btn>
-                    </template>
-                    <div class="pl-2 pr-2 body-1">
-                      Images on the y-axis are the images picked.<br>
-                      For example if the value of image x and image y is 2, the image on the y axis is the one picked twice.
-                    </div>
-                  </v-tooltip>
-                </th>
-
+                <th></th>
                 <th v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j" class="overflow-wrap">
                   {{ y.name }}
                 </th>
@@ -251,77 +253,78 @@ export default {
     }
   },
   created () {
-    // var experimentType = 2
+    var experimentType = 1
 
-    // if (experimentType === 1) {
-    this.$axios.get(`/paired-result/${this.$route.params.id}/statistics`).then(data => {
-      this.results = data.data
+    if (experimentType === 1) {
+      this.$axios.get(`/paired-result/${this.$route.params.id}/statistics`).then(data => {
+        this.results = data.data
 
-      this.results.imageSets.forEach((imageSet, i) => {
-        // create an empty this.resultsArray array with the length of data['imagesForEachImageSet'][i].length
-        // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
-        // push a 0 value in every slot of the sub arrays
-        this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
-        for (var it = 0; it < this.resultsArray.length; it++) {
-          this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
+        this.results.imageSets.forEach((imageSet, i) => {
+          // create an empty this.resultsArray array with the length of data['imagesForEachImageSet'][i].length
+          // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
+          // push a 0 value in every slot of the sub arrays
+          this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
+          for (var it = 0; it < this.resultsArray.length; it++) {
+            this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
 
-          for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
-            this.resultsArray[it][ita] = 0
+            for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
+              this.resultsArray[it][ita] = 0
+            }
           }
-        }
 
-        if (this.results.resultsForEachImageSet.length) {
-          this.results.resultsForEachImageSet[i].forEach((result, index) => {
-            let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
-            let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
-            this.resultsArray[row][column] += 1 // result['won'] here?
+          if (this.results.resultsForEachImageSet.length) {
+            this.results.resultsForEachImageSet[i].forEach((result, index) => {
+              let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
+              let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
+              this.resultsArray[row][column] += 1 // result['won'] here?
+            })
+          }
+
+          // save all raw data maps
+          this.rawDataMap.push(this.resultsArray)
+
+          // stores calculated data for one picture set
+          let zScoreArray = this.calculatePlots(this.resultsArray)
+          this.zScoreMap.push(zScoreArray)
+
+          this.plotData.push({
+            imageSet: imageSet,
+            label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
+            zScores: zScoreArray
           })
-        }
-
-        // save all raw data maps
-        this.rawDataMap.push(this.resultsArray)
-
-        // stores calculated data for one picture set
-        let zScoreArray = this.calculatePlots(this.resultsArray)
-        this.zScoreMap.push(zScoreArray)
-
-        this.plotData.push({
-          imageSet: imageSet,
-          label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
-          zScores: zScoreArray
         })
       })
-    })
-    // } else if (experimentType === 2) {
-    //   this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
-    //     this.results = data.data
-    //     this.rankedResults = data.data
+    } else if (experimentType === 2) {
+      //   this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
+      //     this.results = data.data
+      //     this.rankedResults = data.data
 
-    //     this.results.imageSets.forEach((imageSet, i) => {
+      //     this.results.imageSets.forEach((imageSet, i) => {
 
-    //       // <template v-for="(y, c) in rankedResults.resultsForEachImageSet">
-    //       //   <tr>
-    //       //     <td class="overflow-wrap"><b>{{ y[c].user }}</b></td>
-    //       //     <td v-for="(g, h) in y">{{ g.ranking }}</td>
-    //       //   </tr>
-    //       // </template>
+      //       // <template v-for="(y, c) in rankedResults.resultsForEachImageSet">
+      //       //   <tr>
+      //       //     <td class="overflow-wrap"><b>{{ y[c].user }}</b></td>
+      //       //     <td v-for="(g, h) in y">{{ g.ranking }}</td>
+      //       //   </tr>
+      //       // </template>
 
-    //       // var resultTable = convertRankToPair(this.rankedResults.resultsForEach[i])
-    //       // calculatePlots(resultTable)
-    //       // zScoreArray = calculatePlots(resultTable)
+      //       // var resultTable = convertRankToPair(this.rankedResults.resultsForEach[i])
+      //       // calculatePlots(resultTable)
+      //       // zScoreArray = calculatePlots(resultTable)
 
-    //       // addSeries(imageTitleArray, zScoreArray, t['name'])
+      //       // addSeries(imageTitleArray, zScoreArray, t['name'])
 
-    //       // $("#zScores-container").append('</br></br><div id=zscore-' + roundCounter + '><h1>Z-Scores</h1><hr></div>')
+      //       // $("#zScores-container").append('</br></br><div id=zscore-' + roundCounter + '><h1>Z-Scores</h1><hr></div>')
 
-    //       // //sends all imagestitles, calculated results and the name of picture set
-    //       // setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url'])
-    //     })
-    //   })
-    // } else if (experimentType === 3) {
-    //   //
-    // }
+      //       // //sends all imagestitles, calculated results and the name of picture set
+      //       // setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url'])
+      //     })
+      //   })
+    } else if (experimentType === 3) {
+      //
+    }
   },
+
   methods: {
     ifNotNaN (value) {
       return !Number.isNaN(value) ? value : ''
@@ -584,7 +587,7 @@ export default {
 
 <style lang="css" scoped>
   .qe-statistics-container {
-    padding-bottom: 100px;
+    padding-bottom: 300px;
     margin-top: 150px;
     color: #000;
   }

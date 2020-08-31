@@ -228,8 +228,9 @@
                   <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
                 </v-btn>
               </template>
-              <div class="pa-2 body-1">
-                During experiment creation you'll be able to select whether or not this image should be shown to the observer.
+              <div class="pl-2 pr-2 pt-3 pb-3 pb-5 body-1">
+                During experiment creation you'll be able to select whether or not
+                this image should be shown to the observer.
               </div>
             </v-tooltip>
           </v-row>

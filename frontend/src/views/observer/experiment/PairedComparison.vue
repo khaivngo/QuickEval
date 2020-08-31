@@ -266,7 +266,7 @@ export default {
         if (this.leftReproductionActive === true)  selectedStimuli = this.stimuli[this.index + 1]
 
         // set original
-        if (this.stimuli[this.index].hasOwnProperty('original')) {
+        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 

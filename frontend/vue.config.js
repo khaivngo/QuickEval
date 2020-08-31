@@ -16,6 +16,7 @@ module.exports = {
     : 'index.html',
 
   publicPath: process.env.NODE_ENV === 'production'
-    ? '/'
+    // ? '/' // live production
+    ? '/QuickEval/public_html' // local production
     : '/'
 }

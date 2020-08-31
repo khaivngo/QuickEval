@@ -2,7 +2,7 @@
   <v-row class="fill-height" no-gutters>
     <v-col cols="3" class="fill-height" style="background: #ddd; max-width: 256px;">
       <!-- this navigation drawer is position fixed, so the <v-col> parent must be set to the same width -->
-      <v-navigation-drawer permanent app style="z-index: 1; padding-top: 64px; margin-left: 256px; max-width: 300px;">
+      <v-navigation-drawer permanent app class="qe-experiments-navigation-drawer">
         <v-list
           dense
           class="qe-drawer-2"
@@ -71,20 +71,13 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route (to, from) {
-  //     // react to route changes...
-  //     // this.active = to.params.id
-  //     // console.log(from)
-  //     // this.experiment.
-  //   }
-  // },
-
   created () {
     this.getUsersExperiments()
 
     EventBus.$on('experiment-created', (payload) => {
       this.experiments.unshift(payload)
+      let index = this.experiments.findIndex(exp => exp.id === payload.id)
+      this.active = index
     })
 
     EventBus.$on('experiment-deleted', (payload) => {
@@ -114,8 +107,11 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style lang="scss">
   /* NOTICE: the 'scoped' slot is omitted because it makes overriding Vuetify styles possible (for whatever reason) */
+
+  $scrollbarBG: #CFD8DC;
+  $thumbBG: #90A4AE;
 
   /* Vuetify overriding styles, remove spacing beneath the public/hidden switches */
   .qe-public-switch .v-input__slot {
@@ -136,5 +132,28 @@ export default {
     display: flex;
     align-items: center;
     height: 100%;
+  }
+
+  .qe-experiments-navigation-drawer {
+    z-index: 1;
+    padding-top: 64px;
+    margin-left: 256px;
+    max-width: 300px;
+  }
+
+  .v-navigation-drawer__content::-webkit-scrollbar {
+    width: 12px;
+  }
+  .v-navigation-drawer__content {
+    scrollbar-width: thin;
+    scrollbar-color: $thumbBG $scrollbarBG;
+  }
+  .v-navigation-drawer__content::-webkit-scrollbar-track {
+    background: $scrollbarBG;
+  }
+  .v-navigation-drawer__content::-webkit-scrollbar-thumb {
+    background-color: $thumbBG;
+    border-radius: 6px;
+    border: 3px solid $scrollbarBG;
   }
 </style>

@@ -424,7 +424,7 @@ export default {
       })
 
       // set original
-      if (this.stimuli[this.index].picture_queue[0].hasOwnProperty('original')) {
+      if (this.stimuli[this.index].picture_queue[0].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null) {
         this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].original.path
       }
       this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].path

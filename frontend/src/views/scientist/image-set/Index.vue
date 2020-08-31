@@ -18,6 +18,16 @@
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item v-if="loading === false && imageSets.length === 0">
+          <v-list-item-content>
+            <v-list-item-title>
+              <div class="caption ma-4">
+                You have no image sets. Yet...
+              </div>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list
           dense
         >
@@ -40,9 +50,6 @@
         </v-list>
 
         <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
-        <div class="caption ma-4" v-if="loading === false && imageSets.length === 0">
-          You have no image sets. Yet...
-        </div>
       </v-navigation-drawer>
     </v-col>
 

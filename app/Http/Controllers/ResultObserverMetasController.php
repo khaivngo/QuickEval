@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\ResultObserverMeta;
+use DB;
+
+use Maatwebsite\Excel\Facades\Excel;
+
+class ResultObserverMetasController extends Controller
+{
+    public function store (Request $request)
+    {
+      $observerInputs = [];
+
+      foreach ($request->inputs as $observerInput) {
+        $answer = isset($observerInput['answer']) ? $observerInput['answer'] : null;
+
+        array_push($observerInputs, [
+          'experiment_result_id' => $request->resultObserverMetaId,
+          'answer'               => $answer,
+          'observer_meta_id'     => $observerInput['observer_meta_id']
+        ]);
+      }
+
+      ResultObserverMeta::insert($observerInputs);
+
+      return response('inserted', 201);
+    }
+}

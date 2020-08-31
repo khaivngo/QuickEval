@@ -11,7 +11,7 @@ use App\ResultCategory;
 use App\ExperimentResult;
 use App\ExperimentQueue;
 use App\Experiment;
-use App\ExperimentObserverMetaResult;
+use App\ResultObserverMeta;
 use App\ExperimentObserverMeta;
 
 class ResultCategoriesController extends Controller
@@ -66,13 +66,12 @@ class ResultCategoriesController extends Controller
 
       # get observer input answers for selected observers
       if ($request->flags['inputs']) {
-        $experiment_observer_meta_results =
-          ExperimentObserverMetaResult::with('observer_meta')
-            ->whereIn('user_id', $request->selectedUsers)
-            ->where('experiment_id', $expID)
+        $result_observer_metas =
+          ResultObserverMeta::with('observer_meta', 'experiment_result.user')
+            ->whereIn('experiment_result_id', $request->selected)
             ->get();
 
-        $results['inputs'] = $experiment_observer_meta_results;
+        $results['inputs'] = $result_observer_metas;
       }
 
       # get all meta data for observer input fields used in the experiment
@@ -87,8 +86,8 @@ class ResultCategoriesController extends Controller
         # create array in a export ready format
         $data = [];
         $data['title']            = ['title', $expMeta->title];
-        $data['delay']            = ['delay between stimuli switching', $expMeta->delay];
         $data['experiment_type']  = ['experiment type', $expMeta->experiment_type->name];
+        $data['delay']            = ['delay between stimuli switching', $expMeta->delay];
         $data['background_colour']= ['Background colour', $expMeta->background_colour];
         $data['stimuli_spacing']  = ['Stimuli spacing', $expMeta->stimuli_spacing . 'px'];
         $data['same_pair']        = ['Same pair twice (flipped)', ($expMeta->same_pair == 1) ? 'yes' : 'no'];

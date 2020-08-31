@@ -16,11 +16,11 @@ class DatabaseSeeder extends Seeder
         // factory(App\User::class, 2)->create();
 
         DB::table('experiment_types')->insert([
-            ['name' => 'Paired Comparison', 'description' => ''],
-            ['name' => 'Rank Order', 'description' => ''],
-            ['name' => 'Category Judgement', 'description' => ''],
+            ['name' => 'Paired Comparison',  'slug' => 'paired',     'description' => ''],
+            ['name' => 'Rank Order',         'slug' => 'rank-order', 'description' => ''],
+            ['name' => 'Category Judgement', 'slug' => 'category',   'description' => ''],
+            ['name' => 'Triplet Comparison', 'slug' => 'triplet',    'description' => ''],
             // ['name' => 'Artifact Marking', 'description' => ''],
-            ['name' => 'Triplet Comparison', 'description' => ''],
         ]);
     }
 }

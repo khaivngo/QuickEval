@@ -35,7 +35,7 @@
         class="mb-3"
       >
         <v-layout justify-space-between>
-          <v-flex xs12>
+          <v-flex xs12 class="mt-4">
             <v-text-field
               v-if="event.type === 'meta'"
               label="Input label"
