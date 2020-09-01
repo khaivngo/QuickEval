@@ -49,7 +49,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post(    '/experiment/store',                    'ExperimentsController@store'           );
     Route::patch(   '/experiment/{experiment}/visibility',  'ExperimentsController@visibility'      );
 
-    // we do not use patch there because we want to create a complete new experiment,
+    // we do not use patch on this "update" because we want to create a complete new experiment,
     // and tag the old one with "version 1"
     Route::post(    '/experiment/{original_experiment}/update', 'ExperimentsController@update' );
     Route::delete(  '/experiment/{experiment}',                 'ExperimentsController@destroy');

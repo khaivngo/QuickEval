@@ -34,9 +34,13 @@ class ExperimentsController extends Controller
     public function search ($term) {
       $search_term = '%'.$term.'%';
 
-      // session(['experiment' => 'test']);
+      if ($term == 'all') {
+        return Experiment::with('user:id,name')
+          ->where('is_public', 1)
+          ->get();
+      }
 
-      return Experiment::with('user')
+      return Experiment::with('user:id,name')
         ->where([
           ['is_public', 1],
           ['title', 'LIKE', $search_term]

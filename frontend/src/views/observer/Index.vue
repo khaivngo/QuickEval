@@ -9,6 +9,7 @@
           dense
           v-model="searchTerm"
           @keyup.enter="searchExperiments"
+          :loading="searching"
         ></v-text-field>
       </div>
 
@@ -33,6 +34,10 @@
                 </v-list-item-title>
                 <v-list-item-subtitle>{{ experiment.user.name }}</v-list-item-subtitle>
               </v-list-item-content>
+            </v-list-item>
+
+            <v-list-item v-if="experiments.length === 0">
+              <v-list-item-title>Could not find any experiments</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -63,7 +68,6 @@
     </v-col>
 
     <v-col cols="6" class="justify-center pa-12">
-
       <v-row align="center" justify="center" class="fill-height">
 
         <div v-if="isActive">
@@ -117,6 +121,7 @@ export default {
     experiments: [],
     observerInputs: [],
     searchTerm: '',
+    searching: false,
     prefetch: false,
     showActive: false,
     loading: false
@@ -205,17 +210,16 @@ export default {
     },
 
     searchExperiments () {
-      if (this.searchTerm === '') {
-        this.$axios.get(`/experiment/public`).then((response) => {
-          console.log(response)
-          this.experiments = response.data
-        })
-        return
-      }
+      this.searching = true
 
-      this.$axios.get(`/experiment/${this.searchTerm}/search/public`).then((response) => {
-        console.log(response)
+      // you can't send empty string values in the GET parameter, so we send 'all' instead
+      let searchTerm = this.searchTerm !== '' ? this.searchTerm : 'all'
+      this.$axios.get(`/experiment/${searchTerm}/search/public`).then((response) => {
+        this.active = {}
         this.experiments = response.data
+        this.searching = false
+      }).catch(() => {
+        this.searching = false
       })
     }
   }
