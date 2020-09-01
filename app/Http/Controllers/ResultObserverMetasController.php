@@ -15,7 +15,8 @@ class ResultObserverMetasController extends Controller
       $observerInputs = [];
 
       foreach ($request->inputs as $observerInput) {
-        $answer = isset($observerInput['answer']) ? $observerInput['answer'] : null;
+        $answer = isset($observerInput['observer_meta']['answer']) ?
+          $observerInput['observer_meta']['answer'] : null;
 
         array_push($observerInputs, [
           'experiment_result_id' => $request->resultObserverMetaId,

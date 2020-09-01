@@ -36,7 +36,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item v-if="experiments.length === 0">
+            <v-list-item v-if="experiments.length === 0 && loading === false">
               <v-list-item-title>Could not find any experiments</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
@@ -72,7 +72,9 @@
 
         <div v-if="isActive">
           <v-scroll-y-transition mode="out-in">
-            <div v-if="Object.keys(active).length !== 0 && active.constructor === Object">
+            <div
+              v-if="Object.keys(active).length !== 0 && active.constructor === Object"
+            >
               <h2 class="text-center mb-6 headline">
                 {{ active.title }}
               </h2>
@@ -81,11 +83,11 @@
                 {{ active.long_description }}
               </p>
 
-              <div v-if="observerInputs.length > 0" mt-5>
-                <div v-for="(observerInput, i) in observerInputs" :key="i" class="mb-4">
+              <div v-if="active.observer_metas.length > 0" mt-5>
+                <div v-for="(input, i) in active.observer_metas" :key="i" class="mb-2">
                   <v-text-field
-                    :label="observerInput.meta"
-                    v-model="observerInput.answer"
+                    :label="input.observer_meta.meta"
+                    v-model="input.observer_meta.answer"
                     outlined
                     dense
                   ></v-text-field>
@@ -119,7 +121,6 @@ export default {
   data: () => ({
     active: {},
     experiments: [],
-    observerInputs: [],
     searchTerm: '',
     searching: false,
     prefetch: false,
@@ -128,26 +129,8 @@ export default {
   }),
 
   computed: {
-    // selected () {
-    //   if (Object.keys(this.active).length === 0 && this.active.constructor === Object) {
-    //     return undefined
-    //   }
-
-    //   const id = this.active.id
-
-    //   return this.experiments.find(experiment => experiment.id === id)
-    // },
-
     isActive () {
       return Object.keys(this.active).length !== 0 && this.active.constructor === Object
-    }
-  },
-
-  watch: {
-    active (exp) {
-      this.$axios.get(`/experiment/${exp.id}/observer-metas`)
-        .then(response => { this.observerInputs = response.data })
-        .catch(err => console.warn(err))
     }
   },
 
@@ -187,7 +170,7 @@ export default {
     async saveObserverInputs (id) {
       return this.$axios.post('/result-observer-metas', {
         resultObserverMetaId: id,
-        inputs: this.observerInputs
+        inputs: this.active.observer_metas
       })
     },
 
@@ -198,7 +181,7 @@ export default {
       localStorage.setItem('experimentResult', experimentResult.data.id)
 
       if (experimentResult.data) {
-        if (this.observerInputs.length > 0) {
+        if (this.active.observer_metas.length > 0) {
           await this.saveObserverInputs(experimentResult.data.id)
         }
 
@@ -212,7 +195,7 @@ export default {
     searchExperiments () {
       this.searching = true
 
-      // you can't send empty string values in the GET parameter, so we send 'all' instead
+      // empty string values is not allowed in the GET parameter, so we send 'all' instead
       let searchTerm = this.searchTerm !== '' ? this.searchTerm : 'all'
       this.$axios.get(`/experiment/${searchTerm}/search/public`).then((response) => {
         this.active = {}

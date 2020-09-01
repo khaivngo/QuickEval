@@ -18,14 +18,18 @@ class Experiment extends Model
      *
      * @var array
      */
-    protected $with = ['experiment_type'];
+    protected $with = ['type'];
 
 
     public function results () {
         return $this->hasMany(ExperimentResult::class);
     }
 
-    public function experiment_type () {
+    public function observer_metas () {
+        return $this->hasMany(ExperimentObserverMeta::class);
+    }
+
+    public function type () {
       return $this->belongsTo(ExperimentType::class);
     }
 

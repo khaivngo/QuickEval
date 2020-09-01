@@ -132,6 +132,7 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
                     <v-checkbox
+                      v-if="experiment.observer_metas && experiment.observer_metas.length > 0"
                       v-model="exportFlags.inputs"
                       label="Inputs results (demographics)"
                       class="mt-0"
@@ -149,6 +150,7 @@
                   </v-col>
                   <v-col cols="12" sm="6" md="6" class="pa-0">
                     <v-checkbox
+                      v-if="experiment.observer_metas && experiment.observer_metas.length > 0"
                       v-model="exportFlags.inputsMeta"
                       label="Inputs (demographics)"
                       class="mt-0"
@@ -304,11 +306,10 @@ export default {
           if (this.experiment.experiment_type_id === 3) this.experimentTypeSlug = 'category'
           if (this.experiment.experiment_type_id === 5) this.experimentTypeSlug = 'triplet'
 
-          // // move this
-          // if () {
-          //   this.exportFlags.inputs = true
-          //   this.exportFlags.inputsMeta = true
-          // }
+          if (this.experiment.observer_metas && this.experiment.observer_metas.length > 0) {
+            this.exportFlags.inputs = true
+            this.exportFlags.inputsMeta = true
+          }
 
           this.loading = false
         })

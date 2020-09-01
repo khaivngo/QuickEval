@@ -124,17 +124,17 @@ html {
   opacity: 0;
 }
 
-body::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 12px;
 }
 body {
   scrollbar-width: thin;
   scrollbar-color: $thumbBG $scrollbarBG;
 }
-body::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: $scrollbarBG;
 }
-body::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background-color: $thumbBG;
   border-radius: 6px;
   border: 3px solid $scrollbarBG;

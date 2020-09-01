@@ -31,19 +31,16 @@ class ExperimentsController extends Controller
         ->get();
     }
 
-    public function search ($term) {
-      $search_term = '%'.$term.'%';
-
+    public function search ($term)
+    {
       if ($term == 'all') {
-        return Experiment::with('user:id,name')
-          ->where('is_public', 1)
-          ->get();
+        return Experiment::with('user:id,name')->where('is_public', 1)->get();
       }
 
       return Experiment::with('user:id,name')
         ->where([
           ['is_public', 1],
-          ['title', 'LIKE', $search_term]
+          ['title', 'LIKE', '%'.$term.'%']
         ])->get();
     }
 
@@ -93,7 +90,7 @@ class ExperimentsController extends Controller
      *
      */
     public function find (Request $request) {
-      return Experiment::find($request->id);
+      return Experiment::with('observer_metas.observer_meta')->find($request->id);
     }
 
     /**
@@ -137,7 +134,7 @@ class ExperimentsController extends Controller
     public function all_public ()
     {
       return Experiment::where('is_public', 1)
-        ->with('user:id,name')
+        ->with('user:id,name', 'observer_metas.observer_meta')
         ->orderBy('id', 'desc')
         ->get();
     }
