@@ -85,7 +85,7 @@ export default {
 
   watch: {
     metas: {
-      // immediate: true,
+      immediate: true,
       handler (values) {
         values.forEach((item) => {
           this.events.push({

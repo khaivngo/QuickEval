@@ -1,12 +1,11 @@
 <template>
-  <v-row class="fill-height pa-0" no-gutters >
-    <v-col cols="auto">
-      <Navigation style="padding-top: 64px;"/>
-    </v-col>
-    <v-col>
-      <router-view/>
-    </v-col>
-  </v-row>
+  <div class="d-flex">
+    <Navigation/>
+    <!-- the nav menu above is position fixed, so we put a "mold" below -->
+    <div class="mold"></div>
+
+    <router-view/>
+  </div>
 </template>
 
 <script>
@@ -18,3 +17,15 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="css">
+  .mold {
+    flex: 0 0 240px;
+    height: 20px;
+  }
+  @media (max-width: 1150px) {
+    .mold {
+      flex: 0 0 58px;
+    }
+  }
+</style>

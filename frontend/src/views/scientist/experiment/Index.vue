@@ -1,58 +1,61 @@
 <template>
-  <v-row class="fill-height" no-gutters>
-    <v-col cols="3" class="fill-height" style="background: #ddd; max-width: 256px;">
-      <!-- this navigation drawer is position fixed, so the <v-col> parent must be set to the same width -->
-      <v-navigation-drawer permanent app class="qe-experiments-navigation-drawer">
-        <v-list
-          dense
-          class="qe-drawer-2"
-        >
-          <v-list-item class="mt-1 mb-2">
+  <div class="d-flex flex-grow-1">
+    <div class="qe-nav-drawer">
+      <v-list
+        dense
+        class="qe-drawer-2"
+      >
+        <v-list-item class="mt-1 mb-2">
+          <v-list-item-content>
+            <v-list-item-title>
+              <v-btn text class="pl-2" :to="'/scientist/experiments/create'">
+                <v-icon color="primary" class="pa-0">mdi-plus</v-icon> Create new
+              </v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item-group v-model="active" color="primary">
+          <v-list-item
+            v-for="(experiment, i) in experiments"
+            :key="i"
+            link
+            @click="$router.push(`/scientist/experiments/view/${experiment.id}`)"
+            class="pl-8"
+          >
             <v-list-item-content>
               <v-list-item-title>
-                <v-btn text class="pl-2" :to="'/scientist/experiments/create'">
-                  <v-icon color="primary" class="pa-0">mdi-plus</v-icon> Create new
-                </v-btn>
+                {{ experiment.title }}
+                <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
+                  version {{ experiment.version }}
+                </v-chip>
               </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ experiment.completed_results_count }}<span v-if="!experiment.hasOwnProperty('completed_results_count')">0</span> completed
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+        </v-list-item-group>
+      </v-list>
 
-          <v-list-item-group v-model="active" color="primary">
-            <v-list-item
-              v-for="(experiment, i) in experiments"
-              :key="i"
-              link
-              @click="$router.push(`/scientist/experiments/view/${experiment.id}`)"
-              class="pl-8"
-            >
-              <v-list-item-content>
-                <v-list-item-title>
-                  {{ experiment.title }}
-                  <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
-                    version {{ experiment.version }}
-                  </v-chip>
-                </v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ experiment.completed_results_count }}<span v-if="!experiment.hasOwnProperty('completed_results_count')">0</span> completed
-                </v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
+      <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
 
-        <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
-        <div class="caption pa-4" v-if="loading === false && experiments.length === 0">
-          You have no experiments. Yet...
-        </div>
-      </v-navigation-drawer>
-    </v-col>
+      <v-list-item v-if="loading === false && experiments.length === 0">
+        <v-list-item-content>
+          <v-list-item-title>
+            <div class="caption ma-4">
+              You have no experiments. Yet...
+            </div>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </div>
 
-    <v-col class="pr-12 pl-12 pt-6">
-      <v-row>
-        <router-view :key="$route.params.id || ''"/>
-      </v-row>
-    </v-col>
-  </v-row>
+    <!-- the menu above is position fixed, so we put a "mold" below -->
+    <div style="flex: 0 0 270px; height: 20px;"></div>
+
+    <router-view :key="$route.params.id || ''"/>
+  </div>
 </template>
 
 <script>
@@ -127,33 +130,21 @@ export default {
     margin-right: 0px !important;
   }
 
-  /*  */
-  .qe-experiment-link-container {
-    display: flex;
-    align-items: center;
-    height: 100%;
-  }
-
-  .qe-experiments-navigation-drawer {
+  .qe-nav-drawer {
     z-index: 1;
     padding-top: 64px;
-    margin-left: 256px;
-    max-width: 300px;
+    width: 270px;
+    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 240px;
+    border-right: 1px solid #ddd;
+    background: #fff;
   }
-
-  .v-navigation-drawer__content::-webkit-scrollbar {
-    width: 12px;
-  }
-  .v-navigation-drawer__content {
-    scrollbar-width: thin;
-    scrollbar-color: $thumbBG $scrollbarBG;
-  }
-  .v-navigation-drawer__content::-webkit-scrollbar-track {
-    background: $scrollbarBG;
-  }
-  .v-navigation-drawer__content::-webkit-scrollbar-thumb {
-    background-color: $thumbBG;
-    border-radius: 6px;
-    border: 3px solid $scrollbarBG;
+  @media (max-width: 1150px) {
+    .qe-nav-drawer {
+      left: 58px;
+    }
   }
 </style>

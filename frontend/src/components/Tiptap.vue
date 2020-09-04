@@ -1,5 +1,5 @@
 <template>
-  <v-card class="editor">
+  <v-card class="editor elevation-0">
     <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
       <div class="menubar">
 
@@ -257,7 +257,11 @@ export default {
   .editor {
     width: 100%;
     max-width: 100%;
+    border: 1px solid rgba(0,0,0,.38);
   }
+  /*.editor:focus {
+    outline: #1976d2 solid 3px;
+  }*/
   .menubar {
     padding-bottom: 5px;
     display: flex;

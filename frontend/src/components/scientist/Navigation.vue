@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer permanent app style="z-index: 1;" :mini-variant.sync="mini">
+  <div class="qe-nav-drawer">
     <v-list
       dense
       style="margin-top: 10px;"
@@ -22,7 +22,7 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
-  </v-navigation-drawer>
+  </div>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
         // lightbulb-on-outline
       ],
       active: null,
-      mini: false
+      mini: true
     }
   },
 
@@ -53,3 +53,23 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="css">
+  .qe-nav-drawer {
+    z-index: 1;
+    padding-top: 64px;
+    position: fixed;
+    width: 240px;
+    overflow-y: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-right: 1px solid #ddd;
+    background: #fff;
+  }
+  @media (max-width: 1150px) {
+    .qe-nav-drawer {
+      width: 58px;
+    }
+  }
+</style>

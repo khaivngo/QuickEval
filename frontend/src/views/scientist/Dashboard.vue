@@ -1,34 +1,28 @@
 <template>
-  <!-- <v-container> -->
-    <v-row class="fill-height" no-gutters>
-      <v-col class="pr-12 pl-12 pt-6">
-        <v-row>
-          <div class="mb-8 mt-6">
-            <h2 class="display-1">
-              Dashboard
-            </h2>
-          </div>
+  <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1">
+    <div class="mb-8 mt-6">
+      <h2 class="display-1">
+        Dashboard
+      </h2>
+    </div>
 
-          <table class="table bordered hovered">
-            <thead>
-              <tr>
-                <th class="overflow-wrap">Experiment Title</th>
-                <th class="overflow-wrap">Visitors</th>
-                <th class="overflow-wrap">Visitors Completed</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(experiment, i) in experiments" :key="i">
-                <td class="overflow-wrap">{{ experiment.title }}</td>
-                <td>{{ experiment.results_count }}</td>
-                <td>{{ experiment.completed_results_count }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </v-row>
-      </v-col>
-    </v-row>
-  <!-- </v-container> -->
+    <table class="table bordered hovered">
+      <thead>
+        <tr>
+          <th class="overflow-wrap">Experiment Title</th>
+          <th class="overflow-wrap">Visitors</th>
+          <th class="overflow-wrap">Visitors Completed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(experiment, i) in experiments" :key="i">
+          <td class="overflow-wrap">{{ experiment.title }}</td>
+          <td>{{ experiment.results_count }}</td>
+          <td>{{ experiment.completed_results_count }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>

@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\ResultObserverMeta;
-use DB;
-
-use Maatwebsite\Excel\Facades\Excel;
 
 class ResultObserverMetasController extends Controller
 {

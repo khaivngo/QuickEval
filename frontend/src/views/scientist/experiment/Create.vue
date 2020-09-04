@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="mb-12 pb-12">
+  <v-container fluid class="pl-12 pr-12 pb-12 pt-6 flex-grow-1">
     <v-row class="ml-0 mr-0 mb-12 pa-0">
       <v-col class="pl-9">
         <h2 class="text-h4" v-if="mode === 'new'">
@@ -11,7 +11,11 @@
       </v-col>
     </v-row>
 
-    <v-progress-linear indeterminate class="ma-0" v-if="loaders.fetching"></v-progress-linear>
+    <v-row class="ml-0 mr-0 mt-0 mb-12 pa-0" v-if="loaders.fetching">
+      <v-col class="pl-9">
+        <v-progress-linear indeterminate class="ma-0"></v-progress-linear>
+      </v-col>
+    </v-row>
 
     <v-stepper v-model="currentLevel" alt-labels non-linear v-if="!loaders.fetching" class="elevation-0">
       <v-stepper-header class="elevation-0">
@@ -35,6 +39,7 @@
                 <v-select
                   class="mt-6"
                   v-model="form.experimentType"
+                  :loading="loadingExperimentTypes"
                   :disabled="mode === 'edit'"
                   :items="experimentTypes"
                   item-text="name"
@@ -412,6 +417,7 @@ export default {
       currentLevel: 1,
 
       experimentTypes: [],
+      loadingExperimentTypes: false,
 
       steps: [
         { id: 1, title: 'Basic Details' },
@@ -524,8 +530,10 @@ export default {
       this.findExperiment(this.$route.params.id)
     }
 
+    this.loadingExperimentTypes = true
     this.$axios.get('/experiment-types').then(json => {
       this.experimentTypes = json.data
+      this.loadingExperimentTypes = false
     })
   },
 

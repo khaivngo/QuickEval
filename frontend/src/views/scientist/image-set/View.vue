@@ -1,9 +1,9 @@
 <template>
-  <div class="mb-12">
+  <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1">
     <v-progress-linear indeterminate v-if="loading"></v-progress-linear>
 
-    <div v-if="!loading">
-      <v-row class="mb-12 mt-12" align="center">
+    <div v-if="!loading" class="pl-3 pr-3">
+      <v-row class="mb-12 mt-6" align="center">
         <h2 class="text-h3">
           {{ imageSet.title }}
           <!-- <v-icon color="primary">mdi-pencil</v-icon> -->

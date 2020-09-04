@@ -48,7 +48,7 @@
               </v-text-field> -->
 
               <v-row v-if="event.type === 'instruction'" align="center">
-                <v-col>
+                <v-col class="pr-0">
                   <Tiptap v-model="event.value"/>
                 </v-col>
                 <v-col cols="auto">
@@ -259,7 +259,7 @@ export default {
 
   watch: {
     sequences: {
-      // immediate: true,
+      immediate: true,
       handler (values) {
         values.forEach((item) => {
           let type  = (item.picture_queue_id != null) ? 'imageSet' : 'instruction'
@@ -307,7 +307,7 @@ export default {
   },
 
   methods: {
-    // Since axios returns a promise the async/await can be omitted for the getData function
+    // Since axios returns a promise the async/await can be omitted
     getInstructions () {
       try {
         return this.$axios.get('/instructions')

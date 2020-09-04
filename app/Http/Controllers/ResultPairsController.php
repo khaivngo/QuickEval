@@ -105,7 +105,9 @@ class ResultPairsController extends Controller
 
     # get all meta data for observer input fields used in the experiment
     if ($request->flags['inputsMeta']) {
-      $results['inputsMeta'] = ExperimentObserverMeta::with('observer_meta')->where('experiment_id', $expID)->get();
+      $results['inputsMeta'] = ExperimentObserverMeta::with('observer_meta')
+        ->where('experiment_id', $expID)
+        ->get();
     }
 
     # get meta data about experiment

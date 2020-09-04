@@ -1,5 +1,5 @@
 <template>
-  <v-container @mouseenter="fadeOut" @mouseleave="fadeIn" class="pl-12 pr-12">
+  <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1"> <!-- @mouseenter="fadeOut" @mouseleave="fadeIn" -->
     <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
 
     <div v-if="!loading">
@@ -195,7 +195,7 @@
 
       <Statistics v-if="experimentResults.length > 0"/>
     </div>
-  </v-container >
+  </div>
 </template>
 
 <script>
