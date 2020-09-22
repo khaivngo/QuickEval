@@ -100,7 +100,6 @@
         </v-container>
       </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
         <v-btn
           color="blue darken-1"
           text
@@ -108,7 +107,7 @@
         >
           Close
         </v-btn>
-
+        <v-spacer></v-spacer>
         <v-btn
           color="#78AA1C"
           :loading="exporting"

@@ -148,114 +148,61 @@ class ResultRankOrdersController extends Controller
       return Excel::download(new ResultRankOrdersExport($results), $filename);
     }
 
-    public function statistics(int $id) {
+
+    public function statistics (int $id)
+    {
         $results = [];
 
-        # get the image sets used in a experiment
-        $sets = \DB::table('experiment_queues')
-          ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-          ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
-          ->where([
-            ['experiment_queues.experiment_id', '=', $id],
-            ['experiment_sequences.picture_queue_id', '!=', null]
-          ])
+        # Get the image sets used in the experiment (every image set used in a experiment sequences).
+        $data =
+          ExperimentQueue::with(['experiment_sequences' => function ($query) {
+            $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
+              ->with(['picture_set.pictures' => function ($q) {
+                $q->where('is_original', 0);
+              }]);
+          }])
+          ->where('experiment_id', '=', $id)
           ->get();
-        $results['imageSets'] = $sets;
+
+        // TODO: remove need for this on frontend
+        $results['imagesForEachImageSet'] = $data[0]->experiment_sequences;
+        $results['imageSets'] = $data[0]->experiment_sequences;
 
 
-        # each image set with belonging images
-        $d = [];
-        foreach ($sets as $set) {
-          $dd = \App\Picture::where([
-            ['picture_set_id', '=', $set->picture_set_id],
-            ['is_original', '=', 0]
-          ])->get();
+        // # sorts ascending based on provided id
+        // function build_sorter($key) {
+        //     return function ($a, $b) use ($key) {
+        //         return strnatcmp($a[$key], $b[$key]);
+        //     };
+        // }
 
-          array_push($d, $dd);
-        }
-        $results['imagesForEachImageSet'] = $d;
-
-
-        # original images
-        foreach ($sets as $key => $set) {
-          $dd = \App\Picture::where([
-            ['picture_set_id', '=', $set->picture_set_id],
-            ['is_original', '=', 1]
-          ])->first();
-
-          $results['imageUrl'][$key] = $dd;
-        }
-
-
-        function build_sorter($key) {
-            return function ($a, $b) use ($key) {
-                return strnatcmp($a[$key], $b[$key]);
-            };
-        }
-
-        $rank_order_results = ExperimentResult
-          ::with('rank_order_results.picture', 'rank_order_results.picture_set')
-          ->where('experiment_id', $id)
-          // ->groupBy('rank_order_results.experiment_result_id')
+        $rank_order_results = ExperimentResult::with([
+            'rank_order_results' => function ($query) { $query->orderBy('picture_id'); },
+            'rank_order_results.picture'
+          ])->where('experiment_id', $id)
           ->get();
 
         $data = [];
-        foreach ($rank_order_results as $result)
-        {
+        foreach ($rank_order_results as $result) {
           $one = [];
-          foreach ($result->rank_order_results as $key => $res)
-          {
-            $arr = [];
-
-            $arr['ranking']   = $res->ranking;
-            $arr['pictureId'] = $res->picture->id;
-            $arr['name']      = $res->picture->name;
-            $arr['user']      = $result->user_id;
-            $arr['setId']     = $res->picture_set->id;
-            $arr['setName']   = $res->picture_set->title;
-
-            array_push($one, $arr);
-          }
-          // sort by pictureId ascending
-          usort($one, build_sorter('pictureId')); // do this in sql?
+          $one = $result->rank_order_results->groupBy('picture_set_id');
           array_push($data, $one);
         }
-        // function personSort( $a, $b ) {
-        //     return $a->age == $b->age ? 0 : ( $a->age > $b->age ) ? 1 : -1;
-        // }
-        // usort( $data, 'personSort' );
-        // $results['resultsForEachImageSet'] = $data;
 
-        // $imageSetIds = array_map(function($o) { return $o['id']; }, (array) $sets);
-        $imageSetIds = [];
-        foreach ($sets as $set) {
-          $imageSetIds[] = $set->id;
-        }
+        $results['resultsForEachObserver'] = $data;
 
-        # group results by image set
-        $new = [];
-        foreach ($data as $key => $resultArray)
-        {
-          foreach ($resultArray as $keyy => $result)
-          {
-            $index = array_search($result['setId'], $imageSetIds);
-            $new[$index][] = $result;
+        // $index = array_search($result['setId'], $imageSetIds);
+        // $new[$index][] = $result;
+
+        # group results by image sets (the array $key is the same as image set id)
+        $groupedByImageSet = [];
+        foreach ($data as $observer) {
+          foreach ($observer as $key => $set) {
+            $groupedByImageSet[$key][] = $set;
           }
         }
 
-        # group results by image set
-        // $new = [];
-        // foreach ($data as $result) {
-        //   foreach ($results['imagesForEachImageSet'] as $key => $images) {
-        //     foreach ($images as $image) {
-        //       if ($result[0]['setId'] == $image['picture_set_id']) {
-        //         $new[$key][] = $result;
-        //       }
-        //     }
-        //   }
-        // }
-        $results['resultsForEachImageSet'] = $new;
-
+        $results['resultsForEachImageSet'] = $groupedByImageSet;
 
         return response($results);
       }

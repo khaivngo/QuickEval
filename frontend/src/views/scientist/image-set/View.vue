@@ -6,11 +6,6 @@
       <v-row class="mb-12 mt-6" align="center">
         <h2 class="text-h3">
           {{ imageSet.title }}
-          <!-- <v-icon color="primary">mdi-pencil</v-icon> -->
-          <!-- <v-btn color="primary" outlined icon text class="ml-4 mt-1" @click.stop="editTitle = true">
-            <v-icon>mdi-pencil</v-icon>
-            add file
-          </v-btn> -->
         </h2>
         <v-dialog
           v-model="editTitle"
@@ -285,16 +280,8 @@ export default {
     },
 
     deleteImage (index) {
-      // this.deleting = true
-      // if (confirm('Delete image?')) {
-      //   this.$axios.delete(`/picture/${id}`).then((response) => {
       this.reproductions.splice(index, 1)
       EventBus.$emit('success', 'Image has been deleted successfully')
-      //   this.deleting = false
-      // }).catch(() => {
-      //   this.deleting = false
-      // })
-      // }
     },
 
     deleteOriginal (id) {

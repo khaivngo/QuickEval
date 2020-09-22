@@ -26,9 +26,9 @@ class ResultCategoriesController extends Controller
       $results = [];
       $expID = $request->experimentId;
 
-      # get all paired results for each selected observer
-      if ($request->flags['results']) {
-        # get all triplet results for each observer
+      # get all results for each selected observer
+      if ($request->flags['results'])
+      {
         $observers = ExperimentResult
           ::with('category_results.picture', 'category_results.category')
           ->whereIn('id', $request->selected)
@@ -117,5 +117,62 @@ class ResultCategoriesController extends Controller
       if ($result) {
         return response('result_stored', 201);
       }
+    }
+
+    public function statistics (int $id) {
+      $results = [];
+
+      # Get the image sets used in the experiment (every image set used in experiment sequences).
+      $seq =
+        ExperimentQueue::with(['experiment_sequences' => function ($query) {
+          $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
+            ->with(['picture_set.pictures' => function ($q) {
+              $q->where('is_original', 0);
+            }]);
+        }])
+        ->where('experiment_id', $id)
+        ->get();
+
+      $results['categories'] = \App\ExperimentCategory::with('category')->where('experiment_id', $id)->get();
+
+      # get all results for each observer
+      $observers = ExperimentResult
+        ::with('category_results.picture.picture_set', 'category_results.category')
+        ->where('experiment_id', $id)
+        ->get();
+
+      $data = [];
+      // $hello = $observers->groupBy('picture_id_left');
+      foreach ($observers as $observer) {
+        foreach ($observer->category_results as $key => $result) {
+          $arr = [];
+          $arr['observer']      = $observer->user_id;
+          $arr['session']       = $observer->id;
+          $arr['category_id']   = $result->category->id;
+          $arr['category']      = $result->category->title;
+          $arr['picture_id']    = $result->picture_id_left;
+          $arr['picture']       = $result->picture->name;
+          $arr['picture_set_id'] = $result->picture->picture_set->id;
+          $arr['time_spent']    = $result->client_side_timer;
+
+          array_push($data, $arr);
+        }
+      }
+
+      $results['results'] = $data;
+
+      # Add an array of categories used in the experiment to each image used in the experiment. Then add a empty result array to
+      # every category which we use later for storing results that belongs to that image/category combination.
+      foreach ($seq[0]->experiment_sequences as $sequence) {
+        foreach ($sequence['picture_set']['pictures'] as $image) {
+          $image['categories'] = $results['categories'];
+          foreach ($image['categories'] as $category) {
+            $category['result'] = [];
+          }
+        }
+      }
+      $results['imagesetSequences'] = $seq[0]->experiment_sequences;
+
+      return $results;
     }
 }

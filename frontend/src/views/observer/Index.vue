@@ -1,7 +1,7 @@
 <template>
   <v-row class="fill-height" style="padding-top: 0;">
     <v-col cols="6" style="border-right: 1px solid #ddd; overflow-y: auto; height: 91vh;" class="pa-12">
-      <div>
+      <div class="mb-2">
         <v-text-field
           label="Find experiment"
           placeholder="Title, person, institute"

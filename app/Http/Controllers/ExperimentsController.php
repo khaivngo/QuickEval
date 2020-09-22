@@ -34,10 +34,12 @@ class ExperimentsController extends Controller
     public function search ($term)
     {
       if ($term == 'all') {
-        return Experiment::with('user:id,name')->where('is_public', 1)->get();
+        return Experiment::with('user:id,name', 'observer_metas.observer_meta')
+          ->where('is_public', 1)
+          ->get();
       }
 
-      return Experiment::with('user:id,name')
+      return Experiment::with('user:id,name', 'observer_metas.observer_meta')
         ->where([
           ['is_public', 1],
           ['title', 'LIKE', '%'.$term.'%']
@@ -87,7 +89,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     *
+     * Find the first experiment matching the provided ID.
      */
     public function find (Request $request) {
       return Experiment::with('observer_metas.observer_meta')->find($request->id);
@@ -96,31 +98,13 @@ class ExperimentsController extends Controller
     /**
      * Find the first public experiment that matches the provided ID.
      */
-    public function find_public (Request $request) {
-
-      // $name = 12 . '_' . auth()->user()->id;
-      // if (session not exists for this experiment_id/user_id combo)
-        // start new with name experiment_id _ user_id auth()->user()->id
-
-      // $value = $request->session()->put('345', 'cake');
-      // $request->session()->save();
-      // session(['test' => 'x']);
-
-      // Specifying a default value...
-      // $value = session('hehe');
-
-      // Store a piece of data in the session...
-      // session(['thedodod' => 'hello world']);
-
-      // $session = $request->session()->all();
-
-      // return response($session);
-
+    public function find_public (Request $request)
+    {
       return Experiment::where([
         ['id', $request->id],
         ['is_public', 1]
       ])
-      ->with('user:id,name')
+      ->with('user:id,name', 'observer_metas.observer_meta')
       ->first();
     }
 
@@ -335,7 +319,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * 
+     * Generate a randomized queue for images in a triplet experiment.
      */
     protected function random_triplet_queue ($imageSetId)
     {
@@ -371,7 +355,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * 
+     * Generate a randomized queue for images in a paired experiment.
      */
     protected function random_paired_queue ($imageSetId, $twice)
     {
@@ -407,7 +391,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     *
+     * Generate a randomized queue for images in a category experiment.
      */
     protected function make_category_queue ($image_set_id)
     {

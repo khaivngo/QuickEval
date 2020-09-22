@@ -91,9 +91,9 @@
                 <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
                   <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
-                  <td>{{ ifNotNaN(zScoreMap[f][0][j]) }}</td>
-                  <td>{{ ifNotNaN(zScoreMap[f][1][j]) }}</td>
-                  <td>{{ ifNotNaN(zScoreMap[f][2][j]) }}</td>
+                  <td>{{ isNumber(zScoreMap[f][0][j]) }}</td>
+                  <td>{{ isNumber(zScoreMap[f][1][j]) }}</td>
+                  <td>{{ isNumber(zScoreMap[f][2][j]) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -101,29 +101,6 @@
         </v-card>
       </v-tab-item>
     </v-tabs>
-
-    <!-- <div>
-      <h3 class="title mb-3">Raw data</h3>
-
-      <table class="table bordered hovered">
-        <thead>
-          <tr>
-            <th></th>
-            <th v-for="(rRes, m) in rankedResults.resultsForEachImageSet[0]" :key="m" class="overflow-wrap">
-              {{ rRes.name }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(y, c) in rankedResults.resultsForEachImageSet">
-            <tr>
-              <td class="overflow-wrap"><b>{{ y[c].user }}</b></td>
-              <td v-for="(g, h) in y">{{ g.ranking }}</td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div> -->
 
     <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length === 1" style="margin-top: 50px;">
       <v-card flat>
@@ -193,14 +170,74 @@
               <tr v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j">
                 <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
-                <td>{{ ifNotNaN(zScoreMap[0][0][j]) }}</td>
-                <td>{{ ifNotNaN(zScoreMap[0][1][j]) }}</td>
-                <td>{{ ifNotNaN(zScoreMap[0][2][j]) }}</td>
+                <td>{{ isNumber(zScoreMap[0][0][j]) }}</td>
+                <td>{{ isNumber(zScoreMap[0][1][j]) }}</td>
+                <td>{{ isNumber(zScoreMap[0][2][j]) }}</td>
               </tr>
             </tbody>
           </table>
         </div>
       </v-card>
+    </div>
+
+    <div v-for="(group, gIndex) in grouped" :key="gIndex">
+      <h3 class="title mb-3">Raw</h3>
+
+      <div class="mb-2 d-flex justify-center align-center">
+        <h4 class="text-center">Number of times selected</h4>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+            </v-btn>
+          </template>
+          <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+            Number of times each image/category combination is selected.
+          </div>
+        </v-tooltip>
+      </div>
+      <table class="table bordered hovered">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th v-for="(cat, m) in group.picture_set.pictures[0].categories" :key="m" class="overflow-wrap">
+              {{ cat.category.title }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(picture, c) in group.picture_set.pictures" :key="c">
+            <td class="overflow-wrap"><b>{{ picture.name }}</b></td>
+            <td v-for="(category, cIndex) in picture.categories" :key="cIndex">
+              {{ category.result.length }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-5" v-for="(group, b) in grouped" :key="b * 4">
+      <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
+
+      <table class="table bordered hovered">
+        <thead>
+          <tr>
+            <th class="overflow-wrap">Title</th>
+            <th class="overflow-wrap">Low CI limit</th>
+            <th class="overflow-wrap">Mean z-score</th>
+            <th class="overflow-wrap">High CI limit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(y, j) in group.picture_set.pictures" :key="j * 2">
+            <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+            <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
+            <td>{{ isNumber(zScoreMap[b][1][j]) }}</td>
+            <td>{{ isNumber(zScoreMap[b][2][j]) }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
   </div>
@@ -225,8 +262,8 @@ import {
   calculateZScoreMatrix,
   calculateMeanZScore,
   calculateSDMatrix,
-  arrayObjectIndexOf
-  // convertRankToPair
+  arrayObjectIndexOf,
+  convertRankToPair
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
 
@@ -237,6 +274,11 @@ export default {
   components: {
     ScatterPlot
   },
+
+  props: {
+    experimentType: String
+  },
+
   data () {
     return {
       results: {
@@ -249,13 +291,13 @@ export default {
       activeTab: null,
       plotData: [],
 
-      rankedResults: []
+      rankedResults: [],
+      grouped: []
     }
   },
-  created () {
-    var experimentType = 1
 
-    if (experimentType === 1) {
+  created () {
+    if (this.experimentType === 'paired') {
       this.$axios.get(`/paired-result/${this.$route.params.id}/statistics`).then(data => {
         this.results = data.data
 
@@ -274,7 +316,7 @@ export default {
 
           if (this.results.resultsForEachImageSet.length) {
             this.results.resultsForEachImageSet[i].forEach((result, index) => {
-              let row    = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
+              let row = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
               let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
               this.resultsArray[row][column] += 1 // result['won'] here?
             })
@@ -294,39 +336,106 @@ export default {
           })
         })
       })
-    } else if (experimentType === 2) {
-      //   this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
-      //     this.results = data.data
-      //     this.rankedResults = data.data
+    } else if (this.experimentType === 'rank-order') {
+      this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
+        this.results = data.data
+        this.rankedResults = data.data
 
-      //     this.results.imageSets.forEach((imageSet, i) => {
+        var arrayTwo = []
+        // if (this.results.resultsForEachImageSet.length) {
+        var set = Object.entries(this.results.resultsForEachImageSet)
+        set.forEach((imageSet, index) => {
+          var array = []
 
-      //       // <template v-for="(y, c) in rankedResults.resultsForEachImageSet">
-      //       //   <tr>
-      //       //     <td class="overflow-wrap"><b>{{ y[c].user }}</b></td>
-      //       //     <td v-for="(g, h) in y">{{ g.ranking }}</td>
-      //       //   </tr>
-      //       // </template>
+          imageSet[1].forEach((observer, i) => {
+            observer.forEach((r, ii) => {
+              array[ii] = r.ranking
+            })
+          })
 
-      //       // var resultTable = convertRankToPair(this.rankedResults.resultsForEach[i])
-      //       // calculatePlots(resultTable)
-      //       // zScoreArray = calculatePlots(resultTable)
+          arrayTwo.push(array)
+          console.log(arrayTwo)
 
-      //       // addSeries(imageTitleArray, zScoreArray, t['name'])
+          let resultTable = convertRankToPair(arrayTwo)
+          console.log(resultTable)
+          let zScoreArray = this.calculatePlots(resultTable)
+          console.log(zScoreArray)
 
-      //       // $("#zScores-container").append('</br></br><div id=zscore-' + roundCounter + '><h1>Z-Scores</h1><hr></div>')
+          // store calculated z-scores for an image set
+          this.zScoreMap.push(zScoreArray)
 
-      //       // //sends all imagestitles, calculated results and the name of picture set
-      //       // setZScores(imageTitleArray, zScoreArray, t['name'], data['imageUrl'][i]['url'])
-      //     })
-      //   })
-    } else if (experimentType === 3) {
-      //
+          this.plotData.push({
+            imageSet: this.results.imagesForEachImageSet[index].picture_set,
+            // only get the file names
+            label: this.results.imagesForEachImageSet[index].picture_set.pictures.map(obj => obj.name),
+            zScores: zScoreArray
+          })
+        })
+        // }
+      })
+    } else if (this.experimentType === 'category') {
+      this.$axios.get(`/result-categories/${this.$route.params.id}/statistics`).then(data => {
+        console.log(data.data)
+
+        let answers = data.data.results
+        let sequences = data.data.imagesetSequences
+
+        sequences.forEach(sequence => {
+          sequence.picture_set.pictures.forEach(image => {
+            image.categories.forEach(item => {
+              answers.forEach(answer => {
+                console.log(image)
+                console.log(item)
+                if (answer.category_id === item.category_id && answer.picture_id === image.id) {
+                  console.log('match')
+                  console.log(answer)
+                  console.log(item)
+                  item.result.push(answer)
+                  console.log(item)
+                }
+              })
+            })
+          })
+        })
+
+        console.log(sequences)
+        this.grouped = sequences
+
+        sequences.forEach(sequence => {
+          let set = []
+          sequence.picture_set.pictures.forEach(image => {
+            let row = []
+            image.categories.forEach(categ => {
+              // categ.forEach(result => {
+              row.push(categ.result.length)
+              // })
+            })
+            set.push(row)
+          })
+
+          // calc z-scores
+          let zScoreArray = this.calculatePlotsCategory(set, true)
+          console.log(zScoreArray)
+
+          // store calculated z-scores for image sets
+          this.zScoreMap.push(zScoreArray)
+
+          this.plotData.push({
+            imageSet: sequence.picture_set,
+            // only get the file names
+            label: sequence.picture_set.pictures.map(obj => obj.name),
+            zScores: zScoreArray
+          })
+        })
+      })
     }
   },
 
   methods: {
-    ifNotNaN (value) {
+    /**
+     * Return empty string if provided value is not a number.
+     */
+    isNumber (value) {
       return !Number.isNaN(value) ? value : ''
     },
 
@@ -519,7 +628,7 @@ export default {
       // includeJs('math.js');
 
       // if we cannot invert Xtemp2, then we cannot calculate z-scores.  Does a check here, and then display an error message
-      breakC = 0
+      var breakC = 0
       var meanZScore = []
       var lowCILimit = []
       var highCILimit = []
@@ -543,7 +652,7 @@ export default {
         `)
       }
       else { // If we can invert it, then do the calculations.
-        Ytemp = math.inv(Xtemp2)
+        var Ytemp = math.inv(Xtemp2)
 
         var Y = []
         var ThreeDirection = []

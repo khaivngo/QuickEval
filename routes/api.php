@@ -86,7 +86,11 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/triplet-result',    'ResultTripletsController@store'   );
     Route::post('/rank-order-result', 'ResultRankOrdersController@store' );
 
+    # rank order results
     Route::get( '/rank-order-result/{id}/statistics', 'ResultRankOrdersController@statistics' );
+
+    # category results
+    Route::get( '/result-categories/{id}/statistics', 'ResultCategoriesController@statistics' );
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');

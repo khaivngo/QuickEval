@@ -189,7 +189,15 @@
                 </v-layout> -->
               </div>
             </v-card-text>
-            <v-card-actions style="border-top: 1px solid #ddd;">
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="openNewImageSet = false"
+              >
+                Cancel
+              </v-btn>
               <v-spacer></v-spacer>
               <v-btn color="#78AA1C" dark @click="closeNewImageSet()">
                 Done

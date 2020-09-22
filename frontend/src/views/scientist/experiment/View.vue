@@ -184,16 +184,32 @@
                 </div>
               </v-container>
             </v-card-text>
+            <v-divider></v-divider>
             <v-card-actions>
+              <v-btn
+                color="blue darken-1"
+                text
+                @click="exportDialog = false"
+              >
+                Cancel
+              </v-btn>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="exportDialog = false">Close</v-btn>
-              <v-btn color="#78AA1C" :loading="exporting" dark @click="exportResults()">Export</v-btn>
+              <v-btn
+                color="#78AA1C"
+                :loading="exporting" dark
+                @click="exportResults()"
+              >
+                Export
+              </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
       </div>
 
-      <Statistics v-if="experimentResults.length > 0"/>
+      <Statistics
+        v-if="experiment.id && experimentResults.length > 0"
+        :experimentType="experiment.type.slug"
+      />
     </div>
   </div>
 </template>
@@ -213,6 +229,8 @@ export default {
 
   data () {
     return {
+      experiment: {},
+
       loading: false,
       loadingVisibility: false,
       exporting: false,
@@ -235,12 +253,6 @@ export default {
       ],
 
       selected: [],
-
-      experiment: {
-        id: null,
-        title: null,
-        experiment_type_id: null
-      },
 
       experimentTypeSlug: '',
 

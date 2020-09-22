@@ -27,11 +27,10 @@
               <v-divider></v-divider>
 
               <v-card-actions>
-                <v-spacer></v-spacer>
                 <v-btn text @click="dialog = false">
                   cancel
                 </v-btn>
-
+                <v-spacer></v-spacer>
                 <v-btn color="error" depressed @click="dialog = false">
                   Delete
                 </v-btn>
