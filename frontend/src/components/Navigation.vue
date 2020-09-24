@@ -38,7 +38,7 @@
       href="https://github.com/khaivngo/QuickEval/issues"
       target="_blank"
     >
-      <span class="mr-2 font-weight-regular">Report issues</span>
+      <span class="mr-2 font-weight-regular">Report issue</span>
       <v-icon small>mdi-open-in-new</v-icon>
     </v-btn>
 

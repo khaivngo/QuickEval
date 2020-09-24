@@ -195,6 +195,8 @@ class ResultRankOrdersController extends Controller
         // $new[$index][] = $result;
 
         # group results by image sets (the array $key is the same as image set id)
+
+        // TODO: replace with groupBy function... so that we don't need collect() below
         $groupedByImageSet = [];
         foreach ($data as $observer) {
           foreach ($observer as $key => $set) {
@@ -202,10 +204,20 @@ class ResultRankOrdersController extends Controller
           }
         }
 
-        $results['resultsForEachImageSet'] = $groupedByImageSet;
+        # group each observers (one session) answers
+        $data = [];
+        foreach ($groupedByImageSet as $key => $set) {
+          $one = [];
+          $collection = collect($set);
+          $one = $collection->groupBy(function ($item, $key) {
+              return $item[0]['experiment_result_id'];
+          });
+          array_push($data, $one);
+        }
+        $results['resultsForEachImageSet'] = $data;
 
         return response($results);
-      }
+    }
 
     /**
      * Update the specified resource in storage.

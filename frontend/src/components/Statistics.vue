@@ -10,7 +10,7 @@
       Not enough data yet to calculate statistics.
     </div>
 
-    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 1" v-model="activeTab">
+    <v-tabs v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0" v-model="activeTab">
       <v-tab
         v-for="(imageSet, index) in results.imageSets"
         :key="index"
@@ -102,84 +102,6 @@
       </v-tab-item>
     </v-tabs>
 
-    <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length === 1" style="margin-top: 50px;">
-      <v-card flat>
-        <div class="mt-12">
-          <h3 class="text-h6 mb-3 mt-12">Raw data</h3>
-          <!-- {{ results.imageSets[f].title }} -->
-
-          <div class="mb-2 d-flex justify-center align-center">
-            <h4 class="text-center">Chosen image</h4>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn icon v-on="on">
-                  <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                </v-btn>
-              </template>
-              <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                Images on the y-axis are the images picked.<br><br>
-                For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
-              </div>
-            </v-tooltip>
-          </div>
-          <table class="table bordered hovered body-1">
-            <thead>
-              <tr>
-                <th></th>
-                <th v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j" class="overflow-wrap">
-                  {{ y.name }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j">
-                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
-
-                <td v-for="(score, scoreIndex) in rawDataMap[0][j]" :key="scoreIndex">
-                  <span v-if="score > 0">
-                    {{ score }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div>
-          <!-- <h3 class="headline">Z-Scores: {{ results.imageSets[f].title }}</h3> -->
-          <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
-
-          <!-- <div style="width: 150px;">
-            <v-img :src="$UPLOADS_FOLDER + results.imageUrl[f].path" alt="" contain></v-img>
-          </div> -->
-
-          <p v-if="zScoreMap[0][3] == 1">
-            Warning: Need more observer-data to be calculated properly.
-          </p>
-
-          <table class="table bordered hovered">
-            <thead>
-              <tr>
-                <th class="overflow-wrap">Title</th>
-                <th class="overflow-wrap">Low CI limit</th>
-                <th class="overflow-wrap">Mean z-score</th>
-                <th class="overflow-wrap">High CI limit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(y, j) in results.imagesForEachImageSet[0]" :key="j">
-                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
-
-                <td>{{ isNumber(zScoreMap[0][0][j]) }}</td>
-                <td>{{ isNumber(zScoreMap[0][1][j]) }}</td>
-                <td>{{ isNumber(zScoreMap[0][2][j]) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </v-card>
-    </div>
-
     <div v-for="(group, gIndex) in grouped" :key="gIndex">
       <h3 class="title mb-3">Raw</h3>
 
@@ -216,7 +138,7 @@
       </table>
     </div>
 
-    <div class="mt-5" v-for="(group, b) in grouped" :key="b * 4">
+    <div class="mt-5" v-for="(group, b) in grouped" :key="group.id">
       <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
 
       <table class="table bordered hovered">
@@ -229,7 +151,69 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(y, j) in group.picture_set.pictures" :key="j * 2">
+          <tr v-for="(y, j) in group.picture_set.pictures" :key="y.id">
+            <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+            <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
+            <td>{{ isNumber(zScoreMap[b][1][j]) }}</td>
+            <td>{{ isNumber(zScoreMap[b][2][j]) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- RANK ORDER -->
+    <div v-for="(set, gIndex) in rankedResults.resultsForEachImageSet" :key="gIndex">
+      <h3 class="title mb-3">Raw</h3>
+
+      <div class="mb-2 d-flex justify-center align-center">
+        <h4 class="text-center">Ranking</h4>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+            </v-btn>
+          </template>
+          <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+            <!--  -->
+          </div>
+        </v-tooltip>
+      </div>
+      <table class="table bordered hovered">
+        <thead>
+          <tr>
+            <th>Observer ID</th>
+            <th v-for="(image, m) in rankedResults.imagesForEachImageSet[gIndex].picture_set.pictures" :key="m" class="overflow-wrap">
+              {{ image.name }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(observer, c) in set" :key="c">
+            <td class="overflow-wrap"><b>{{ observer[0][0].experiment_result_id }}</b></td>
+            <template v-for="(answers) in observer">
+              <td v-for="answer in answers" :key="answer.id">{{ answer.ranking }}</td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Z-scores RANK ORDER -->
+    <div class="mt-5" v-for="(imageSet, b) in rankedResults.imagesForEachImageSet" :key="imageSet.id">
+      <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
+
+      <table class="table bordered hovered">
+        <thead>
+          <tr>
+            <th class="overflow-wrap">Title</th>
+            <th class="overflow-wrap">Low CI limit</th>
+            <th class="overflow-wrap">Mean z-score</th>
+            <th class="overflow-wrap">High CI limit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(y, j) in imageSet.picture_set.pictures" :key="y.id">
             <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
             <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
@@ -340,38 +324,40 @@ export default {
       this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
         this.results = data.data
         this.rankedResults = data.data
+        console.log(this.rankedResults)
 
-        var arrayTwo = []
         // if (this.results.resultsForEachImageSet.length) {
-        var set = Object.entries(this.results.resultsForEachImageSet)
-        set.forEach((imageSet, index) => {
-          var array = []
+        // console.log(this.rankedResults.resultsForEachImageSet)
+        this.rankedResults.resultsForEachImageSet.forEach((imageSet, index) => {
+          // TODO: bruk object.values
+          let array = Object.entries(imageSet)
+          // console.log(array)
 
-          imageSet[1].forEach((observer, i) => {
-            observer.forEach((r, ii) => {
-              array[ii] = r.ranking
+          // TODO: JUST USE THIS WHEN IN RAW DATA TEMPLATE
+          var arrayTwo = []
+          array.forEach(observer => {
+            observer[1].forEach(answer => {
+              var objectOne = {}
+              answer.forEach((rank, index) => {
+                objectOne[index] = rank.ranking
+              })
+              arrayTwo.push(objectOne)
             })
           })
 
-          arrayTwo.push(array)
-          console.log(arrayTwo)
-
           let resultTable = convertRankToPair(arrayTwo)
-          console.log(resultTable)
           let zScoreArray = this.calculatePlots(resultTable)
-          console.log(zScoreArray)
 
           // store calculated z-scores for an image set
           this.zScoreMap.push(zScoreArray)
 
           this.plotData.push({
-            imageSet: this.results.imagesForEachImageSet[index].picture_set,
+            imageSet: this.rankedResults.imagesForEachImageSet[index].picture_set,
             // only get the file names
-            label: this.results.imagesForEachImageSet[index].picture_set.pictures.map(obj => obj.name),
+            label: this.rankedResults.imagesForEachImageSet[index].picture_set.pictures.map(obj => obj.name),
             zScores: zScoreArray
           })
         })
-        // }
       })
     } else if (this.experimentType === 'category') {
       this.$axios.get(`/result-categories/${this.$route.params.id}/statistics`).then(data => {
@@ -384,21 +370,14 @@ export default {
           sequence.picture_set.pictures.forEach(image => {
             image.categories.forEach(item => {
               answers.forEach(answer => {
-                console.log(image)
-                console.log(item)
                 if (answer.category_id === item.category_id && answer.picture_id === image.id) {
-                  console.log('match')
-                  console.log(answer)
-                  console.log(item)
                   item.result.push(answer)
-                  console.log(item)
                 }
               })
             })
           })
         })
 
-        console.log(sequences)
         this.grouped = sequences
 
         sequences.forEach(sequence => {
