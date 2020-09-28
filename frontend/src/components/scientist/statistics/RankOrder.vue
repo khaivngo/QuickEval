@@ -8,10 +8,15 @@
 
     <ScatterPlot :series="plotData"/>
 
+    <h3 class="text-h4 mt-12 font-weight-thin">
+      Raw data
+    </h3>
     <div v-for="(set, gIndex) in rankedResults.resultsForEachImageSet" :key="gIndex">
-      <h3 class="title mb-3 mt-12">Raw</h3>
+      <h3 class="text-h6 mb-3 mt-4">
+        {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
+      </h3>
 
-      <div class="mb-2 d-flex justify-center align-center">
+      <div class="pa-1 d-flex justify-center align-center qe-table-title">
         <h4 class="text-center">Ranking</h4>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
@@ -35,7 +40,9 @@
         </thead>
         <tbody>
           <tr v-for="(observer, c) in set" :key="c">
-            <td class="overflow-wrap"><b>{{ observer[0][0].experiment_result_id }}</b></td>
+            <td class="overflow-wrap">
+              <b>{{ observer[0][0].experiment_result_id }}</b>
+            </td>
             <template v-for="(answers) in observer">
               <td v-for="answer in answers" :key="answer.id">{{ answer.ranking }}</td>
             </template>
@@ -72,31 +79,20 @@
 </template>
 
 <script>
-import { create, all } from 'mathjs'
 import {
   calculateZScoreValues,
   parseLFMValues,
   calculateLFMatrix,
   calculatePercentageMatrix,
   calculateCumulative,
-  imnegative,
-  im,
-  matrix,
-  transpose,
-  dotProduct,
-  getAllIndexes,
-  // normsInv,
   calculateSlope,
   calculateZScoreMatrix,
   calculateMeanZScore,
   calculateSDMatrix,
-  arrayObjectIndexOf,
   convertRankToPair
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
-
-const config = {}
-const math = create(all, config)
+import { isNumber } from '@/helpers.js'
 
 export default {
   components: {
@@ -161,12 +157,7 @@ export default {
   },
 
   methods: {
-    /**
-     * Return empty string if provided value is not a number.
-     */
-    isNumber (value) {
-      return !Number.isNaN(value) ? value : ''
-    },
+    isNumber,
 
     /* eslint-disable */
     calculatePlots ($frequencyMatrix, $category) {
@@ -264,6 +255,11 @@ export default {
   }
   .table.bordered tr:hover {
     background: #eee;
+  }
+  .qe-table-title {
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
   }
   .overflow-wrap {
     /*overflow: hidden;*/

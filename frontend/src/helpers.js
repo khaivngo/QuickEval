@@ -22,21 +22,9 @@ export function formatDate (dateTime) {
   return `${date[2]}. ${months[date[1] - 1]}. ${date[0]}, at ${time[0]}:${time[1]}`
 }
 
-// const result = groupBy(list, function (item) {
-//   return [item.lastname, item.age]
-// })
 /**
- * Group array items by provided object properties.
+ * Return empty string if provided value is not a number.
  */
-export function groupBy (array, f) {
-  let groups = {}
-  array.forEach(function (o) {
-    let group = JSON.stringify(f(o))
-    groups[group] = groups[group] || []
-    groups[group].push(o)
-  })
-
-  return Object.keys(groups).map(function (group) {
-    return groups[group]
-  })
+export function isNumber (value) {
+  return !Number.isNaN(value) ? value : ''
 }

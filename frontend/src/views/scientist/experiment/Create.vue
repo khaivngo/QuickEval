@@ -195,7 +195,7 @@
             ></v-checkbox> -->
 
             <v-row class="mt-6" align="center">
-              <v-col cols="4">
+              <v-col cols="4" xl="4" lg="6" md="8" sm="9">
                 <v-text-field
                   v-model="form.bgColour"
                   label="Background colour"
@@ -207,13 +207,13 @@
               </v-col>
 
               <v-col
-                cols="auto"
+                cols="auto" xl="auto" lg="auto" md="auto" sm="3"
                 :style="'border-radius: 2px; height: 40px; margin-bottom: 5px; width: 50px; background: #' + form.bgColour"
               ></v-col>
             </v-row>
 
             <v-row class="mt-4" align="center">
-              <v-col cols="4">
+              <v-col cols="4" xl="4" lg="6" md="8" sm="9">
                 <v-text-field
                   v-model="form.delay"
                   label="Delay between stimuli (gray screen)"
@@ -223,7 +223,10 @@
                   placeholder="200"
                 ></v-text-field>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <v-col
+                cols="auto" xl="auto" lg="auto" md="auto" sm="3"
+                class="pa-0 mb-1"
+              >
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -239,7 +242,7 @@
             </v-row>
 
             <v-row class="mt-8" align="center" v-if="form.experimentType !== 3">
-              <v-col cols="4">
+              <v-col cols="4" xl="4" lg="6" md="8" sm="9">
                 <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
@@ -249,7 +252,10 @@
                   type="text"
                 ></v-text-field>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <v-col
+                cols="auto" xl="auto" lg="auto" md="auto" sm="3"
+                class="pa-0 mb-1"
+              >
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">

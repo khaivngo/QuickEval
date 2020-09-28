@@ -8,10 +8,10 @@
 
     <ScatterPlot :series="plotData"/>
 
-    <div v-for="(group, gIndex) in grouped" :key="gIndex">
-      <h3 class="title mb-3">Raw</h3>
+    <div v-for="(group, gIndex) in sequences" :key="gIndex">
+      <h3 class="title mb-3">Raw data</h3>
 
-      <div class="mb-2 d-flex justify-center align-center">
+      <div class="pa-1 d-flex justify-center align-center qe-table-title">
         <h4 class="text-center">Number of times selected</h4>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
@@ -44,7 +44,7 @@
       </table>
     </div>
 
-    <div class="mt-5" v-for="(group, b) in grouped" :key="group.id">
+    <div class="mt-5" v-for="(group, b) in sequences" :key="group.id">
       <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
 
       <table class="table bordered hovered">
@@ -84,14 +84,10 @@ import {
   transpose,
   dotProduct,
   getAllIndexes,
-  calculateSlope,
-  calculateZScoreMatrix,
-  calculateMeanZScore,
-  calculateSDMatrix,
-  arrayObjectIndexOf,
-  convertRankToPair
+  calculateSDMatrix
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
+import { isNumber } from '@/helpers.js'
 
 const config = {}
 const math = create(all, config)
@@ -113,7 +109,7 @@ export default {
       activeTab: null,
       plotData: [],
 
-      grouped: [],
+      sequences: [],
       loading: false
     }
   },
@@ -138,7 +134,7 @@ export default {
         })
       })
 
-      this.grouped = sequences
+      this.sequences = sequences
 
       sequences.forEach(sequence => {
         let set = []
@@ -175,13 +171,9 @@ export default {
   },
 
   methods: {
-    /**
-     * Return empty string if provided value is not a number.
-     */
-    isNumber (value) {
-      return !Number.isNaN(value) ? value : ''
-    },
+    isNumber,
 
+    /* eslint-disable */
     calculatePlotsCategory ($frequencyMatrix, $category) {
       var observerAmount = 0
       var cumulativeFrequencyTable
@@ -326,13 +318,12 @@ export default {
       }
 
       if (breakC == 1) {
-        window.alert(`
-          Not enough data to calculate Z-scores.
-          In order to calculate z-scores at least one row needs to be complete.
-          All values are set to '0'.
-        `)
-      }
-      else { // If we can invert it, then do the calculations.
+        // window.alert(`
+        //   Not enough data to calculate Z-scores.
+        //   In order to calculate z-scores at least one row needs to be complete.
+        //   All values are set to '0'.
+        // `)
+      } else { // If we can invert it, then do the calculations.
         var Ytemp = math.inv(Xtemp2)
 
         var Y = []
@@ -405,6 +396,11 @@ export default {
   }
   .table.bordered tr:hover {
     background: #eee;
+  }
+  .qe-table-title {
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-left: 1px solid #ddd;
   }
   .overflow-wrap {
     /*overflow: hidden;*/
