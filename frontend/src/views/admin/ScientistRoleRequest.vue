@@ -1,19 +1,17 @@
 <template>
-  <div>
-    <v-layout mb-5 mt-5>
+  <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1">
+    <div class="mb-8 mt-6">
       <h2 class="display-1">
         Scientist role requests
       </h2>
-    </v-layout>
 
-    <v-card>
-      <!-- <v-container> -->
       <v-data-table
         :loading="loadingRequests"
         :headers="headers"
         :items="requests"
         hide-default-footer
         no-data-text=""
+        class="mt-12"
       >
         <template v-slot:no-data>
           <div class="caption text-xs-center" v-if="loadingRequests === false">
@@ -49,8 +47,7 @@
           </td>
         </template>
       </v-data-table>
-      <!-- </v-container> -->
-    </v-card>
+    </div>
   </div>
 </template>
 

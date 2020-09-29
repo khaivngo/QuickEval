@@ -3,6 +3,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         color="primary"
+        class="mr-4"
         dark
         large
         rounded
@@ -20,7 +21,7 @@
               <span class="headline">Login</span>
             </v-col>
             <v-col cols="auto">
-              <v-btn icon color="blue darken-1" text @click="dialog = false">
+              <v-btn icon text color="blue darken-1" @click="dialog = false">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-col>

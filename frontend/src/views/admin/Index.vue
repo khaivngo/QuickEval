@@ -1,21 +1,11 @@
 <template>
-  <v-container mt-3 fluid style="max-width: 1400px;">
-    <v-layout>
-      <v-flex shrink mr-3 mt-5 mb-5>
-        <Navigation/>
-      </v-flex>
-      <v-flex grow mt-2 ml-5 mr-5>
-        <!-- <transition
-          mode="out-in"
-          appear
-          name="custom-classes-transition"
-          enter-active-class="animated slideInLeft"
-        > -->
-        <router-view/>
-        <!-- </transition> -->
-      </v-flex>
-    </v-layout>
-  </v-container>
+  <div class="d-flex">
+    <Navigation/>
+    <!-- the nav menu above is position fixed, so we put a "mold" below -->
+    <div class="mold"></div>
+
+    <router-view/>
+  </div>
 </template>
 
 <script>
@@ -27,3 +17,15 @@ export default {
   }
 }
 </script>
+
+<style scoped lang="css">
+  .mold {
+    flex: 0 0 240px;
+    height: 20px;
+  }
+  @media (max-width: 1150px) {
+    .mold {
+      flex: 0 0 58px;
+    }
+  }
+</style>

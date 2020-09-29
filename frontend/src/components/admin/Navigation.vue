@@ -1,30 +1,28 @@
 <template>
-  <v-card
-    class="mx-auto"
-    max-width="400"
-    tile
-    flat
-  >
+  <div class="qe-nav-drawer">
     <v-list
-      flat
+      dense
+      style="margin-top: 10px;"
+      class="qe-drawer-1"
     >
-      <v-list-item-group color="primary">
+      <v-list-item-group v-model="active" color="primary">
         <v-list-item
           v-for="(item, i) in items"
           :key="i"
-          :class="
-            (parentPage(item.url) === parentPage($route.path)) || ($route.path === '/admin' && item.url === '/admin/scientist-role-requests') ?
-            'qe-active-nav' : ''
-          "
+          link
           @click="$router.push(item.url)"
         >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
           <v-list-item-content>
-            <v-list-item-title v-html="item.title"></v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list-item-group>
     </v-list>
-  </v-card>
+  </div>
 </template>
 
 <script>
@@ -32,30 +30,42 @@ export default {
   data () {
     return {
       items: [
-        // { title: 'Dashboard', url: '/admin/dashboard', icon: 'insert_chart' },
-        { title: 'Scientist Requests', url: '/admin/scientist-role-requests', icon: 'verified_user' }
-      ]
+        { title: 'Dashboard', url: '/admin/dashboard', icon: 'mdi-view-dashboard-outline' },
+        { title: 'Scientist Requests', url: '/admin/scientist-role-requests', icon: 'mdi-account-multiple-plus-outline' }
+      ],
+      active: null,
+      mini: true
     }
   },
 
-  methods: {
-    parentPage (url) {
-      return url.split('/')[2]
+  created () {
+    if (this.$route.path.split('/')[2] === 'scientist-role-requests') {
+      this.active = 1
+    } else if (this.$route.path.split('/')[2] === 'dashboard') {
+      this.active = 0
+    } else {
+      this.active = 1
     }
   }
 }
 </script>
 
 <style scoped lang="css">
-.qe-active-nav {
-  font-weight: 900;
-  /*color: rgb(25, 118, 210);*/
-  color: black;
-}
-
-.v-list-item--active, .v-item--active {
-  /*background-color: #FAFAFA;*/
-  /*font-weight: 900;*/
-  /*color: rgb(25, 118, 210);*/
-}
+  .qe-nav-drawer {
+    z-index: 1;
+    padding-top: 64px;
+    position: fixed;
+    width: 240px;
+    overflow-y: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-right: 1px solid #ddd;
+    background: #fff;
+  }
+  @media (max-width: 1150px) {
+    .qe-nav-drawer {
+      width: 58px;
+    }
+  }
 </style>

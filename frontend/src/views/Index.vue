@@ -30,14 +30,7 @@
 
       <v-row class="mt-12">
         <v-col>
-          <v-btn
-            @click="loginAsAnonymous()"
-            large rounded
-            color="primary"
-            :loading="anonymousIntent"
-          >
-            Participate anonymously <v-icon right>mdi-arrow-right</v-icon>
-          </v-btn>
+          <LoginAnonymous/>
         </v-col>
       </v-row>
 
@@ -49,33 +42,10 @@
 
       <v-row class="mb-12">
         <v-col>
-          <!-- <v-btn
-            @click="toggleIntent('login')"
-            large
-            rounded
-            color="primary"
-            class="mr-4"
-          >
-            Log in <v-icon right>mdi-arrow-right</v-icon>
-          </v-btn> -->
           <Login/>
-
           <Register/>
-
-          <!-- <v-btn
-            @click="toggleIntent('register')"
-            text large
-            color="primary"
-          >
-            Register
-          </v-btn> -->
         </v-col>
       </v-row>
-
-      <!-- <div style="width: 400px;" class="mt-4">
-        <Register v-if="registerIntent" @success="registered"/>
-        <Login v-if="loginIntent"/>
-      </div> -->
     </v-container>
 
     <v-footer style="background: white; margin-top: 200px;">
@@ -107,57 +77,24 @@
 </template>
 
 <script>
+import LoginAnonymous from '@/components/LoginAnonymous'
 import Register from '@/components/Register'
 import Login from '@/components/Login'
-import EventBus from '@/eventBus'
 
 export default {
   components: {
+    LoginAnonymous,
     Register,
     Login
   },
 
   data () {
     return {
-      anonymousIntent: false,
-      registerIntent: false,
-      loginIntent: false,
-
       error: ''
-      // storeState: store.state
-      // user: {}
     }
   },
 
-  // computed: {
-  //   storeState () {
-  //     return store.state
-  //   }
-  // },
-  // computed: {
-  //   user () {
-  //     return store.state.user
-  //   }
-  // },
-  // watch: {
-  //   user (user) {
-  //     // this.user = user
-  //     console.log(user)
-  //   }
-  // },
-
-  // watch: {
-  //   storeState () {
-  //     console.log('wwwww')
-  //   }
-  // },
-
   created () {
-    // check if login -> redirect
-    // console.log(this.storeState)
-    // if (this.user.id > 0) {
-    //   console.log('wwww')
-    // }
     this.$axios.get(`/user`).then(response => {
       if (response.data) {
         if (response.data.role < 2) {
@@ -170,41 +107,6 @@ export default {
     }).catch(() => {
       this.showAuth = true
     })
-  },
-
-  methods: {
-    toggleIntent (intent) {
-      if (intent === 'register') {
-        this.registerIntent = true
-        this.loginIntent = false
-      }
-
-      if (intent === 'login') {
-        this.registerIntent = false
-        this.loginIntent = true
-      }
-    },
-
-    loginAsAnonymous () {
-      this.anonymousIntent = true
-
-      this.$axios.post('/anonymous').then(response => {
-        localStorage.setItem('access_token', response.data.access_token)
-        this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        // // if (response.data.role === 2) redirect /scientist
-        EventBus.$emit('logged', response.data)
-        this.anonymousIntent = false
-        this.$router.push('/observer')
-      }).catch((error) => {
-        this.anonymousIntent = false
-        this.error = error
-      })
-    },
-
-    registered () {
-      this.registerIntent = false
-      this.loginIntent = true
-    }
   }
 }
 </script>

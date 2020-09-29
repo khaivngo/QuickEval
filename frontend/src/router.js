@@ -71,6 +71,7 @@ export default new VueRouter({
       component: loadView('admin/Index'),
       children: [
         { path: '',                         component: loadView('admin/ScientistRoleRequest') },
+        { path: 'dashboard',                component: loadView('admin/Dashboard') },
         { path: 'scientist-role-requests',  component: loadView('admin/ScientistRoleRequest') }
       ]
     },
