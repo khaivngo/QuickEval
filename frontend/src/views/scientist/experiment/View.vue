@@ -82,134 +82,150 @@
         </div>
       </v-row> -->
 
-      <h2 class="mb-5 mt-12">Observers</h2>
+      <v-tabs v-model="tab" class="mt-12 mb-6">
+        <v-tab>
+          <h5 class="text-subtitle-1 font-weight-medium">Observers</h5>
+        </v-tab>
+        <v-tab>
+          <h2 class="text-subtitle-1 font-weight-medium">Statistics</h2>
+        </v-tab>
+      </v-tabs>
 
-      <v-data-table
-        v-model="selected"
-        :headers="headers"
-        :items="experimentResults"
-        item-key="id"
-        show-select
-        no-data-text="0 completed"
-        :loading="loading"
-        loading-text="Loading... Please wait"
-        hide-default-footer
-        :items-per-page="100"
-      ></v-data-table>
+      <v-tabs-items v-model="tab">
+        <v-tab-item :key="0">
+          <v-data-table
+            class="mt-12"
+            v-model="selected"
+            :headers="headers"
+            :items="experimentResults"
+            item-key="id"
+            show-select
+            no-data-text="0 completed"
+            :loading="loading"
+            loading-text="Loading... Please wait"
+            hide-default-footer
+            :items-per-page="100"
+          ></v-data-table>
 
-      <div>
-        <v-dialog v-model="exportDialog" max-width="600px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              class="mt-2 ml-4"
-              v-bind="attrs"
-              v-on="on"
-              :disabled="selected.length === 0"
-            >
-              <v-icon :size="20" class="mr-2">
-                mdi-download
-              </v-icon>
-              Export...
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">Export observer data</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-row class="mt-4">
-                  <v-col cols="12" class="pa-0 mb-0">
-                    <p class="pl-0 body-1" style="color: #000;">Results</p>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox
-                      v-model="exportFlags.results"
-                      label="Stimuli results"
-                      class="mt-0"
-                    ></v-checkbox>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox
-                      v-if="experiment.observer_metas && experiment.observer_metas.length > 0"
-                      v-model="exportFlags.inputs"
-                      label="Inputs results (demographics)"
-                      class="mt-0"
-                    ></v-checkbox>
-                  </v-col>
-                  <v-col cols="12" class="pa-0 mb-0 mt-6">
-                    <p class="pl-0 body-1" style="color: #000;">Meta data</p>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox
-                      v-model="exportFlags.imageSets"
-                      label="Image sets"
-                      class="mt-0"
-                    ></v-checkbox>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox
-                      v-if="experiment.observer_metas && experiment.observer_metas.length > 0"
-                      v-model="exportFlags.inputsMeta"
-                      label="Inputs (demographics)"
-                      class="mt-0"
-                    ></v-checkbox>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="6" class="pa-0">
-                    <v-checkbox
-                      v-model="exportFlags.expMeta"
-                      label="Experiment paramaters"
-                      class="mt-0"
-                    ></v-checkbox>
-                  </v-col>
-                </v-row>
-                <div class="pa-0 mt-0">
-                  <v-radio-group v-model="fileFormat" :mandatory="false">
-                    <v-row class="mt-6">
+          <div>
+            <v-dialog v-model="exportDialog" max-width="600px">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  color="primary"
+                  class="mt-2 ml-4"
+                  v-bind="attrs"
+                  v-on="on"
+                  :disabled="selected.length === 0"
+                >
+                  <v-icon :size="20" class="mr-2">
+                    mdi-download
+                  </v-icon>
+                  Export...
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Export observer data</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row class="mt-4">
                       <v-col cols="12" class="pa-0 mb-0">
-                        <p class="pl-0">File format</p>
+                        <p class="pl-0 body-1" style="color: #000;">Results</p>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
-                        <v-radio label="CSV" value="csv"></v-radio>
+                      <v-col cols="12" sm="6" md="6" class="pa-0">
+                        <v-checkbox
+                          v-model="exportFlags.results"
+                          label="Stimuli results"
+                          class="mt-0"
+                        ></v-checkbox>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
-                        <v-radio label="XLSX" value="xlsx"></v-radio>
+                      <v-col cols="12" sm="6" md="6" class="pa-0">
+                        <v-checkbox
+                          v-if="experiment.observer_metas && experiment.observer_metas.length > 0"
+                          v-model="exportFlags.inputs"
+                          label="Inputs results (demographics)"
+                          class="mt-0"
+                        ></v-checkbox>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
-                        <v-radio label="HTML" value="html"></v-radio>
+                      <v-col cols="12" class="pa-0 mb-0 mt-6">
+                        <p class="pl-0 body-1" style="color: #000;">Meta data</p>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6" class="pa-0">
+                        <v-checkbox
+                          v-model="exportFlags.imageSets"
+                          label="Image sets"
+                          class="mt-0"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6" class="pa-0">
+                        <v-checkbox
+                          v-if="experiment.observer_metas && experiment.observer_metas.length > 0"
+                          v-model="exportFlags.inputsMeta"
+                          label="Inputs (demographics)"
+                          class="mt-0"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="6" class="pa-0">
+                        <v-checkbox
+                          v-model="exportFlags.expMeta"
+                          label="Experiment paramaters"
+                          class="mt-0"
+                        ></v-checkbox>
                       </v-col>
                     </v-row>
-                  </v-radio-group>
-                </div>
-              </v-container>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="exportDialog = false"
-              >
-                Cancel
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="#78AA1C"
-                :loading="exporting" dark
-                @click="exportResults()"
-              >
-                Export
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
+                    <div class="pa-0 mt-0">
+                      <v-radio-group v-model="fileFormat" :mandatory="false">
+                        <v-row class="mt-6">
+                          <v-col cols="12" class="pa-0 mb-0">
+                            <p class="pl-0">File format</p>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
+                            <v-radio label="CSV" value="csv"></v-radio>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
+                            <v-radio label="XLSX" value="xlsx"></v-radio>
+                          </v-col>
+                          <v-col cols="12" sm="6" md="4" class="pa-0 mb-0">
+                            <v-radio label="HTML" value="html"></v-radio>
+                          </v-col>
+                        </v-row>
+                      </v-radio-group>
+                    </div>
+                  </v-container>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click="exportDialog = false"
+                  >
+                    Cancel
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="#78AA1C"
+                    :loading="exporting" dark
+                    @click="exportResults()"
+                  >
+                    Export
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
+        </v-tab-item>
 
-      <Statistics
-        v-if="experiment.id && experimentResults.length > 0"
-        :experimentType="experiment.type.slug"
-      />
+        <v-tab-item :key="1">
+          <Statistics
+            v-if="experiment.id && experimentResults.length > 0"
+            :experimentType="experiment.type.slug"
+          />
+        </v-tab-item>
+      </v-tabs-items>
+
+      <!-- <h2 class="mb-5 mt-12">Observers</h2> -->
     </div>
   </div>
 </template>
@@ -230,6 +246,8 @@ export default {
   data () {
     return {
       experiment: {},
+
+      tab: 0,
 
       loading: false,
       loadingVisibility: false,
@@ -253,8 +271,6 @@ export default {
       ],
 
       selected: [],
-
-      experimentTypeSlug: '',
 
       experimentResults: []
     }
@@ -283,7 +299,7 @@ export default {
       })
 
       this.$axios({
-        url: `/${this.experimentTypeSlug}-result/export`,
+        url: `/${this.experiment.type.slug}-result/export`,
         method: 'POST',
         responseType: 'blob', // important
         data: {
@@ -311,12 +327,6 @@ export default {
       this.$axios.get(`/experiment/${this.$route.params.id}`)
         .then(response => {
           this.experiment = response.data
-
-          // TODO: use slug form DB
-          if (this.experiment.experiment_type_id === 1) this.experimentTypeSlug = 'paired'
-          if (this.experiment.experiment_type_id === 2) this.experimentTypeSlug = 'rank-order'
-          if (this.experiment.experiment_type_id === 3) this.experimentTypeSlug = 'category'
-          if (this.experiment.experiment_type_id === 5) this.experimentTypeSlug = 'triplet'
 
           if (this.experiment.observer_metas && this.experiment.observer_metas.length > 0) {
             this.exportFlags.inputs = true

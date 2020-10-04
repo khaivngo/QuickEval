@@ -18,12 +18,12 @@
         style="margin-bottom: 140px;"
       >
         <div class="mt-3">
-          <h3 class="text-h5 mb-3">
-            {{ results.imageSets[f].title }}
+          <h3 class="text-h6 mb-3">
+            {{ results.imageSets[f].title }} <v-icon small>mdi-arrow-right</v-icon> Raw data
           </h3>
-          <h3 class="text-h6 mb-3 font-weight-regular">
+          <!-- <h3 class="text-h6 mb-3 font-weight-regular">
             Raw data
-          </h3>
+          </h3> -->
 
           <div class="pb-1 pt-1 d-flex justify-center align-center qe-table-title">
             <h4 class="text-center">Chosen image</h4>

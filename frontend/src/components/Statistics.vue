@@ -1,9 +1,5 @@
 <template>
-  <div class="qe-statistics-container">
-    <h2 class="mb-12">
-      Statistics
-    </h2>
-
+  <div class="qe-statistics-container mt-12">
     <StatsCategory
       v-if="experimentType === 'category'"
     />
@@ -42,7 +38,7 @@ export default {
 <style lang="css" scoped>
   .qe-statistics-container {
     padding-bottom: 300px;
-    margin-top: 150px;
+    /*margin-top: 150px;*/
     color: #000;
   }
 </style>

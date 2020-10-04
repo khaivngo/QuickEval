@@ -1,19 +1,19 @@
 <template>
-  <v-container fluid class="pl-12 pr-12 pb-12 pt-6 flex-grow-1">
-    <v-row class="ml-0 mr-0 mb-12 pa-0">
+  <v-container fluid class="pl-8 pr-8 pb-12 pt-6 flex-grow-1">
+    <v-row class="ml-0 mr-0 mt-0 mb-12 pa-0" v-if="loaders.fetching">
+      <v-col class="pl-9">
+        <v-progress-linear indeterminate class="ma-0"></v-progress-linear>
+      </v-col>
+    </v-row>
+
+    <v-row class="ml-0 mr-0 mb-12 mt-4 pa-0" v-if="!loaders.fetching">
       <v-col class="pl-9">
         <h2 class="text-h4" v-if="mode === 'new'">
           Create Experiment
         </h2>
         <h2 class="text-h4" v-else>
-          Edit {{ experiment.title }}
+          Edit <v-icon>mdi-arrow-right</v-icon> {{ experiment.title }}
         </h2>
-      </v-col>
-    </v-row>
-
-    <v-row class="ml-0 mr-0 mt-0 mb-12 pa-0" v-if="loaders.fetching">
-      <v-col class="pl-9">
-        <v-progress-linear indeterminate class="ma-0"></v-progress-linear>
       </v-col>
     </v-row>
 

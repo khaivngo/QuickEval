@@ -36,42 +36,40 @@
                 </template>
               </v-select>
 
-              <!-- <v-text-field
-                v-if="event.type === 'instruction'"
-                label="Write instruction"
-                v-model="event.value"
-                class="m-0"
-              >
-                <template v-slot:append-outer>
-                  <v-icon @click="remove(i)">delete</v-icon>
-                </template>
-              </v-text-field> -->
-
               <v-row v-if="event.type === 'instruction'" align="center">
                 <v-col class="pr-0">
                   <Tiptap v-model="event.value"/>
                 </v-col>
                 <v-col cols="auto">
-                  <v-icon @click="remove(i)">
-                    mdi-delete <!-- clear -->
-                  </v-icon>
+                  <div>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on" class="mr-2">
+                          <v-icon @click="openInstructionsHistory = true">
+                            mdi-history
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+                        History
+                      </div>
+                    </v-tooltip>
+
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on" class="mr-2">
+                          <v-icon @click="remove(i)">
+                            mdi-delete
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+                        Remove
+                      </div>
+                    </v-tooltip>
+                  </div>
                 </v-col>
               </v-row>
-
-              <v-select
-                v-if="event.type === 'instructionFromHistory'"
-                label="Select instruction"
-                :items="instructions"
-                v-model="event.value"
-                item-text="description"
-                item-value="id"
-                outlined
-                dense
-              >
-                <template v-slot:append-outer>
-                  <v-icon @click="remove(i)">mdi-delete</v-icon>
-                </template>
-              </v-select>
             </v-flex>
           </v-layout>
         </v-timeline-item>
@@ -80,132 +78,17 @@
 
     <v-row class="mb-5 pa-0 ma-0">
       <v-col cols="auto" class="pl-0">
-        <v-menu bottom offset-y>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              class="mr-4 ml-0"
-              color="info"
-              v-on="on"
-            >
-              <v-icon class="mr-2" :size="20">mdi-format-list-bulleted</v-icon>
-              instruction
-            </v-btn>
-          </template>
-
-          <v-list>
-            <v-list-item
-              @click="add('instruction')"
-            >
-              <v-list-item-title>
-                <v-icon left>mdi-plus</v-icon>
-                Create new
-              </v-list-item-title>
-            </v-list-item>
-
-            <v-list-item
-              @click="add('instructionFromHistory')"
-            >
-              <v-list-item-title>
-                <v-icon left>mdi-history</v-icon>
-                Add from history
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <v-btn
+          class="mr-4 ml-0"
+          color="info"
+          @click="add('instruction')"
+        >
+          <v-icon class="mr-2" :size="20">mdi-format-list-bulleted</v-icon>
+          instruction
+        </v-btn>
       </v-col>
 
       <v-col>
-        <!-- <v-btn outlined @click="add('uploadImageSet')">
-          upload image set <v-icon class="ml-2" small>create</v-icon>
-        </v-btn> -->
-
-        <!-- <v-btn depressed @click="add('imageSet')">
-          image set <v-icon class="ml-2" :size="20">add</v-icon>
-        </v-btn> -->
-
-        <v-dialog v-model="openNewImageSet" persistent scrollable max-width="800">
-          <!-- <template v-slot:activator="{ on }">
-            <v-btn text dark color="#D9D9D9" v-on="{ on }">
-              Create new
-            </v-btn>
-          </template> -->
-          <v-card>
-            <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">Create Image Set</v-card-title>
-            <v-card-text class="pt-8 pb-8">
-              <v-layout align-center>
-                <v-text-field
-                  v-model="newImageSet.name"
-                  label="Title"
-                  outlined
-                  dense
-                ></v-text-field>
-
-                <v-btn
-                  :disabled="newImageSet.name === '' || creating"
-                  :loading="creating"
-                  color="success"
-                  class="ma-0 ml-3"
-                  @click="createNew"
-                >
-                  Create
-                </v-btn>
-              </v-layout>
-
-              <div class="mt-5" :class="(!newImageSet.imageSetId) ? 'not-interactable' : ''">
-                <v-layout mb-3>
-                  <h2 class="title">
-                    Original/reference image
-                    <span class="subheading">(optional)</span>
-                  </h2>
-                </v-layout>
-
-                <v-layout>
-                  <p>
-                    Upload the original, uncompressed, image of the image set.
-                    During experiment creation you'll be able to select whether or not this image should be shown to the observer.
-                  </p>
-                </v-layout>
-
-                <v-layout mb-5>
-                  <UppyOriginal :imagesetid="newImageSet.imageSetId" :width="300" :height="200"/>
-                </v-layout>
-
-                <v-layout mb-3>
-                  <h2 class="title">Reproduction images</h2>
-                </v-layout>
-
-                <div>
-                  <Uppy :imagesetid="newImageSet.imageSetId" style="width: 100%;">
-                    <div id="UppyModalOpenerBtn" class="default">
-                      <v-icon color="primary" large>mdi-plus</v-icon>
-                    </div>
-                  </Uppy>
-                </div>
-
-                <!-- <v-layout mt-5 justify-end>
-                  <v-btn class="success" @click="openNewImageSet = false">
-                    Done
-                  </v-btn>
-                </v-layout> -->
-              </div>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="openNewImageSet = false"
-              >
-                Cancel
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn color="#78AA1C" dark @click="closeNewImageSet()">
-                Done
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-
         <v-menu bottom offset-y>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -239,6 +122,109 @@
         </v-menu>
       </v-col>
     </v-row>
+
+    <v-dialog v-model="openNewImageSet" persistent scrollable max-width="800">
+      <v-card>
+        <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">Create Image Set</v-card-title>
+        <v-card-text class="pt-8 pb-8">
+          <v-layout align-center>
+            <v-text-field
+              v-model="newImageSet.name"
+              label="Title"
+              outlined
+              dense
+            ></v-text-field>
+
+            <v-btn
+              :disabled="newImageSet.name === '' || creating"
+              :loading="creating"
+              color="success"
+              class="ma-0 ml-3"
+              @click="createNew"
+            >
+              Create
+            </v-btn>
+          </v-layout>
+
+          <div class="mt-5" :class="(!newImageSet.imageSetId) ? 'not-interactable' : ''">
+            <v-layout mb-3>
+              <h2 class="title">
+                Original/reference image
+                <span class="subheading">(optional)</span>
+              </h2>
+            </v-layout>
+
+            <v-layout>
+              <p>
+                Upload the original, uncompressed, image of the image set.
+                During experiment creation you'll be able to select whether or not this image should be shown to the observer.
+              </p>
+            </v-layout>
+
+            <v-layout mb-5>
+              <UppyOriginal :imagesetid="newImageSet.imageSetId" :width="300" :height="200"/>
+            </v-layout>
+
+            <v-layout mb-3>
+              <h2 class="title">Reproduction images</h2>
+            </v-layout>
+
+            <div>
+              <Uppy :imagesetid="newImageSet.imageSetId" style="width: 100%;">
+                <div id="UppyModalOpenerBtn" class="default">
+                  <v-icon color="primary" large>mdi-plus</v-icon>
+                </div>
+              </Uppy>
+            </div>
+
+            <!-- <v-layout mt-5 justify-end>
+              <v-btn class="success" @click="openNewImageSet = false">
+                Done
+              </v-btn>
+            </v-layout> -->
+          </div>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="openNewImageSet = false"
+          >
+            Cancel
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="#78AA1C" dark @click="closeNewImageSet()">
+            Done
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="openInstructionsHistory" persistent scrollable max-width="800">
+      <v-card>
+        <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">Select instructions</v-card-title>
+        <v-card-text class="pt-8 pb-8">
+          <div
+            v-for="(instruction, i) in instructions" :key="i"
+            v-html="instruction.description"
+            style="height: 60px; overflow-y: hidden; margin-bottom: 10px; padding: 10px; background-color: #eee; cursor: pointer; border-radius: 4px;"
+            @click="instructionFromHistory(instruction)"
+          ></div>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="blue darken-1"
+            text
+            @click="openInstructionsHistory = false"
+          >
+            Cancel
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -296,6 +282,7 @@ export default {
     input: null,
     nonce: 0,
 
+    openInstructionsHistory: false,
     openNewImageSet: false,
     newImageSet: {
       name: null,
@@ -344,6 +331,18 @@ export default {
       this.input = null
 
       this.$emit('added', this.events)
+    },
+
+    instructionFromHistory (instruction) {
+      this.events.push({
+        id: this.nonce++,
+        value: instruction.description,
+        type: 'instruction'
+      })
+
+      // this.input = null
+      this.$emit('added', this.events)
+      this.openInstructionsHistory = false
     },
 
     remove (id) {

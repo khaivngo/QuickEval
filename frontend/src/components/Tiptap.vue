@@ -178,60 +178,70 @@ import {
 } from 'tiptap-extensions'
 
 export default {
-  prop: ['value'],
+  props: ['value'],
   components: {
     EditorContent,
     EditorMenuBar
   },
-  watch: {
-    html (html) {
-      // this.$emit('updated', html)
-      this.$emit('input', this.html)
-    }
-  },
   data () {
     return {
-      editor: new Editor({
-        extensions: [
-          new Placeholder({
-            emptyNodeClass: 'is-empty',
-            emptyNodeText: 'Write your instructions …',
-            showOnlyWhenEditable: true
-          }),
-          new Blockquote(),
-          new BulletList(),
-          new CodeBlock(),
-          new HardBreak(),
-          new Heading({ levels: [1, 2, 3] }),
-          new HorizontalRule(),
-          new ListItem(),
-          new OrderedList(),
-          new TodoItem(),
-          new TodoList(),
-          new Link(),
-          new Bold(),
-          new Code(),
-          new Italic(),
-          new Strike(),
-          new Underline(),
-          new History()
-        ],
-        content: ``,
-        onUpdate: ({ getJSON, getHTML }) => {
-          this.html = getHTML()
-        }
-      }),
-      html: this.value
+      editor: null,
+      emitAfterOnUpdate: false
     }
+  },
+  watch: {
+    // https://github.com/ueberdosis/tiptap/issues/133#issuecomment-559014481
+    value (val) {
+      if (this.emitAfterOnUpdate) {
+        this.emitAfterOnUpdate = false
+        return
+      }
+      if (this.editor) {
+        this.editor.setContent(val, true)
+      }
+    }
+  },
+  mounted () {
+    this.editor = new Editor({
+      extensions: [
+        new Placeholder({
+          emptyNodeClass: 'is-empty',
+          emptyNodeText: 'Write your instructions …',
+          showOnlyWhenEditable: true
+        }),
+        new Blockquote(),
+        new BulletList(),
+        new CodeBlock(),
+        new HardBreak(),
+        new Heading({ levels: [1, 2, 3] }),
+        new HorizontalRule(),
+        new ListItem(),
+        new OrderedList(),
+        new TodoItem(),
+        new TodoList(),
+        new Link(),
+        new Bold(),
+        new Code(),
+        new Italic(),
+        new Strike(),
+        new Underline(),
+        new History()
+      ],
+      content: this.value,
+      onUpdate: ({ getJSON, getHTML }) => {
+        this.emitAfterOnUpdate = true
+        this.$emit('input', getHTML())
+      }
+    })
   },
   beforeDestroy () {
     this.editor.destroy()
-  },
-  methods: {
-    handleInput (e) {
-      this.$emit('input', this.html)
-    }
   }
+  // methods: {
+  //   handleInput (e) {
+  //     this.$emit('input', this.html)
+  //   }
+  // }
 }
 </script>
 
