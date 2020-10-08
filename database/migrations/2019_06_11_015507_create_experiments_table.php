@@ -34,6 +34,7 @@ class CreateExperimentsTable extends Migration
             $table->unsignedSmallInteger('stimuli_spacing')->default(15);
 
             $table->tinyInteger('is_public')->default(0);
+            $table->tinyInteger('ishihara')->nullable();
             $table->tinyInteger('allow_colour_blind')->nullable();
             $table->tinyInteger('timer')->nullable();
 

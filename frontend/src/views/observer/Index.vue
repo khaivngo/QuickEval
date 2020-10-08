@@ -111,13 +111,22 @@
           </h3>
         </div>
       </v-row>
-
     </v-col>
+
+    <v-scale-transition>
+      <IshiharaTest v-if="showIshihara" @finished="ishiharaFinished" @aborted="ishiharaAborted"/>
+    </v-scale-transition>
   </v-row>
 </template>
 
 <script>
+import IshiharaTest from '@/components/IshiharaTest'
+
 export default {
+  components: {
+    IshiharaTest
+  },
+
   data: () => ({
     active: {},
     experiments: [],
@@ -125,7 +134,8 @@ export default {
     searching: false,
     prefetch: false,
     showActive: false,
-    loading: false
+    loading: false,
+    showIshihara: false
   }),
 
   computed: {
@@ -188,8 +198,20 @@ export default {
         this.prefetch = false
 
         // Onward!
-        this.$router.push(`/experiment/${this.active.experiment_type_id}/${this.active.id}`)
+        if (this.active.ishihara === 1) {
+          this.showIshihara = true
+        } else {
+          this.$router.push(`/experiment/${this.active.experiment_type_id}/${this.active.id}`)
+        }
       }
+    },
+
+    ishiharaFinished () {
+      this.$router.push(`/experiment/${this.active.experiment_type_id}/${this.active.id}`)
+    },
+
+    ishiharaAborted () {
+      this.showIshihara = false
     },
 
     searchExperiments () {

@@ -170,6 +170,28 @@
               </v-col>
             </v-row>
 
+            <v-row align="center" class="mt-0 pt-0">
+              <v-col cols="auto" class="pt-0 pb-0 pr-0">
+                <v-checkbox
+                  v-model="form.ishihara"
+                  color="success"
+                  :label="`Require Ishihara test`"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="auto" class="pa-0 mb-1">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                    Run a Ishihara test at the beginning of the experiment.
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+
           </v-card>
         </v-stepper-content>
 
@@ -180,9 +202,9 @@
               v-model="form.timer"
               color="success"
               :label="`Display timer for observer`"
-            ></v-checkbox>
+            ></v-checkbox> -->
 
-            <v-checkbox
+            <!-- <v-checkbox
               v-model="form.cvd"
               color="success"
               :label="`Allow observers with colour vision deficiencies (did not pass Ishihara test)`"
@@ -195,7 +217,7 @@
             ></v-checkbox> -->
 
             <v-row class="mt-6" align="center">
-              <v-col cols="4" xl="4" lg="6" md="8" sm="9">
+              <v-col cols="4" xl="3" lg="6" md="8" sm="9">
                 <v-text-field
                   v-model="form.bgColour"
                   label="Background colour"
@@ -213,7 +235,7 @@
             </v-row>
 
             <v-row class="mt-4" align="center">
-              <v-col cols="4" xl="4" lg="6" md="8" sm="9">
+              <v-col cols="3" xl="4" lg="6" md="8" sm="9">
                 <v-text-field
                   v-model="form.delay"
                   label="Delay between stimuli (gray screen)"
@@ -242,7 +264,7 @@
             </v-row>
 
             <v-row class="mt-8" align="center" v-if="form.experimentType !== 3">
-              <v-col cols="4" xl="4" lg="6" md="8" sm="9">
+              <v-col cols="4" xl="3" lg="6" md="8" sm="9">
                 <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
@@ -446,6 +468,7 @@ export default {
         experimentType: null,
         algorithm: 1,
         timer: null,
+        ishihara: null,
         cvd: null,
         forcedChoice: false,
         samePairTwice: false,
@@ -637,6 +660,7 @@ export default {
           this.form.longDescription  = response.data.long_description
           this.form.experimentType   = response.data.experiment_type_id
           this.form.timer            = response.data.title
+          this.form.ishihara         = response.data.ishihara
           this.form.cvd              = response.data.allow_colour_blind
           this.form.bgColour         = response.data.background_colour || '808080'
           this.form.showOriginal     = (response.data.show_original === 1)

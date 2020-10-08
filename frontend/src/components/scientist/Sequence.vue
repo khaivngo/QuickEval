@@ -32,7 +32,20 @@
                 dense
               >
                 <template v-slot:append-outer>
-                  <v-icon @click="remove(i)">mdi-delete</v-icon>
+                  <div>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on" class="mr-2">
+                          <v-icon @click="remove(i)">
+                            mdi-delete
+                          </v-icon>
+                        </v-btn>
+                      </template>
+                      <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+                        Remove
+                      </div>
+                    </v-tooltip>
+                  </div>
                 </template>
               </v-select>
 
@@ -42,19 +55,6 @@
                 </v-col>
                 <v-col cols="auto">
                   <div>
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on" class="mr-2">
-                          <v-icon @click="openInstructionsHistory = true">
-                            mdi-history
-                          </v-icon>
-                        </v-btn>
-                      </template>
-                      <div class="pl-1 pr-1 pt-2 pb-2 body-1">
-                        History
-                      </div>
-                    </v-tooltip>
-
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
                         <v-btn icon v-on="on" class="mr-2">
@@ -79,53 +79,55 @@
     <v-row class="mb-5 pa-0 ma-0">
       <v-col cols="auto" class="pl-0">
         <v-btn
-          class="mr-4 ml-0"
+          class="mr-1 ml-0"
           color="info"
           @click="add('instruction')"
         >
           <v-icon class="mr-2" :size="20">mdi-format-list-bulleted</v-icon>
           instruction
         </v-btn>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-icon @click="openInstructionsHistory = true">
+                mdi-history
+              </v-icon>
+            </v-btn>
+          </template>
+          <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+            Add from history
+          </div>
+        </v-tooltip>
       </v-col>
 
       <v-col>
-        <v-menu bottom offset-y>
+        <v-btn
+          color="info"
+          @click="add('imageSet')"
+        >
+          <v-icon class="mr-2" :size="20">mdi-tooltip-image-outline</v-icon>
+          image set
+        </v-btn>
+        <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn
-              color="info"
-              v-on="on"
-            >
-              <v-icon class="mr-2" :size="20">mdi-tooltip-image-outline</v-icon>
-              image set
+            <v-btn icon v-on="on" class="mr-2">
+              <v-icon @click="openNewImageSet = true">
+                mdi-plus
+              </v-icon>
             </v-btn>
           </template>
-
-          <v-list>
-            <v-list-item
-              @click.stop="openNewImageSet = true"
-            >
-              <v-list-item-title>
-                <v-icon left small>mdi-pencil</v-icon>
-                Create new
-              </v-list-item-title>
-            </v-list-item>
-
-            <v-list-item
-              @click="add('imageSet')"
-            >
-              <v-list-item-title>
-                <v-icon left small>mdi-plus-circle</v-icon>
-                Add existing
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+          <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+            Create new set
+          </div>
+        </v-tooltip>
       </v-col>
     </v-row>
 
     <v-dialog v-model="openNewImageSet" persistent scrollable max-width="800">
       <v-card>
-        <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">Create Image Set</v-card-title>
+        <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">
+          Create Image Set
+        </v-card-title>
         <v-card-text class="pt-8 pb-8">
           <v-layout align-center>
             <v-text-field
@@ -162,7 +164,7 @@
             </v-layout>
 
             <v-layout mb-5>
-              <UppyOriginal :imagesetid="newImageSet.imageSetId" :width="300" :height="200"/>
+              <UppyOriginal :imagesetid="newImageSet.imageSetId" @uploaded="addOrginal" :width="300" :height="200"/>
             </v-layout>
 
             <v-layout mb-3>
@@ -170,7 +172,7 @@
             </v-layout>
 
             <div>
-              <Uppy :imagesetid="newImageSet.imageSetId" style="width: 100%;">
+              <Uppy :imagesetid="newImageSet.imageSetId" @uploaded="addImage" style="width: 100%;">
                 <div id="UppyModalOpenerBtn" class="default">
                   <v-icon color="primary" large>mdi-plus</v-icon>
                 </div>
@@ -203,7 +205,9 @@
 
     <v-dialog v-model="openInstructionsHistory" persistent scrollable max-width="800">
       <v-card>
-        <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">Select instructions</v-card-title>
+        <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">
+          Select instructions
+        </v-card-title>
         <v-card-text class="pt-8 pb-8">
           <div
             v-for="(instruction, i) in instructions" :key="i"
@@ -229,14 +233,12 @@
 </template>
 
 <script>
-// import CreateImageSet from '@/views/scientist/image-set/CreateFile'
 import UppyOriginal from '@/components/scientist/UppyOriginal'
 import Uppy from '@/components/scientist/Uppy'
 import Tiptap from '@/components/Tiptap'
 
 export default {
   components: {
-    // CreateImageSet,
     UppyOriginal,
     Uppy,
     Tiptap
@@ -289,7 +291,10 @@ export default {
       imageSetId: null,
       description: ''
     },
-    creating: false
+    creating: false,
+
+    orginal: [],
+    reproductions: []
   }),
 
   async created () {
@@ -355,6 +360,14 @@ export default {
       // this.newImageSet.name = null
 
       // removeFile in uppy
+    },
+
+    addOrginal (files) {
+      this.original.unshift(files[0])
+    },
+
+    addImage (files) {
+      this.reproductions.unshift(files[0])
     },
 
     createNew () {
