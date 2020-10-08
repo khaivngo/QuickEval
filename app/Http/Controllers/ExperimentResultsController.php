@@ -38,7 +38,6 @@ class ExperimentResultsController extends Controller
     public function completed (ExperimentResult $result) {
 
       // TODO: Why does this fail?!
-
       // if ($result->user_id !== auth()->user()->id) {
       //   return response()->json('Unauthorized', 401);
       // }
@@ -51,6 +50,13 @@ class ExperimentResultsController extends Controller
         'completed' => 1,
         'end_time' => time()
       ]);
+
+      return response($result, 200);
+    }
+
+    public function update (Request $request, ExperimentResult $result)
+    {
+      $result->update($request->all());
 
       return response($result, 200);
     }

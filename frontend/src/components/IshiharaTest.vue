@@ -41,6 +41,7 @@
             v-model.number="answer"
             outlined
             dense
+            autocomplete="off"
             style="width: 150px;"
           ></v-text-field>
         </v-col>
@@ -104,7 +105,7 @@ export default {
     }
   },
   methods: {
-    next () {
+    async next () {
       if (this.index === this.ishihara.length - 1) {
         this.diableBtn = true
         this.tasks.push({ 'answer': this.answer, 'extra': null })
@@ -112,29 +113,15 @@ export default {
         this.answer = null
 
         // save result
+        await this.save()
 
-        // this.$emit('finished')
+        this.$emit('finished')
         return
       }
 
       this.tasks.push({ 'answer': this.answer, 'extra': null })
       this.answer = null
       this.index++
-
-      // this.$axios.post(`/experiment-result/${}/ishihara`, {
-        // vision: this.vision,
-        // postEvaluation: this.postEvaluation,
-        // degree: this.degree
-      // }).then(response => {
-      //   EventBus.$emit('success', 'Experiment successfully updated.')
-
-      //   this.loading = false
-      // }).catch((error) => {
-      //   this.errors = error.response.data
-      //   EventBus.$emit('error', error.data)
-
-      //   this.loading = false
-      // })
     },
 
     /* eslint-disable */
@@ -184,7 +171,7 @@ export default {
         // Good vision:
         if (normal >= 10) {
           this.vision = "Normal"
-          this.degree = calcDegree(normalP)
+          this.degree = this.calcDegree(normalP)
           this.perc = normalP
         }  
         // 9 and less is regarded as deficient.
@@ -222,10 +209,10 @@ export default {
         this.perc = failP
       }
 
-      console.log('Normal\n  score: ' + normal + '\n  perc:  ' + normalP + '%')
-      console.log('Protan\n  score: ' + protan + '\n  perc:  ' + protanP + '%')
-      console.log('Deutan\n  score: ' + deutan + '\n  perc:  ' + deutanP + '%')
-      console.log('Fail\n    score: ' + fail   + '\n  perc:  ' + failP + '%')
+      // console.log('Normal\n  score: ' + normal + '\n  perc:  ' + normalP + '%')
+      // console.log('Protan\n  score: ' + protan + '\n  perc:  ' + protanP + '%')
+      // console.log('Deutan\n  score: ' + deutan + '\n  perc:  ' + deutanP + '%')
+      // console.log('Fail\n    score: ' + fail   + '\n  perc:  ' + failP + '%')
     },
 
     calcDegree (perc) {
@@ -253,6 +240,16 @@ export default {
       else {
         return "Not Applicable"
       }
+    },
+
+    save () {
+      const expID = localStorage.getItem('experimentResult')
+
+      return this.$axios.patch(`/experiment-result/${expID}/update`, {
+        vision: this.vision,
+        post_eval: this.postEvaluation,
+        degree: this.degree
+      })
     },
 
     abort () {

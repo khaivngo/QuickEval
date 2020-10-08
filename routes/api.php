@@ -73,6 +73,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get(     '/experiment/{id}/experiment-results',  'ExperimentResultsController@index'     );
     Route::get(     '/experiment-result/{id}',              'ExperimentResultsController@fetch'     );
     Route::post(    '/experiment-result/create',            'ExperimentResultsController@store'     );
+    Route::patch(   '/experiment-result/{result}/update',   'ExperimentResultsController@update'    );
     Route::patch(   '/experiment-result/{result}/completed','ExperimentResultsController@completed' );
     Route::delete(  '/experiment-result/{id}/wipe',         'ExperimentResultsController@destroy'   );
 

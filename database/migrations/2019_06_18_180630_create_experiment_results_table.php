@@ -27,6 +27,10 @@ class CreateExperimentResultsTable extends Migration
             $table->integer('end_time')->nullable();
             $table->tinyInteger('completed')->nullable();
 
+            $table->string('vision')->nullable();
+            $table->string('post_eval')->nullable();
+            $table->string('degree')->nullable();
+
             $table->timestamps();
         });
     }
