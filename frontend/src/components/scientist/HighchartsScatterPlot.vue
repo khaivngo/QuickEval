@@ -58,21 +58,24 @@
       Save
     </v-btn> -->
 
-    <div :style="position" style="display: none; width: 250px; z-index: 100; position: fixed;">
-      <v-card class="pa-4">
+    <div :style="position" style="display: none; width: 300px; z-index: 100; position: fixed;">
+      <v-card class="pa-4 pb-0 d-flex">
         <v-text-field
           outlined dense
           label="Title"
           v-model="label"
         ></v-text-field>
 
-        <v-btn @click="update" color="success">
+        <v-btn @click="update" color="success" class="ml-2">
           Save
         </v-btn>
       </v-card>
     </div>
 
-    <!-- <p class="caption">Tip: </p> -->
+    <p class="caption">
+      <v-icon>mdi-lightbulb-on-outline</v-icon>
+      Tip: Edit the text of the chart labels by clicking on the labels.
+    </p>
   </div>
 </template>
 
@@ -215,7 +218,7 @@ export default {
         vm.position = `left: ${event.x - 125}px; top: ${event.y - 110}px; display: block;`
         vm.type = 'title'
       }
-    },
+    }
 
     this.chartOptions.subtitle.events = {
       click: function (event) {
@@ -223,7 +226,7 @@ export default {
         vm.position = `left: ${event.x - 125}px; top: ${event.y - 110}px; display: block;`
         vm.type = 'subtitle'
 
-        // Chart.setTitle()
+        // Chart.setTitle('cake')
       }
     }
   },
@@ -232,27 +235,23 @@ export default {
     update (type) {
       if (this.type === 'yAxisTitle') {
         this.chartOptions.yAxis.title.text = this.label
-        this.position = ''
-        return
       }
 
       if (this.type === 'title') {
         this.chartOptions.title.text = this.label
-        this.position = ''
-        return
       }
 
       if (this.type === 'subtitle') {
         this.chartOptions.subtitle.text = this.label
-        this.position = ''
-        return
       }
 
-      this.chartOptions.xAxis[this.currentSet].categories[this.currentPos] = this.label
+      if (this.type === 'xAxisCategories') {
+        this.chartOptions.xAxis[this.currentSet].categories[this.currentPos] = this.label
 
-      // hide then show in order to update the chart
-      this.chartOptions.xAxis[this.currentSet].visible = false
-      this.chartOptions.xAxis[this.currentSet].visible = true
+        // hide then show in order to update the chart
+        this.chartOptions.xAxis[this.currentSet].visible = false
+        this.chartOptions.xAxis[this.currentSet].visible = true
+      }
 
       this.position = ''
 
@@ -343,6 +342,7 @@ export default {
               vm.position = `left: ${event.x - 125}px; top: ${event.y - 110}px; display: block;`
               vm.currentSet = this.axis.userOptions.setID
               vm.currentPos = this.pos
+              vm.type = 'xAxisCategories'
             }
           }
           // step: 1
