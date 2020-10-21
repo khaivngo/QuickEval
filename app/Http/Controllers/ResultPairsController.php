@@ -51,14 +51,16 @@ class ResultPairsController extends Controller
     $results = [];
     $expID = $request->experimentId;
 
+    $observers =
+      ExperimentResult
+        ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected', 'user')
+        ->whereIn('id', $request->selected)
+        ->get();
+
+    $results['observers'] = $observers;
+
     # get all paired results for each selected observer
     if ($request->flags['results']) {
-      $observers =
-        ExperimentResult
-          ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected', 'user')
-          ->whereIn('id', $request->selected)
-          ->get();
-
       # create array in a export ready format
       $data = [];
       foreach ($observers as $observer) {
@@ -117,7 +119,7 @@ class ResultPairsController extends Controller
       # create array in a export ready format
       $data = [];
       $data['title']            = ['title', $expMeta->title];
-      $data['experiment_type']  = ['experiment type', $expMeta->experiment_type->name];
+      $data['experiment_type']  = ['experiment type', $expMeta->type->name];
       $data['delay']            = ['delay between stimuli switching', $expMeta->delay];
       $data['background_colour']= ['Background colour', $expMeta->background_colour];
       $data['stimuli_spacing']  = ['Stimuli spacing', $expMeta->stimuli_spacing . 'px'];

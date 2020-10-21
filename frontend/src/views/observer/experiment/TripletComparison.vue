@@ -396,6 +396,11 @@ export default {
     },
 
     onFinish () {
+      this.originalImage = ''
+      this.imageLeft = ''
+      this.imageMiddle = ''
+      this.imageRight = ''
+
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
       localStorage.removeItem('index')

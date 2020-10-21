@@ -1,35 +1,25 @@
 <template>
   <div>
-    <v-layout class="mb-3 mt-1">
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            color="info"
-            v-on="on"
-          >
-            <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon> category
+    <v-layout class="mb-12 mt-8">
+      <v-btn
+        @click="add('category')"
+        color="info"
+      >
+        <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon> category
+      </v-btn>
+
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn icon v-on="on">
+            <v-icon @click="add('categoryFromHistory')">
+              mdi-history
+            </v-icon>
           </v-btn>
         </template>
-        <v-list>
-          <v-list-item
-            @click="add('category')"
-          >
-            <v-list-item-title>
-              <v-icon left small>mdi-pencil</v-icon>
-              Create new
-            </v-list-item-title>
-          </v-list-item>
-
-          <v-list-item
-            @click="add('categoryFromHistory')"
-          >
-            <v-list-item-title>
-              <v-icon left small>mdi-plus-circle</v-icon>
-              Add from history
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+        <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+          Add from history
+        </div>
+      </v-tooltip>
     </v-layout>
 
     <v-slide-x-transition group>
@@ -42,11 +32,10 @@
           <v-flex xs12>
             <v-text-field
               v-if="event.type === 'category'"
-              label="Input label"
+              label="Write input title"
               outlined
               dense
               v-model="event.value"
-              class="mt-4"
               item-text="title"
               item-value="id"
             >
@@ -58,7 +47,7 @@
             <v-select
               v-if="event.type === 'categoryFromHistory'"
               :items="items"
-              label="Select input label"
+              label="Select input title"
               v-model="event.value"
               item-text="title"
               item-value="id"

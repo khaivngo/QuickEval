@@ -7,6 +7,7 @@
         <h2 class="text-h3">
           {{ imageSet.title }}
         </h2>
+
         <v-dialog
           v-model="editTitle"
           width="500"
@@ -99,7 +100,7 @@
           </Uppy>
         </v-row>
 
-        <v-row v-if="reproductions.length > 0" wrap>
+        <v-row wrap>
           <v-col
             v-for="(image, i) in reproductions" :key="i"
             xs="6" sm="6" md="3" lg="3" xl="3"
@@ -131,8 +132,9 @@
             </h5>
           </v-col>
         </v-row>
-        <div v-else>
-          <v-row class="mt-12 mb-3" align="center">
+
+        <div v-show="reproductions.length === 0">
+          <v-row class="mt-6 mb-3" align="center">
             <h2 class="text-h6">Images</h2>
           </v-row>
 
@@ -231,7 +233,11 @@
           </v-row>
 
           <v-row class="mb-5">
-            <UppyOriginal :imagesetid="imageSet.id" @uploaded="add" :width="300" :height="200"/>
+            <UppyOriginal
+              :imagesetid="imageSet.id"
+              @uploaded="add"
+              :width="300" :height="200"
+            />
           </v-row>
         </div>
       </div>
@@ -276,7 +282,13 @@ export default {
     },
 
     addImage (files) {
-      this.reproductions.unshift(files[0])
+      console.log(files)
+      this.reproductions.push(files[0])
+      // if (this.reproductions.length > 0) {
+      //   this.reproductions.unshift(files[0])
+      // } else {
+      //   this.reproductions.unshift(files[0])
+      // }
     },
 
     deleteImage (index) {
@@ -302,6 +314,10 @@ export default {
       return this.$axios.get(`/picture-set/${this.imageSetId}`).then((response) => {
         this.imageSet = response.data
 
+        if (this.imageSet.title === 'Untitled image set') {
+          this.editTitle = true
+        }
+
         this.original = this.imageSet.pictures.filter(image => image.is_original === 1)
         this.reproductions = this.imageSet.pictures.filter(image => image.is_original === 0)
 
@@ -315,6 +331,7 @@ export default {
       this.$axios.patch(`/picture-set/${this.imageSetId}`, { title: this.imageSet.title }).then((response) => {
         this.creating = false
         this.editTitle = false
+        EventBus.$emit('image-set-title', response.data)
       }).catch(() => {
         this.creating = false
       })

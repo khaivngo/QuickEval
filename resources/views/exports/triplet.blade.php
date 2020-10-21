@@ -43,6 +43,32 @@
 </table>
 @endif
 
+@if(isset($results['observers']))
+<h2>Observers</h2>
+<table>
+    <thead>
+    <tr>
+        <!-- <th style="font-weight: bold;">id</th> -->
+        <th style="font-weight: bold;">user ID</th>
+        <th style="font-weight: bold;">vision</th>
+        <th style="font-weight: bold;">evalutation</th>
+        <th style="font-weight: bold;">degree</th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach($results['observers'] as $observer)
+            <tr>
+                <!-- <td>{{ $observer['id'] }}</td> -->
+                <td>{{ $observer['user_id'] }}</td>
+                <td>{{ $observer['vision'] }}</td>
+                <td>{{ $observer['post_eval'] }}</td>
+                <td>{{ $observer['degree'] }}</td>
+            </tr>
+        @endforeach
+    </tbody>
+</table>
+@endif
+
 @if(isset($results['results']))
 <h2>Stimuli Results</h2>
 <table>

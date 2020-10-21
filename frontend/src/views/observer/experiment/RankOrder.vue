@@ -446,6 +446,11 @@ export default {
     },
 
     onFinish () {
+      this.rankings = []
+      this.originalImage = ''
+      this.leftImage = ''
+      this.rightImage = ''
+
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
       localStorage.removeItem('index')

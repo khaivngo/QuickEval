@@ -468,7 +468,7 @@ export default {
         experimentType: null,
         algorithm: 1,
         timer: null,
-        ishihara: null,
+        ishihara: 0,
         cvd: null,
         forcedChoice: false,
         samePairTwice: false,

@@ -198,7 +198,7 @@ export default {
         this.prefetch = false
 
         // Onward!
-        if (this.active.ishihara === 1) {
+        if (this.active.ishihara && this.active.ishihara === 1) {
           this.showIshihara = true
         } else {
           this.$router.push(`/experiment/${this.active.experiment_type_id}/${this.active.id}`)

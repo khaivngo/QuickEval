@@ -274,7 +274,7 @@ export default {
   }*/
   .menubar {
     padding-bottom: 5px;
-    display: flex;
+    /*display: flex;*/
     background-color: #f5f5f5;
   }
   .menubar__button {

@@ -82,7 +82,7 @@
         </div>
       </v-row> -->
 
-      <v-tabs v-model="tab" class="mt-12 mb-6">
+      <v-tabs v-model="tab" class="mb-6" style="margin-top: 60px;">
         <v-tab>
           <h5 class="text-subtitle-1 font-weight-medium">Observers</h5>
         </v-tab>
@@ -267,7 +267,8 @@ export default {
       headers: [
         { text: 'Observer ID', value: 'user_id', sortable: false, desc: '' },
         { text: 'Session ID', value: 'id', align: 'left', sortable: false, desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.' },
-        { text: 'Taken At', value: 'created_at', sortable: false, desc: '' }
+        { text: 'Taken At', value: 'created_at', sortable: false, desc: '' },
+        { text: 'Color vision', value: 'ishihara', sortable: false, desc: '' }
       ],
 
       selected: [],
@@ -348,6 +349,11 @@ export default {
           // convert all the created_at dates to a more readable format
           this.experimentResults.forEach(item => {
             item.created_at = this.formatDate(item.created_at)
+          })
+
+          this.experimentResults.forEach(item => {
+            item.ishihara = (item.vision) ? `${item.vision}, ${item.post_eval}, ${item.degree}` : 'unknown'
+            // (${item.perc}%)
           })
 
           this.loading = false

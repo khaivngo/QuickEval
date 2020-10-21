@@ -7,8 +7,8 @@
     </div>
 
     <ScatterPlot
-      v-if="zScoreMap.length > 0"
       :series="plotData"
+      style="margin-bottom: 100px;"
     />
 
     <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
@@ -18,12 +18,13 @@
         style="margin-bottom: 140px;"
       >
         <div class="mt-3">
-          <h3 class="text-h6 mb-3">
-            {{ results.imageSets[f].title }} <v-icon small>mdi-arrow-right</v-icon> Raw data
+          <h3 class="text-h4 mb-3 font-weight-light">
+            {{ results.imageSets[f].title }} <!-- <v-icon small>mdi-arrow-right</v-icon> -->
+            <!-- Raw data -->
           </h3>
-          <!-- <h3 class="text-h6 mb-3 font-weight-regular">
+          <h3 class="text-h6 mb-3 font-weight-bold">
             Raw data
-          </h3> -->
+          </h3>
 
           <div class="pb-1 pt-1 d-flex justify-center align-center qe-table-title">
             <h4 class="text-center">Chosen image</h4>
@@ -64,7 +65,9 @@
 
         <div class="mt-5">
           <!-- <h3 class="headline">Z-Scores: {{ results.imageSets[f].title }}</h3> -->
-          <h3 class="text-h6 mb-3 mt-12 font-weight-regular">Z-Scores</h3>
+          <h3 class="text-h6 mb-3 mt-12 font-weight-bold">
+            Z-Scores
+          </h3>
 
           <!-- <div style="width: 150px;">
             <v-img :src="$UPLOADS_FOLDER + results.imageUrl[f].path" alt="" contain></v-img>

@@ -109,6 +109,12 @@ export default {
 
       this.active = null
     })
+
+    EventBus.$on('image-set-title', (payload) => {
+      console.log(payload)
+      let id = this.imageSets.findIndex(exp => exp.id === payload.id)
+      this.imageSets[id].title = payload.title
+    })
   },
 
   methods: {

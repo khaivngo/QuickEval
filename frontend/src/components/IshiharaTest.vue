@@ -4,6 +4,12 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
+        <p class="mr-12 mt-6 pt-0 body-2">
+          {{ index + 1 }} / 17
+        </p>
+      </v-toolbar-items>
+
+      <v-toolbar-items>
         <v-dialog v-model="abortDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn text v-on="on">
@@ -120,8 +126,26 @@ export default {
       }
 
       this.tasks.push({ 'answer': this.answer, 'extra': null })
+
+      // if (this.index < this.ishihara.length - 1 || this.index === 16)
+      //   // Post test at plate 15 if read normally:
+      //   if (this.index === 15 && this.tasks[15].answer === this.ishihara[15].normal && this.tasks[15] !== null) {
+      //     // label.text('which numeral is clearer? (2 or 6)');
+      //     // $('#extraButton1').text('2');
+      //     // $('#extraButton2').text('6');
+      //     console.log('post test 15')
+      //   } else if (this.index === 16 && this.tasks[16].answer === this.ishihara[16].normal && this.tasks[16] !== null) {
+      //     // label.text('which numeral is clearer? (4 or 2)');
+      //     // $('#extraButton1').text('4');
+      //     // $('#extraButton2').text('2');
+      //     console.log('post test 16')
+      //   }
+      // }
+
       this.answer = null
       this.index++
+
+      // TODO: set focus to input
     },
 
     /* eslint-disable */

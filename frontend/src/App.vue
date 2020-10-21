@@ -144,4 +144,7 @@ body {
   // outline: 2px solid #FFBC42;
   // outline: 2px dashed $dark-yellow;
 // }
+.mb-100 {
+  margin-bottom: 100px;
+}
 </style>

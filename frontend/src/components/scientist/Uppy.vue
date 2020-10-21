@@ -30,6 +30,7 @@ export default {
   },
 
   watch: {
+    // immediate: true,
     imagesetid (val) {
       this.uppy.setMeta({ imageSetId: val })
     }
@@ -95,6 +96,8 @@ export default {
     })
 
     this.uppy.on('upload-success', (file, response) => {
+      // console.log(file)
+      console.log(response.body)
       this.$emit('uploaded', response.body)
     })
 

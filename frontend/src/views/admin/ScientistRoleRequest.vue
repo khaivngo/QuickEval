@@ -9,42 +9,31 @@
         :loading="loadingRequests"
         :headers="headers"
         :items="requests"
+        no-data-text="No pending requests"
         hide-default-footer
-        no-data-text=""
         class="mt-12"
       >
-        <template v-slot:no-data>
-          <div class="caption text-xs-center" v-if="loadingRequests === false">
-            Currently no requests pending.
-          </div>
-        </template>
-        <template v-slot:items="props">
-          <td>{{ props.item.name }}</td>
-          <td>{{ props.item.email }}</td>
-          <td>{{ props.item.institution }}</td>
-          <td>{{ props.item.nationality }}</td>
-          <!-- <td>{{ props.item.created_at }}</td> -->
-          <td class="text-xs-right">
-            <v-btn
-              :loading="loading"
-              :disabled="loading"
-              color="success"
-              @click="accept(props.item.id, props.index)"
-              small
-            >
-              Approve
-            </v-btn>
+        <template v-slot:item.action="{ item }">
+          <v-btn
+            :loading="loading"
+            :disabled="loading"
+            color="success"
+            class="mr-4"
+            @click="accept(item.id)"
+            small
+          >
+            Approve
+          </v-btn>
 
-            <v-btn
-              :loading="loading"
-              :disabled="loading"
-              @click="reject(props.item.id, props.index)"
-              small
-              class="mr-0"
-            >
-              Decline
-            </v-btn>
-          </td>
+          <v-btn
+            :loading="loading"
+            :disabled="loading"
+            @click="reject(item.id)"
+            small
+            class="mr-0"
+          >
+            Decline
+          </v-btn>
         </template>
       </v-data-table>
     </div>
@@ -63,7 +52,7 @@ export default {
         { text: 'Institution', sortable: false, value: 'institution' },
         { text: 'Nationality', sortable: false, value: 'nationality' },
         // { text: 'When', sortable: false, value: 'when' },
-        { text: 'Actions', sortable: false, value: 'action', align: 'right' }
+        { text: 'Actions', sortable: false, value: 'action' }
       ],
 
       requests: [],
@@ -82,15 +71,34 @@ export default {
   },
 
   methods: {
-    async accept (id, index) {
+    async accept (id) {
+      this.loading = true
       await this.$axios.post(`/scientist-request/${id}/accept`)
-      this.requests.splice(index, 1)
+      this.loading = false
+
+      const itemToRemoveIndex = this.requests.findIndex(function (item) {
+        return item.id === id
+      })
+
+      if (itemToRemoveIndex !== -1) {
+        this.requests.splice(itemToRemoveIndex, 1)
+      }
+
       EventBus.$emit('success', 'Request accepted successfully.')
     },
 
-    async reject (id, index) {
+    async reject (id) {
+      this.loading = true
       await this.$axios.post(`/scientist-request/${id}/reject`)
-      this.requests.splice(index, 1)
+      this.loading = false
+
+      const itemToRemoveIndex = this.requests.findIndex(function (item) {
+        return item.id === id
+      })
+
+      if (itemToRemoveIndex !== -1) {
+        this.requests.splice(itemToRemoveIndex, 1)
+      }
     }
   }
 }
