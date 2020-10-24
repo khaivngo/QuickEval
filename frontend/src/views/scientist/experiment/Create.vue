@@ -12,7 +12,7 @@
           Create Experiment
         </h2>
         <h2 class="text-h4" v-else>
-          Edit <v-icon>mdi-arrow-right</v-icon> {{ experiment.title }}
+          Editing <v-icon>mdi-arrow-right</v-icon> {{ experiment.title }}
         </h2>
       </v-col>
     </v-row>

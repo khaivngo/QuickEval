@@ -10,6 +10,7 @@
 
         <v-dialog
           v-model="editTitle"
+          persistent
           width="500"
         >
           <template v-slot:activator="{ on, attrs }">

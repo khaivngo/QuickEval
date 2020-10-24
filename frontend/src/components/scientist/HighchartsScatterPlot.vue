@@ -3,60 +3,10 @@
     <h2 class="mb-8 mt-12">
       <!-- Scatter and errorbar plot -->
     </h2>
+
     <highcharts
       :options="chartOptions"
     ></highcharts>
-
-    <!-- <div v-for="(serie, i) in series" :key="i">
-      <div v-for="(label, j) in serie.label" :key="j">
-        {{ label }}
-        <v-text-field
-          outlined dense
-          label="Title"
-          v-model="label.label"
-        ></v-text-field>
-      </div>
-    </div> -->
-
-    <!-- <div v-for="(serie, i) in labels" :key="i">
-      <div v-for="(label, j) in serie" :key="j">
-        <v-text-field
-          outlined dense
-          label="Title"
-          v-model="label.label"
-          class="max-width-250"
-        ></v-text-field>
-      </div>
-
-      <v-btn @click="updateLabels(i)" color="success">
-        Save
-      </v-btn>
-    </div>
-
-    <h4 class="mb-3">Chart titles</h4>
-    <v-text-field
-      outlined dense
-      label="Chart Title"
-      v-model="title"
-      class="max-width-250"
-    ></v-text-field>
-
-    <v-text-field
-      outlined dense
-      label="Y-label"
-      v-model="yTitle"
-      class="max-width-250"
-    ></v-text-field>
-
-    <v-text-field
-      outlined dense
-      label="X-label"
-      v-model="xTitle"
-      class="max-width-250"
-    ></v-text-field>
-    <v-btn @click="updateTitles" color="success">
-      Save
-    </v-btn> -->
 
     <div :style="position" style="display: none; width: 300px; z-index: 100; position: fixed;">
       <v-card class="pa-4 pb-0 d-flex">
@@ -72,10 +22,16 @@
       </v-card>
     </div>
 
-    <p class="caption">
-      <v-icon>mdi-lightbulb-on-outline</v-icon>
-      Tip: Edit the text of the chart labels by clicking on the labels.
-    </p>
+    <v-btn @click="resetLabels">
+      Reset labels
+    </v-btn>
+
+    <div class="d-flex align-center">
+      <v-icon small>mdi-lightbulb-on-outline</v-icon>
+      <p class="caption ma-0 ml-2 mt-1 pa-0">
+        Tip: Click on the chart labels to edit the text.
+      </p>
+    </div>
   </div>
 </template>
 
@@ -108,12 +64,23 @@ export default {
     series (newVal) {
       newVal.forEach((serie, index) => {
         this.addSeries(serie, index)
-
-        let labels = serie.label.map(label => {
-          return { label: label }
-        })
-        this.labels.push(labels)
+        this.orginalChartLabels.labels.push(serie.label)
+        this.chartLabels.labels.push(serie.label)
       })
+
+      // overwrite chart labels if we have anything in storage
+      let storage = localStorage.getItem(this.$route.params.id + '-labels')
+      if (storage) {
+        this.chartLabels = JSON.parse(storage)
+
+        this.chartOptions.yAxis.title.text = this.chartLabels.yTitle || 'Z-score' // Chart.setTitle('cake')
+        this.chartOptions.title.text = this.chartLabels.title || 'Plot Title'
+        this.chartOptions.subtitle.text = this.chartLabels.subtitle || 'subtitle'
+
+        this.chartLabels.labels.forEach((labels, index) => {
+          this.chartOptions.xAxis[index].categories = labels
+        })
+      }
     }
   },
 
@@ -122,55 +89,30 @@ export default {
       chartOptions: {
         title: {
           text: 'Plot Title',
-          style: {
-            'cursor': 'pointer'
-          }
+          style: { 'cursor': 'pointer' }
         },
         subtitle: {
           text: 'subtitle',
-          style: {
-            'cursor': 'pointer'
-          }
+          style: { 'cursor': 'pointer' }
         },
-        chart: {
-          // type: 'scatter',
-          // zoomType: 'xy'
-        },
-        credits: {
-          enabled: false
-        },
-        series: [],
-        xAxis: [],
         yAxis: {
           title: {
             text: 'Z-score',
-            // useHTML: true,
-            style: {
-              'cursor': 'pointer'
-            }
+            style: { 'cursor': 'pointer' }
           },
           ceiling: 5,
           floor: -5,
           tickInterval: 0.5,
           allowDecimals: true
-          // plotLines: [{
-          //   value: 932, // The position of the line in axis units.
-          //   width: 1,
-          //   label: {
-          //     text: 'Theoretical mean: 932',
-          //     align: 'center',
-          //     style: {
-          //       color: 'gray'
-          //     }
-          //   }
-          // }]
         },
+        series: [],
+        xAxis: [],
         plotOptions: {
           series: {
             cursor: 'pointer',
             events: {
               legendItemClick: (event) => {
-                this.hideSeries(event)
+                this.toggleSeries(event)
               }
             }
           },
@@ -186,16 +128,31 @@ export default {
             whiskerLength: '20%',
             whiskerWidth: 3
           }
+        },
+        credits: {
+          enabled: false
         }
       },
 
-      labels: [],
-      yTitle: '',
-      xTitle: '',
-      title: '',
+      // keep track of original chart labels for easy reset
+      orginalChartLabels: {
+        labels: [],
+        title: 'Plot Title',
+        subtitle: 'subtitle',
+        yTitle: 'Z-score',
+        xTitle: ''
+      },
 
-      position: '',
+      // everything handling editing of chart labels
+      chartLabels: {
+        labels: [],
+        title: '',
+        subtitle: '',
+        yTitle: '',
+        xTitle: ''
+      },
       label: '',
+      position: '',
       type: '',
       currentSet: null,
       currentPos: null
@@ -204,6 +161,7 @@ export default {
 
   created () {
     var vm = this
+
     this.chartOptions.yAxis.title.events = {
       click: function (event) {
         vm.label = event.srcElement.innerHTML
@@ -225,28 +183,44 @@ export default {
         vm.label = event.srcElement.innerHTML
         vm.position = `left: ${event.x - 125}px; top: ${event.y - 110}px; display: block;`
         vm.type = 'subtitle'
-
-        // Chart.setTitle('cake')
       }
     }
   },
 
   methods: {
     update (type) {
-      if (this.type === 'yAxisTitle') {
-        this.chartOptions.yAxis.title.text = this.label
-      }
+      let experiment = this.$route.params.id
 
       if (this.type === 'title') {
         this.chartOptions.title.text = this.label
+        this.chartLabels.title = this.label
+
+        let json = JSON.stringify(this.chartLabels)
+        localStorage.setItem(experiment + '-labels', json)
       }
 
       if (this.type === 'subtitle') {
         this.chartOptions.subtitle.text = this.label
+        this.chartLabels.subtitle = this.label
+
+        let json = JSON.stringify(this.chartLabels)
+        localStorage.setItem(experiment + '-labels', json)
+      }
+
+      if (this.type === 'yAxisTitle') {
+        this.chartOptions.yAxis.title.text = this.label
+        this.chartLabels.yTitle = this.label
+
+        let json = JSON.stringify(this.chartLabels)
+        localStorage.setItem(experiment + '-labels', json)
       }
 
       if (this.type === 'xAxisCategories') {
         this.chartOptions.xAxis[this.currentSet].categories[this.currentPos] = this.label
+        this.chartLabels.labels[this.currentSet][this.currentPos] = this.label
+
+        let json = JSON.stringify(this.chartLabels)
+        localStorage.setItem(experiment + '-labels', json)
 
         // hide then show in order to update the chart
         this.chartOptions.xAxis[this.currentSet].visible = false
@@ -254,24 +228,23 @@ export default {
       }
 
       this.position = ''
-
-      // persistent saving
     },
 
-    updateLabels (serie) {
-      let labels = this.labels[serie].map(label => {
-        return label.label
+    resetLabels () {
+      localStorage.removeItem(this.$route.params.id + '-labels')
+
+      this.orginalChartLabels.labels.forEach((labels, index) => {
+        this.chartOptions.xAxis[index].categories = labels
       })
-      this.chartOptions.xAxis[serie].categories = labels
 
-      // this.chartOptions.xAxis[serie].categories[this.pos] = this.Label
-      // save in DB
-    },
+      this.chartOptions.title.text = this.orginalChartLabels.title
+      this.chartLabels.title = this.orginalChartLabels.title
 
-    updateTitles () {
-      this.chartOptions.title.text = this.title
-      this.chartOptions.yAxis.title.text = this.yTitle
-      this.chartOptions.xTitle.text = this.xTitle
+      this.chartOptions.subtitle.text = this.orginalChartLabels.subtitle
+      this.chartLabels.subtitle = this.orginalChartLabels.subtitle
+
+      this.chartOptions.yAxis.title.text = this.orginalChartLabels.yTitle
+      this.chartLabels.yTitle = this.orginalChartLabels.yTitle
     },
 
     addSeries (zScoreArray, index) {
@@ -286,17 +259,16 @@ export default {
         ])
       }
 
-      // save a reference to the vue instance
+      // save a reference to the vue instance, allows us to access vue instance data inside the charts click events
       var vm = this
 
       this.chartOptions.series.push({
-        labelId: index,
+        type: 'scatter',
+        id: index,
         xAxis: index,
         name: zScoreArray.imageSet.title,
-        type: 'scatter',
         data: meanValues,
         marker: {
-          // fillColor: 'white', // strokeColor: 'red', // lineWidth: 6,
           radius: 5
         },
         tooltip: {
@@ -311,7 +283,6 @@ export default {
         stemWidth: 2,
         whiskerWidth: 2,
         tooltip: {
-          // headerFormat: '<em>{point.name}</em><br/>',
           headerFormat: '',
           pointFormat: `
             Limit high: <b>{point.high}</b><br>
@@ -329,13 +300,7 @@ export default {
         },
         labels: {
           enabled: true,
-          style: {
-            'cursor': 'pointer'
-          },
-          // limit length of labels to 15 characters
-          // formatter: function () {
-          //   return this.value.toString().substring(0, 15)
-          // },
+          style: { 'cursor': 'pointer' },
           events: {
             click: function (event) {
               vm.label = this.value
@@ -345,28 +310,16 @@ export default {
               vm.type = 'xAxisCategories'
             }
           }
-          // step: 1
         },
         visible: true
       })
-
-      // only display the first series
-      // this.chartOptions.series.forEach((serie) => {
-      //   serie.visible = false
-      // })
-      // this.chartOptions.series[0].visible = true
-      // this.chartOptions.series[1].visible = true
-
-      // this.chartOptions.title.text = ''
-      // this.chartOptions.xAxis[1].categories = this.series[0].label
-      // this.chartOptions.xAxis.categories = this.series[1].label
     },
 
-    hideSeries (event) {
-      if (this.chartOptions.xAxis[event.target.userOptions.labelId].visible === true) {
-        this.chartOptions.xAxis[event.target.userOptions.labelId].visible = false
+    toggleSeries (event) {
+      if (this.chartOptions.xAxis[event.target.userOptions.id].visible === true) {
+        this.chartOptions.xAxis[event.target.userOptions.id].visible = false
       } else {
-        this.chartOptions.xAxis[event.target.userOptions.labelId].visible = true
+        this.chartOptions.xAxis[event.target.userOptions.id].visible = true
       }
     }
   }
