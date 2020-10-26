@@ -1,15 +1,28 @@
 <template>
   <div>
-    <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
+    <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
+      <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
+    </div>
 
     <div v-if="!loading && rawDataMap.length === 0 && zScoreMap.length === 0">
       Not enough data yet to calculate statistics.
     </div>
 
-    <ScatterPlot :series="plotData"/>
+    <h2 class="mb-3 mt-12 pt-6">
+      Scatter and errorbar plot
+    </h2>
+    <h3 class="text-h6 mb-6 mt-4 font-weight-light">
+      <span v-for="(group, gIndex) in sequences" :key="gIndex">
+        {{ group.picture_set.title }}<span v-if="gIndex !== sequences.length - 1">,</span>
+      </span>
+    </h3>
+    <ScatterPlot :series="plotData" class="mb-12"/>
 
+    <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
     <div v-for="(group, gIndex) in sequences" :key="gIndex">
-      <h3 class="title mb-3">Raw data</h3>
+      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+        {{ group.picture_set.title }}
+      </h3>
 
       <div class="pa-1 d-flex justify-center align-center qe-table-title">
         <h4 class="text-center">Number of times selected</h4>
@@ -44,8 +57,12 @@
       </table>
     </div>
 
-    <div class="mt-5" v-for="(group, b) in sequences" :key="group.id">
-      <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
+    <h2 class="mb-3 mt-12 pt-12">Z-Scores</h2>
+    <div v-for="(group, b) in sequences" :key="group.id">
+      <!-- <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3> -->
+      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+        {{ group.picture_set.title }}
+      </h3>
 
       <table class="table bordered hovered">
         <thead>

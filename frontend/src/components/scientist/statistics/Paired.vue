@@ -1,104 +1,109 @@
 <template>
   <div>
-    <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
+    <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
+      <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
+    </div>
 
     <div v-if="!loading && rawDataMap.length === 0 && zScoreMap.length === 0">
       Not enough data yet to calculate statistics.
     </div>
 
+    <h2 class="mb-3 mt-12 pt-6">
+      Scatter and errorbar plot
+    </h2>
+    <h3 class="text-h6 mb-6 mt-4 font-weight-light">
+      <span v-for="(imageSet, k) in rawDataMap" :key="k">
+        {{ results.imageSets[k].title }}<span v-if="k !== rawDataMap.length - 1">,</span>
+      </span>
+    </h3>
     <ScatterPlot
       :series="plotData"
-      style="margin-bottom: 100px;"
     />
 
+    <!-- Raw data -->
     <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+      <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
       <div
         v-for="(imageSet, f) in rawDataMap"
         :key="f"
-        style="margin-bottom: 140px;"
       >
-        <div class="mt-3">
-          <h3 class="text-h4 mb-3 font-weight-light">
-            {{ results.imageSets[f].title }} <!-- <v-icon small>mdi-arrow-right</v-icon> -->
-            <!-- Raw data -->
-          </h3>
-          <h3 class="text-h6 mb-3 font-weight-bold">
-            Raw data
-          </h3>
+        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+          {{ results.imageSets[f].title }}
+        </h3>
 
-          <div class="pb-1 pt-1 d-flex justify-center align-center qe-table-title">
-            <h4 class="text-center">Chosen image</h4>
-            <v-tooltip top>
-              <template v-slot:activator="{ on }">
-                <v-btn icon v-on="on">
-                  <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                </v-btn>
-              </template>
-              <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                Images on the y-axis are the images picked.<br><br>
-                For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
-              </div>
-            </v-tooltip>
-          </div>
-          <table class="table bordered hovered body-1">
-            <thead>
-              <tr>
-                <th></th>
-                <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
-                  {{ y.name }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
-                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+        <table class="table bordered hovered body-1">
+          <thead>
+            <tr>
+              <th>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                    Images on the y-axis are the images picked.<br><br>
+                    For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
+                  </div>
+                </v-tooltip>
+              </th>
+              <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
+                {{ y.name }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
+              <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
-                <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
-                  <span v-if="score > 0">
-                    {{ score }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="mt-5">
-          <!-- <h3 class="headline">Z-Scores: {{ results.imageSets[f].title }}</h3> -->
-          <h3 class="text-h6 mb-3 mt-12 font-weight-bold">
-            Z-Scores
-          </h3>
-
-          <!-- <div style="width: 150px;">
-            <v-img :src="$UPLOADS_FOLDER + results.imageUrl[f].path" alt="" contain></v-img>
-          </div> -->
-
-          <p v-if="zScoreMap[f][3] == 1">
-            Need more observer data to calculate z-scores properly.
-          </p>
-
-          <table v-if="zScoreMap[f][3] == 0" class="table bordered hovered">
-            <thead>
-              <tr>
-                <th class="overflow-wrap">Title</th>
-                <th class="overflow-wrap">Low CI limit</th>
-                <th class="overflow-wrap">Mean z-score</th>
-                <th class="overflow-wrap">High CI limit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
-                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
-
-                <td>{{ isNumber(zScoreMap[f][0][j]) }}</td>
-                <td>{{ isNumber(zScoreMap[f][1][j]) }}</td>
-                <td>{{ isNumber(zScoreMap[f][2][j]) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+              <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
+                <span v-if="score > 0">
+                  {{ score }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
+    <!-- Z-scores -->
+    <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+      <h2 class="mb-3 mt-12 pt-12">Z-score</h2>
+      <div
+        v-for="(imageSet, p) in rawDataMap"
+        :key="p"
+      >
+        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+          {{ results.imageSets[p].title }}
+        </h3>
+
+        <p v-if="zScoreMap[p][3] == 1">
+          Need more observer data to calculate z-scores properly.
+        </p>
+
+        <table v-if="zScoreMap[p][3] == 0" class="table bordered hovered">
+          <thead>
+            <tr>
+              <th class="overflow-wrap">Title</th>
+              <th class="overflow-wrap">Low CI limit</th>
+              <th class="overflow-wrap">Mean z-score</th>
+              <th class="overflow-wrap">High CI limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(y, j) in results.imagesForEachImageSet[p]" :key="j">
+              <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+              <td>{{ isNumber(zScoreMap[p][0][j]) }}</td>
+              <td>{{ isNumber(zScoreMap[p][1][j]) }}</td>
+              <td>{{ isNumber(zScoreMap[p][2][j]) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </template>
 

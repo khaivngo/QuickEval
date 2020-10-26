@@ -1,18 +1,29 @@
 <template>
   <div>
-    <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
+    <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
+      <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
+    </div>
 
     <div v-if="!loading && rawDataMap.length === 0 && zScoreMap.length === 0">
       Not enough data yet to calculate statistics.
     </div>
 
+    <h2 class="mb-3 mt-12 pt-6">
+      Scatter and errorbar plot
+    </h2>
+    <h3 class="text-h6 mb-6 mt-4 font-weight-light">
+      <span v-for="(imageSet, iIndex) in rankedResults.imageSets" :key="iIndex">
+        {{ imageSet.picture_set.title }}<span v-if="iIndex !== rankedResults.imageSets.length - 1">,</span>
+      </span>
+    </h3>
     <ScatterPlot :series="plotData"/>
 
-    <h3 class="text-h4 mt-12 font-weight-thin">
-      Raw data
-    </h3>
+    <h2 class="mb-0 pb-0 mt-12 pt-12">Raw data</h2>
     <div v-for="(set, gIndex) in rankedResults.resultsForEachImageSet" :key="gIndex">
-      <h3 class="text-h6 mb-3 mt-4">
+      <!-- <h3 class="text-h6 mb-3 mt-4">
+        {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
+      </h3> -->
+      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
         {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
       </h3>
 
@@ -52,8 +63,11 @@
     </div>
 
     <!-- Z-scores -->
-    <div class="mt-5" v-for="(imageSet, b) in rankedResults.imagesForEachImageSet" :key="imageSet.id">
-      <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3>
+    <h2 class="mt-12 pt-12">Z-Scores</h2>
+    <div v-for="(imageSet, b) in rankedResults.imagesForEachImageSet" :key="imageSet.id">
+      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+        {{ rankedResults.imagesForEachImageSet[b].picture_set.title }}
+      </h3>
 
       <table class="table bordered hovered">
         <thead>

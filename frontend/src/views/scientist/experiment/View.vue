@@ -87,7 +87,10 @@
           <h5 class="text-subtitle-1 font-weight-medium">Observers</h5>
         </v-tab>
         <v-tab>
-          <h2 class="text-subtitle-1 font-weight-medium">Statistics</h2>
+          <h2 class="text-subtitle-1 font-weight-medium">
+            Statistics
+            <!-- Results -->
+          </h2>
         </v-tab>
       </v-tabs>
 
@@ -107,7 +110,7 @@
             :items-per-page="100"
           ></v-data-table>
 
-          <div>
+          <div class="d-flex mb-12">
             <v-dialog v-model="exportDialog" max-width="600px">
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -214,6 +217,15 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
+
+            <v-spacer></v-spacer>
+
+            <v-btn @click="wipeAllResults" class="mt-2 ml-4" color="default">
+              <v-icon :size="20" class="mr-2">
+                mdi-delete
+              </v-icon>
+              Clear results
+            </v-btn>
           </div>
         </v-tab-item>
 
@@ -401,7 +413,7 @@ export default {
           if (response.data === 'deleted') {
             this.experimentResults = []
 
-            EventBus.$emit('success', 'Experiment data has been deleted successfully')
+            EventBus.$emit('success', 'Observer results has been deleted successfully')
           } else {
             EventBus.$emit('error', 'Could not delete experiment data.')
           }

@@ -1,8 +1,8 @@
 <template>
   <div v-if="chartOptions.series.length !== 0" class="qe-highcharts-container">
-    <h2 class="mb-8 mt-12">
-      <!-- Scatter and errorbar plot -->
-    </h2>
+    <!-- <h2 class="mb-8 mt-12">
+      Scatter and errorbar plot
+    </h2> -->
 
     <highcharts
       :options="chartOptions"
@@ -22,15 +22,15 @@
       </v-card>
     </div>
 
-    <v-btn @click="resetLabels">
-      Reset labels
-    </v-btn>
-
-    <div class="d-flex align-center">
+    <div class="d-flex align-center mt-4">
       <v-icon small>mdi-lightbulb-on-outline</v-icon>
       <p class="caption ma-0 ml-2 mt-1 pa-0">
-        Tip: Click on the chart labels to edit the text.
+        Tip: Click on the chart labels to edit the text before exporting (top right of chart). Or undo edited one's:
       </p>
+      <v-btn @click="resetLabels" icon>
+        <!-- Reset labels -->
+        <v-icon>mdi-undo-variant</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
@@ -74,7 +74,7 @@ export default {
         this.chartLabels = JSON.parse(storage)
 
         this.chartOptions.yAxis.title.text = this.chartLabels.yTitle || 'Z-score' // Chart.setTitle('cake')
-        this.chartOptions.title.text = this.chartLabels.title || 'Plot Title'
+        this.chartOptions.title.text = this.chartLabels.title || 'Plot'
         this.chartOptions.subtitle.text = this.chartLabels.subtitle || 'subtitle'
 
         this.chartLabels.labels.forEach((labels, index) => {
@@ -88,7 +88,7 @@ export default {
     return {
       chartOptions: {
         title: {
-          text: 'Plot Title',
+          text: 'Plot',
           style: { 'cursor': 'pointer' }
         },
         subtitle: {
@@ -104,6 +104,17 @@ export default {
           floor: -5,
           tickInterval: 0.5,
           allowDecimals: true
+          // plotLines: [{
+          //   value: 932, // The position of the line in axis units.
+          //   width: 1,
+          //   label: {
+          //     text: 'Theoretical mean: 932',
+          //     align: 'center',
+          //     style: {
+          //       color: 'gray'
+          //     }
+          //   }
+          // }]
         },
         series: [],
         xAxis: [],
@@ -137,7 +148,7 @@ export default {
       // keep track of original chart labels for easy reset
       orginalChartLabels: {
         labels: [],
-        title: 'Plot Title',
+        title: 'Plot',
         subtitle: 'subtitle',
         yTitle: 'Z-score',
         xTitle: ''
