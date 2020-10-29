@@ -97,10 +97,9 @@ export default {
   created () {
     this.$axios.get(`/user`).then(response => {
       if (response.data) {
-        if (response.data.role < 2) {
+        if (response.data.role && response.data.role < 2) {
           this.$router.push('/observer')
-        }
-        if (response.data.role === 2) {
+        } else if (response.data.role && response.data.role > 2) {
           this.$router.push('/scientist')
         }
       }

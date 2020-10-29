@@ -372,8 +372,7 @@ export default {
           EventBus.$emit('success', 'Observer results has been deleted successfully')
           this.destroying = false
         }).catch(error => {
-          alert(error)
-          EventBus.$emit('error', 'Could not delete experiment data.')
+          EventBus.$emit('error', 'Could not delete observer results. Please try again in a little while.')
           this.destroying = false
         })
       }
