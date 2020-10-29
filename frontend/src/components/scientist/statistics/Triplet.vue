@@ -1,6 +1,5 @@
 <template>
   <div>
-    Triplet
   </div>
 </template>
 

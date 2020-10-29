@@ -58,8 +58,8 @@
     </v-toolbar>
 
     <v-layout mt-4 mb-1 ml-3 mr-3 pa-0 justify-center align-center>
-      <v-flex ml-2 mr-2 xs6 class="text-center">
-        <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
+      <v-flex ml-2 mr-2 xs6 class="text-center" v-if="experiment.show_original === 1 && originalImage">
+        <h4 class="subheading font-weight-regular">
           Original
         </h4>
       </v-flex>
@@ -126,9 +126,13 @@
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
-      <v-flex mt-2 mb-2 class="picture-container" v-if="experiment.show_original === 1" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+      <v-flex
+        mt-2 mb-2
+        class="picture-container"
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+      >
         <div class="panzoom">
-          <img id="picture-original" class="picture" :src="imageLeft"/>
+          <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
       </v-flex>
 

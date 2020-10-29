@@ -217,7 +217,7 @@
             ></v-checkbox> -->
 
             <v-row class="mt-6" align="center">
-              <v-col cols="4" xl="3" lg="6" md="8" sm="9">
+              <v-col cols="4" xl="3" lg="4" md="8" sm="9">
                 <v-text-field
                   v-model="form.bgColour"
                   label="Background colour"
@@ -235,7 +235,7 @@
             </v-row>
 
             <v-row class="mt-4" align="center">
-              <v-col cols="3" xl="4" lg="6" md="8" sm="9">
+              <v-col cols="3" xl="4" lg="4" md="8" sm="9">
                 <v-text-field
                   v-model="form.delay"
                   label="Delay between stimuli (gray screen)"
@@ -264,7 +264,7 @@
             </v-row>
 
             <v-row class="mt-8" align="center" v-if="form.experimentType !== 3">
-              <v-col cols="4" xl="3" lg="6" md="8" sm="9">
+              <v-col cols="4" xl="3" lg="4" md="8" sm="9">
                 <v-text-field
                   v-model="form.stimuliSpacing"
                   label="Stimuli separation distance"
