@@ -77,8 +77,10 @@
         </v-layout>
       </v-flex>
 
-      <v-flex ml-2 mr-2 xs6 class="text-center" v-if="experiment.show_original === 1">
-        <h4 class="subheading font-weight-regular">Original</h4>
+      <v-flex ml-2 mr-2 xs6 class="text-center">
+        <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
+          Original
+        </h4>
       </v-flex>
     </v-layout>
 
@@ -256,7 +258,12 @@ export default {
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
         // set original
-        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null) {
+        if (
+          this.stimuli[this.index].hasOwnProperty('original') &&
+          this.stimuli[this.index].hasOwnProperty('original') !== null &&
+          this.stimuli[this.index].original &&
+          this.stimuli[this.index].original.path
+        ) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 
@@ -370,4 +377,20 @@ export default {
     max-width: 250px;
     background-color: #bbb;
   }
+
+  /* override default v-select dropdown colours */
+  .theme--light.v-application {
+    background-color: #bbb;
+    // color: #fff;
+  }
+  .theme--light.v-list {
+    background: #bbb;
+    // color: #fff;
+  }
+  .theme--light.v-list.v-list-item__content.v-list-item__title {
+    color: #fff;
+  }
+  // .theme--light.v-list-item:hover:before {
+  //   opacity: 0.4;
+  // }
 </style>

@@ -72,7 +72,7 @@ export default {
       hideCancelButton: false,
       hideProgressAfterFinish: false,
       note: null,
-      closeModalOnClickOutside: true,
+      closeModalOnClickOutside: false,
       closeAfterFinish: false,
       disableStatusBar: false,
       disableInformer: false,

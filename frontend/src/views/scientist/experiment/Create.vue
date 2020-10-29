@@ -361,13 +361,6 @@
         </v-stepper-content>
       </v-stepper-items>
 
-      <v-layout justify-end v-if="currentLevel === steps.length && mode === 'edit'">
-        <v-flex xs6 class="caption">
-          Note: The original version will be kept untouched and a new version will be created with a "version 2"-tag.
-          Delete the old version from the experiments list later if you don't need it.
-        </v-flex>
-      </v-layout>
-
       <!-- footer stepper actions -->
       <v-container class="pl-12 pr-12">
         <v-row align="center" justify="space-between" style="border-top: 1px solid #ddd;">
@@ -423,6 +416,49 @@
         </v-row>
       </v-container>
     </v-stepper>
+
+    <v-dialog
+      v-model="disclaimerDialog"
+      persistent
+      width="500"
+    >
+      <v-card>
+        <v-card-title>
+          <!-- <span class="headline">Edit title</span> -->
+        </v-card-title>
+
+        <v-card-text>
+          <v-container class="pt-6" fluid>
+            This experiment already have observers.<br>
+            The original version will be kept untouched and a new version will be created with a "version 2"-tag.
+            Delete the old version from the experiments list later if you don't need it.
+          </v-container>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            text
+            @click="disclaimerDialog = false"
+          >
+            Cancel
+          </v-btn>
+
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="success"
+            class="ml-3"
+            @click="updateApproved()"
+          >
+            save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </v-container>
 </template>
 
@@ -488,7 +524,9 @@ export default {
         saving: false
       },
 
-      errors: []
+      errors: [],
+
+      disclaimerDialog: false
     }
   },
 
@@ -532,6 +570,7 @@ export default {
      *
      * currentLevel is linked with the ID of the object, so we have to
      * increment/decrement the IDs for the currentLevel to be correct.
+     * It's a bit hacky, but we have to work around limitations in the Vuetify stepper component.
      */
     experimentType (newVal, oldVal) {
       // if rating -> non rating
@@ -620,7 +659,18 @@ export default {
       })
     },
 
+    updatee () {
+      if (this.experiment.results_count > 0) {
+        this.disclaimerDialog = true
+        // return
+      } else {
+        // this.updateApproved()
+      }
+    },
+
     update () {
+      // this.disclaimerDialog = false
+
       this.loaders.storing = true
       this.loaders.saving = true
 

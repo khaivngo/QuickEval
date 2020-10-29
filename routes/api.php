@@ -70,12 +70,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get(     '/picture/{id}', 'PicturesController@index'  );
 
     # experiment results
-    Route::get(     '/experiment/{id}/experiment-results',  'ExperimentResultsController@index'     );
-    Route::get(     '/experiment-result/{id}',              'ExperimentResultsController@fetch'     );
-    Route::post(    '/experiment-result/create',            'ExperimentResultsController@store'     );
-    Route::patch(   '/experiment-result/{result}/update',   'ExperimentResultsController@update'    );
-    Route::patch(   '/experiment-result/{result}/completed','ExperimentResultsController@completed' );
-    Route::delete(  '/experiment-result/{id}/wipe',         'ExperimentResultsController@destroy'   );
+    Route::get(   '/experiment/{id}/experiment-results',  'ExperimentResultsController@index'     );
+    Route::get(   '/experiment-result/{id}',              'ExperimentResultsController@fetch'     );
+    Route::post(  '/experiment-result/create',            'ExperimentResultsController@store'     );
+    Route::patch( '/experiment-result/{result}/update',   'ExperimentResultsController@update'    );
+    Route::patch( '/experiment-result/{result}/completed','ExperimentResultsController@completed' );
+    Route::delete('/experiment-result',                   'ExperimentResultsController@destroy'   );
 
     # paired results
     Route::get( '/paired-result/{id}',            'ResultPairsController@index'      );

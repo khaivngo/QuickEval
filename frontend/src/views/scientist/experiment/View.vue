@@ -84,7 +84,9 @@
 
       <v-tabs v-model="tab" class="mb-6" style="margin-top: 60px;">
         <v-tab>
-          <h5 class="text-subtitle-1 font-weight-medium">Observers</h5>
+          <h5 class="text-subtitle-1 font-weight-medium">
+            Observers
+          </h5>
         </v-tab>
         <v-tab>
           <h2 class="text-subtitle-1 font-weight-medium">
@@ -120,7 +122,7 @@
                   v-on="on"
                   :disabled="selected.length === 0"
                 >
-                  <v-icon :size="20" class="mr-2">
+                  <v-icon :size="20" class="mr-2" style="padding-top: 3px;">
                     mdi-download
                   </v-icon>
                   Export...
@@ -208,8 +210,8 @@
                   </v-btn>
                   <v-spacer></v-spacer>
                   <v-btn
-                    color="#78AA1C"
-                    :loading="exporting" dark
+                    color="#78AA1C" dark
+                    :loading="exporting"
                     @click="exportResults()"
                   >
                     Export
@@ -220,12 +222,26 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn @click="wipeAllResults" class="mt-2 ml-4" color="default">
-              <v-icon :size="20" class="mr-2">
-                mdi-delete
-              </v-icon>
-              Clear results
-            </v-btn>
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  @click="destroyResults()"
+                  :loading="destroying"
+                  :disabled="selected.length === 0"
+                  class="mt-2 ml-4"
+                  color="default"
+                >
+                  <v-icon :size="18" class="mr-2">
+                    mdi-delete
+                  </v-icon>
+                  Delete
+                </v-btn>
+              </template>
+              <div class="pa-1">
+                Delete selected observers,<br>with belonging results.
+              </div>
+            </v-tooltip>
           </div>
         </v-tab-item>
 
@@ -265,6 +281,7 @@ export default {
       loadingVisibility: false,
       exporting: false,
       deleting: false,
+      destroying: false,
       exportDialog: false,
 
       exportFlags: {
@@ -280,7 +297,7 @@ export default {
         { text: 'Observer ID', value: 'user_id', sortable: false, desc: '' },
         { text: 'Session ID', value: 'id', align: 'left', sortable: false, desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.' },
         { text: 'Taken At', value: 'created_at', sortable: false, desc: '' },
-        { text: 'Color vision', value: 'ishihara', sortable: false, desc: '' }
+        { text: 'Color vision (vision/post eval/degree)', value: 'ishihara', sortable: false, desc: '' }
       ],
 
       selected: [],
@@ -334,6 +351,32 @@ export default {
       }).catch(() => {
         this.exporting = false
       })
+    },
+
+    destroyResults () {
+      this.destroying = true
+
+      // create new array with only IDs of the selected objects
+      let ids = this.selected.map(selected => {
+        return selected.id
+      })
+
+      if (confirm('Do you want to delete selected results data for this experiment?')) {
+        this.$axios({
+          url: `/experiment-result`,
+          method: 'DELETE',
+          data: {
+            selected: ids
+          }
+        }).then(response => {
+          EventBus.$emit('success', 'Observer results has been deleted successfully')
+          this.destroying = false
+        }).catch(error => {
+          alert(error)
+          EventBus.$emit('error', 'Could not delete experiment data.')
+          this.destroying = false
+        })
+      }
     },
 
     getExperiment () {
@@ -402,20 +445,6 @@ export default {
             this.$router.push('/scientist/experiments')
           } else {
             EventBus.$emit('error', 'Could not delete experiment')
-          }
-        })
-      }
-    },
-
-    wipeAllResults () {
-      if (confirm('Do you want to delete ALL results data for this experiment?')) {
-        this.$axios.delete(`/experiment-result/${this.$route.params.id}/wipe`).then(response => {
-          if (response.data === 'deleted') {
-            this.experimentResults = []
-
-            EventBus.$emit('success', 'Observer results has been deleted successfully')
-          } else {
-            EventBus.$emit('error', 'Could not delete experiment data.')
           }
         })
       }

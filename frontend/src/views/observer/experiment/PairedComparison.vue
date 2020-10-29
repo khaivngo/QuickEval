@@ -59,7 +59,7 @@
     </v-toolbar>
 
     <v-layout mt-3 justify-center>
-      <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1">
+      <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
         Original
       </h4>
     </v-layout>
@@ -266,7 +266,12 @@ export default {
         if (this.leftReproductionActive === true)  selectedStimuli = this.stimuli[this.index + 1]
 
         // set original
-        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null) {
+        if (
+          this.stimuli[this.index].hasOwnProperty('original') &&
+          this.stimuli[this.index].hasOwnProperty('original') !== null &&
+          this.stimuli[this.index].original &&
+          this.stimuli[this.index].original.path
+        ) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 

@@ -424,8 +424,16 @@ export default {
       })
 
       // set original
-      if (this.stimuli[this.index].picture_queue[0].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null) {
+      if (
+        // this.stimuli[this.index].picture_queue[0].hasOwnProperty('original') &&
+        // this.stimuli[this.index].picture_queue[0].hasOwnProperty('original') !== null &&
+        // this.stimuli[this.index].picture_queue[0].hasOwnProperty('original')
+        this.stimuli[this.index].picture_queue[0].original &&
+        this.stimuli[this.index].picture_queue[0].original.path
+      ) {
         this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].original.path
+      } else {
+        this.originalImage = ''
       }
       this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[0].path
       this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].picture_queue[1].path

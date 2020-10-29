@@ -53,7 +53,7 @@
         <!-- <th style="font-weight: bold;">id</th> -->
         <th style="font-weight: bold;">user ID</th>
         <th style="font-weight: bold;">vision</th>
-        <th style="font-weight: bold;">evalutation</th>
+        <th style="font-weight: bold;">post evalutation</th>
         <th style="font-weight: bold;">degree</th>
     </tr>
     </thead>

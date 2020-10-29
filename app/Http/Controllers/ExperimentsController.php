@@ -54,7 +54,9 @@ class ExperimentsController extends Controller
       $experiment = Experiment::where([
         ['user_id', auth()->user()->id],
         ['id', $request->id]
-      ])->first();
+      ])
+      ->withCount('results')
+      ->first();
 
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')

@@ -283,7 +283,7 @@ export default {
     },
 
     addImage (files) {
-      console.log(files)
+      // console.log(files)
       this.reproductions.push(files[0])
       // if (this.reproductions.length > 0) {
       //   this.reproductions.unshift(files[0])

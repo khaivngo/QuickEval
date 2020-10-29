@@ -61,18 +61,12 @@ class ExperimentResultsController extends Controller
       return response($result, 200);
     }
 
-    public function destroy ($id) {
-      // check that scientist owns experiment
+    public function destroy (Request $request) {
+      // TODO: check if owner
 
-      $results = ExperimentResult::where('experiment_id', $id)->get();
+      $deleted = ExperimentResult::destroy($request->selected);
 
-      $experiment_results = $results->map(function ($result) {
-        return $result->id;
-      });
-
-      ExperimentResult::destroy($experiment_results);
-
-      return response()->json('deleted', 200);
+      return response()->json($request, 200);
     }
 
     // public function destroy (Request $request, Experiment $experiment) {
