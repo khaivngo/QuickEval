@@ -314,6 +314,7 @@ export default {
             this.isLoadLeft = true
             // starts or overrides existing timer
             this.startTime = new Date()
+            this.disableNextBtn = false
           }, this.experiment.delay)
         }
 
@@ -326,6 +327,7 @@ export default {
             this.isLoadMiddle = true
             // starts or overrides existing timer
             this.startTime = new Date()
+            this.disableNextBtn = false
           }, this.experiment.delay)
         }
 
@@ -338,6 +340,7 @@ export default {
             this.isLoadRight = true
             // starts or overrides existing timer
             this.startTime = new Date()
+            this.disableNextBtn = false
           }, this.experiment.delay)
         }
 
@@ -355,7 +358,6 @@ export default {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
-            this.disableNextBtn = false
             this.selectedCategoryLeft = null
             this.selectedCategoryMiddle = null
             this.selectedCategoryRight = null

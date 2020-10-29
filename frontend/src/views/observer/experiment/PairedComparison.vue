@@ -304,6 +304,7 @@ export default {
                 this.isLoadRight = true
                 // starts or overrides existing timer
                 this.timeElapsed = new Date()
+                this.disableNextBtn = false
               }, this.experiment.delay)
             }
           }
@@ -331,7 +332,6 @@ export default {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
-            this.disableNextBtn = false
             this.rightReproductionActive = false
             this.leftReproductionActive = false
             this.index += 2

@@ -314,6 +314,7 @@ export default {
         this.isLoadLeft = true
         // starts or overrides existing timer
         this.timeElapsed = new Date()
+        this.disableNextBtn = false
       }, this.experiment.delay)
     },
 
@@ -334,6 +335,7 @@ export default {
       window.setTimeout(() => {
         this.isLoadRight = true
         this.timeElapsed = new Date()
+        this.disableNextBtn = false
       }, this.experiment.delay)
     },
 
@@ -361,8 +363,7 @@ export default {
 
         // has every image been viewed in the panner?
         let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
-        console.log(watched)
-        console.log(this.rankings)
+
         // if rankings array is not empty, and every item in the array has been opened in the panner
         if ((this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
           this.disableNextBtn = true
@@ -371,7 +372,7 @@ export default {
           let endTime = new Date()
           // get the number of seconds between endTime and startTime
           let seconds = datetimeToSeconds(this.timeElapsed, endTime)
-          console.log('inside')
+
           this.store(seconds).then(response => {
             this.labels = []
             this.rankings = []
@@ -383,8 +384,6 @@ export default {
             if (this.stimuli[this.index] === undefined) {
               this.onFinish()
             }
-
-            this.disableNextBtn = false
 
             this.next()
           }).catch(() => {

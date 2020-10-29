@@ -275,6 +275,7 @@ export default {
           window.setTimeout(() => {
             this.isLoadLeft = true
             this.startTime = new Date()
+            this.disableNextBtn = false
           }, this.experiment.delay)
         }
         // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
@@ -293,7 +294,6 @@ export default {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
-            this.disableNextBtn = false
             this.selectedCategory = null
             this.index += 1
             localStorage.setItem('index', this.index)
