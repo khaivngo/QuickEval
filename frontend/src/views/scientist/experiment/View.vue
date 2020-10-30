@@ -110,7 +110,11 @@
             loading-text="Loading... Please wait"
             hide-default-footer
             :items-per-page="100"
-          ></v-data-table>
+          >
+            <template v-slot:item.completed="{ item }">
+              <span>{{ (item.completed === 1) ? 1 : 0 }}</span>
+            </template>
+          </v-data-table>
 
           <div class="d-flex mb-12">
             <v-dialog v-model="exportDialog" max-width="600px">
@@ -297,6 +301,7 @@ export default {
         { text: 'Observer ID', value: 'user_id', sortable: false, desc: '' },
         { text: 'Session ID', value: 'id', align: 'left', sortable: false, desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.' },
         { text: 'Taken At', value: 'created_at', sortable: false, desc: '' },
+        { text: 'Completed', value: 'completed', sortable: false, desc: '' },
         { text: 'Color vision (vision/post eval/degree)', value: 'ishihara', sortable: false, desc: '' }
       ],
 
