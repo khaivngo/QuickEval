@@ -40,6 +40,7 @@ class CreateExperimentsTable extends Migration
 
             $table->tinyInteger('allow_ties')       ->nullable();
             $table->tinyInteger('show_original')    ->nullable();
+            $table->tinyInteger('show_progress')    ->nullable();
             $table->tinyInteger('same_pair')        ->nullable();
             $table->tinyInteger('horizontal_flip')  ->nullable();
             $table->tinyInteger('natural_lighting') ->nullable();

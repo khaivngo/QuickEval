@@ -147,7 +147,7 @@
               </v-col>
             </v-row>
 
-            <v-row align="center" class="mt-0 pt-0">
+            <v-row align="center" class="mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.showOriginal"
@@ -165,6 +165,28 @@
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Display the original image of the image set alongside the reproductions.<br>
                     As a reference for the observer.
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+
+            <v-row align="center" class="mt-0 pt-0">
+              <v-col cols="auto" class="pt-0 pb-0 pr-0">
+                <v-checkbox
+                  v-model="form.showProgress"
+                  color="success"
+                  :label="`Display progress indicator`"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="auto" class="pa-0 mb-1">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                    Display a progress indicator in the top right corner. Example: 3/34
                   </div>
                 </v-tooltip>
               </v-col>
@@ -512,6 +534,7 @@ export default {
         delay: 200,
         stimuliSpacing: 15,
         showOriginal: false,
+        showProgress: false,
         isPublic: 0,
         sequences: [],
         observerMetas: [],
@@ -639,6 +662,7 @@ export default {
 
       // convert values from boolean to integer before saving
       this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       this.form.isPublic = (type === 'hidden') ? 0 : 1
 
       this.$axios.post('/experiment/store', this.form).then(response => {
@@ -676,6 +700,7 @@ export default {
 
       // convert values from boolean to integer before saving
       this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       // this.form.isPublic = (type === 'hidden') ? 0 : 1
       this.form.isPublic = 1
 
@@ -714,6 +739,7 @@ export default {
           this.form.cvd              = response.data.allow_colour_blind
           this.form.bgColour         = response.data.background_colour || '808080'
           this.form.showOriginal     = (response.data.show_original === 1)
+          this.form.showProgress     = (response.data.show_progress === 1)
           this.form.samePairTwice    = response.data.same_pair
           this.form.algorithm        = response.data.picture_sequence_algorithm
 

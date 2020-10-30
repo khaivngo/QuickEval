@@ -37,6 +37,12 @@
 
       <v-spacer></v-spacer>
 
+      <v-toolbar-items v-if="experiment.show_progress === 1">
+        <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
+          {{ index }}/{{ stimuli.length }}
+        </h4>
+      </v-toolbar-items>
+
       <v-toolbar-items>
         <v-dialog v-model="abortDialog" max-width="500">
           <template v-slot:activator="{ on }">

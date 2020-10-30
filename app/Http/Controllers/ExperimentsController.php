@@ -193,6 +193,7 @@ class ExperimentsController extends Controller
         'same_pair'         => $request->samePairTwice,
         'background_colour' => $request->bgColour,
         'show_original'     => $request->showOriginal,
+        'show_progress'     => $request->showProgress,
         'version'           => 1
       ]);
 
@@ -645,6 +646,7 @@ class ExperimentsController extends Controller
         'same_pair'         => $request->samePairTwice,
         'background_colour' => $request->bgColour,
         'show_original'     => $request->showOriginal,
+        'show_progress'     => $request->showProgress,
         'first_version_id'  => $original,
         'version'           => $version
       ]);
