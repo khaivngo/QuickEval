@@ -39,7 +39,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index / 3 }}/{{ stimuli.length / 3 }}
+          {{ index2 / 3 }}/{{ (stimuli.length + stimuliIndex) / 3 }}
         </h4>
       </v-toolbar-items>
 
@@ -208,6 +208,8 @@ export default {
       stimuli: [],
 
       index: 0,
+      index2: 0,
+      stimuliIndex: 0,
       experimentResult: null,
 
       categories: [],
@@ -257,6 +259,12 @@ export default {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
           this.stimuli = payload.data
+
+          // count how many instructions we have
+          let count = payload.data.filter((obj) => obj.instruction_id).length
+          let count2 = count * 2 // 3
+          // let min = payload.data - count
+          this.stimuliIndex = count2
 
           if (localStorage.getItem('index') === null) {
             localStorage.setItem('index', 0)
@@ -372,6 +380,7 @@ export default {
             this.selectedCategoryMiddle = null
             this.selectedCategoryRight = null
             this.index += 3
+            this.index2 += 3
             localStorage.setItem('index', this.index)
 
             // Have we reached the end?
@@ -388,6 +397,7 @@ export default {
         this.instructionDialog = true
 
         this.index += 1
+        this.index2 += 3
         localStorage.setItem('index', this.index)
 
         this.next()
