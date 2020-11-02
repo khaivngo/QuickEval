@@ -79,7 +79,7 @@ Route::middleware('auth:api')->group(function () {
 
     # paired results
     Route::get( '/paired-result/{id}',            'ResultPairsController@index'      );
-    Route::get( '/paired-result/{id}/statistics', 'ResultPairsController@statistics' );
+    Route::post('/paired-result/{id}/statistics', 'ResultPairsController@statistics' );
 
     // TODO: rename this to result-pairs, result-categories etc.
     Route::post('/paired-result',     'ResultPairsController@store'      );
@@ -88,10 +88,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/rank-order-result', 'ResultRankOrdersController@store' );
 
     # rank order results
-    Route::get( '/rank-order-result/{id}/statistics', 'ResultRankOrdersController@statistics' );
+    Route::post('/rank-order-result/{id}/statistics', 'ResultRankOrdersController@statistics');
 
     # category results
-    Route::get( '/result-categories/{id}/statistics', 'ResultCategoriesController@statistics' );
+    Route::post('/result-categories/{id}/statistics', 'ResultCategoriesController@statistics');
 
     # instructions
     Route::get('/instructions', 'InstructionsController@index');

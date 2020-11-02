@@ -1,88 +1,105 @@
 <template>
   <div>
+    <div>
+      <v-checkbox
+        v-model="includeIncomplete"
+        :label="`Include unfinshed experiments in calculations`"
+      ></v-checkbox>
+    </div>
+
     <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
       <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
     </div>
 
-    <div v-if="!loading && rawDataMap.length === 0 && zScoreMap.length === 0">
-      Not enough data yet to calculate statistics.
-    </div>
-
-    <h2 class="mb-3 mt-12 pt-6">
-      Scatter and errorbar plot
-    </h2>
-    <h3 class="text-h6 mb-6 mt-4 font-weight-light">
-      <span v-for="(group, gIndex) in sequences" :key="gIndex">
-        {{ group.picture_set.title }}<span v-if="gIndex !== sequences.length - 1">,</span>
-      </span>
-    </h3>
-    <ScatterPlot :series="plotData" class="mb-12"/>
-
-    <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
-    <div v-for="(group, gIndex) in sequences" :key="gIndex">
-      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-        {{ group.picture_set.title }}
-      </h3>
-
-      <div class="pa-1 d-flex justify-center align-center qe-table-title">
-        <h4 class="text-center">Number of times selected</h4>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
-              <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-            </v-btn>
-          </template>
-          <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-            Number of times each image/category combination is selected.
-          </div>
-        </v-tooltip>
+    <div v-show="!loading">
+      <div v-if="rawDataMap.length === 0 && zScoreMap.length === 0">
+        Not enough data yet to calculate statistics.
       </div>
-      <table class="table bordered hovered">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th v-for="(cat, m) in group.picture_set.pictures[0].categories" :key="m" class="overflow-wrap">
-              {{ cat.category.title }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(picture, c) in group.picture_set.pictures" :key="c">
-            <td class="overflow-wrap"><b>{{ picture.name }}</b></td>
-            <td v-for="(category, cIndex) in picture.categories" :key="cIndex">
-              {{ category.result.length }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <h2 class="mb-3 mt-12 pt-12">Z-Scores</h2>
-    <div v-for="(group, b) in sequences" :key="group.id">
-      <!-- <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3> -->
-      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-        {{ group.picture_set.title }}
+      <h2 class="mb-3 mt-12 pt-6">
+        Scatter and errorbar plot
+      </h2>
+
+      <h3 class="text-h6 mb-6 mt-4 font-weight-light">
+        <span v-for="(group, gIndex) in sequences" :key="gIndex">
+          {{ group.picture_set.title }}<span v-if="gIndex !== sequences.length - 1">,</span>
+        </span>
       </h3>
 
-      <table class="table bordered hovered">
-        <thead>
-          <tr>
-            <th class="overflow-wrap">Title</th>
-            <th class="overflow-wrap">Low CI limit</th>
-            <th class="overflow-wrap">Mean z-score</th>
-            <th class="overflow-wrap">High CI limit</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(y, j) in group.picture_set.pictures" :key="y.id">
-            <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+      <ScatterPlot :series="plotData" class="mb-12"/>
 
-            <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
-            <td>{{ isNumber(zScoreMap[b][1][j]) }}</td>
-            <td>{{ isNumber(zScoreMap[b][2][j]) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <h2 class="mb-3 mt-12 pt-12">
+        Raw data
+      </h2>
+
+      <div v-for="(group, gIndex) in sequences" :key="gIndex">
+        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+          {{ group.picture_set.title }}
+        </h3>
+
+        <div class="pa-1 d-flex justify-center align-center qe-table-title">
+          <h4 class="text-center">Number of times selected</h4>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn icon v-on="on">
+                <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+              </v-btn>
+            </template>
+            <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+              Number of times each image/category combination is selected.
+            </div>
+          </v-tooltip>
+        </div>
+        <table class="table bordered hovered">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th v-for="(cat, m) in group.picture_set.pictures[0].categories" :key="m" class="overflow-wrap">
+                {{ cat.category.title }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(picture, c) in group.picture_set.pictures" :key="c">
+              <td class="overflow-wrap"><b>{{ picture.name }}</b></td>
+              <td v-for="(category, cIndex) in picture.categories" :key="cIndex">
+                {{ category.result.length }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="mb-3 mt-12 pt-12">
+        Z-Scores
+      </h2>
+
+      <div v-for="(group, b) in sequences" :key="group.id">
+        <!-- <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3> -->
+        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+          {{ group.picture_set.title }}
+        </h3>
+
+        <table class="table bordered hovered">
+          <thead>
+            <tr>
+              <th class="overflow-wrap">Title</th>
+              <th class="overflow-wrap">Low CI limit</th>
+              <th class="overflow-wrap">Mean z-score</th>
+              <th class="overflow-wrap">High CI limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(y, j) in group.picture_set.pictures" :key="y.id">
+              <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+              <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
+              <td>{{ isNumber(zScoreMap[b][1][j]) }}</td>
+              <td>{{ isNumber(zScoreMap[b][2][j]) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -127,68 +144,97 @@ export default {
       plotData: [],
 
       sequences: [],
-      loading: false
+      loading: false,
+
+      includeIncomplete: false
+    }
+  },
+
+  watch: {
+    includeIncomplete (newVal, oldVal) {
+      if (oldVal !== null) {
+        localStorage.setItem(this.$route.params.id + '-includeIncomplete', newVal)
+      }
+      // re-calculate statistics
+      this.init()
     }
   },
 
   created () {
-    this.loading = true
-    this.$axios.get(`/result-categories/${this.$route.params.id}/statistics`).then(data => {
-      console.log(data.data)
+    const incomplete = localStorage.getItem(this.$route.params.id + '-includeIncomplete')
+    // convert to boolean, so the checkbox will work. replace with json?
+    if (incomplete === 'false') {
+      this.includeIncomplete = false
+    } else if (incomplete === 'true') {
+      this.includeIncomplete = true
+    }
 
-      let answers = data.data.results
-      let sequences = data.data.imagesetSequences
-
-      sequences.forEach(sequence => {
-        sequence.picture_set.pictures.forEach(image => {
-          image.categories.forEach(item => {
-            answers.forEach(answer => {
-              if (answer.category_id === item.category_id && answer.picture_id === image.id) {
-                item.result.push(answer)
-              }
-            })
-          })
-        })
-      })
-
-      this.sequences = sequences
-
-      sequences.forEach(sequence => {
-        let set = []
-        sequence.picture_set.pictures.forEach(image => {
-          let row = []
-          image.categories.forEach(categ => {
-            // categ.forEach(result => {
-            row.push(categ.result.length)
-            // })
-          })
-          set.push(row)
-        })
-
-        // calc z-scores
-        let zScoreArray = this.calculatePlotsCategory(set, true)
-        console.log(zScoreArray)
-
-        // store calculated z-scores for image sets
-        this.zScoreMap.push(zScoreArray)
-
-        this.plotData.push({
-          imageSet: sequence.picture_set,
-          // only get the file names
-          label: sequence.picture_set.pictures.map(obj => obj.name),
-          zScores: zScoreArray
-        })
-      })
-
-      this.loading = false
-    }).catch(error => {
-      console.log(error)
-      this.loading = false
-    })
+    this.init()
   },
 
   methods: {
     isNumber,
+
+    init () {
+      this.loading = true
+
+      this.$axios.post(`/result-categories/${this.$route.params.id}/statistics`, {
+        includeIncomplete: this.includeIncomplete
+      }).then(data => {
+        this.resultsArray = null
+        this.rawDataMap = []
+        this.zScoreMap = []
+        this.plotData = []
+
+        let answers = data.data.results
+        let sequences = data.data.imagesetSequences
+
+        sequences.forEach(sequence => {
+          sequence.picture_set.pictures.forEach(image => {
+            image.categories.forEach(item => {
+              answers.forEach(answer => {
+                if (answer.category_id === item.category_id && answer.picture_id === image.id) {
+                  item.result.push(answer)
+                }
+              })
+            })
+          })
+        })
+
+        this.sequences = sequences
+
+        sequences.forEach(sequence => {
+          let set = []
+          sequence.picture_set.pictures.forEach(image => {
+            let row = []
+            image.categories.forEach(categ => {
+              // categ.forEach(result => {
+              row.push(categ.result.length)
+              // })
+            })
+            set.push(row)
+          })
+
+          // calc z-scores
+          let zScoreArray = this.calculatePlotsCategory(set, true)
+
+          // store calculated z-scores for image sets
+          this.zScoreMap.push(zScoreArray)
+
+          this.plotData.push({
+            imageSet: sequence.picture_set,
+            // only get the file names
+            label: sequence.picture_set.pictures.map(obj => obj.name),
+            zScores: zScoreArray
+          })
+        })
+
+        this.loading = false
+      }).catch(error => {
+        console.log(error)
+        this.loading = false
+      })
+    },
 
     /* eslint-disable */
     calculatePlotsCategory ($frequencyMatrix, $category) {

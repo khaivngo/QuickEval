@@ -121,7 +121,7 @@ class ResultCategoriesController extends Controller
       }
     }
 
-    public function statistics (int $id) {
+    public function statistics (Request $request, int $id) {
       $results = [];
 
       # Get the image sets used in the experiment (every image set used in experiment sequences).
@@ -137,10 +137,16 @@ class ResultCategoriesController extends Controller
 
       $results['categories'] = \App\ExperimentCategory::with('category')->where('experiment_id', $id)->get();
 
+      $matchThese = ['experiment_id' => $id];
+      // include incomplete data?
+      if ($request->includeIncomplete == false) {
+        $matchThese['completed'] = 1;
+      }
+
       # get all results for each observer
       $observers = ExperimentResult
         ::with('category_results.picture.picture_set', 'category_results.category')
-        ->where('experiment_id', $id)
+        ->where($matchThese)
         ->get();
 
       $data = [];

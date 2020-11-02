@@ -151,7 +151,7 @@ class ResultRankOrdersController extends Controller
     }
 
 
-    public function statistics (int $id)
+    public function statistics (Request $request, int $id)
     {
         $results = [];
 
@@ -163,7 +163,7 @@ class ResultRankOrdersController extends Controller
                 $q->where('is_original', 0);
               }]);
           }])
-          ->where('experiment_id', '=', $id)
+          ->where('experiment_id', $id)
           ->get();
 
         // TODO: remove need for this on frontend
@@ -178,10 +178,16 @@ class ResultRankOrdersController extends Controller
         //     };
         // }
 
+        $matchThese = ['experiment_id' => $id];
+        // include incomplete data?
+        if ($request->includeIncomplete == false) {
+          $matchThese['completed'] = 1;
+        }
+
         $rank_order_results = ExperimentResult::with([
             'rank_order_results' => function ($query) { $query->orderBy('picture_id'); },
             'rank_order_results.picture'
-          ])->where('experiment_id', $id)
+          ])->where($matchThese)
           ->get();
 
         $data = [];

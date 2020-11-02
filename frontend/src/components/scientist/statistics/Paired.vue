@@ -1,106 +1,117 @@
 <template>
   <div>
-    <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
+    <div>
+      <v-checkbox
+        v-model="includeIncomplete"
+        :label="`Include unfinshed experiments in calculations`"
+      ></v-checkbox>
+    </div>
+
+    <div class="mt-12 mb-12" v-if="loading">
       <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
     </div>
 
-    <div v-if="!loading && rawDataMap.length === 0 && zScoreMap.length === 0">
-      Not enough data yet to calculate statistics.
-    </div>
-
-    <h2 class="mb-3 mt-12 pt-6">
-      Scatter and errorbar plot
-    </h2>
-    <h3 class="text-h6 mb-6 mt-4 font-weight-light">
-      <span v-for="(imageSet, k) in rawDataMap" :key="k">
-        {{ results.imageSets[k].title }}<span v-if="k !== rawDataMap.length - 1">,</span>
-      </span>
-    </h3>
-    <ScatterPlot
-      :series="plotData"
-    />
-
-    <!-- Raw data -->
-    <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
-      <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
-      <div
-        v-for="(imageSet, f) in rawDataMap"
-        :key="f"
-      >
-        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-          {{ results.imageSets[f].title }}
-        </h3>
-
-        <table class="table bordered hovered body-1">
-          <thead>
-            <tr>
-              <th>
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                    Images on the y-axis are the images picked.<br><br>
-                    For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
-                  </div>
-                </v-tooltip>
-              </th>
-              <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
-                {{ y.name }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
-              <td class="overflow-wrap"><b>{{ y.name }}</b></td>
-
-              <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
-                <span v-if="score > 0">
-                  {{ score }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    <div v-show="!loading">
+      <div v-if="rawDataMap.length === 0 && zScoreMap.length === 0">
+        Not enough data yet to calculate statistics.
       </div>
-    </div>
 
-    <!-- Z-scores -->
-    <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
-      <h2 class="mb-3 mt-12 pt-12">Z-score</h2>
-      <div
-        v-for="(imageSet, p) in rawDataMap"
-        :key="p"
-      >
-        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-          {{ results.imageSets[p].title }}
-        </h3>
+      <h2 class="mb-3 mt-12 pt-6">
+        Scatter and errorbar plot
+      </h2>
 
-        <p v-if="zScoreMap[p][3] == 1">
-          Need more observer data to calculate z-scores properly.
-        </p>
+      <h3 class="text-h6 mb-6 mt-4 font-weight-light">
+        <span v-for="(imageSet, k) in rawDataMap" :key="k">
+          {{ results.imageSets[k].title }}<span v-if="k !== rawDataMap.length - 1">,</span>
+        </span>
+      </h3>
 
-        <table v-if="zScoreMap[p][3] == 0" class="table bordered hovered">
-          <thead>
-            <tr>
-              <th class="overflow-wrap">Title</th>
-              <th class="overflow-wrap">Low CI limit</th>
-              <th class="overflow-wrap">Mean z-score</th>
-              <th class="overflow-wrap">High CI limit</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(y, j) in results.imagesForEachImageSet[p]" :key="j">
-              <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+      <ScatterPlot
+        :series="plotData"
+      />
 
-              <td>{{ isNumber(zScoreMap[p][0][j]) }}</td>
-              <td>{{ isNumber(zScoreMap[p][1][j]) }}</td>
-              <td>{{ isNumber(zScoreMap[p][2][j]) }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <!-- Raw data -->
+      <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+        <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
+        <div
+          v-for="(imageSet, f) in rawDataMap"
+          :key="f"
+        >
+          <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+            {{ results.imageSets[f].title }}
+          </h3>
+
+          <table class="table bordered hovered body-1">
+            <thead>
+              <tr>
+                <th>
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon v-on="on">
+                        <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                      Images on the y-axis are the images picked.<br><br>
+                      For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
+                    </div>
+                  </v-tooltip>
+                </th>
+                <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
+                  {{ y.name }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
+                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+                <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
+                  <span v-if="score > 0">
+                    {{ score }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Z-scores -->
+      <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+        <h2 class="mb-3 mt-12 pt-12">Z-score</h2>
+        <div
+          v-for="(imageSet, p) in rawDataMap"
+          :key="p"
+        >
+          <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+            {{ results.imageSets[p].title }}
+          </h3>
+
+          <p v-if="zScoreMap[p][3] == 1">
+            Need more observer data to calculate z-scores properly.
+          </p>
+
+          <table v-if="zScoreMap[p][3] == 0" class="table bordered hovered">
+            <thead>
+              <tr>
+                <th class="overflow-wrap">Title</th>
+                <th class="overflow-wrap">Low CI limit</th>
+                <th class="overflow-wrap">Mean z-score</th>
+                <th class="overflow-wrap">High CI limit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(y, j) in results.imagesForEachImageSet[p]" :key="j">
+                <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+                <td>{{ isNumber(zScoreMap[p][0][j]) }}</td>
+                <td>{{ isNumber(zScoreMap[p][1][j]) }}</td>
+                <td>{{ isNumber(zScoreMap[p][2][j]) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -138,59 +149,96 @@ export default {
       zScoreMap: [],
       plotData: [],
 
-      loading: false
+      loading: false,
+
+      includeIncomplete: null
+    }
+  },
+
+  watch: {
+    includeIncomplete (newVal, oldVal) {
+      // console.log(oldVal)
+      // console.log(newVal)
+      // if (this.includeIncomplete === )
+
+      if (this.includeIncomplete !== null && oldVal !== null && newVal !== null) {
+        localStorage.setItem(this.$route.params.id + '-includeIncomplete', newVal)
+      }
+
+      // re-calculate statistics
+      this.init()
     }
   },
 
   created () {
-    this.loading = true
-    this.$axios.get(`/paired-result/${this.$route.params.id}/statistics`).then(data => {
-      this.results = data.data
+    const incomplete = localStorage.getItem(this.$route.params.id + '-includeIncomplete')
+    // replace with json?
+    if (incomplete === 'false') {
+      this.includeIncomplete = false
+    } else if (incomplete === 'true') {
+      this.includeIncomplete = true
+    }
 
-      this.results.imageSets.forEach((imageSet, i) => {
-        // create an empty this.resultsArray array with the length of the number of images in the image set
-        // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
-        // push a 0 value in every slot of the sub arrays
-        this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
-        for (var it = 0; it < this.resultsArray.length; it++) {
-          this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
-
-          for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
-            this.resultsArray[it][ita] = 0
-          }
-        }
-
-        if (this.results.resultsForEachImageSet.length) {
-          this.results.resultsForEachImageSet[i].forEach((result, index) => {
-            let row = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
-            let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
-            this.resultsArray[row][column] += 1 // result['won'] here?
-          })
-        }
-
-        // save all raw data maps
-        this.rawDataMap.push(this.resultsArray)
-
-        // stores calculated data for one image set
-        let zScoreArray = this.calculatePlots(this.resultsArray)
-        this.zScoreMap.push(zScoreArray)
-
-        // add z-score and image set names for one image set to the array used by the scatter plot
-        this.plotData.push({
-          imageSet: imageSet,
-          label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
-          zScores: zScoreArray
-        })
-      })
-
-      this.loading = false
-    }).catch(() => {
-      this.loading = false
-    })
+    this.init()
   },
 
   methods: {
     isNumber,
+
+    init () {
+      this.loading = true
+
+      this.$axios.post(`/paired-result/${this.$route.params.id}/statistics`, {
+        includeIncomplete: this.includeIncomplete
+      }).then(data => {
+        this.results = data.data
+
+        this.resultsArray = null
+        this.rawDataMap = []
+        this.zScoreMap = []
+        this.plotData = []
+
+        this.results.imageSets.forEach((imageSet, i) => {
+          // create an empty this.resultsArray array with the length of the number of images in the image set
+          // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
+          // push a 0 value in every slot of the sub arrays
+          this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
+          for (var it = 0; it < this.resultsArray.length; it++) {
+            this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
+
+            for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
+              this.resultsArray[it][ita] = 0
+            }
+          }
+
+          if (this.results.resultsForEachImageSet.length) {
+            this.results.resultsForEachImageSet[i].forEach((result, index) => {
+              let row = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
+              let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
+              this.resultsArray[row][column] += 1 // result['won'] here?
+            })
+          }
+
+          // save all raw data maps
+          this.rawDataMap.push(this.resultsArray)
+
+          // stores calculated data for one image set
+          let zScoreArray = this.calculatePlots(this.resultsArray)
+          this.zScoreMap.push(zScoreArray)
+
+          // add z-score and image set names for one image set to the array used by the scatter plot
+          this.plotData.push({
+            imageSet: imageSet,
+            label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
+            zScores: zScoreArray
+          })
+        })
+
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
 
     /* eslint-disable */
     calculatePlots ($frequencyMatrix, $category) {

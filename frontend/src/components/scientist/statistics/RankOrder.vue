@@ -1,93 +1,106 @@
 <template>
   <div>
+    <div>
+      <v-checkbox
+        v-model="includeIncomplete"
+        :label="`Include unfinshed experiments in calculations`"
+      ></v-checkbox>
+    </div>
+
     <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
       <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
     </div>
 
-    <div v-if="!loading && rawDataMap.length === 0 && zScoreMap.length === 0">
-      Not enough data yet to calculate statistics.
-    </div>
-
-    <h2 class="mb-3 mt-12 pt-6">
-      Scatter and errorbar plot
-    </h2>
-    <h3 class="text-h6 mb-6 mt-4 font-weight-light">
-      <span v-for="(imageSet, iIndex) in rankedResults.imageSets" :key="iIndex">
-        {{ imageSet.picture_set.title }}<span v-if="iIndex !== rankedResults.imageSets.length - 1">,</span>
-      </span>
-    </h3>
-    <ScatterPlot :series="plotData"/>
-
-    <h2 class="mb-0 pb-0 mt-12 pt-12">Raw data</h2>
-    <div v-for="(set, gIndex) in rankedResults.resultsForEachImageSet" :key="gIndex">
-      <!-- <h3 class="text-h6 mb-3 mt-4">
-        {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
-      </h3> -->
-      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-        {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
-      </h3>
-
-      <div class="pa-1 d-flex justify-center align-center qe-table-title">
-        <h4 class="text-center">Ranking</h4>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
-              <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-            </v-btn>
-          </template>
-          <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-            <!--  -->
-          </div>
-        </v-tooltip>
+    <div v-show="!loading">
+      <div v-if="rawDataMap.length === 0 && zScoreMap.length === 0">
+        Not enough data yet to calculate statistics.
       </div>
-      <table class="table bordered hovered">
-        <thead>
-          <tr>
-            <th>Observer ID</th>
-            <th v-for="(image, m) in rankedResults.imagesForEachImageSet[gIndex].picture_set.pictures" :key="m" class="overflow-wrap">
-              {{ image.name }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(observer, c) in set" :key="c">
-            <td class="overflow-wrap">
-              <b>{{ observer[0][0].experiment_result_id }}</b>
-            </td>
-            <template v-for="(answers) in observer">
-              <td v-for="answer in answers" :key="answer.id">{{ answer.ranking }}</td>
-            </template>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <!-- Z-scores -->
-    <h2 class="mt-12 pt-12">Z-Scores</h2>
-    <div v-for="(imageSet, b) in rankedResults.imagesForEachImageSet" :key="imageSet.id">
-      <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-        {{ rankedResults.imagesForEachImageSet[b].picture_set.title }}
+      <h2 class="mb-3 mt-12 pt-6">
+        Scatter and errorbar plot
+      </h2>
+
+      <h3 class="text-h6 mb-6 mt-4 font-weight-light">
+        <span v-for="(imageSet, iIndex) in rankedResults.imageSets" :key="iIndex">
+          {{ imageSet.picture_set.title }}<span v-if="iIndex !== rankedResults.imageSets.length - 1">,</span>
+        </span>
       </h3>
 
-      <table class="table bordered hovered">
-        <thead>
-          <tr>
-            <th class="overflow-wrap">Title</th>
-            <th class="overflow-wrap">Low CI limit</th>
-            <th class="overflow-wrap">Mean z-score</th>
-            <th class="overflow-wrap">High CI limit</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(y, j) in imageSet.picture_set.pictures" :key="y.id">
-            <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+      <ScatterPlot :series="plotData"/>
 
-            <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
-            <td>{{ isNumber(zScoreMap[b][1][j]) }}</td>
-            <td>{{ isNumber(zScoreMap[b][2][j]) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <h2 class="mb-0 pb-0 mt-12 pt-12">
+        Raw data
+      </h2>
+
+      <div v-for="(set, gIndex) in rankedResults.resultsForEachImageSet" :key="gIndex">
+        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+          {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
+        </h3>
+
+        <div class="pa-1 d-flex justify-center align-center qe-table-title">
+          <h4 class="text-center">Ranking</h4>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn icon v-on="on">
+                <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+              </v-btn>
+            </template>
+            <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+              <!--  -->
+            </div>
+          </v-tooltip>
+        </div>
+        <table class="table bordered hovered">
+          <thead>
+            <tr>
+              <th>Observer ID</th>
+              <th v-for="(image, m) in rankedResults.imagesForEachImageSet[gIndex].picture_set.pictures" :key="m" class="overflow-wrap">
+                {{ image.name }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(observer, c) in set" :key="c">
+              <td class="overflow-wrap">
+                <b>{{ observer[0][0].experiment_result_id }}</b>
+              </td>
+              <template v-for="(answers) in observer">
+                <td v-for="answer in answers" :key="answer.id">{{ answer.ranking }}</td>
+              </template>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="mt-12 pt-12">
+        Z-Scores
+      </h2>
+
+      <div v-for="(imageSet, b) in rankedResults.imagesForEachImageSet" :key="imageSet.id">
+        <h3 class="text-h6 mb-3 mt-8 font-weight-light">
+          {{ rankedResults.imagesForEachImageSet[b].picture_set.title }}
+        </h3>
+
+        <table class="table bordered hovered">
+          <thead>
+            <tr>
+              <th class="overflow-wrap">Title</th>
+              <th class="overflow-wrap">Low CI limit</th>
+              <th class="overflow-wrap">Mean z-score</th>
+              <th class="overflow-wrap">High CI limit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(y, j) in imageSet.picture_set.pictures" :key="y.id">
+              <td class="overflow-wrap"><b>{{ y.name }}</b></td>
+
+              <td>{{ isNumber(zScoreMap[b][0][j]) }}</td>
+              <td>{{ isNumber(zScoreMap[b][1][j]) }}</td>
+              <td>{{ isNumber(zScoreMap[b][2][j]) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -120,58 +133,88 @@ export default {
       activeTab: null,
       plotData: [],
 
-      rankedResults: []
+      rankedResults: [],
+
+      includeIncomplete: false
+    }
+  },
+
+  watch: {
+    includeIncomplete (newVal, oldVal) {
+      if (oldVal !== null) {
+        localStorage.setItem(this.$route.params.id + '-includeIncomplete', newVal)
+      }
+      // re-calculate statistics
+      this.init()
     }
   },
 
   created () {
-    this.loading = true
-    this.$axios.get(`/rank-order-result/${this.$route.params.id}/statistics`).then(data => {
-      this.results = data.data
-      this.rankedResults = data.data
-      console.log(this.rankedResults)
+    const incomplete = localStorage.getItem(this.$route.params.id + '-includeIncomplete')
+    // replace with json?
+    if (incomplete === 'false') {
+      this.includeIncomplete = false
+    } else if (incomplete === 'true') {
+      this.includeIncomplete = true
+    }
 
-      // if (this.results.resultsForEachImageSet.length) {
-      // console.log(this.rankedResults.resultsForEachImageSet)
-      this.rankedResults.resultsForEachImageSet.forEach((imageSet, index) => {
-        // TODO: bruk object.values
-        let array = Object.entries(imageSet)
-        // console.log(array)
-
-        // TODO: JUST USE THIS WHEN IN RAW DATA TEMPLATE
-        var arrayTwo = []
-        array.forEach(observer => {
-          observer[1].forEach(answer => {
-            var objectOne = {}
-            answer.forEach((rank, index) => {
-              objectOne[index] = rank.ranking
-            })
-            arrayTwo.push(objectOne)
-          })
-        })
-
-        let resultTable = convertRankToPair(arrayTwo)
-        let zScoreArray = this.calculatePlots(resultTable)
-
-        // store calculated z-scores for an image set
-        this.zScoreMap.push(zScoreArray)
-
-        this.plotData.push({
-          imageSet: this.rankedResults.imagesForEachImageSet[index].picture_set,
-          // only get the file names
-          label: this.rankedResults.imagesForEachImageSet[index].picture_set.pictures.map(obj => obj.name),
-          zScores: zScoreArray
-        })
-      })
-
-      this.loading = false
-    }).catch(() => {
-      this.loading = false
-    })
+    this.init()
   },
 
   methods: {
     isNumber,
+
+    init () {
+      this.loading = true
+
+      this.$axios.post(`/rank-order-result/${this.$route.params.id}/statistics`, {
+        includeIncomplete: this.includeIncomplete
+      }).then(data => {
+        this.results = data.data
+        this.rankedResults = data.data
+
+        this.rawDataMap = []
+        this.zScoreMap = []
+        this.plotData = []
+
+        // if (this.results.resultsForEachImageSet.length) {
+        // console.log(this.rankedResults.resultsForEachImageSet)
+        this.rankedResults.resultsForEachImageSet.forEach((imageSet, index) => {
+          // TODO: bruk object.values
+          let array = Object.entries(imageSet)
+          // console.log(array)
+
+          // TODO: JUST USE THIS WHEN IN RAW DATA TEMPLATE
+          var arrayTwo = []
+          array.forEach(observer => {
+            observer[1].forEach(answer => {
+              var objectOne = {}
+              answer.forEach((rank, index) => {
+                objectOne[index] = rank.ranking
+              })
+              arrayTwo.push(objectOne)
+            })
+          })
+
+          let resultTable = convertRankToPair(arrayTwo)
+          let zScoreArray = this.calculatePlots(resultTable)
+
+          // store calculated z-scores for an image set
+          this.zScoreMap.push(zScoreArray)
+
+          this.plotData.push({
+            imageSet: this.rankedResults.imagesForEachImageSet[index].picture_set,
+            // only get the file names
+            label: this.rankedResults.imagesForEachImageSet[index].picture_set.pictures.map(obj => obj.name),
+            zScores: zScoreArray
+          })
+        })
+
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
 
     /* eslint-disable */
     calculatePlots ($frequencyMatrix, $category) {

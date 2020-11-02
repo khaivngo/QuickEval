@@ -144,7 +144,7 @@ class ResultPairsController extends Controller
     return ResultPair::where('experiment_result_id', $id)->get();
   }
 
-  public function statistics (int $id) {
+  public function statistics (Request $request, int $id) {
     $results = [];
 
     # REPLACE WITH RELATIONSHIP QUERY ABOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -184,9 +184,14 @@ class ResultPairsController extends Controller
     }
 
 
+    $matchThese = ['experiment_id' => $id];
+    if ($request->includeIncomplete == false) {
+      $matchThese['completed'] = 1;
+    }
+
     $paired_results = ExperimentResult
       ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
-      ->where('experiment_id', $id)
+      ->where($matchThese)
       ->get();
 
     $data = [];

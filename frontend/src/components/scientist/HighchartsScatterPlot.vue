@@ -62,6 +62,18 @@ export default {
 
   watch: {
     series (newVal) {
+      // this.series = []
+      this.orginalChartLabels.labels = []
+      this.chartLabels = {
+        labels: [],
+        title: '',
+        subtitle: '',
+        yTitle: '',
+        xTitle: ''
+      }
+      this.chartOptions.series = []
+      this.chartOptions.xAxis = []
+
       newVal.forEach((serie, index) => {
         this.addSeries(serie, index)
         this.orginalChartLabels.labels.push(serie.label)
