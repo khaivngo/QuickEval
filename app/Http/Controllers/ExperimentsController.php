@@ -43,7 +43,15 @@ class ExperimentsController extends Controller
         ->where([
           ['is_public', 1],
           ['title', 'LIKE', '%'.$term.'%']
-        ])->get();
+        ])
+        // I need the experiment if any of its user's name matches the given input
+        ->orWhereHas('user', function($q) use ($term) {
+            return $q->where('name', 'LIKE', '%' . $term . '%');
+        })
+        // I need the experiment if any of its type's title matches the given input
+        ->orWhereHas('type', function($q) use ($term) {
+            return $q->where('title', 'LIKE', '%'. $term . '%');
+        })->get();
     }
 
     /**
