@@ -4,7 +4,7 @@
       <div class="mb-2">
         <v-text-field
           label="Find experiment"
-          placeholder="Title, person, institute"
+          placeholder="Title, person, type"
           outlined
           dense
           v-model="searchTerm"
@@ -114,7 +114,12 @@
     </v-col>
 
     <v-scale-transition>
-      <IshiharaTest v-if="showIshihara" @finished="ishiharaFinished" @aborted="ishiharaAborted"/>
+      <IshiharaTest
+        v-if="showIshihara"
+        :experimentId="this.active.id"
+        @finished="ishiharaFinished"
+        @aborted="ishiharaAborted"
+      />
     </v-scale-transition>
   </v-row>
 </template>
@@ -188,7 +193,7 @@ export default {
       this.prefetch = true
 
       const experimentResult = await this.$axios.post('/experiment-result/create', { experimentId: this.active.id })
-      localStorage.setItem('experimentResult', experimentResult.data.id)
+      localStorage.setItem(`${this.active.id}-experimentResult`, experimentResult.data.id)
 
       if (experimentResult.data) {
         if (this.active.observer_metas.length > 0) {

@@ -235,6 +235,7 @@
                   :disabled="selected.length === 0"
                   class="mt-2 ml-4"
                   color="default"
+                  depressed
                 >
                   <v-icon :size="18" class="mr-2">
                     mdi-delete

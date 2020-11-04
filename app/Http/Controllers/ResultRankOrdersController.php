@@ -179,7 +179,7 @@ class ResultRankOrdersController extends Controller
         // }
 
         $matchThese = ['experiment_id' => $id];
-        // include incomplete data?
+        // exclude incomplete data?
         if ($request->includeIncomplete == false) {
           $matchThese['completed'] = 1;
         }

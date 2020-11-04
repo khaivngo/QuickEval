@@ -197,7 +197,7 @@
                 <v-checkbox
                   v-model="form.ishihara"
                   color="success"
-                  :label="`Require Ishihara test`"
+                  :label="`(Beta!) Require Ishihara test`"
                 ></v-checkbox>
               </v-col>
               <v-col cols="auto" class="pa-0 mb-1">
@@ -209,6 +209,7 @@
                   </template>
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Run a Ishihara test at the beginning of the experiment.
+                    Currently in beta.
                   </div>
                 </v-tooltip>
               </v-col>
@@ -257,7 +258,7 @@
             </v-row>
 
             <v-row class="mt-4" align="center">
-              <v-col cols="3" xl="4" lg="4" md="8" sm="9">
+              <v-col cols="4" xl="3" lg="4" md="8" sm="9">
                 <v-text-field
                   v-model="form.delay"
                   label="Delay between stimuli (gray screen)"
@@ -307,11 +308,17 @@
                     </v-btn>
                   </template>
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                    Spacing in pixels between stimuli images.
+                    Spacing in pixels between stimuli images.<br>
+                    Images will not get closer than amount specified,<br>
+                    but may be further apart if images are small or user's screen is large.
                   </div>
                 </v-tooltip>
               </v-col>
             </v-row>
+            <div class="text-caption">
+              Note: Images will not get closer than amount specified, but may be further apart<br>if images
+              are small or user's screen is large.
+            </div>
           </v-card>
         </v-stepper-content>
 

@@ -231,14 +231,13 @@ export default {
           // const count = array.reduce((acc, cur) => cur.id === id ? ++acc : acc, 0)
 
           this.stimuliIndex = count
-          console.log(this.stimuliIndex)
 
-          if (localStorage.getItem('index') === null) {
-            localStorage.setItem('index', 0)
+          if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
+            localStorage.setItem(`${this.experiment.id}-index`, 0)
           }
 
-          this.index = Number(localStorage.getItem('index'))
-          this.experimentResult = Number(localStorage.getItem('experimentResult'))
+          this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+          this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
 
           this.next()
         } else {
@@ -355,7 +354,7 @@ export default {
             this.leftReproductionActive = false
             this.index += 2
             this.index2 += 2
-            localStorage.setItem('index', this.index)
+            localStorage.setItem(`${this.experiment.id}-index`, this.index)
 
             // Have we reached the end?
             if (this.stimuli[this.index + 1] === undefined) {
@@ -372,7 +371,7 @@ export default {
 
         this.index += 1
         this.index2 += 2
-        localStorage.setItem('index', this.index)
+        localStorage.setItem(`${this.experiment.id}-index`, this.index)
 
         this.next()
       }
@@ -412,15 +411,15 @@ export default {
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
-      localStorage.removeItem('index')
-      localStorage.removeItem('experimentResult')
+      localStorage.removeItem(`${this.experiment.id}-index`)
+      localStorage.removeItem(`${this.experiment.id}-experimentResult`)
       this.finished = true
     },
 
     abort () {
       this.abortDialog = true
-      localStorage.removeItem('index')
-      localStorage.removeItem('experimentResult')
+      localStorage.removeItem(`${this.experiment.id}-index`)
+      localStorage.removeItem(`${this.experiment.id}-experimentResult`)
       this.$router.push('/observer')
     }
   }

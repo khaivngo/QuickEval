@@ -185,6 +185,7 @@ class ResultPairsController extends Controller
 
 
     $matchThese = ['experiment_id' => $id];
+    // exclude incomplete data?
     if ($request->includeIncomplete == false) {
       $matchThese['completed'] = 1;
     }

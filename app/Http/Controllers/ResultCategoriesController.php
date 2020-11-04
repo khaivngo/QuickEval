@@ -138,7 +138,7 @@ class ResultCategoriesController extends Controller
       $results['categories'] = \App\ExperimentCategory::with('category')->where('experiment_id', $id)->get();
 
       $matchThese = ['experiment_id' => $id];
-      // include incomplete data?
+      // exclude incomplete data?
       if ($request->includeIncomplete == false) {
         $matchThese['completed'] = 1;
       }

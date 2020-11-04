@@ -279,12 +279,12 @@ export default {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         this.stimuli = payload.data
 
-        if (localStorage.getItem('index') === null) {
-          localStorage.setItem('index', 0)
+        if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
+          localStorage.setItem(`${this.experiment.id}-index`, 0)
         }
 
-        this.index = Number(localStorage.getItem('index'))
-        this.experimentResult = Number(localStorage.getItem('experimentResult'))
+        this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+        this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
 
         this.next()
       }).catch((err) => {
@@ -384,7 +384,7 @@ export default {
             this.rankings = []
 
             this.index += 1
-            localStorage.setItem('index', this.index)
+            localStorage.setItem(`${this.experiment.id}-index`, this.index)
 
             // Have we reached the end?
             if (this.stimuli[this.index] === undefined) {
@@ -403,7 +403,7 @@ export default {
         this.instructionDialog = true
 
         this.index += 1
-        localStorage.setItem('index', this.index)
+        localStorage.setItem(`${this.experiment.id}-index`, this.index)
 
         this.next()
       }
@@ -466,14 +466,14 @@ export default {
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
-      localStorage.removeItem('index')
-      localStorage.removeItem('experimentResult')
+      localStorage.removeItem(`${this.experiment.id}-index`)
+      localStorage.removeItem(`${this.experiment.id}-experimentResult`)
       this.finished = true
     },
 
     abort () {
-      localStorage.removeItem('index')
-      localStorage.removeItem('experimentResult')
+      localStorage.removeItem(`${this.experiment.id}-index`)
+      localStorage.removeItem(`${this.experiment.id}-experimentResult`)
       this.abortDialog = true
       this.$router.push('/observer')
     }

@@ -71,6 +71,10 @@
 
 <script>
 export default {
+  props: {
+    experimentId: null
+  },
+
   data () {
     return {
       ishihara: [
@@ -267,7 +271,7 @@ export default {
     },
 
     save () {
-      const expID = localStorage.getItem('experimentResult')
+      const expID = localStorage.getItem(`${this.experimentId}-experimentResult`)
 
       return this.$axios.patch(`/experiment-result/${expID}/update`, {
         vision: this.vision,
@@ -278,7 +282,7 @@ export default {
 
     abort () {
       localStorage.removeItem('index')
-      localStorage.removeItem('experimentResult')
+      localStorage.removeItem(`${this.experimentId}-experimentResult`)
       this.abortDialog = true
       this.$emit('aborted')
     }

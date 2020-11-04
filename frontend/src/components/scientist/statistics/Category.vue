@@ -7,7 +7,7 @@
       ></v-checkbox>
     </div>
 
-    <div class="mt-12 pt-12 ml-4 mr-4" v-if="loading">
+    <div class="mt-12 mb-12" v-if="loading">
       <v-progress-linear v-if="loading" indeterminate class="ma-0"></v-progress-linear>
     </div>
 
