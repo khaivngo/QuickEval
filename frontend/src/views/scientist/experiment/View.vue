@@ -224,7 +224,7 @@
               </v-card>
             </v-dialog>
 
-            <v-spacer></v-spacer>
+            <!-- <v-spacer></v-spacer> -->
 
             <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -234,9 +234,12 @@
                   :loading="destroying"
                   :disabled="selected.length === 0"
                   class="mt-2 ml-4"
-                  color="default"
-                  depressed
+                  color="secondary"
+                  text
+                  outlined
                 >
+                  <!-- color="default" -->
+                  <!-- depressed -->
                   <v-icon :size="18" class="mr-2">
                     mdi-delete
                   </v-icon>

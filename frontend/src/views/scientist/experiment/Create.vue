@@ -457,10 +457,17 @@
         </v-card-title>
 
         <v-card-text>
-          <v-container class="pt-6" fluid>
-            This experiment already have observers.<br>
-            The original version will be kept untouched and a new version will be created with a "version 2"-tag.
-            Delete the old version from the experiments list later if you don't need it.
+          <v-container class="pt-6" fluid style="color: #000;">
+            <h4 class="text-h6 mb-4">
+              <v-icon class="mr-2 mb-1">mdi-alert-outline</v-icon>
+              This experiment already have observers.
+            </h4>
+            <p>
+              The original version will be kept untouched and a new version will be created with a "version 2"-tag.
+            </p>
+            <p class="mt-6">
+              Delete the original version from the experiments list later if you don't need it.
+            </p>
           </v-container>
         </v-card-text>
 
@@ -482,7 +489,7 @@
             class="ml-3"
             @click="updateApproved()"
           >
-            save
+            OK
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -690,18 +697,16 @@ export default {
       })
     },
 
-    updatee () {
+    update () {
+      // has anyone taken the experiment?
       if (this.experiment.results_count > 0) {
         this.disclaimerDialog = true
-        // return
       } else {
-        // this.updateApproved()
+        this.updateApproved()
       }
     },
 
-    update () {
-      // this.disclaimerDialog = false
-
+    updateApproved () {
       this.loaders.storing = true
       this.loaders.saving = true
 
@@ -710,9 +715,11 @@ export default {
       this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       // this.form.isPublic = (type === 'hidden') ? 0 : 1
       this.form.isPublic = 1
+      this.form.amountObservers = this.experiment.results_count
 
       this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
         EventBus.$emit('success', 'Experiment successfully updated.')
+        EventBus.$emit('experiment-created', response.data)
 
         // EMPTY FORM: {}
         console.log(response)
@@ -720,7 +727,8 @@ export default {
         this.loaders.storing = false
         this.loaders.saving = false
 
-        this.$router.push('/scientist/experiments')
+        // this.$router.push('/scientist/experiments')
+        this.$router.push(`/scientist/experiments/view/${response.data.id}`)
       }).catch((error) => {
         this.errors = error.response.data
         EventBus.$emit('error', error.data)

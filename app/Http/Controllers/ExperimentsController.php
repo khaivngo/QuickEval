@@ -22,7 +22,8 @@ class ExperimentsController extends Controller
      * Get all experiments owned by the user. With the count of total experiments results,
      * and completed results.
      */
-    public function index () {
+    public function index ()
+    {
       return Experiment
         ::where('user_id', auth()->user()->id)
         ->withCount('results')
@@ -31,6 +32,12 @@ class ExperimentsController extends Controller
         ->get();
     }
 
+    /**
+     * Search DB for any experiment title/scientist name/experiment type,
+     * that matches provided string.
+     * Return experiments with matching title, and experiments that belong to matching scientist name,
+     * and experiments of searched experiment type.
+     */
     public function search ($term)
     {
       if ($term == 'all') {
@@ -630,34 +637,63 @@ class ExperimentsController extends Controller
         'experimentType' => 'required'
       ]);
 
-      if ($original_experiment->first_version_id) {
-        $last_version = Experiment::where('first_version_id', $original_experiment->first_version_id)->latest()->first();
+      if ($request->amountObservers > 0)
+      {
+        if ($original_experiment->first_version_id) {
+          $last_version = Experiment::where('first_version_id', $original_experiment->first_version_id)
+            ->latest()
+            ->first();
+        } else {
+          $last_version = Experiment::where('first_version_id', $original_experiment->id)
+            ->latest()
+            ->first();
+        }
+
+        # have we updated before?
+        $version  = ($last_version) ? ++$last_version->version : 2;
+        $original = ($original_experiment->first_version_id) ? $original_experiment->first_version_id : $original_experiment->id;
+
+        $experiment = Experiment::create([
+          'user_id'           => auth()->user()->id,
+          'title'             => $request->title,
+          'experiment_type_id'=> $request->experimentType,
+          'picture_sequence_algorithm' => $request->algorithm,
+          'delay'             => $request->delay,
+          'ishihara'          => $request->ishihara,
+          'stimuli_spacing'   => $request->stimuliSpacing,
+          'short_description' => $request->shortDescription,
+          'long_description'  => $request->longDescription,
+          'is_public'         => $request->isPublic,
+          'same_pair'         => $request->samePairTwice,
+          'background_colour' => $request->bgColour,
+          'show_original'     => $request->showOriginal,
+          'show_progress'     => $request->showProgress,
+          'first_version_id'  => $original,
+          'version'           => $version
+        ]);
       } else {
-        $last_version = Experiment::where('first_version_id', $original_experiment->id)->latest()->first();
+        $experiment = Experiment::create([
+          'user_id'           => auth()->user()->id,
+          'title'             => $request->title,
+          'experiment_type_id'=> $request->experimentType,
+          'picture_sequence_algorithm' => $request->algorithm,
+          'delay'             => $request->delay,
+          'ishihara'          => $request->ishihara,
+          'stimuli_spacing'   => $request->stimuliSpacing,
+          'short_description' => $request->shortDescription,
+          'long_description'  => $request->longDescription,
+          'is_public'         => $request->isPublic,
+          'same_pair'         => $request->samePairTwice,
+          'background_colour' => $request->bgColour,
+          'show_original'     => $request->showOriginal,
+          'show_progress'     => $request->showProgress,
+          'version'           => 1
+        ]);
+
+        // Delete original experiment
+        // TODO: delete everything related
+        Experiment::destroy($original_experiment->id);
       }
-
-      # have we updated before?
-      $version  = ($last_version) ? ++$last_version->version : 2;
-      $original = ($original_experiment->first_version_id) ? $original_experiment->first_version_id : $original_experiment->id;
-
-      $experiment = Experiment::create([
-        'user_id'           => auth()->user()->id,
-        'title'             => $request->title,
-        'experiment_type_id'=> $request->experimentType,
-        'picture_sequence_algorithm' => $request->algorithm,
-        'delay'             => $request->delay,
-        'ishihara'          => $request->ishihara,
-        'stimuli_spacing'   => $request->stimuliSpacing,
-        'short_description' => $request->shortDescription,
-        'long_description'  => $request->longDescription,
-        'is_public'         => $request->isPublic,
-        'same_pair'         => $request->samePairTwice,
-        'background_colour' => $request->bgColour,
-        'show_original'     => $request->showOriginal,
-        'show_progress'     => $request->showProgress,
-        'first_version_id'  => $original,
-        'version'           => $version
-      ]);
 
       // TODO: abstract store function into another file/class
 

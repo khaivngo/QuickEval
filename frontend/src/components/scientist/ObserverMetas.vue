@@ -1,31 +1,16 @@
 <template>
   <div>
-    <v-layout class="mb-3 mt-1">
-      <v-menu bottom offset-y>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            color="info"
-            v-on="on"
-          >
-            <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon> input field
-          </v-btn>
-        </template>
+    <v-layout class="mb-8 mt-1">
+      <v-btn
+        color="info"
+        @click="add('meta')"
+      >
+        <v-icon class="mr-2" :size="20">mdi-plus-circle-outline</v-icon> input field
+      </v-btn>
 
-        <v-list>
-          <v-list-item @click="add('meta')">
-            <v-list-item-title>
-              <v-icon left small>mdi-pencil</v-icon>
-              Create new
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="add('metaFromHistory')">
-            <v-list-item-title>
-              <v-icon left small>mdi-plus-circle</v-icon>
-              Add from history
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <v-btn @click="add('metaFromHistory')" icon>
+        <v-icon>mdi-history</v-icon>
+      </v-btn>
     </v-layout>
 
     <v-slide-x-transition group>
