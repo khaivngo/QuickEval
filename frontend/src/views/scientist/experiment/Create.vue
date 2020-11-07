@@ -710,6 +710,8 @@ export default {
       this.loaders.storing = true
       this.loaders.saving = true
 
+      this.disclaimerDialog = false
+
       // convert values from boolean to integer before saving
       this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
       this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
@@ -718,18 +720,16 @@ export default {
       this.form.amountObservers = this.experiment.results_count
 
       this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
-        EventBus.$emit('experiment-deleted', this.experiment)
+        if (this.experiment.results_count === 0) {
+          EventBus.$emit('experiment-deleted', this.experiment)
+        }
         EventBus.$emit('experiment-created', response.data)
 
         EventBus.$emit('success', 'Experiment successfully updated.')
 
-        // EMPTY FORM: {}
-        console.log(response)
-
         this.loaders.storing = false
         this.loaders.saving = false
 
-        // this.$router.push('/scientist/experiments')
         this.$router.push(`/scientist/experiments/view/${response.data.id}`)
       }).catch((error) => {
         this.errors = error.response.data

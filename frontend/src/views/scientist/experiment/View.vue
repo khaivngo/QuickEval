@@ -349,7 +349,6 @@ export default {
           fileFormat: this.fileFormat
         }
       }).then((response) => {
-        console.log(response)
         const url = window.URL.createObjectURL(new Blob([response.data]))
         const link = document.createElement('a')
         link.href = url
@@ -366,7 +365,7 @@ export default {
       this.destroying = true
 
       // create new array with only IDs of the selected objects
-      let ids = this.selected.map(selected => {
+      var ids = this.selected.map(selected => {
         return selected.id
       })
 
@@ -379,6 +378,14 @@ export default {
           }
         }).then(response => {
           EventBus.$emit('success', 'Observer results has been deleted successfully')
+
+          // filter out experiment results that has NOT been deleted
+          let includes = this.experimentResults.filter(selected => {
+            return !ids.includes(selected.id)
+          })
+          // replace experimentResults with those that has NOT been deleted
+          this.experimentResults = includes
+
           this.destroying = false
         }).catch(error => {
           alert(error)
