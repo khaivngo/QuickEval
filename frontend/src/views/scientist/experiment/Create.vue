@@ -718,8 +718,10 @@ export default {
       this.form.amountObservers = this.experiment.results_count
 
       this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
-        EventBus.$emit('success', 'Experiment successfully updated.')
+        EventBus.$emit('experiment-deleted', this.experiment)
         EventBus.$emit('experiment-created', response.data)
+
+        EventBus.$emit('success', 'Experiment successfully updated.')
 
         // EMPTY FORM: {}
         console.log(response)
