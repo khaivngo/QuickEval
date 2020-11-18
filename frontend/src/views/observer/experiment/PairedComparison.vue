@@ -2,6 +2,39 @@
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour" @keydown.esc="alert('esc')">
     <v-toolbar flat height="30" color="#282828">
       <v-toolbar-items>
+        <v-dialog persistent v-model="howToDialog" max-width="500">
+          <template v-slot:activator="{ on }">
+            <v-btn text dark color="#D9D9D9" v-on="on">
+              How to
+            </v-btn>
+          </template>
+          <v-card style="background-color: grey; color: #fff;">
+            <v-card-title class="headline">
+              How to
+            </v-card-title>
+
+            <v-card-text style="color: #fff;">
+              <h3 class="subtitle-1 mt-4">1. Images can be moved around. Click and hold down mouse on the image, then move around.</h3>
+
+              <h4 class="subtitle-1 mt-4">2. Go next with either: Space bar / enter key / right arrow key</h4>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary darken-1"
+                text
+                outlined
+                @click="howToDialog = false"
+              >
+                Close
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar-items>
+
+      <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
             <v-btn text dark color="#D9D9D9" v-on="on">
@@ -13,14 +46,15 @@
               Instructions
             </v-card-title>
 
-            <v-card-text v-html="instructionText" style="color: #fff;"></v-card-text>
+            <v-card-text v-html="instructionText" style="color: #fff;" class="subtitle-1 mt-4"></v-card-text>
 
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
                 color="primary darken-1"
                 text
-                @click="instructionDialog = false"
+                outlined
+                @click="closeAndNext"
               >
                 Close
               </v-btn>
@@ -75,8 +109,6 @@
         mt-2 mb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
-        :class="leftReproductionActive ? 'selected' : ''"
-        @click="toggleSelected('left')"
       >
         <div class="panzoom">
           <img
@@ -106,8 +138,6 @@
 
       <v-flex
         class="picture-container"
-        :class="rightReproductionActive ? 'selected' : ''"
-        @click="toggleSelected('right')"
         mt-2 mb-2
       >
         <div class="panzoom">
@@ -117,30 +147,58 @@
             :class="isLoadRight === false ? 'hide' : ''"
             :src="rightImage"
             tabindex="0"
-            @focus="toggleSelected('right')"
           />
         </div>
       </v-flex>
     </v-layout>
 
-    <v-btn
-      @click="next('click')"
-      :disabled="noneSelected"
-      :loading="disableNextBtn"
-      color="#D9D9D9"
-      fixed
-      bottom
-      right
-    >
-      <span class="ml-1">next</span>
-      <v-icon>mdi-chevron-right</v-icon>
-    </v-btn>
+    <v-radio-group v-model="selectedRadio">
+      <v-row class="pa-0 ma-0 align-center">
+        <v-col class="pa-0 mt-0 pt-1">
+          <div class="d-flex justify-center pa-0 mt-0">
+            <v-radio color="default" value="left" class="scaled"></v-radio>
+          </div>
+        </v-col>
+        <v-col cols="auto" class="pa-0 mt-0">
+          <div class="d-flex justify-center">
+            <v-btn
+              @click="next()"
+              :disabled="selectedRadio === null"
+              :loading="disableNextBtn"
+              color="#D9D9D9"
+            >
+              <span class="ml-1">next</span>
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col class="pa-0 mt-0 pt-1">
+          <div class="d-flex justify-center">
+            <v-radio color="default" value="right" class="scaled"></v-radio>
+          </div>
+        </v-col>
+      </v-row>
+    </v-radio-group>
+
+    <!-- <div class="d-flex justify-center pt-4">
+      <v-btn
+        @click="next('click')"
+        :disabled="selectedRadio === null"
+        :loading="disableNextBtn"
+        color="#D9D9D9"
+      > -->
+        <!-- :disabled="noneSelected" -->
+        <!-- <span class="ml-1">next</span>
+        <v-icon>mdi-chevron-right</v-icon>
+      </v-btn>
+    </div> -->
 
     <FinishedDialog :show="finished"/>
   </v-container>
 </template>
 
 <script>
+// import Panzoom from '@panzoom/panzoom'
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 
 export default {
@@ -160,7 +218,11 @@ export default {
         delay: 200
       },
 
+      howToDialog: false,
+
       stimuli: [],
+
+      selectedRadio: null,
 
       index: 0,
       index2: 0,
@@ -172,8 +234,6 @@ export default {
 
       selectedStimuli: null,
 
-      rightReproductionActive: false,
-      leftReproductionActive: false,
       disableNextBtn: false,
 
       instructionText: 'Rate the images.',
@@ -186,16 +246,18 @@ export default {
       leftImage: '',
       rightImage: '',
 
-      timeElapsed: null
+      timeElapsed: null,
+
+      firstImages: 1
     }
   },
 
-  computed: {
-    // returns true if no image has been selected, or if the "next" button is disabled.
-    noneSelected () {
-      return this.disableNextBtn || (this.rightReproductionActive === false && this.leftReproductionActive === false)
-    }
-  },
+  // computed: {
+  //   // returns true if no image has been selected, or if the "next" button is disabled.
+  //   noneSelected () {
+  //     return this.disableNextBtn || (this.rightReproductionActive === false && this.leftReproductionActive === false)
+  //   }
+  // },
 
   created () {
     this.getExperiment(this.$route.params.id).then(response => {
@@ -207,10 +269,32 @@ export default {
       /* eslint-env jquery */
       $(document).ready(function () {
         (function () {
+          // const elem = document.querySelector('.panzoom')
+          // if (elem) {
+          //   const panzoom = Panzoom(elem, {
+          //     maxScale: 1,
+          //     minScale: 1
+          //   })
+          //   elem.addEventListener('panzoomchange', (event) => {
+          //     panzoom2.setStyle('transform', `translate(${event.detail.x}px, ${event.detail.y}px)`)
+          //   })
+          // }
+
+          // const elem2 = document.querySelector('.panzoom2')
+          // if (elem2) {
+          //   const panzoom2 = elem2(elem, {
+          //     maxScale: 1,
+          //     minScale: 1
+          //   })
+          //   elem2.addEventListener('panzoomchange', (event) => {
+          //     panzoom.setStyle('transform', `translate(${event.detail.x}px, ${event.detail.y}px)`)
+          //   })
+          // }
+
           var $pictureContainer = $('.picture-container')
 
           $pictureContainer.find('.panzoom').panzoom({
-            $set: $pictureContainer.find('.panzoom'),
+            $set: $pictureContainer.find('.panzoom'), // moves the images in unison
             minScale: 1,
             maxScale: 1,
             $reset: $('.panning-reset')
@@ -249,15 +333,14 @@ export default {
     })
 
     window.addEventListener('keydown', (e) => {
-      // esc
-      if (e.keyCode === 27) {
-        this.abort()
-      }
-      // arrow right
-      if (e.keyCode === 39) {
-        if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
+      if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
+        if (this.selectedRadio !== null) {
           this.next()
         }
+      }
+
+      if (e.keyCode === 27) { // esc
+        this.abort()
       }
     })
   },
@@ -267,10 +350,16 @@ export default {
   },
 
   methods: {
+    closeAndNext () {
+      this.instructionDialog = false
+      this.next()
+    },
+
     /**
      * Load the next image queue stimuli, or instructions.
      */
     next () {
+      console.log(this.index)
       // Have we reached the end?
       if (this.stimuli[this.index + 1] === undefined) {
         this.onFinish()
@@ -279,57 +368,17 @@ export default {
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
         // if (this.timeElapsed === null) this.timeElapsed = new Date()
-        let selectedStimuli = 0
-        if (this.rightReproductionActive === true) selectedStimuli = this.stimuli[this.index]
-        if (this.leftReproductionActive === true)  selectedStimuli = this.stimuli[this.index + 1]
+        let selectedStimuli = null
+        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.index]
+        if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.index + 1]
 
-        // set original
-        if (
-          this.stimuli[this.index].hasOwnProperty('original') &&
-          this.stimuli[this.index].hasOwnProperty('original') !== null &&
-          this.stimuli[this.index].original &&
-          this.stimuli[this.index].original.path
-        ) {
+        // set original if exists
+        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null && this.stimuli[this.index].original && this.stimuli[this.index].original.path) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 
-        // prepare to load reproduction images
-        var images = [
-          { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index].path },
-          { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path }
-        ]
-        var imageCount = images.length
-        var imagesLoaded = 0
-        // attach onload events to every reproduction image
-        for (var i = 0; i < imageCount; i++) {
-          images[i].img.src = images[i].path
-          images[i].img.onload = () => {
-            imagesLoaded++
-            // when all images loaded
-            if (imagesLoaded === imageCount) {
-              // hide right image, then set source
-              this.isLoadRight = false
-              this.rightImage = images[0].img.src
-              // hide left image, then set source
-              this.isLoadLeft = false
-              this.leftImage = images[1].img.src
-
-              // show a blank screen inbetween image switching,
-              // if scientist set up delay
-              window.setTimeout(() => {
-                // show left and right image
-                this.isLoadLeft = true
-                this.isLoadRight = true
-                // starts or overrides existing timer
-                this.timeElapsed = new Date()
-                this.disableNextBtn = false
-              }, this.experiment.delay)
-            }
-          }
-        }
-
         // only do stuff if stimuli has been selected
-        if (this.rightReproductionActive !== false || this.leftReproductionActive !== false) {
+        if (this.selectedRadio !== null) {
           this.disableNextBtn = true
 
           // record the current time
@@ -350,8 +399,7 @@ export default {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
-            this.rightReproductionActive = false
-            this.leftReproductionActive = false
+            this.selectedRadio = null
             this.index += 2
             this.index2 += 2
             localStorage.setItem(`${this.experiment.id}-index`, this.index)
@@ -359,13 +407,40 @@ export default {
             // Have we reached the end?
             if (this.stimuli[this.index + 1] === undefined) {
               this.onFinish()
+              return
+            }
+
+            if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
+              this.loadStimuli()
+            } else {
+              this.disableNextBtn = false
+
+              this.instructionText = this.stimuli[this.index].description
+              this.instructionDialog = true
+
+              this.index += 1
+              this.index2 += 2
+              localStorage.setItem(`${this.experiment.id}-index`, this.index)
+
+              // Have we reached the end?
+              if (this.stimuli[this.index + 1] === undefined) {
+                this.onFinish()
+                // return
+              }
+              this.loadStimuli() // this could be replaced by resetting this.firstImages = 1
             }
           }).catch(() => {
             this.disableNextBtn = false
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
         }
+
+        if (this.firstImages === 1) {
+          this.loadStimuli()
+          this.firstImages = 2
+        }
       } else {
+        console.log('instr')
         this.instructionText = this.stimuli[this.index].description
         this.instructionDialog = true
 
@@ -373,7 +448,50 @@ export default {
         this.index2 += 2
         localStorage.setItem(`${this.experiment.id}-index`, this.index)
 
-        this.next()
+        // Have we reached the end?
+        if (this.stimuli[this.index + 1] === undefined) {
+          this.onFinish()
+          // return
+        }
+      }
+    },
+
+    loadStimuli () {
+      // prepare to load reproduction images
+      var images = [
+        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index].path },
+        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path }
+      ]
+      var imageCount = images.length
+      var imagesLoaded = 0
+      // attach onload events to every reproduction image
+      for (var i = 0; i < imageCount; i++) {
+        images[i].img.src = images[i].path
+        images[i].img.onload = () => {
+          imagesLoaded++
+          // when all images loaded
+          if (imagesLoaded === imageCount) {
+            // hide right image, then set source
+            this.isLoadRight = false
+            this.rightImage = images[0].img.src
+            // hide left image, then set source
+            this.isLoadLeft = false
+            this.leftImage = images[1].img.src
+            // console.log('right - ' + this.rightImage)
+            // console.log('left - ' + this.leftImage)
+
+            // show a blank screen inbetween image switching,
+            // if scientist set up delay
+            window.setTimeout(() => {
+              // show left and right image
+              this.isLoadLeft = true
+              this.isLoadRight = true
+              // starts or overrides existing timer
+              this.timeElapsed = new Date()
+              this.disableNextBtn = false
+            }, this.experiment.delay)
+          }
+        }
       }
     },
 
@@ -381,22 +499,12 @@ export default {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
-    toggleSelected (side) {
-      if (side === 'left') {
-        this.leftReproductionActive = !this.leftReproductionActive
-        this.rightReproductionActive = false
-      } else {
-        this.rightReproductionActive = !this.rightReproductionActive
-        this.leftReproductionActive = false
-      }
-    },
-
-    async store (pictureIdSelected, pictureIdLeft, pictureIdRight, clientSideTimer) {
+    async store (pictureIdSelected, pictureIdRight, pictureIdLeft, clientSideTimer) {
       let data = {
         experiment_result_id: this.experimentResult,
         picture_id_selected: pictureIdSelected.picture_id,
-        picture_id_left: pictureIdLeft.picture_id,
         picture_id_right: pictureIdRight.picture_id,
+        picture_id_left: pictureIdLeft.picture_id,
         client_side_timer: clientSideTimer,
         chose_none: 0
       }
@@ -409,6 +517,7 @@ export default {
       this.leftImage = ''
       this.rightImage = ''
 
+      // spinner while await
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
       localStorage.removeItem(`${this.experiment.id}-index`)
@@ -452,6 +561,11 @@ export default {
 
 .hide {
   opacity: 0;
+}
+
+.scaled {
+  transform: scale(1.6);
+  transform-origin: left;
 }
 
 // .parent {

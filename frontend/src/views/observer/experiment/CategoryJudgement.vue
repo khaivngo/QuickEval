@@ -186,7 +186,9 @@ export default {
       leftImage: '',
       rightImage: '',
 
-      startTime: null
+      startTime: null,
+
+      firstImages: 1
     }
   },
 
@@ -235,15 +237,14 @@ export default {
       })
 
       window.addEventListener('keydown', (e) => {
-        // esc
-        if (e.keyCode === 27) {
-          this.abort()
-        }
-        // arrow right
-        if (e.keyCode === 39) {
+        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
           if (this.selectedCategory !== null) {
             this.next()
           }
+        }
+
+        if (e.keyCode === 27) { // esc
+          this.abort()
         }
       })
     })
@@ -273,17 +274,6 @@ export default {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         }
 
-        const imgLeft = new Image()
-        imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        imgLeft.onload = () => {
-          this.isLoadLeft = false
-          this.leftImage = imgLeft.src
-          window.setTimeout(() => {
-            this.isLoadLeft = true
-            this.startTime = new Date()
-            this.disableNextBtn = false
-          }, this.experiment.delay)
-        }
         // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
 
         // don't do anything unless category has been selected
@@ -307,11 +297,19 @@ export default {
             // Have we reached the end?
             if (this.stimuli[this.index] === undefined) {
               this.onFinish()
+              return
             }
+
+            this.loadStimuli()
           }).catch(() => {
             this.disableNextBtn = false
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
+        }
+
+        if (this.firstImages === 1) {
+          this.loadStimuli()
+          this.firstImages = 2
         }
       } else {
         this.instructionText = this.stimuli[this.index].description
@@ -321,6 +319,21 @@ export default {
         localStorage.setItem(`${this.experiment.id}-index`, this.index)
 
         this.next()
+      }
+    },
+
+    loadStimuli () {
+      const imgLeft = new Image()
+      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+      imgLeft.onload = () => {
+        this.isLoadLeft = false
+        this.leftImage = imgLeft.src
+        window.setTimeout(() => {
+          this.isLoadLeft = true
+          this.startTime = new Date()
+          console.log(this.leftImage)
+          this.disableNextBtn = false
+        }, this.experiment.delay)
       }
     },
 

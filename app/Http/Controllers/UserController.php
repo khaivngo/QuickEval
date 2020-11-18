@@ -15,7 +15,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return User::where('role', '>', 1)
+            ->orderBy('id', 'desc')
+            ->get();
     }
 
     /**
@@ -81,6 +83,23 @@ class UserController extends Controller
         }
 
         return response('Your credentials are incorrect. Please try again.', 401);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateRole(Request $request)
+    {
+        $user = User::find($request->id);
+
+        $user->role = $request->role;
+        $user->save();
+
+        return response('User role successfully updated.', 200);
     }
 
     /**

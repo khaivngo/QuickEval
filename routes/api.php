@@ -31,7 +31,9 @@ Route::post('/category-result/export',   'ResultCategoriesController@export');
 Route::middleware('auth:api')->group(function () {
     # user
     Route::get(  '/user', function (Request $request) { return $request->user(); });
-    Route::patch('/user', 'UserController@update');
+    Route::patch('/user',     'UserController@update');
+    Route::patch('/user/role','UserController@updateRole');
+    Route::get(  '/user/all', 'UserController@index');
 
     # experiments
     Route::get(     '/experiment/{id}/observer-metas',      'ExperimentsController@observer_metas'  );

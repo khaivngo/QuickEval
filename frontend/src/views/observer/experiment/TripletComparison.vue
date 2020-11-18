@@ -136,6 +136,7 @@
         mt-2 mb-2
         class="picture-container"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+        v-if="experiment.show_original === 1 && originalImage"
       >
         <div class="panzoom">
           <img id="picture-original" class="picture" :src="originalImage"/>
@@ -150,7 +151,7 @@
 
       <v-flex mt-2 mb-2 class="picture-container" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
         <div class="panzoom">
-          <img id="picture-right" class="picture" :class="isLoadMiddle === false ? 'hide' : ''" :src="imageMiddle"/>
+          <img id="picture-middle" class="picture" :class="isLoadMiddle === false ? 'hide' : ''" :src="imageMiddle"/>
         </div>
       </v-flex>
 
@@ -227,6 +228,8 @@ export default {
       imageMiddle: '',
       imageRight: '',
 
+      firstImages: 1,
+
       startTime: null
     }
   },
@@ -282,15 +285,15 @@ export default {
       })
 
       window.addEventListener('keydown', (e) => {
-        // esc
-        if (e.keyCode === 27) {
-          this.abort()
-        }
-        // arrow right
-        if (e.keyCode === 39) {
+        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
           if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
             this.next()
           }
+        }
+
+        // esc
+        if (e.keyCode === 27) {
+          this.abort()
         }
       })
     })
@@ -312,54 +315,10 @@ export default {
       // is the next stimuli of type image?
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
         // set original
-        if (
-          this.stimuli[this.index].hasOwnProperty('original') &&
-          this.stimuli[this.index].hasOwnProperty('original') !== null &&
-          this.stimuli[this.index].original &&
-          this.stimuli[this.index].original.path
-        ) {
+        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null && this.stimuli[this.index].original && this.stimuli[this.index].original.path) {
           this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
         } else {
           this.originalImage = ''
-        }
-
-        const imgLeft = new Image()
-        imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
-        imgLeft.onload = () => {
-          this.isLoadLeft = false
-          this.imageLeft = imgLeft.src
-          window.setTimeout(() => {
-            this.isLoadLeft = true
-            // starts or overrides existing timer
-            this.startTime = new Date()
-            this.disableNextBtn = false
-          }, this.experiment.delay)
-        }
-
-        const imgMiddle = new Image()
-        imgMiddle.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
-        imgMiddle.onload = () => {
-          this.isLoadMiddle = false
-          this.imageMiddle = imgMiddle.src
-          window.setTimeout(() => {
-            this.isLoadMiddle = true
-            // starts or overrides existing timer
-            this.startTime = new Date()
-            this.disableNextBtn = false
-          }, this.experiment.delay)
-        }
-
-        const imgRight = new Image()
-        imgRight.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
-        imgRight.onload = () => {
-          this.isLoadRight = false
-          this.imageRight = imgRight.src
-          window.setTimeout(() => {
-            this.isLoadRight = true
-            // starts or overrides existing timer
-            this.startTime = new Date()
-            this.disableNextBtn = false
-          }, this.experiment.delay)
         }
 
         /* don't do anything unless all categories has been selected */
@@ -371,6 +330,10 @@ export default {
           // get the number of seconds between endTime and startTime
           let seconds = datetimeToSeconds(this.startTime, endTime)
 
+          // console.log(this.stimuli[this.index])
+          // console.log(this.stimuli[this.index + 1])
+          // console.log(this.stimuli[this.index + 2])
+          // console.log(seconds)
           this.store(this.stimuli[this.index], this.stimuli[this.index + 1], this.stimuli[this.index + 2], seconds).then(response => {
             if (response.data !== 'result_stored') {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
@@ -386,11 +349,20 @@ export default {
             // Have we reached the end?
             if (this.stimuli[this.index + 2] === undefined) {
               this.onFinish()
+              return
             }
-          }).catch(() => {
+
+            this.loadStimuli()
+          }).catch((error) => {
             this.disableNextBtn = false
+            console.log(error)
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
           })
+        }
+
+        if (this.firstImages === 1) {
+          this.loadStimuli()
+          this.firstImages = 2
         }
       } else {
         this.instructionText = this.stimuli[this.index].description
@@ -404,12 +376,60 @@ export default {
       }
     },
 
+    loadStimuli () {
+      const imgLeft = new Image()
+      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+      imgLeft.onload = () => {
+        this.isLoadLeft = false
+        this.imageLeft = imgLeft.src
+        window.setTimeout(() => {
+          this.isLoadLeft = true
+          // starts or overrides existing timer
+          this.startTime = new Date()
+          this.disableNextBtn = false
+          // console.log('left - ' + this.imageLeft)
+        }, this.experiment.delay)
+      }
+
+      const imgMiddle = new Image()
+      imgMiddle.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 1].path
+      imgMiddle.onload = () => {
+        this.isLoadMiddle = false
+        this.imageMiddle = imgMiddle.src
+        window.setTimeout(() => {
+          this.isLoadMiddle = true
+          // starts or overrides existing timer
+          this.startTime = new Date()
+          this.disableNextBtn = false
+          // console.log('middle - ' + this.imageMiddle)
+        }, this.experiment.delay)
+      }
+
+      const imgRight = new Image()
+      imgRight.src = this.$UPLOADS_FOLDER + this.stimuli[this.index + 2].path
+      imgRight.onload = () => {
+        this.isLoadRight = false
+        this.imageRight = imgRight.src
+        window.setTimeout(() => {
+          this.isLoadRight = true
+          // starts or overrides existing timer
+          this.startTime = new Date()
+          this.disableNextBtn = false
+          // console.log('right - ' + this.imageRight)
+        }, this.experiment.delay)
+      }
+    },
+
     async getExperiment (experimentId) {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
     async store (pictureIdLeft, pictureIdMiddle, pictureIdRight, clientSideTimer) {
       /* eslint-disable */
+      console.log(pictureIdLeft)
+      console.log(pictureIdMiddle)
+      console.log(pictureIdRight)
+      console.log(clientSideTimer)
       let data = {
         experiment_result_id: this.experimentResult,
         category_id_left:     this.selectedCategoryLeft,

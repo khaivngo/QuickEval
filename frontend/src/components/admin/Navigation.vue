@@ -31,7 +31,9 @@ export default {
     return {
       items: [
         { title: 'Dashboard', url: '/admin/dashboard', icon: 'mdi-view-dashboard-outline' },
-        { title: 'Scientist Requests', url: '/admin/scientist-role-requests', icon: 'mdi-account-multiple-plus-outline' }
+        { title: 'Scientist Requests', url: '/admin/scientist-role-requests', icon: 'mdi-account-multiple-plus-outline' },
+        { title: 'Users', url: '/admin/all-users', icon: 'mdi-account-multiple-outline' }
+        // account-supervisor-outline
       ],
       active: null,
       mini: true
@@ -43,6 +45,8 @@ export default {
       this.active = 1
     } else if (this.$route.path.split('/')[2] === 'dashboard') {
       this.active = 0
+    } else if (this.$route.path.split('/')[2] === 'all-users') {
+      this.active = 2
     } else {
       this.active = 1
     }

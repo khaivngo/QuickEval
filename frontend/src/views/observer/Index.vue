@@ -29,7 +29,7 @@
                 <v-list-item-title>
                   {{ experiment.title }}
                   <v-chip v-if="experiment.version > 1" disabled text-color="#222" small class="ml-2">
-                    {{ experiment.version }}
+                    version {{ experiment.version }}
                   </v-chip>
                 </v-list-item-title>
                 <v-list-item-subtitle>{{ experiment.user.name }}</v-list-item-subtitle>
