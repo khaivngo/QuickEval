@@ -60,7 +60,7 @@ export default {
     this.loading = true
 
     this.$axios.get(`/user/all`).then(response => {
-      // add a prop to keep track of loading state before making the object array reactive with vue
+      // add a prop to keep track of potential loading state before making the object array reactive with vue
       response.data.forEach(function (element) {
         element.loading = false
       })

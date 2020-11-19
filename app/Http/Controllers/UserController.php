@@ -15,6 +15,12 @@ class UserController extends Controller
      */
     public function index()
     {
+        # abort if not admin
+        if (auth()->user()->role < 3)
+        {
+            return response()->json('Unauthorized', 401);
+        }
+
         return User::where('role', '>', 1)
             ->orderBy('id', 'desc')
             ->get();
@@ -94,6 +100,11 @@ class UserController extends Controller
      */
     public function updateRole(Request $request)
     {
+        # abort if not admin
+        if (auth()->user()->role < 3) {
+            return response()->json('Unauthorized', 401);
+        }
+
         $user = User::find($request->id);
 
         $user->role = $request->role;
