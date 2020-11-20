@@ -16,7 +16,7 @@
             <v-card-text style="color: #fff;">
               <h3 class="subtitle-1 mt-4">1. Images can be moved around. Click and hold down mouse on the image, then move around.</h3>
 
-              <h4 class="subtitle-1 mt-4">2. Go next with either: Space bar / enter key / right arrow key</h4>
+              <h4 class="subtitle-1 mt-4">2. Left/right arrow keyboard key can be used to select image.</h4>
             </v-card-text>
 
             <v-card-actions>
@@ -156,25 +156,32 @@
       <v-row class="pa-0 ma-0 align-center">
         <v-col class="pa-0 mt-0 pt-1">
           <div class="d-flex justify-center pa-0 mt-0">
+            <!-- <v-icon class="mr-2">mdi-arrow-left-box</v-icon> -->
+            <!-- left -->
             <v-radio color="default" value="left" class="scaled"></v-radio>
           </div>
         </v-col>
         <v-col cols="auto" class="pa-0 mt-0">
           <div class="d-flex justify-center">
-            <v-btn
-              @click="next()"
-              :disabled="selectedRadio === null"
-              :loading="disableNextBtn"
-              color="#D9D9D9"
-            >
-              <span class="ml-1">next</span>
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
+            <div class="d-flex justify-center pt-4">
+              <v-btn
+                @click="next"
+                :disabled="selectedRadio === null"
+                :loading="disableNextBtn"
+                color="#D9D9D9"
+              >
+                <!-- :disabled="noneSelected" -->
+                <span class="ml-1">next</span>
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-btn>
+            </div>
           </div>
         </v-col>
         <v-col class="pa-0 mt-0 pt-1">
-          <div class="d-flex justify-center">
+          <div class="d-flex justify-center pa-0 mt-0">
             <v-radio color="default" value="right" class="scaled"></v-radio>
+            <!-- right
+            <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
           </div>
         </v-col>
       </v-row>
@@ -333,9 +340,25 @@ export default {
     })
 
     window.addEventListener('keydown', (e) => {
-      if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
+      if (e.keyCode === 13 || e.keyCode === 32) { // enter / arrow right / space
         if (this.selectedRadio !== null) {
           this.next()
+        }
+      }
+
+      if (e.keyCode === 37) { // arrow left
+        if (this.disableNextBtn === false) {
+          this.selectedRadio = 'left'
+          this.next()
+          console.log('left')
+        }
+      }
+
+      if (e.keyCode === 39) { // arrow right
+        if (this.disableNextBtn === false) {
+          this.selectedRadio = 'right'
+          this.next()
+          console.log('right')
         }
       }
 
