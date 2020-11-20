@@ -91,14 +91,25 @@
       </v-row>
 
       <div class="mt-12">
-        <v-row v-if="reproductions.length > 0" align="center">
-          <h2 class="text-h6">Images</h2>
+        <v-row align="center">
+          <v-col cols="auto" class="pa-0 ma-0">
+            <h2 class="text-h6">Images</h2>
+          </v-col>
 
-          <Uppy :imagesetid="imageSet.id" @uploaded="addImage">
-            <v-btn color="primary" id="UppyModalOpenerBtn" outlined icon text class="ml-6 mt-1">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </Uppy>
+          <v-col
+            class="pa-0 ma-0"
+            :class="reproductions.length === 0 ? 'pt-4' : ''"
+            :cols="reproductions.length === 0 ? 12 : 'auto'"
+          >
+            <Uppy :imagesetid="imageSet.id" @uploaded="addImage">
+              <v-btn v-show="reproductions.length > 0" color="primary" id="UppyModalOpenerBtn" outlined icon text class="ml-6 mt-1">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <div v-show="reproductions.length === 0" id="UppyModalOpenerBtn" class="default">
+                <v-icon color="primary" large>mdi-plus</v-icon>
+              </div>
+            </Uppy>
+          </v-col>
         </v-row>
 
         <v-row wrap>
@@ -133,35 +144,19 @@
             </h5>
           </v-col>
         </v-row>
-
-        <div v-show="reproductions.length === 0">
-          <v-row class="mt-6 mb-3" align="center">
-            <h2 class="text-h6">Images</h2>
-          </v-row>
-
-          <v-row>
-            <Uppy :imagesetid="imageSet.id" @uploaded="addImage" style="width: 100%;">
-              <div id="UppyModalOpenerBtn" class="default">
-                <v-icon color="primary" large>mdi-plus</v-icon>
-              </div>
-            </Uppy>
-          </v-row>
-        </div>
       </div>
 
       <div class="mt-12 pt-12">
-        <v-row align="center">
-          <h3 class="text-h6" v-if="original.length > 0">Reference image</h3>
-        </v-row>
-
         <v-row v-if="original.length > 0">
+          <v-col cols="12">
+            <h3 class="text-h6">
+              Reference/original image
+            </h3>
+          </v-col>
           <v-col
             xs="6" sm="6" md="3" lg="3" xl="3"
             class="pa-1"
           >
-            <!-- <v-icon @click="deleteImage(original[0].id)">
-              mdi-dots-horizontal
-            </v-icon> -->
             <div style="display: flex; justify-content: flex-end;">
               <v-menu offset-y left>
                 <template v-slot:activator="{ on, attrs }">
@@ -208,10 +203,11 @@
             </h5>
           </v-col>
         </v-row>
-        <div v-else class="ma-0 pa-0">
+
+        <div v-if="original.length === 0" class="ma-0 pa-0">
           <v-row align="center">
             <h2 class="text-h6 mb-2">
-              Reference image
+              Reference image/original
               <span class="body-1">(optional)</span>
             </h2>
           </v-row>
@@ -232,15 +228,20 @@
               </div>
             </v-tooltip>
           </v-row>
-
-          <v-row class="mb-5">
-            <UppyOriginal
-              :imagesetid="imageSet.id"
-              @uploaded="add"
-              :width="300" :height="200"
-            />
-          </v-row>
         </div>
+
+        <v-row class="mb-5">
+          <UppyOriginal
+            :imagesetid="imageSet.id"
+            @uploaded="addOriginal"
+            :width="300"
+            :height="200"
+          >
+            <div v-show="original.length === 0" id="UppyModalOpenerBtnOriginal">
+              <v-icon color="primary" large>mdi-plus</v-icon>
+            </div>
+          </UppyOriginal>
+        </v-row>
       </div>
     </div>
   </div>
@@ -278,18 +279,12 @@ export default {
   },
 
   methods: {
-    add (files) {
+    addOriginal (files) {
       this.original.unshift(files[0])
     },
 
     addImage (files) {
-      // console.log(files)
       this.reproductions.push(files[0])
-      // if (this.reproductions.length > 0) {
-      //   this.reproductions.unshift(files[0])
-      // } else {
-      //   this.reproductions.unshift(files[0])
-      // }
     },
 
     deleteImage (index) {

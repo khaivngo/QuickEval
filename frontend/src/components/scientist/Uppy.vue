@@ -68,8 +68,8 @@ export default {
       hideCancelButton: false,
       hideProgressAfterFinish: false,
       note: null,
-      closeModalOnClickOutside: false,
-      closeAfterFinish: false,
+      closeModalOnClickOutside: true,
+      closeAfterFinish: true,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
@@ -93,6 +93,7 @@ export default {
       // wait 2 sec before clearing the files after upload
       // window.setTimeout(() => { this.uppy.reset() }, 2000)
       // console.log(result)
+      this.uppy.reset()
     })
 
     this.uppy.on('upload-success', (file, response) => {

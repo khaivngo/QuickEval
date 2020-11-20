@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div id="UppyModalOpenerBtnOriginal">
-      <v-icon color="primary" large>mdi-plus</v-icon>
-    </div>
+    <slot></slot>
     <div id="drag-drop-area-original"></div>
   </div>
 </template>
@@ -72,8 +70,8 @@ export default {
       hideCancelButton: false,
       hideProgressAfterFinish: false,
       note: null,
-      closeModalOnClickOutside: false,
-      closeAfterFinish: false,
+      closeModalOnClickOutside: true,
+      closeAfterFinish: true,
       disableStatusBar: false,
       disableInformer: false,
       disableThumbnailGenerator: false,
@@ -93,13 +91,15 @@ export default {
       original: 1
     })
 
-    this.uppy.on('completed', (result, response) => {
+    this.uppy.on('complete', (result, response) => {
       // wait 2 sec before clearing the files after upload
-      // window.setTimeout(() => { this.uppy.reset() }, 2000)
+      // window.setTimeout(() => { this.uppy.reset() }, 500)
+      this.uppy.reset()
     })
 
     this.uppy.on('upload-success', (file, response) => {
       this.$emit('uploaded', response.body)
+      // window.setTimeout(() => { this.uppy.reset() }, 2000)
     })
 
     // override Uppy's hardcoded min-height of 450px

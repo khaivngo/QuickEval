@@ -16,7 +16,10 @@
             <v-card-text style="color: #fff;">
               <h3 class="subtitle-1 mt-4">1. Images can be moved around. Click and hold down mouse on the image, then move around.</h3>
 
-              <h4 class="subtitle-1 mt-4">2. Left/right arrow keyboard key can be used to select image.</h4>
+              <h4 class="subtitle-1 mt-4">
+                2. Press left arrow keyboard key to select left image.
+                Press right arrow keyboard key to select right image.
+              </h4>
             </v-card-text>
 
             <v-card-actions>
