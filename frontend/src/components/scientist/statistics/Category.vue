@@ -3,7 +3,7 @@
     <div>
       <v-checkbox
         v-model="includeIncomplete"
-        :label="`Include unfinshed experiments in calculations`"
+        :label="`Include unfinished experiments in calculations`"
       ></v-checkbox>
     </div>
 

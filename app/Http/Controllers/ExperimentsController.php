@@ -53,11 +53,17 @@ class ExperimentsController extends Controller
         ])
         // I need the experiment if any of its user's name matches the given input
         ->orWhereHas('user', function($q) use ($term) {
-            return $q->where('name', 'LIKE', '%' . $term . '%');
+            return $q->where([
+              ['is_public', 1],
+              ['name', 'LIKE', '%'.$term.'%']
+            ]);
         })
         // I need the experiment if any of its type's title matches the given input
         ->orWhereHas('type', function($q) use ($term) {
-            return $q->where('title', 'LIKE', '%'. $term . '%');
+            return $q->where([
+              ['is_public', 1],
+              ['title', 'LIKE', '%'.$term.'%']
+            ]);
         })->get();
     }
 
@@ -109,11 +115,15 @@ class ExperimentsController extends Controller
      * Find the first experiment matching the provided ID.
      */
     public function find (Request $request) {
-      return Experiment::with('observer_metas.observer_meta')->find($request->id);
+      return Experiment::with(
+          'user:id,name',
+          'observer_metas.observer_meta'
+        )
+        ->find($request->id);
     }
 
     /**
-     * Find the first public experiment that matches the provided ID.
+     * Find the first PUBLIC experiment that matches the provided ID.
      */
     public function find_public (Request $request)
     {

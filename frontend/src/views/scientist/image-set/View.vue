@@ -90,7 +90,7 @@
         </v-menu>
       </v-row>
 
-      <div class="mt-12">
+      <div class="mt-12 pt-6">
         <v-row align="center">
           <v-col cols="auto" class="pa-0 ma-0">
             <h2 class="text-h6">Images</h2>
