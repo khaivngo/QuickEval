@@ -43,6 +43,7 @@ class ExperimentsController extends Controller
       if ($term == 'all') {
         return Experiment::with('user:id,name', 'observer_metas.observer_meta')
           ->where('is_public', 1)
+          ->orderBy('id', 'desc')
           ->get();
       }
 
@@ -64,7 +65,9 @@ class ExperimentsController extends Controller
               ['is_public', 1],
               ['title', 'LIKE', '%'.$term.'%']
             ]);
-        })->get();
+        })
+        ->orderBy('id', 'desc')
+        ->get();
     }
 
     /**
