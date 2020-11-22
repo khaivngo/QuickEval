@@ -112,6 +112,8 @@
         mt-2 mb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
+        :class="selectedRadio === 'left' ? 'selected' : ''"
+        @click="selectedRadio = 'left'"
       >
         <div class="panzoom">
           <img
@@ -142,6 +144,8 @@
       <v-flex
         class="picture-container"
         mt-2 mb-2
+        :class="selectedRadio === 'right' ? 'selected' : ''"
+        @click="selectedRadio = 'right'"
       >
         <div class="panzoom">
           <img
