@@ -29,6 +29,14 @@ class Experiment extends Model
         return $this->hasMany(ExperimentObserverMeta::class);
     }
 
+    // public function experiment_queues () {
+    //   return $this->hasMany(ExperimentQueue::class);
+    // }
+
+    public function sequences () {
+        return $this->hasManyThrough(ExperimentSequence::class, ExperimentQueue::class);
+    }
+
     public function type () {
       return $this->belongsTo(ExperimentType::class, 'experiment_type_id');
     }

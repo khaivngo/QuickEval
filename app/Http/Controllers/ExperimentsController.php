@@ -117,12 +117,20 @@ class ExperimentsController extends Controller
     /**
      * Find the first experiment matching the provided ID.
      */
-    public function find (Request $request) {
+    public function find (Request $request)
+    {
       return Experiment::with(
+        [
           'user:id,name',
-          'observer_metas.observer_meta'
-        )
-        ->find($request->id);
+          'observer_metas.observer_meta',
+          // for every picture set experiment_sequence get the count of pictures used
+          'sequences' => function ($query) {
+            $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+              $query->withCount('picture_sequence');
+            }]);
+          }
+        ]
+      )->find($request->id);
     }
 
     /**
@@ -153,7 +161,8 @@ class ExperimentsController extends Controller
         ->get();
     }
 
-    public function observer_metas (Request $request) {
+    public function observer_metas (Request $request)
+    {
       $metas = DB::table('experiment_observer_metas')
         ->join('observer_metas', 'observer_metas.id', '=', 'experiment_observer_metas.observer_meta_id')
         ->where('experiment_observer_metas.experiment_id', $request->id)
@@ -488,6 +497,14 @@ class ExperimentsController extends Controller
     public function start (Experiment $experiment)
     {
       // $newOrExists = $this->start_results($id);
+
+      // Experiment::with([
+      //     'sequences' => function ($query) {
+      //       $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+      //         $query->with('picture_sequence');
+      //       }]);
+      //     }
+      //   ])->find($experiment->id);
 
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')

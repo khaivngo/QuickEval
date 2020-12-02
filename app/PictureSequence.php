@@ -13,7 +13,7 @@ class PictureSequence extends Model
      */
     protected $guarded = [];
 
-    // public function experiment_sequence () {
-    //     return $this->belongsTo(ExperimentSequence::class);
-    // }
+    public function picture_queue () {
+        return $this->belongsTo(ExperimentSequence::class);
+    }
 }

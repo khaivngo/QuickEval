@@ -85,12 +85,12 @@
       <v-tabs v-model="tab" class="mb-6" style="margin-top: 60px;">
         <v-tab>
           <h5 class="text-subtitle-1 font-weight-medium">
-            Observers
+            <v-icon>mdi-account-multiple</v-icon> Observers
           </h5>
         </v-tab>
         <v-tab>
           <h2 class="text-subtitle-1 font-weight-medium">
-            Statistics
+            <v-icon>mdi-chart-bell-curve</v-icon> Statistics
             <!-- Results -->
           </h2>
         </v-tab>
@@ -113,6 +113,7 @@
           >
             <template v-slot:item.completed="{ item }">
               <span>{{ (item.completed === 1) ? 1 : 0 }}</span>
+              <!-- {{ item.paired_results_count }} / {{ totalComparisons }} -->
             </template>
           </v-data-table>
 
@@ -282,6 +283,7 @@ export default {
   data () {
     return {
       experiment: {},
+      totalComparisons: 0,
 
       tab: 0,
 
@@ -304,9 +306,9 @@ export default {
       headers: [
         { text: 'Observer ID', value: 'user_id', sortable: false, desc: '' },
         { text: 'Session ID', value: 'id', align: 'left', sortable: false, desc: 'If the same observer has taken the experiment multiple times,<br> each attempt will have its own session ID.' },
-        { text: 'Taken At', value: 'created_at', sortable: false, desc: '' },
         { text: 'Completed', value: 'completed', sortable: false, desc: '' },
-        { text: 'Color vision (vision/post eval/degree)', value: 'ishihara', sortable: false, desc: '' }
+        { text: 'Taken At', value: 'created_at', sortable: false, desc: '' }
+        // { text: 'Color vision (vision/post eval/degree)', value: 'ishihara', sortable: false, desc: '' }
       ],
 
       selected: [],
@@ -405,6 +407,11 @@ export default {
           if (this.experiment.observer_metas && this.experiment.observer_metas.length > 0) {
             this.exportFlags.inputs = true
             this.exportFlags.inputsMeta = true
+          }
+
+          if (this.experiment.type.slug === 'paired') {
+            const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+            this.totalComparisons = total / 2
           }
 
           this.loading = false

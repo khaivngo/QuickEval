@@ -36,6 +36,7 @@
                 class="mt-3"
                 v-model.trim="email"
                 label="Email"
+                browser-autocomplete="email"
                 outlined
                 dense
               ></v-text-field>

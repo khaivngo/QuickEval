@@ -14,7 +14,9 @@
             </v-card-title>
 
             <v-card-text style="color: #fff;">
-              <h3 class="subtitle-1 mt-4">1. Images can be moved around. Click and hold down mouse on the image, then move around.</h3>
+              <h3 class="subtitle-1 mt-4">
+                1. Images can be moved around. To do so click and hold down mouse on the image, then move around.
+              </h3>
 
               <h4 class="subtitle-1 mt-4">
                 2. Press left arrow keyboard key to select left image.
@@ -76,7 +78,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index2 / 2 }}/{{ (stimuli.length + stimuliIndex) / 2 }}
+          {{ index2 / 2 }}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
 
@@ -178,8 +180,9 @@
                 color="#D9D9D9"
               >
                 <!-- :disabled="noneSelected" -->
-                <span class="ml-1">next</span>
-                <v-icon>mdi-chevron-right</v-icon>
+                <!-- <span class="ml-1">next</span> -->
+                next
+                <!-- <v-icon>mdi-chevron-right</v-icon> -->
               </v-btn>
             </div>
           </div>
@@ -240,7 +243,7 @@ export default {
 
       index: 0,
       index2: 0,
-      stimuliIndex: 0,
+      totalComparisons: 0,
       experimentResult: null,
 
       isLoadLeft: false,
@@ -320,15 +323,8 @@ export default {
         if (payload) {
           this.stimuli = payload.data
 
-          // count how many instructions do we have
-          let count = payload.data.filter((obj) => obj.instruction_id).length
-          // let count2 = count * 1 // 3
-          // let min = payload.data - count
-
-          // const id = 12
-          // const count = array.reduce((acc, cur) => cur.id === id ? ++acc : acc, 0)
-
-          this.stimuliIndex = count
+          const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+          this.totalComparisons = total / 2
 
           if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
             localStorage.setItem(`${this.experiment.id}-index`, 0)
@@ -347,13 +343,15 @@ export default {
     })
 
     window.addEventListener('keydown', (e) => {
-      if (e.keyCode === 13 || e.keyCode === 32) { // enter / arrow right / space
+      // enter / space
+      if (e.keyCode === 13 || e.keyCode === 32) {
         if (this.selectedRadio !== null) {
           this.next()
         }
       }
 
-      if (e.keyCode === 37) { // arrow left
+      // arrow left
+      if (e.keyCode === 37) {
         if (this.disableNextBtn === false) {
           this.selectedRadio = 'left'
           this.next()
@@ -361,7 +359,8 @@ export default {
         }
       }
 
-      if (e.keyCode === 39) { // arrow right
+      // arrow right
+      if (e.keyCode === 39) {
         if (this.disableNextBtn === false) {
           this.selectedRadio = 'right'
           this.next()
@@ -369,7 +368,8 @@ export default {
         }
       }
 
-      if (e.keyCode === 27) { // esc
+      // esc
+      if (e.keyCode === 27) {
         this.abort()
       }
     })

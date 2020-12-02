@@ -17,4 +17,12 @@ class ExperimentSequence extends Model
         // return $this->hasOne(PictureSet::class, 'id', 'picture_set_id');
         return $this->belongsTo(PictureSet::class);
     }
+
+    // public function picture_sequences () {
+    //     return $this->hasManyThrough(PictureSequence::class, PictureQueue::class);
+    // }
+
+    public function picture_queue () {
+        return $this->belongsTo(PictureQueue::class);
+    }
 }

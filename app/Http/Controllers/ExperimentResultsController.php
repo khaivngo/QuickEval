@@ -19,6 +19,7 @@ class ExperimentResultsController extends Controller
     public function fetch ($id) {
       return ExperimentResult
         ::with('user')
+        // ->withCount('paired_results')
         ->where('experiment_id', $id)
         ->get();
     }
