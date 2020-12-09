@@ -32,10 +32,12 @@
             @foreach($imageSet['picture_set']['pictures'] as $image)
                 <tr>
                     <td>{{ $imageSet['picture_set']['title'] }}</td>
-                    <td>{{ $image['name'] }}</td>
-                    @if($image['is_original'] == 1)
-                        (reference/original)
-                    @endif
+                    <td>
+                        {{ $image['name'] }}
+                        @if($image['is_original'] == 1)
+                            (reference/original)
+                        @endif
+                    </td>
                 </tr>
             @endforeach
         @endforeach

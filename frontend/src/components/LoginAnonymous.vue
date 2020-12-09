@@ -25,14 +25,26 @@ export default {
       this.loading = true
 
       this.$axios.post('/anonymous').then(response => {
-        localStorage.setItem('access_token', response.data.access_token)
-        this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
-        // // if (response.data.role === 2) redirect /scientist
-        EventBus.$emit('logged', response.data)
-        this.loading = false
-        // this.$router.push('/observer')
-        // this.$router.go() // refresh current page
-        window.location.reload(true)
+        if (response.data) {
+          this.$axios.post('/login', {
+            username: response.data.email,
+            password: response.data.auth_id
+          }).then(response => {
+            localStorage.setItem('access_token', response.data.access_token)
+            this.$axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.access_token
+            // // if (response.data.role === 2) redirect /scientist
+            EventBus.$emit('logged', response.data)
+            this.loading = false
+            // this.$router.push('/observer')
+            // this.$router.go() // refresh current page
+            window.location.reload(true)
+          }).catch((error) => {
+            this.loading = false
+            this.error = error
+          })
+        } else {
+          this.loading = false
+        }
       }).catch((error) => {
         this.loading = false
         this.error = error

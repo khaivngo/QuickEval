@@ -496,16 +496,6 @@ class ExperimentsController extends Controller
      */
     public function start (Experiment $experiment)
     {
-      // $newOrExists = $this->start_results($id);
-
-      // Experiment::with([
-      //     'sequences' => function ($query) {
-      //       $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
-      //         $query->with('picture_sequence');
-      //       }]);
-      //     }
-      //   ])->find($experiment->id);
-
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
         ->where('experiment_queues.experiment_id', $experiment->id)
@@ -601,32 +591,6 @@ class ExperimentsController extends Controller
       $flattened = $collection->flatten();
 
       return response($flattened->all());
-    }
-
-
-    /**
-     *
-     */
-    public function start_results ($id)
-    {
-      // replace with?
-      // Retrieve flight by name, or create it if it doesn't exist...
-      // $flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
-
-      $experimentResult = ExperimentResult::where([
-        ['experiment_id', (int)$id],
-        ['user_id', auth()->user()->id]
-      ])->get();
-
-      if (count($experimentResult) > 0) {
-        return response('exists', 200);
-      } else {
-        ExperimentResult::create([
-          'experiment_id' => (int)$id,
-          'user_id' => auth()->user()->id
-        ]);
-        return response('new', 200);
-      }
     }
 
     /**

@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 
-
+use App\Http\Controllers\UserController;
 // Route::get('mailable', function () {
 
 //     // $experiment_results = \App\ExperimentResult::find(8);
@@ -31,9 +31,9 @@ Route::post('/category-result/export',   'ResultCategoriesController@export');
 Route::middleware('auth:api')->group(function () {
     # user
     Route::get(  '/user', function (Request $request) { return $request->user(); });
-    Route::patch('/user',     'UserController@update');
-    Route::patch('/user/role','UserController@updateRole');
-    Route::get(  '/user/all', 'UserController@index');
+    Route::patch('/user',     'UserController@update'         );
+    Route::patch('/user/role','UserController@updateRole'     );
+    Route::get(  '/user/all', [UserController::class, 'index']);
 
     # experiments
     Route::get(     '/experiment/{id}/observer-metas',      'ExperimentsController@observer_metas'  );
