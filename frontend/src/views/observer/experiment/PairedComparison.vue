@@ -107,6 +107,7 @@
       <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
         Original
       </h4>
+      <ArtifactMarkerToolbar @changed="changedDrawingTool"/>
     </v-layout>
 
     <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
@@ -125,6 +126,7 @@
             :src="leftImage"
             tabindex="0"
           />
+          <ArtifactMarker @updated="drawn" :imageURL="leftImage" :tool="drawingTool"/>
         </div>
       </v-flex>
 
@@ -157,6 +159,7 @@
             :src="rightImage"
             tabindex="0"
           />
+          <ArtifactMarker @updated="drawn" :imageURL="rightImage" :tool="drawingTool"/>
         </div>
       </v-flex>
     </v-layout>
@@ -217,12 +220,16 @@
 <script>
 // import Panzoom from '@panzoom/panzoom'
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
+import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
+import ArtifactMarker from '@/components/ArtifactMarker'
 
 export default {
   name: 'experiment-view',
 
   components: {
-    FinishedDialog
+    FinishedDialog,
+    ArtifactMarkerToolbar,
+    ArtifactMarker
   },
 
   data () {
@@ -265,7 +272,10 @@ export default {
 
       timeElapsed: null,
 
-      firstImages: 1
+      firstImages: 1,
+
+      shapes: null,
+      drawingTool: ''
     }
   },
 
@@ -380,6 +390,14 @@ export default {
   },
 
   methods: {
+    drawn (shapes) {
+      this.shapes = shapes
+    },
+
+    changedDrawingTool (string) {
+      this.drawingTool = string
+    },
+
     closeAndNext () {
       this.instructionDialog = false
       this.next()
@@ -389,7 +407,6 @@ export default {
      * Load the next image queue stimuli, or instructions.
      */
     next () {
-      console.log(this.index)
       // Have we reached the end?
       if (this.stimuli[this.index + 1] === undefined) {
         this.onFinish()
