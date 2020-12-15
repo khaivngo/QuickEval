@@ -252,6 +252,23 @@ class ResultPairsController extends Controller
       'chose_none'            => $request->chose_none
     ]);
 
+    if ($request->artifact_marks) {
+      // $shapes = [];
+      foreach ($request->artifact_marks as $image) {
+        foreach ($image as $mark) {
+          $fill = json_encode($mark['fill']);
+          // array_push($shapes, $fill);
+          \App\ResultImageArtifact::create([
+            'experiment_result_id'  => $request->experiment_result_id,
+            'picture_id'            => 23,
+            'selected_area'         => $fill,
+            'comment'               => null,
+            'client_side_timer'     => 0, // $request->client_side_timer
+          ]);
+        }
+      }
+    }
+
     if ($result) {
       return response('result_stored', 201);
     }

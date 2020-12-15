@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour" @keydown.esc="alert('esc')">
+  <div class="qe-wrapper" :style="'background-color: #' + experiment.background_colour" @keydown.esc="alert('esc')">
     <v-toolbar flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="howToDialog" max-width="500">
@@ -104,13 +104,18 @@
     </v-toolbar>
 
     <v-layout mt-3 justify-center>
+      <ArtifactMarkerToolbar
+        v-if="experiment.artifact_marking"
+        @changed="changedDrawingTool"
+      />
+    </v-layout>
+    <v-layout mt-3 justify-center>
       <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
         Original
       </h4>
-      <ArtifactMarkerToolbar @changed="changedDrawingTool"/>
     </v-layout>
 
-    <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
+    <v-layout fill-height ml-3 mr-3 pa-0 justify-center ref="images" style="height: 741px;" class="images-container">
       <v-flex
         mt-2 mb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
@@ -120,13 +125,19 @@
       >
         <div class="panzoom">
           <img
+            v-if="!experiment.artifact_marking"
             id="picture-left"
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
             tabindex="0"
           />
-          <ArtifactMarker @updated="drawn" :imageURL="leftImage" :tool="drawingTool"/>
+          <ArtifactMarker
+            v-if="experiment.artifact_marking"
+            @updated="drawn"
+            :imageURL="leftCanvas"
+            :tool="drawingTool"
+          />
         </div>
       </v-flex>
 
@@ -153,52 +164,60 @@
       >
         <div class="panzoom">
           <img
+            v-if="!experiment.artifact_marking"
             id="picture-right"
             class="picture"
             :class="isLoadRight === false ? 'hide' : ''"
             :src="rightImage"
             tabindex="0"
           />
-          <ArtifactMarker @updated="drawn" :imageURL="rightImage" :tool="drawingTool"/>
+          <ArtifactMarker
+            v-if="experiment.artifact_marking"
+            @updated="drawn"
+            :imageURL="rightCanvas"
+            :tool="drawingTool"
+          />
         </div>
       </v-flex>
     </v-layout>
 
-    <v-radio-group v-model="selectedRadio">
-      <v-row class="pa-0 ma-0 align-center">
-        <v-col class="pa-0 mt-0 pt-1">
-          <div class="d-flex justify-center pa-0 mt-0">
-            <!-- <v-icon class="mr-2">mdi-arrow-left-box</v-icon> -->
-            <!-- left -->
-            <v-radio color="default" value="left" class="scaled"></v-radio>
-          </div>
-        </v-col>
-        <v-col cols="auto" class="pa-0 mt-0">
-          <div class="d-flex justify-center">
-            <div class="d-flex justify-center pt-4">
-              <v-btn
-                @click="next"
-                :disabled="selectedRadio === null"
-                :loading="disableNextBtn"
-                color="#D9D9D9"
-              >
-                <!-- :disabled="noneSelected" -->
-                <!-- <span class="ml-1">next</span> -->
-                next
-                <!-- <v-icon>mdi-chevron-right</v-icon> -->
-              </v-btn>
+    <v-layout>
+      <v-radio-group v-model="selectedRadio">
+        <v-row class="pa-0 ma-0 align-center">
+          <v-col class="pa-0 mt-0 pt-1">
+            <div class="d-flex justify-center pa-0 mt-0">
+              <!-- <v-icon class="mr-2">mdi-arrow-left-box</v-icon> -->
+              <!-- left -->
+              <v-radio color="default" value="left" class="scaled"></v-radio>
             </div>
-          </div>
-        </v-col>
-        <v-col class="pa-0 mt-0 pt-1">
-          <div class="d-flex justify-center pa-0 mt-0">
-            <v-radio color="default" value="right" class="scaled"></v-radio>
-            <!-- right
-            <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
-          </div>
-        </v-col>
-      </v-row>
-    </v-radio-group>
+          </v-col>
+          <v-col cols="auto" class="pa-0 mt-0">
+            <div class="d-flex justify-center">
+              <div class="d-flex justify-center pt-4">
+                <v-btn
+                  @click="next"
+                  :disabled="selectedRadio === null"
+                  :loading="disableNextBtn"
+                  color="#D9D9D9"
+                >
+                  <!-- :disabled="noneSelected" -->
+                  <!-- <span class="ml-1">next</span> -->
+                  next
+                  <!-- <v-icon>mdi-chevron-right</v-icon> -->
+                </v-btn>
+              </div>
+            </div>
+          </v-col>
+          <v-col class="pa-0 mt-0 pt-1">
+            <div class="d-flex justify-center pa-0 mt-0">
+              <v-radio color="default" value="right" class="scaled"></v-radio>
+              <!-- right
+              <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
+            </div>
+          </v-col>
+        </v-row>
+      </v-radio-group>
+    </v-layout>
 
     <!-- <div class="d-flex justify-center pt-4">
       <v-btn
@@ -214,11 +233,12 @@
     </div> -->
 
     <FinishedDialog :show="finished"/>
-  </v-container>
+  </div>
 </template>
 
 <script>
 // import Panzoom from '@panzoom/panzoom'
+// import { store, mutations } from '@/store.js'
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
@@ -234,6 +254,8 @@ export default {
 
   data () {
     return {
+      heightChecked: false,
+
       experiment: {
         id: null,
         show_original: null,
@@ -269,12 +291,14 @@ export default {
       originalImage: '',
       leftImage: '',
       rightImage: '',
+      leftCanvas: '',
+      rightCanvas: '',
 
       timeElapsed: null,
 
       firstImages: 1,
 
-      shapes: null,
+      shapes: {},
       drawingTool: ''
     }
   },
@@ -285,6 +309,19 @@ export default {
   //     return this.disableNextBtn || (this.rightReproductionActive === false && this.leftReproductionActive === false)
   //   }
   // },
+
+  mounted () {
+    // // let x = 0
+    // var checkHeight = window.setTimeout(() => {
+    //   let height = this.$refs.images.offsetHeight
+    //   console.log(height)
+    //   this.$refs.images.style.height = height + 'px'
+    //   this.heightChecked = true
+    //   // if (++x === 10) {
+    //   //   window.clearInterval(checkHeight)
+    //   // }
+    // }, 5000)
+  },
 
   created () {
     this.getExperiment(this.$route.params.id).then(response => {
@@ -391,7 +428,8 @@ export default {
 
   methods: {
     drawn (shapes) {
-      this.shapes = shapes
+      // shapes.uuid let's us distinguish between left and right image canvas
+      this.shapes[shapes.uuid] = shapes.shapes
     },
 
     changedDrawingTool (string) {
@@ -446,6 +484,10 @@ export default {
               alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
             }
 
+            // if (this.experiment.artifact_marking) {
+            this.shapes = {}
+            // }
+
             this.selectedRadio = null
             this.index += 2
             this.index2 += 2
@@ -487,7 +529,6 @@ export default {
           this.firstImages = 2
         }
       } else {
-        console.log('instr')
         this.instructionText = this.stimuli[this.index].description
         this.instructionDialog = true
 
@@ -521,11 +562,15 @@ export default {
             // hide right image, then set source
             this.isLoadRight = false
             this.rightImage = images[0].img.src
+
             // hide left image, then set source
             this.isLoadLeft = false
             this.leftImage = images[1].img.src
-            // console.log('right - ' + this.rightImage)
-            // console.log('left - ' + this.leftImage)
+
+            // we use a object because sometimes the image is the same image but we still want
+            // to trigger watch in child components
+            this.leftCanvas = { path: images[1].img.src }
+            this.rightCanvas = { path: images[0].img.src }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
@@ -553,7 +598,8 @@ export default {
         picture_id_right: pictureIdRight.picture_id,
         picture_id_left: pictureIdLeft.picture_id,
         client_side_timer: clientSideTimer,
-        chose_none: 0
+        chose_none: 0,
+        artifact_marks: this.shapes
       }
 
       return this.$axios.post('/paired-result', data)
@@ -592,8 +638,11 @@ export default {
 <style scoped lang="scss">
 .qe-wrapper {
   background-color: #808080;
-  min-height: 100vh;
-  overflow: hidden;
+  // min-height: 100vh;
+  height: 100%;
+  // overflow: hidden;
+  display: flex;
+  flex-direction: column;
   margin: 0;
   padding: 0;
 }

@@ -14,12 +14,23 @@
 import lodashGroupBy from 'lodash/groupBy'
 import lodashEach from 'lodash/each'
 
+// keep track of unique id for each instance of this component
+let uuid = 0
+
 export default {
+  beforeCreate () {
+    this.uuid = uuid.toString()
+    uuid += 1
+  },
+
   props: ['imageURL', 'tool'],
 
   watch: {
     imageURL () {
+      // if (newVal === oldVal) return
       this.setCanvasImage()
+      console.log('www')
+      this.reset()
     },
     tool (value) {
       this[value]()
@@ -32,7 +43,6 @@ export default {
       pictureID: null,
       canvasContainer: null,
       image: null,
-      // imageURL: 'http://127.0.0.1/QuickEval/public/storage/64/VHQZSHGWti9rR24hRLsbNbon9q7L0xYdWr6zN5Tw.bmp',
       points: [],
       savedShapes: [],
       deleteArea: [],
@@ -47,21 +57,9 @@ export default {
       savedCtx: null
     }
   },
+
   mounted () {
     /* eslint-disable */
-
-    // console.log()
-    // console.log()
-
-        /***************
-          
-          OVERLAPPIng shapes is very slow
-
-          make sure one instance for each image
-
-          why is there a gap between end and start of drawing line
-
-        ***************/
 
     // canvas where the drawing will take place
     this.canvas = this.$el.querySelector('#currentDrawing')
@@ -75,22 +73,6 @@ export default {
     this.canvasContainer = this.$el
 
     this.setCanvasImage()
-
-    // $(this.canvasContainer).append(this.savedCanvas) // append the resized canvas to the DOM
-    // $(this.canvasContainer).append(this.canvas) // append the resized canvas to the DOM
-
-    $(document).ready(function() {
-        $('#button-next-category').on('click', () => {
-          // TODO: switch out loop and send array!!!!!!!!!!!!!!!!!
-          this.savedShapes.forEach(function(shape) {
-            var fillAsJSONstring = JSON.stringify(shape.fill);
-            // this.$axios.post('', (response) => {})
-          })
-
-          // delete all savedShapes in order to make it ready for the next image set
-          this.reset()
-        })
-    })
   },
 
   methods: {
@@ -132,9 +114,6 @@ export default {
      * Enable the drawing events.
      */
     enableMarking () {
-        // this.canvas.on('mousedown', this.startdrag)
-        // this.canvas.on('mouseup', this.stopdrag)
-        // this.canvas.on('dblclick', this.findClickedShape)
         this.canvas.addEventListener('mousedown', this.startdrag)
         this.canvas.addEventListener('mouseup', this.stopdrag)
         this.canvas.addEventListener('dblclick', this.findClickedShape)
@@ -144,9 +123,6 @@ export default {
      * Disable the drawing events.
      */
     disableMarking () {
-        // this.canvas.off('mousedown')
-        // this.canvas.off('mouseup')
-        // this.canvas.off('dblclick')
         this.canvas.removeEventListener('mousedown', this.startdrag)
         this.canvas.removeEventListener('mouseup', this.stopdrag)
         this.canvas.removeEventListener('dblclick', this.findClickedShape)
@@ -157,47 +133,29 @@ export default {
      */
     setCanvasImage () {
         this.image = new Image()
-        this.image.src = this.imageURL
+        this.image.src = this.imageURL.path
+
+        // mutations.setUpdated(false)
 
         var self = this
         this.image.onload = function() {
             // make all elements the same size as the image
-            // $('.canvas-container').css({
-            //     height: self.image.height + 'px',
-            //     width: self.image.width + 'px',
-            //      // make sure our absolute positioned canvases
-            //      // are placed relative to the container 
-            //     position: 'relative'
-            // })
             self.canvasContainer.style.height = self.image.height + 'px'
             self.canvasContainer.style.width = self.image.width + 'px'
             self.canvasContainer.style.position = 'relative'
 
             // make canvases the same size as the image
-            // self.canvas.attr('height', self.image.height).attr('width', self.image.width)
             self.canvas.setAttribute('height', self.image.height)
             self.canvas.setAttribute('width', self.image.width)
 
-            // self.savedCanvas.attr('height', self.image.height).attr('width', self.image.width)
             self.savedCanvas.setAttribute('height', self.image.height)
             self.savedCanvas.setAttribute('width', self.image.width)
 
-            // self.savedCanvas.css({
-            //     background: 'url(' + self.image.src + ')',
-            //     position: "absolute",
-            //     top: 0,
-            //     right: 0
-            // })
             self.savedCanvas.style.background = 'url(' + self.image.src + ')'
             self.savedCanvas.style.position = 'absolute'
             self.savedCanvas.style.top = '0'
             self.savedCanvas.style.right = '0'
 
-            // self.canvas.css({
-            //     position: "absolute",
-            //     top: 0,
-            //     right: 0
-            // })
             self.canvas.style.position = 'absolute'
             self.canvas.style.top = '0'
             self.canvas.style.right = '0'
@@ -248,13 +206,13 @@ export default {
     },
 
     stopdrag (e) {
-        $(this.canvasContainer).off('mousemove')
+        this.canvasContainer.removeEventListener('mousemove', this.mousedrag)
         /* we're done drawing, save the shape */
         this.saveShape(e)
     },
 
     startdrag () {
-        $(this.canvasContainer).on('mousemove', this.mousedrag)
+        this.canvasContainer.addEventListener('mousemove', this.mousedrag)
     },
 
     /**
@@ -388,7 +346,7 @@ export default {
                 this.deleteArea = []
             }
 
-            this.$emit('updated', this.savedShapes)
+            this.$emit('updated', { uuid: this.uuid, shapes: this.savedShapes })
         }
 
         this.points = [] /* remove the current shape now that it's saved */

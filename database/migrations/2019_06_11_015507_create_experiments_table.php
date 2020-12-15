@@ -37,6 +37,7 @@ class CreateExperimentsTable extends Migration
             $table->tinyInteger('ishihara')->nullable();
             $table->tinyInteger('allow_colour_blind')->nullable();
             $table->tinyInteger('timer')->nullable();
+            $table->tinyInteger('artifact_marking')->nullable();
 
             $table->tinyInteger('allow_ties')       ->nullable();
             $table->tinyInteger('show_original')    ->nullable();

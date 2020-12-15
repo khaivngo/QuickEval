@@ -215,6 +215,29 @@
               </v-col>
             </v-row>
 
+            <v-row align="center" class="mt-0 pt-0">
+              <v-col cols="auto" class="pt-0 pb-0 pr-0">
+                <v-checkbox
+                  v-model="form.artifact_marking"
+                  color="success"
+                  :label="`Enable artifact marking pen`"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="auto" class="pa-0 mb-1">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                    Gives the observer access to a drawing pen, allowing them to<br>mark artifacts or interesting objects
+                    in the images.
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+
           </v-card>
         </v-stepper-content>
 
@@ -541,6 +564,7 @@ export default {
         algorithm: 1,
         timer: null,
         ishihara: 0,
+        artifact_marking: 0,
         cvd: null,
         forcedChoice: false,
         samePairTwice: false,
@@ -753,6 +777,7 @@ export default {
           this.form.experimentType   = response.data.experiment_type_id
           this.form.timer            = response.data.title
           this.form.ishihara         = response.data.ishihara
+          this.form.artifact_marking = response.data.artifact_marking
           this.form.cvd              = response.data.allow_colour_blind
           this.form.bgColour         = response.data.background_colour || '808080'
           this.form.showOriginal     = (response.data.show_original === 1)
