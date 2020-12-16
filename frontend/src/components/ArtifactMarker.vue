@@ -29,7 +29,6 @@ export default {
     imageURL () {
       // if (newVal === oldVal) return
       this.setCanvasImage()
-      console.log('www')
       this.reset()
     },
     tool (value) {

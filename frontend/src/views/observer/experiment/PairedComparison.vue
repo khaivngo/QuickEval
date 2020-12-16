@@ -1,6 +1,6 @@
 <template>
   <div class="qe-wrapper" :style="'background-color: #' + experiment.background_colour" @keydown.esc="alert('esc')">
-    <v-toolbar flat height="30" color="#282828">
+    <v-toolbar ref="navMain" flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="howToDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -103,21 +103,23 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout mt-3 justify-center>
+    <v-layout ref="navMarker" pa-0 ma-0 justify-center>
       <ArtifactMarkerToolbar
         v-if="experiment.artifact_marking"
         @changed="changedDrawingTool"
+        class="pt-3 pb-3"
       />
     </v-layout>
-    <v-layout mt-3 justify-center>
-      <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
+
+    <v-layout ref="titles" pa-0 ma-0 justify-center>
+      <h4 class="subtitle-1 pt-3" v-if="experiment.show_original === 1" style="padding-bottom: 0px; margin-bottom: 0;">
         Original
       </h4>
     </v-layout>
 
-    <v-layout fill-height ml-3 mr-3 pa-0 justify-center ref="images" style="height: 741px;" class="images-container">
+    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
       <v-flex
-        mt-2 mb-2
+        mt-0 mb-0 pb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         :class="selectedRadio === 'left' ? 'selected' : ''"
@@ -142,7 +144,7 @@
       </v-flex>
 
       <v-flex
-        mt-2 mb-2
+        mt-0 mb-0 pb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         v-if="experiment.show_original === 1"
@@ -158,7 +160,7 @@
 
       <v-flex
         class="picture-container"
-        mt-2 mb-2
+        mt-0 mb-0 pb-2
         :class="selectedRadio === 'right' ? 'selected' : ''"
         @click="selectedRadio = 'right'"
       >
@@ -181,43 +183,41 @@
       </v-flex>
     </v-layout>
 
-    <v-layout>
-      <v-radio-group v-model="selectedRadio">
-        <v-row class="pa-0 ma-0 align-center">
-          <v-col class="pa-0 mt-0 pt-1">
-            <div class="d-flex justify-center pa-0 mt-0">
-              <!-- <v-icon class="mr-2">mdi-arrow-left-box</v-icon> -->
-              <!-- left -->
-              <v-radio color="default" value="left" class="scaled"></v-radio>
-            </div>
-          </v-col>
-          <v-col cols="auto" class="pa-0 mt-0">
-            <div class="d-flex justify-center">
-              <div class="d-flex justify-center pt-4">
-                <v-btn
-                  @click="next"
-                  :disabled="selectedRadio === null"
-                  :loading="disableNextBtn"
-                  color="#D9D9D9"
-                >
-                  <!-- :disabled="noneSelected" -->
-                  <!-- <span class="ml-1">next</span> -->
-                  next
-                  <!-- <v-icon>mdi-chevron-right</v-icon> -->
-                </v-btn>
-              </div>
-            </div>
-          </v-col>
-          <v-col class="pa-0 mt-0 pt-1">
-            <div class="d-flex justify-center pa-0 mt-0">
-              <v-radio color="default" value="right" class="scaled"></v-radio>
-              <!-- right
-              <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
-            </div>
-          </v-col>
-        </v-row>
-      </v-radio-group>
-    </v-layout>
+    <!-- <v-layout ref="navAction"> -->
+    <v-radio-group ref="navAction" v-model="selectedRadio">
+      <v-row class="pt-0 pl-0 pr-0 pb-4 ma-0 align-center">
+        <v-col class="pa-0 mt-0 pt-1">
+          <div class="d-flex justify-center pa-0 mt-0">
+            <!-- <v-icon class="mr-2">mdi-arrow-left-box</v-icon> -->
+            <!-- left -->
+            <v-radio color="default" value="left" class="scaled"></v-radio>
+          </div>
+        </v-col>
+        <v-col cols="auto" class="pa-0 mt-0">
+          <div class="d-flex justify-center">
+            <v-btn
+              @click="next"
+              :disabled="selectedRadio === null"
+              :loading="disableNextBtn"
+              color="#D9D9D9"
+            >
+              <!-- :disabled="noneSelected" -->
+              <!-- <span class="ml-1">next</span> -->
+              next
+              <!-- <v-icon>mdi-chevron-right</v-icon> -->
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col class="pa-0 mt-0 pt-1">
+          <div class="d-flex justify-center pa-0 mt-0">
+            <v-radio color="default" value="right" class="scaled"></v-radio>
+            <!-- right
+            <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
+          </div>
+        </v-col>
+      </v-row>
+    </v-radio-group>
+    <!-- </v-layout> -->
 
     <!-- <div class="d-flex justify-center pt-4">
       <v-btn
@@ -311,16 +311,17 @@ export default {
   // },
 
   mounted () {
-    // // let x = 0
-    // var checkHeight = window.setTimeout(() => {
-    //   let height = this.$refs.images.offsetHeight
-    //   console.log(height)
-    //   this.$refs.images.style.height = height + 'px'
-    //   this.heightChecked = true
-    //   // if (++x === 10) {
-    //   //   window.clearInterval(checkHeight)
-    //   // }
-    // }, 5000)
+    // // let navMain =  this.$refs.navMain.height ? parseInt(this.$refs.navMain.height) : 0
+    // let navMain = 30
+    // let navMarker = this.$refs.navMarker.offsetHeight ? this.$refs.navMarker : 'ww'
+    // let titles = this.$refs.titles.offsetHeight ? this.$refs.titles.offsetHeight : 'dd'
+    // let navAction = this.$refs.navAction.offsetHeight ? this.$refs.navAction.offsetHeight : 'fd'
+    // let minus = navMain + titles + navMarker + navAction
+    // console.log(navMarker + ' marker')
+    // console.log(titles + ' titles')
+    // console.log(navAction + ' action')
+    // var height = document.body.scrollHeight - minus /* 155 = roughly padding + margin missed by offsetHeight */
+    // this.$refs.images.style.maxHeight = height + 'px'
   },
 
   created () {
@@ -381,6 +382,19 @@ export default {
           this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
 
           this.next()
+
+          this.$nextTick(() => {
+            let navMain = 30
+            let navMarker = this.$refs.navMarker.offsetHeight
+            let titles = this.$refs.titles.offsetHeight
+            let navAction = this.$refs.navAction.$el.offsetHeight
+            let minus = navMain + titles + navMarker + navAction
+            console.log(navMarker)
+            console.log(titles)
+            console.log(navAction)
+            var height = document.body.scrollHeight - minus - 20
+            this.$refs.images.style.maxHeight = height + 'px'
+          })
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
