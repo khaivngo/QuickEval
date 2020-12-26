@@ -19,6 +19,21 @@ class ExperimentResult extends Model
     }
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'experiment_id' => 'integer',
+        'user_id' => 'integer',
+        'start_time' => 'integer',
+        'end_time' => 'integer',
+        'completed' => 'integer',
+        // 'x' => 'integer',
+        // 'y' => 'integer',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
-    <v-toolbar flat height="30" color="#282828">
+    <v-toolbar ref="navMain" flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -37,11 +37,13 @@
 
       <v-spacer></v-spacer>
 
-      <v-toolbar-items v-if="experiment.show_progress === 1">
-        <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index }}/{{ stimuli.length }}
+      <!-- <v-toolbar-items v-if="experiment.show_progress === 1">
+        <h4 class="pt-1 mr-4" style="color: #BDBDBD; padding-right: 240px;">
+          {{ index }}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
+
+      <v-spacer></v-spacer> -->
 
       <v-toolbar-items>
         <v-dialog v-model="abortDialog" max-width="500">
@@ -63,56 +65,101 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout mt-4 mb-1 ml-3 mr-3 pa-0 justify-center align-center>
+    <v-layout ref="navMarker" pa-0 ma-0 justify-center>
+      <v-flex ml-2 mr-2 xs6 justify-center align-center>
+        <div class="d-flex justify-center">
+          <ArtifactMarkerToolbar
+            v-if="experiment.artifact_marking"
+            @changed="changedDrawingTool"
+            class="pt-3 pb-3"
+          />
+        </div>
+      </v-flex>
+      <v-flex ml-2 mr-2 xs6 v-if="experiment.show_original === 1" justify-center align-center>
+      </v-flex>
+    </v-layout>
+
+    <v-layout ref="titles" pa-0 pt-4 ma-0 justify-center align-center>
       <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center>
-          <div class="pl-2 pr-2 category-select">
-            <v-select
-              v-model="selectedCategory"
-              :items="categories"
-              :disabled="disableNextBtn"
-              menu-props="auto"
-              label="Select category"
-              item-text="title"
-              item-value="id"
-              hide-details
-              single-line
-              class="ma-0 pt-0"
-            ></v-select>
-          </div>
-        </v-layout>
       </v-flex>
 
       <v-flex ml-2 mr-2 xs6 class="text-center">
-        <h4 class="subheading font-weight-regular" v-if="experiment.show_original === 1 && originalImage">
+        <h4 class="subtitle-1 pb-0 mb-0" v-if="experiment.show_original === 1 && originalImage">
           Original
         </h4>
       </v-flex>
     </v-layout>
 
-    <v-layout ml-3 mr-3 pa-0 style="height: 85vh;" justify-center>
-      <v-flex ma-2 class="picture-container">
-        <div class="panzoom">
-          <img id="picture-left" class="picture" :class="isLoadLeft === false ? 'hide' : ''" :src="leftImage"/>
+    <v-layout ref="images" fill-height justify-center ml-3 mr-3 pa-0 pt-2>
+      <v-flex :style="(experiment.show_original) ? `margin-right: ${experiment.stimuli_spacing}px` : ''" mt-0 mr-2 mb-0 pb-2 class="picture-container">
+        <div class="panzoom d-flex justify-center align-center">
+          <img
+            v-if="!experiment.artifact_marking"
+            id="picture-left"
+            class="picture"
+            :class="isLoadLeft === false ? 'hide' : ''"
+            :src="leftImage"
+          />
+          <ArtifactMarker
+            v-if="experiment.artifact_marking"
+            @updated="drawn"
+            :imageURL="leftCanvas"
+            :tool="drawingTool"
+          />
         </div>
       </v-flex>
 
-      <v-flex ma-2 class="picture-container" v-if="experiment.show_original === 1">
-        <div class="panzoom">
+      <v-flex mt-0 ml-2 mb-0 pb-2 class="picture-container" v-if="experiment.show_original === 1">
+        <div class="panzoom d-flex justify-center align-center stretch">
           <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
       </v-flex>
+    </v-layout>
 
-      <!-- <v-flex
-        class="picture-container"
-        :class="rightReproductionActive ? 'selected' : ''"
-        @click="toggleSelected('right')"
-        xs4 ma-2
-      >
-        <div class="panzoom">
-          <img id="picture-right" class="picture" :src="rightImage"/>
-        </div>
-      </v-flex> -->
+    <v-layout ref="navAction" pt-4 pl-0 pr-0 pb-4 ma-0 justify-center align-center>
+      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
+        <v-layout pa-0 ma-0 justify-center align-center>
+          <div class="pl-2 pr-2 category-select">
+            <v-select
+              ref="select"
+              v-model="selectedCategory"
+              :items="categories"
+              :disabled="disableNextBtn"
+              label="Select category"
+              item-text="title"
+              item-value="id"
+              :menu-props="{ maxHeight: 400, overflowY: true }"
+              hide-details
+              single-line
+              class="ma-0 pt-0"
+            ></v-select>
+          </div>
+
+          <v-btn
+            color="#D9D9D9"
+            @click="next()"
+            :disabled="disableNextBtn || (selectedCategory === null)"
+            :loading="disableNextBtn"
+            class="ml-2"
+          >
+            <span class="ml-1">next</span>
+            <!-- <h4 class="ml-1 mr-1">
+              ({{ index }}/{{ totalComparisons }})
+            </h4> -->
+
+            <!-- <h4 class="ml-4" style="color: #BDBDBD;">
+              {{ index }}/{{ totalComparisons }}
+            </h4> -->
+            <h4 class="ml-1">
+              ({{ index }}/{{ totalComparisons }})
+            </h4>
+            <v-icon>mdi-chevron-right</v-icon>
+          </v-btn>
+        </v-layout>
+      </v-flex>
+
+      <v-flex ml-2 mr-2 xs6 v-if="experiment.show_original === 1" class="justify-center" justify-center align-center>
+      </v-flex>
     </v-layout>
 
     <!-- <div style="position: fixed; bottom: 2%; left: 1.4%; right: 50.9%;">
@@ -131,14 +178,14 @@
       </v-tabs>
     </div> -->
 
-    <v-btn fixed bottom right color="#D9D9D9"
+    <!-- <v-btn fixed bottom right color="#D9D9D9"
       @click="next()"
       :disabled="disableNextBtn || (selectedCategory === null)"
       :loading="disableNextBtn"
     >
       <span class="ml-1">next</span>
       <v-icon>mdi-chevron-right</v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <FinishedDialog :show="finished"/>
   </v-container>
@@ -146,13 +193,17 @@
 
 <script>
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
+import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
+import ArtifactMarker from '@/components/ArtifactMarker'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 
 export default {
   name: 'category-experiment-view',
 
   components: {
-    FinishedDialog
+    FinishedDialog,
+    ArtifactMarkerToolbar,
+    ArtifactMarker
   },
 
   data () {
@@ -169,6 +220,8 @@ export default {
 
       index: 0,
       experimentResult: null,
+
+      totalComparisons: 0,
 
       categories: [],
       selectedCategory: null,
@@ -188,7 +241,12 @@ export default {
 
       startTime: null,
 
-      firstImages: 1
+      firstImages: 1,
+
+      // artifact marking
+      leftCanvas: '',
+      shapes: {},
+      drawingTool: ''
     }
   },
 
@@ -221,6 +279,17 @@ export default {
         if (payload) {
           this.stimuli = payload.data
 
+          var total2 = 0
+          this.experiment.sequences.forEach((sequence) => {
+            if (sequence.hasOwnProperty('picture_queue')) {
+              total2 += Number(sequence.picture_queue.picture_sequence_count)
+            }
+          })
+          // console.log(total2)
+          this.totalComparisons = total2
+
+          // this.totalComparisons = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+
           if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
             localStorage.setItem(`${this.experiment.id}-index`, 0)
           }
@@ -229,6 +298,17 @@ export default {
           this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
 
           this.next()
+
+          this.$nextTick(() => {
+            let navMain = 30
+            let navMarker = this.$refs.navMarker.offsetHeight
+            let titles = this.$refs.titles.offsetHeight
+            let navAction = this.$refs.navAction.offsetHeight
+            let minus = navMain + titles + navAction + navMarker
+
+            var height = document.body.scrollHeight - minus - 20
+            this.$refs.images.style.maxHeight = height + 'px'
+          })
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -253,10 +333,23 @@ export default {
   methods: {
     datetimeToSeconds: datetimeToSeconds,
 
+    drawn (shapes) {
+      // shapes.uuid let's us distinguish between left and right image canvas
+      this.shapes[shapes.uuid] = shapes.shapes
+    },
+
+    changedDrawingTool (string) {
+      this.drawingTool = string
+    },
+
     /**
      * Load the next image stimuli queue, or instructions.
      */
     next () {
+      // window.setTimeout(() => {
+      //   this.$refs.select.$el.childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].focus()
+      // }, 200)
+
       // Have we reached the end?
       if (this.stimuli[this.index] === undefined) {
         this.onFinish()
@@ -323,15 +416,16 @@ export default {
     },
 
     loadStimuli () {
-      const imgLeft = new Image()
+      var imgLeft = new Image()
       imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
       imgLeft.onload = () => {
         this.isLoadLeft = false
         this.leftImage = imgLeft.src
+        this.leftCanvas =  { path: imgLeft.src, image: this.stimuli[this.index] }
         window.setTimeout(() => {
           this.isLoadLeft = true
           this.startTime = new Date()
-          console.log(this.leftImage)
+          // console.log(this.leftImage)
           this.disableNextBtn = false
         }, this.experiment.delay)
       }
@@ -357,6 +451,7 @@ export default {
       this.originalImage = ''
       this.leftImage = ''
       this.rightImage = ''
+      this.disableNextBtn = false
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -394,6 +489,7 @@ export default {
 
   .category-select {
     max-width: 250px;
+    min-width: 250px;
     background-color: #bbb;
   }
 
@@ -409,6 +505,13 @@ export default {
   .theme--light.v-list.v-list-item__content.v-list-item__title {
     color: #fff;
   }
+  // .v-menu__content.theme--light {
+  //   max-height: 800px;
+  // }
+  // div.v-list.v-select-list {
+  //   display: flex;
+  // }
+  // v-sheet theme--light theme--light
   // .theme--light.v-list-item:hover:before {
   //   opacity: 0.4;
   // }

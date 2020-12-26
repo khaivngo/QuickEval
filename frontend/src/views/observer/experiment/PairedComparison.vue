@@ -125,7 +125,7 @@
         :class="selectedRadio === 'left' ? 'selected' : ''"
         @click="selectedRadio = 'left'"
       >
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
             id="picture-left"
@@ -149,7 +149,7 @@
         class="picture-container"
         v-if="experiment.show_original === 1"
       >
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-original"
             class="picture"
@@ -164,7 +164,7 @@
         :class="selectedRadio === 'right' ? 'selected' : ''"
         @click="selectedRadio = 'right'"
       >
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
             id="picture-right"
@@ -254,8 +254,6 @@ export default {
 
   data () {
     return {
-      heightChecked: false,
-
       experiment: {
         id: null,
         show_original: null,
@@ -310,20 +308,6 @@ export default {
   //   }
   // },
 
-  mounted () {
-    // // let navMain =  this.$refs.navMain.height ? parseInt(this.$refs.navMain.height) : 0
-    // let navMain = 30
-    // let navMarker = this.$refs.navMarker.offsetHeight ? this.$refs.navMarker : 'ww'
-    // let titles = this.$refs.titles.offsetHeight ? this.$refs.titles.offsetHeight : 'dd'
-    // let navAction = this.$refs.navAction.offsetHeight ? this.$refs.navAction.offsetHeight : 'fd'
-    // let minus = navMain + titles + navMarker + navAction
-    // console.log(navMarker + ' marker')
-    // console.log(titles + ' titles')
-    // console.log(navAction + ' action')
-    // var height = document.body.scrollHeight - minus /* 155 = roughly padding + margin missed by offsetHeight */
-    // this.$refs.images.style.maxHeight = height + 'px'
-  },
-
   created () {
     this.getExperiment(this.$route.params.id).then(response => {
       this.experiment = response.data
@@ -371,8 +355,16 @@ export default {
         if (payload) {
           this.stimuli = payload.data
 
-          const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
-          this.totalComparisons = total / 2
+          var total2 = 0
+          this.experiment.sequences.forEach((sequence) => {
+            if (sequence.hasOwnProperty('picture_queue')) {
+              total2 += Number(sequence.picture_queue.picture_sequence_count)
+            }
+          })
+          this.totalComparisons = total2 / 2
+          // const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+          // this.totalComparisons = total / 2
+          // console.log(total)
 
           if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
             localStorage.setItem(`${this.experiment.id}-index`, 0)
@@ -389,9 +381,7 @@ export default {
             let titles = this.$refs.titles.offsetHeight
             let navAction = this.$refs.navAction.$el.offsetHeight
             let minus = navMain + titles + navMarker + navAction
-            console.log(navMarker)
-            console.log(titles)
-            console.log(navAction)
+
             var height = document.body.scrollHeight - minus - 20
             this.$refs.images.style.maxHeight = height + 'px'
           })
@@ -583,8 +573,8 @@ export default {
 
             // we use a object because sometimes the image is the same image but we still want
             // to trigger watch in child components
-            this.leftCanvas = { path: images[1].img.src }
-            this.rightCanvas = { path: images[0].img.src }
+            this.leftCanvas =  { path: images[1].img.src, image: this.stimuli[this.index] }
+            this.rightCanvas = { path: images[0].img.src, image: this.stimuli[this.index + 1] }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
@@ -676,6 +666,10 @@ export default {
 .scaled {
   transform: scale(1.6);
   transform-origin: left;
+}
+
+.picture {
+  user-select: none;
 }
 
 // .parent {

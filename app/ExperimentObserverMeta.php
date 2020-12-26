@@ -13,6 +13,16 @@ class ExperimentObserverMeta extends Model
    */
   protected $guarded = [];
 
+  /**
+   * The attributes that should be cast.
+   *
+   * @var array
+   */
+  protected $casts = [
+      'experiment_id' => 'integer',
+      'observer_meta_id' => 'integer',
+  ];
+
   public function experiment () {
     return $this->belongsTo(Experiment::class);
   }

@@ -259,7 +259,7 @@ export default {
       handler (values) {
         values.forEach((item) => {
           let type  = (item.picture_queue_id != null) ? 'imageSet' : 'instruction'
-          let value = (item.picture_queue_id != null) ? item.picture_set_id : item.description
+          let value = (item.picture_queue_id != null) ? Number(item.picture_set_id) : item.description
 
           this.events.push({
             id: this.nonce++,

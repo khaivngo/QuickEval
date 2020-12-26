@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
-    <v-toolbar flat height="30" color="#282828">
+    <v-toolbar ref="navMain" flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -39,7 +39,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index }}/{{ stimuli.length }}
+          {{ index }}/{{ totalComparison }}
         </h4>
       </v-toolbar-items>
 
@@ -63,9 +63,9 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout ml-3 mr-3 mt-3 pa-0 style="height: 72vh;" justify-center>
+    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
       <v-flex class="picture-container" mt-2 mb-1 ml-2 :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-left"
             class="picture"
@@ -82,7 +82,7 @@
         v-if="experiment.show_original === 1"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
       >
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-original"
             class="picture"
@@ -92,7 +92,7 @@
       </v-flex>
 
       <v-flex class="picture-container" mt-2 mb-1 mr-2>
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-right"
             class="picture"
@@ -104,7 +104,7 @@
       </v-flex>
     </v-layout>
 
-    <v-layout mb-2>
+    <v-layout ref="titles" pb-2>
       <v-layout justify-center class="ml-2 mr-2">
         <div
           v-for="(label, i) in labels"
@@ -119,8 +119,8 @@
         </div>
       </v-layout>
 
-      <v-layout justify-center align-center class="text-center ml-2 mr-2" v-if="experiment.show_original === 1">
-        <h4 class="body-1 font-weight-regular">
+      <v-layout pa-0 ma-0 justify-center align-center class="text-center ml-2 mr-2">
+        <h4 class="subtitle-1 pt-3" v-if="experiment.show_original === 1">
           Original
         </h4>
       </v-layout>
@@ -140,8 +140,8 @@
       </v-layout>
     </v-layout>
 
-    <div class="rating mt-3">
-      <v-layout justify-center align-center class="mt-2 pa-0">
+    <div ref="navAction" class="rating pt-3">
+      <v-layout justify-center align-center class="pt-2 pa-0">
         <template v-if="rankings">
           <div class="text-center subheading" v-for="(num, i) in rankings.length" :key="i"
             style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
@@ -165,6 +165,7 @@
               <div class="draggable-title headline">
                 {{ element.letter }}
               </div>
+              <!-- <div style="width: 100px; height: 100px; display: block; background: rgba(0,0,0,0.4);"></div> -->
               <img style="width: 100px; display: block;" :src="`${$UPLOADS_FOLDER}${element.path}`"/>
             </div>
           </transition-group>
@@ -238,9 +239,11 @@ export default {
       leftImage: '',
       rightImage: '',
 
-      timeElapsed: null
+      timeElapsed: null,
 
       // firstRound: 1
+
+      totalComparison: 0
     }
   },
 
@@ -286,7 +289,25 @@ export default {
         this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
         this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
 
+        const amount = this.stimuli.filter(item => item.hasOwnProperty('picture_queue'))
+        this.totalComparison = amount.length
+
         this.next()
+
+        this.$nextTick(() => {
+          let navMain = 30
+          // let navMarker = this.$refs.navMarker.offsetHeight
+          let titles = this.$refs.titles.offsetHeight
+          // let navAction = this.$refs.navAction.offsetHeight
+          let navAction = 159
+          let minus = navMain + titles + navAction // + navMarker
+          // console.log(titles)
+          // console.log(navAction)
+          // console.log(minus)
+          console.log(document.body.scrollHeight)
+          var height = document.body.scrollHeight - minus - 20
+          this.$refs.images.style.maxHeight = height + 'px'
+        })
       }).catch((err) => {
         window.alert(err)
       })

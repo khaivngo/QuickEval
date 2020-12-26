@@ -106,19 +106,16 @@
                   ]"
                   item-text="text"
                   item-value="id"
-                  :menu-props="{maxHeight:'auto'}"
+                  :menu-props="{ maxHeight: 'auto', maxWidth: 900 }"
                   label="Randomization Algorithm"
                   outlined
                   dense
                 >
                   <template v-slot:item="data">
-                    {{ data.item.text }} {{ data.item.caption }}
-                    <!-- <v-list-item two-line>
-                      <v-list-item-content>
-                        <v-list-item-title>{{ data.item.text }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ data.item.caption }}</v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item> -->
+                    <div style="display: block;">
+                      <div>{{ data.item.text }}</div>
+                      <div class="caption">{{ data.item.caption }}</div>
+                    </div>
                   </template>
                 </v-select>
               </v-col>
@@ -220,7 +217,7 @@
                 <v-checkbox
                   v-model="form.artifact_marking"
                   color="success"
-                  :label="`Enable artifact marking pen`"
+                  :label="`(Beta!) Enable artifact marking pen`"
                 ></v-checkbox>
               </v-col>
               <v-col cols="auto" class="pa-0 mb-1">

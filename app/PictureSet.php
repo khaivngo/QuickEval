@@ -13,6 +13,15 @@ class PictureSet extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'user_id' => 'integer'
+    ];
+
     public function pictures () {
         return $this->hasMany(Picture::class);
     }

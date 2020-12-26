@@ -260,7 +260,7 @@ class ResultPairsController extends Controller
           // array_push($shapes, $fill);
           \App\ResultImageArtifact::create([
             'experiment_result_id'  => $request->experiment_result_id,
-            'picture_id'            => 23,
+            'picture_id'            => $mark['picture_id'],
             'selected_area'         => $fill,
             'comment'               => null,
             'client_side_timer'     => 0, // $request->client_side_timer

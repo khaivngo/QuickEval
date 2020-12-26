@@ -13,6 +13,18 @@ class ExperimentSequence extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'picture_set_id' => 'integer',
+        'experiment_queue_id' => 'integer',
+        'picture_queue_id' => 'integer',
+        'instruction_id' => 'integer',
+    ];
+
     public function picture_set () {
         // return $this->hasOne(PictureSet::class, 'id', 'picture_set_id');
         return $this->belongsTo(PictureSet::class);

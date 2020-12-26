@@ -12,4 +12,15 @@ class ResultImageArtifact extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'experiment_result_id' => 'integer',
+        'picture_id' => 'integer',
+        'client_side_timer' => 'integer',
+    ];
 }

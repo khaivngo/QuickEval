@@ -13,6 +13,15 @@ class ExperimentQueue extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'experiment_id' => 'integer',
+    ];
+
     public function experiment_sequences () {
         return $this->hasMany(ExperimentSequence::class);
     }
