@@ -20,7 +20,7 @@
               <v-btn
                 color="primary darken-1"
                 text
-                @click="instructionDialog = false"
+                @click="closeInstructions"
               >
                 Close
               </v-btn>
@@ -326,12 +326,27 @@ export default {
         if (e.keyCode === 27) { // esc
           this.abort()
         }
+
+        // if (e.keyCode === 40) { // down arrow
+        //   this.$refs.select.activateMenu()
+        // }
       })
     })
   },
 
   methods: {
     datetimeToSeconds: datetimeToSeconds,
+
+    closeInstructions () {
+      this.instructionDialog = false
+      this.focusSelect()
+    },
+
+    focusSelect () {
+      window.setTimeout(() => {
+        this.$refs.select.$el.childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].focus()
+      }, 400)
+    },
 
     drawn (shapes) {
       // shapes.uuid let's us distinguish between left and right image canvas
@@ -346,15 +361,13 @@ export default {
      * Load the next image stimuli queue, or instructions.
      */
     next () {
-      // window.setTimeout(() => {
-      //   this.$refs.select.$el.childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].focus()
-      // }, 200)
-
       // Have we reached the end?
       if (this.stimuli[this.index] === undefined) {
         this.onFinish()
         return
       }
+
+      this.focusSelect()
 
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
         // set original
@@ -394,6 +407,8 @@ export default {
             }
 
             this.loadStimuli()
+
+            this.focusSelect()
           }).catch(() => {
             this.disableNextBtn = false
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
