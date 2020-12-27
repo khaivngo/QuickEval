@@ -515,14 +515,19 @@ class ExperimentsController extends Controller
             ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
             ->where('experiment_sequences.id', $sequence->id)
             ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
+          // return count($result);
 
           // future: if $experiment->experiment_algorithm = 1 or 2
 
           # shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different picture queue.
           if ($experiment->experiment_type_id == 1) {
-            $Algorithms = new Algorithms;
-            $result = $Algorithms->shuffle_the_cards($result);
+            # only shuffle if we have more than one step of stimuli, it's not needed if so, the shuffle_the_cards algorithm cannot handle
+            # only one step of stimuli either way
+            if (count($result) > 2) {
+              $Algorithms = new Algorithms;
+              $result = $Algorithms->shuffle_the_cards($result);
+            }
           } else {
             $result = $result->shuffle();
           }
