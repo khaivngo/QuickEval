@@ -342,12 +342,6 @@ export default {
       this.focusSelect()
     },
 
-    focusSelect () {
-      window.setTimeout(() => {
-        this.$refs.select.$el.childNodes[0].childNodes[0].childNodes[0].childNodes[1].childNodes[0].focus()
-      }, 400)
-    },
-
     drawn (shapes) {
       // shapes.uuid let's us distinguish between left and right image canvas
       this.shapes[shapes.uuid] = shapes.shapes
@@ -460,6 +454,12 @@ export default {
       }
 
       return this.$axios.post('/category-result', data)
+    },
+
+    focusSelect () {
+      window.setTimeout(() => {
+        this.$refs.select.focus()
+      }, 400)
     },
 
     onFinish () {
