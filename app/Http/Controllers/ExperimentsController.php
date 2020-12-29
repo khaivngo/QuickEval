@@ -515,7 +515,6 @@ class ExperimentsController extends Controller
             ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
             ->where('experiment_sequences.id', $sequence->id)
             ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
-          // return count($result);
 
           // future: if $experiment->experiment_algorithm = 1 or 2
 

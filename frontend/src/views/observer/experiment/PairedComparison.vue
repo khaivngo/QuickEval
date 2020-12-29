@@ -117,7 +117,7 @@
       </h4>
     </v-layout>
 
-    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
+    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center align-center>
       <v-flex
         mt-0 mb-0 pb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"

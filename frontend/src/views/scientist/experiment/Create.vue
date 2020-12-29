@@ -121,7 +121,7 @@
               </v-col>
             </v-row>
 
-            <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
+            <!-- <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
               <v-col cols="auto" class="pb-0 pt-0 pr-0">
                 <v-checkbox
                   v-model="form.samePairTwice"
@@ -142,9 +142,9 @@
                   </div>
                 </v-tooltip>
               </v-col>
-            </v-row>
+            </v-row> -->
 
-            <v-row align="center" class="mt-4 pt-0">
+            <!-- <v-row align="center" class="mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.showOriginal"
@@ -165,9 +165,9 @@
                   </div>
                 </v-tooltip>
               </v-col>
-            </v-row>
+            </v-row> -->
 
-            <v-row align="center" class="mt-0 pt-0">
+            <v-row align="center" class="mt-0 mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.showProgress"
