@@ -91,7 +91,7 @@
               </v-col>
             </v-row>
 
-            <v-row align="center" class="pr-5">
+            <!-- <v-row align="center" class="pr-5">
               <v-col class="pb-0 pt-0 pr-0">
                 <v-select
                   class="mt-8"
@@ -121,7 +121,7 @@
               </v-col>
             </v-row>
 
-            <!-- <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
+            <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
               <v-col cols="auto" class="pb-0 pt-0 pr-0">
                 <v-checkbox
                   v-model="form.samePairTwice"
@@ -142,9 +142,9 @@
                   </div>
                 </v-tooltip>
               </v-col>
-            </v-row> -->
+            </v-row>
 
-            <!-- <v-row align="center" class="mt-4 pt-0">
+            <v-row align="center" class="mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.showOriginal"
@@ -173,9 +173,12 @@
                   v-model="form.showProgress"
                   color="success"
                   :label="`Display progress indicator`"
+                  class="pb-0 mb-0"
+                  hide-details
                 ></v-checkbox>
+                <p class="caption pl-8 pt-0 mt-0">Display a progress indicator in the top right corner. Example: 3/34</p>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -186,7 +189,7 @@
                     Display a progress indicator in the top right corner. Example: 3/34
                   </div>
                 </v-tooltip>
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <v-row align="center" class="mt-0 pt-0">
@@ -195,9 +198,13 @@
                   v-model="form.ishihara"
                   color="success"
                   :label="`(Beta!) Require Ishihara test`"
+                  hide-details
                 ></v-checkbox>
+                <p class="caption pl-8 pt-0 mt-0">
+                  Run a Ishihara test at the beginning of the experiment.
+                </p>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -209,7 +216,7 @@
                     Currently in beta.
                   </div>
                 </v-tooltip>
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <v-row align="center" class="mt-0 pt-0">
@@ -218,9 +225,14 @@
                   v-model="form.artifact_marking"
                   color="success"
                   :label="`(Beta!) Enable artifact marking pen`"
+                  hide-details
                 ></v-checkbox>
+                <p class="caption pl-8 pt-0 mt-0">
+                  Gives the observer access to a drawing pen, allowing them to mark artifacts or interesting objects
+                  in the images.
+                </p>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -232,7 +244,7 @@
                     in the images.
                   </div>
                 </v-tooltip>
-              </v-col>
+              </v-col> -->
             </v-row>
 
           </v-card>
@@ -525,6 +537,8 @@ import Categories from '@/components/scientist/Categories'
 import EventBus from '@/eventBus'
 import { removeArrayItem } from '@/helpers.js'
 
+import { storage, mutations } from '@/stores/store.js'
+
 export default {
   components: {
     Sequence,
@@ -535,6 +549,8 @@ export default {
   data () {
     return {
       currentLevel: 1,
+
+      storage: storage,
 
       experimentTypes: [],
       loadingExperimentTypes: false,
@@ -648,6 +664,8 @@ export default {
         ++this.steps[4].id
         this.steps.splice(3, 0, { id: 4, title: 'Categories' })
       }
+
+      mutations.setExperimentType(newVal)
     }
   },
 

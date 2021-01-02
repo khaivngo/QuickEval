@@ -193,7 +193,13 @@ export default {
     async startExperiment () {
       this.prefetch = true
 
-      const experimentResult = await this.$axios.post('/experiment-result/create', { experimentId: this.active.id })
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+      console.log(vw)
+      console.log(vh)
+      const experimentResult = await this.$axios.post('/experiment-result/create', {
+        experimentId: this.active.id
+      })
       localStorage.setItem(`${this.active.id}-experimentResult`, experimentResult.data.id)
 
       if (experimentResult.data) {
