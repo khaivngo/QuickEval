@@ -90,7 +90,7 @@
       </v-flex>
     </v-layout>
 
-    <v-layout ref="images" fill-height justify-center align-center ml-3 mr-3 pa-0 pt-2>
+    <v-layout ref="images" fill-height justify-center ml-3 mr-3 pa-0 pt-2>
       <v-flex :style="(experiment.show_original) ? `margin-right: ${experiment.stimuli_spacing}px` : ''" mt-0 mr-2 mb-0 pb-2 class="picture-container">
         <div class="panzoom d-flex justify-center align-center">
           <img

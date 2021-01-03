@@ -117,9 +117,9 @@
       </h4>
     </v-layout>
 
-    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center align-center>
+    <v-layout ref="images" fill-height ma-0 ml-3 mr-3 pa-0 justify-center style="background: red;">
       <v-flex
-        mt-0 mb-0 pb-2
+        mt-0 mb-0
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         :class="selectedRadio === 'left' ? 'selected' : ''"
@@ -144,7 +144,7 @@
       </v-flex>
 
       <v-flex
-        mt-0 mb-0 pb-2
+        mt-0 mb-0
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         v-if="experiment.show_original === 1"
@@ -160,7 +160,7 @@
 
       <v-flex
         class="picture-container"
-        mt-0 mb-0 pb-2
+        mt-0 mb-0
         :class="selectedRadio === 'right' ? 'selected' : ''"
         @click="selectedRadio = 'right'"
       >

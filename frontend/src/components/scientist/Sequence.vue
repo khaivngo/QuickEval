@@ -11,6 +11,12 @@
           <v-row class="pa-0 ma-0">
             <v-col class="pa-0 ma-0 pr-12">
               <v-row v-for="(event, k) in group" :key="k" align="center" class="ma-0 pa-0 mt-6">
+                <!-- <v-col cols="auto" class="pa-0 ma-0 pr-4">
+                  <div class="qe-step-circle d-flex justify-center align-center elevation-1">
+                    {{ event.id + 1 }}
+                  </div>
+                </v-col> -->
+
                 <v-col cols="auto" class="pa-0 ma-0">
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
@@ -130,6 +136,12 @@
 
         <template v-if="group[0].type === 'instruction'">
           <v-row v-for="(event, k) in group" :key="k" class="pa-0 ma-0 mt-8" align="center">
+            <!-- <v-col cols="auto" class="pa-0 ma-0 pr-4">
+              <div class="qe-step-circle d-flex justify-center align-center elevation-1">
+                {{ event.id + 1 }}
+              </div>
+            </v-col> -->
+
             <v-col cols="auto" class="pa-0 ma-0">
               <div>
                 <v-tooltip top>
@@ -523,5 +535,12 @@ export default {
   .not-interactable {
     pointer-events: none;
     opacity: 0.3;
+  }
+  .qe-step-circle {
+    background: #BDBDBD;
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
   }
 </style>
