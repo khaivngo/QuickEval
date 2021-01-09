@@ -144,8 +144,9 @@
       <v-layout justify-center align-center class="pt-2 pa-0">
         <template v-if="rankings">
           <div class="text-center subheading" v-for="(num, i) in rankings.length" :key="i"
-            style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
+            style="width: 50px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
           >
+            <!-- style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;" -->
             #{{ num }}
           </div>
         </template>
@@ -162,11 +163,12 @@
         >
           <transition-group type="transition" :name="!beingDragged ? 'flip-list' : null" style="display: flex;">
             <div v-for="element in rankings" :key="element.id" class="moveable-image">
-              <div class="draggable-title headline">
+              <!-- <div class="draggable-title headline"> -->
+              <div class="draggable-title headline" style="background: none;">
                 {{ element.letter }}
               </div>
-              <!-- <div style="width: 100px; height: 100px; display: block; background: rgba(0,0,0,0.4);"></div> -->
-              <img style="width: 100px; display: block;" :src="`${$UPLOADS_FOLDER}${element.path}`"/>
+              <div style="width: 50px; height: 50px; display: block; background: rgba(0,0,0,0.4);"></div>
+              <!-- <img style="width: 100px; display: block;" :src="`${$UPLOADS_FOLDER}${element.path}`"/> -->
             </div>
           </transition-group>
         </draggable>
@@ -523,8 +525,10 @@ export default {
 
 .draggable-title {
   position: absolute;
-  top: 32%;
-  left: 36%;
+  // top: 32%;
+  // left: 36%;
+  top: 13%;
+  left: 23%;
   z-index: 20;
   color: white;
   padding-top: 2px;
@@ -541,7 +545,8 @@ export default {
 }
 
 .moveable-image {
-  width: 100px;
+  // width: 100px;
+  width: 50px;
   position: relative;
   margin: 3px;
   cursor: move;

@@ -12,6 +12,8 @@
     <!-- Show a login modal if not logged in. Unless we're on the frontpage (already has login form). -->
     <LoginModal :open="showAuth" v-if="$route.path != '/'"/>
 
+    <CookiesConsent/>
+
     <v-snackbar
       v-model="snackbar"
       :bottom="y === 'bottom'"
@@ -37,6 +39,7 @@
 <script>
 import LoginModal from '@/components/LoginModal'
 import MainNavigation from '@/components/Navigation'
+import CookiesConsent from '@/components/CookiesConsent'
 import EventBus from '@/eventBus'
 
 export default {
@@ -44,7 +47,8 @@ export default {
 
   components: {
     MainNavigation,
-    LoginModal
+    LoginModal,
+    CookiesConsent
   },
 
   data () {

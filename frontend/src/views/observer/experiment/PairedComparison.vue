@@ -117,8 +117,9 @@
       </h4>
     </v-layout>
 
-    <v-layout ref="images" fill-height ma-0 ml-3 mr-3 pa-0 justify-center style="background: red;">
+    <v-layout ref="images" fill-height ma-0 ml-3 mr-3 pa-0 justify-center>
       <v-flex
+        ref="leftPanzoom"
         mt-0 mb-0
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
@@ -159,6 +160,7 @@
       </v-flex>
 
       <v-flex
+        ref="rightPanzoom"
         class="picture-container"
         mt-0 mb-0
         :class="selectedRadio === 'right' ? 'selected' : ''"
@@ -585,6 +587,22 @@ export default {
               // starts or overrides existing timer
               this.timeElapsed = new Date()
               this.disableNextBtn = false
+
+              console.log(this.$refs.rightPanzoom.offsetHeight)
+              console.log(this.$refs.rightPanzoom.offsetWidth)
+
+              console.log(this.$refs.leftPanzoom.offsetHeight)
+              console.log(this.$refs.leftPanzoom.offsetWidth)
+
+              // console.log(images[0].img.width)
+              // console.log(images[0].img.height)
+
+              // console.log(images[1].img.width)
+              // console.log(images[1].img.height)
+
+              // $pictureContainer.find('.panzoom').on('panzoompan', function (e, panzoom, matrix) {
+              //   console.log(matrix)
+              // })
             }, this.experiment.delay)
           }
         }

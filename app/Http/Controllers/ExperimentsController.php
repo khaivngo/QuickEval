@@ -80,6 +80,7 @@ class ExperimentsController extends Controller
         ['id', $request->id]
       ])
       ->withCount('results')
+      ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
       ->first();
 
       $sequences = DB::table('experiment_queues')

@@ -738,7 +738,8 @@ export default {
 
     update () {
       // has anyone taken the experiment?
-      if (this.experiment.results_count > 0) {
+      // if (this.experiment.results_count > 0) {
+      if (this.experiment.completed_results_count > 0) {
         this.disclaimerDialog = true
       } else {
         this.updateApproved()

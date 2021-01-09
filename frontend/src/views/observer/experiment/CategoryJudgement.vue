@@ -402,7 +402,7 @@ export default {
 
             this.loadStimuli()
 
-            this.focusSelect()
+            // this.focusSelect()
           }).catch(() => {
             this.disableNextBtn = false
             alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
@@ -435,6 +435,7 @@ export default {
           this.isLoadLeft = true
           this.startTime = new Date()
           // console.log(this.leftImage)
+          this.focusSelect()
           this.disableNextBtn = false
         }, this.experiment.delay)
       }
