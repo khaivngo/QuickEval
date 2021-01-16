@@ -59,4 +59,8 @@ class ExperimentResult extends Model
     public function category_results () {
         return $this->hasMany(ResultCategory::class);
     }
+
+    public function image_artifact_results () {
+        return $this->hasMany(ResultImageArtifact::class);
+    }
 }

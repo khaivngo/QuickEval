@@ -191,9 +191,11 @@ class ResultPairsController extends Controller
     }
 
     $paired_results = ExperimentResult
-      ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+      ::with('image_artifact_results', 'paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
       ->where($matchThese)
       ->get();
+
+    $results['artifact'] = $paired_results;
 
     $data = [];
     foreach ($paired_results as $result)

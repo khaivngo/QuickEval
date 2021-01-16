@@ -23,4 +23,8 @@ class ResultImageArtifact extends Model
         'picture_id' => 'integer',
         'client_side_timer' => 'integer',
     ];
+
+    public function experiment_result () {
+        return $this->belongsTo(ExperimentResult::class);
+    }
 }

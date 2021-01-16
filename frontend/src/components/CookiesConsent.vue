@@ -1,6 +1,7 @@
 <template>
-  <div v-if="show" class="bottom-dialog d-flex justify-center align-center flex-wrap" style="background: transparent; ">
-    <div style="background: #fff; border: 1px solid #ddd;" class="pt-8 pb-8 pl-8 pr-10 mb-8">
+  <div v-if="show" class="bottom-dialog d-flex justify-end flex-wrap">
+    <div style="background: #1BA1E2;" class="pt-8 pb-8 pl-8 pr-8 mb-8 elevation-3">
+      <!-- #1BA1E2 -->
       <!-- <p class="mr-6 pb-3 pt-6 mb-0">
         We use cookies for necessary site features only. These features are:
       </p> -->
@@ -13,6 +14,7 @@
       <div class="d-flex mt-6">
         <div style="padding-top: 2px;">
           <v-checkbox
+            dark
             v-model="necessary"
             class="ma-0 pa-0 pl-1"
             color="success"
@@ -39,9 +41,10 @@
       <div class="d-flex mt-1">
         <div style="padding-top: 2px;">
           <v-checkbox
+            dark
             v-model="preferences"
             class="ma-0 pa-0 pl-1"
-            color="success"
+            color="default"
             hide-details
           ></v-checkbox>
         </div>
@@ -114,10 +117,21 @@ export default {
 
 <style scoped lang="css">
   .bottom-dialog {
+    /*position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 0;
+    background: transparent;*/
+    z-index: 1;
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1;
+    left: 50%;
+    width: auto;
+    color: #fff;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
   }
 </style>

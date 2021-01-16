@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="#1BA1E2" flat dark app clipped-left>
+  <v-app-bar color="#1BA1E2" flat dark app clipped-left style="z-index: 400;">
     <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
     <div class="mr-3" @click="$router.push('/')">
@@ -7,6 +7,12 @@
     </div>
 
     <v-toolbar-title class="pr-12">QuickEval</v-toolbar-title>
+
+    <v-btn v-if="!user.role" to="/" dark text class="mr-2 text-none">
+      <span class="mr-2 font-weight-regular">
+        Home
+      </span>
+    </v-btn>
 
     <v-btn to="/observer" dark text class="mr-2 text-none">
       <span v-if="user.role > 1" class="mr-2 font-weight-regular">
@@ -42,7 +48,7 @@
       <v-icon small>mdi-open-in-new</v-icon>
     </v-btn>
 
-    <v-menu bottom v-if="user.id !== 0">
+    <v-menu offset-y bottom v-if="user.id !== 0">
       <template v-slot:activator="{ on }">
         <v-btn
           class="mr-2"
@@ -80,6 +86,36 @@
             <v-list-item-content>
               <v-list-item-title>
                 Sign out
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+
+        <v-divider></v-divider>
+
+        <v-list-item-group color="primary">
+          <v-list-item
+            @click="$router.push('/privacy')"
+          >
+            <v-list-item-icon class="mr-4">
+              <!-- <v-icon>mdi-account-circle</v-icon> -->
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="pr-5">
+                Privacy Policy
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+            @click="$router.push('/cookies')"
+          >
+            <v-list-item-icon class="mr-4">
+              <!-- <v-icon>mdi-account-circle</v-icon> -->
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title class="pr-5">
+                Cookies Policy
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>

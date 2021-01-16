@@ -115,6 +115,7 @@
       </div>
     </div>
 
+    <Heatmap :artifacts="results.artifact"/>
   </div>
 </template>
 
@@ -132,16 +133,19 @@ import {
   arrayObjectIndexOf
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
+import Heatmap from '@/components/scientist/Heatmap'
 import { isNumber } from '@/helpers.js'
 
 export default {
   components: {
-    ScatterPlot
+    ScatterPlot,
+    Heatmap
   },
 
   data () {
     return {
       results: {
+        artifact: [],
         resultsForEachImageSet: []
       },
       resultsArray: null,

@@ -27,6 +27,18 @@ export default new VueRouter({
       component: loadView('Index')
     },
 
+    {
+      path: '/privacy',
+      name: 'privacy',
+      component: loadView('PrivacyPolicy')
+    },
+
+    {
+      path: '/cookies',
+      name: 'cookies',
+      component: loadView('CookiesPolicy')
+    },
+
     /* observer */
     { path: '/observer',     component: loadView('observer/Index') },
     { path: '/observer/:id', component: loadView('observer/Index'), name: 'referral' },
