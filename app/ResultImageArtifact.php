@@ -27,4 +27,8 @@ class ResultImageArtifact extends Model
     public function experiment_result () {
         return $this->belongsTo(ExperimentResult::class);
     }
+
+    public function picture () {
+        return $this->belongsTo(Picture::class, 'picture_id');
+    }
 }
