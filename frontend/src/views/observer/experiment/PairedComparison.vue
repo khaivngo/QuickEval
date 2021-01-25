@@ -117,10 +117,9 @@
       </h4>
     </v-layout>
 
-    <v-layout ref="images" fill-height ma-0 ml-3 mr-3 pa-0 justify-center>
+    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
       <v-flex
-        ref="leftPanzoom"
-        mt-0 mb-0
+        mt-0 mb-0 pb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         :class="selectedRadio === 'left' ? 'selected' : ''"
@@ -145,7 +144,7 @@
       </v-flex>
 
       <v-flex
-        mt-0 mb-0
+        mt-0 mb-0 pb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
         v-if="experiment.show_original === 1"
@@ -160,9 +159,8 @@
       </v-flex>
 
       <v-flex
-        ref="rightPanzoom"
         class="picture-container"
-        mt-0 mb-0
+        mt-0 mb-0 pb-2
         :class="selectedRadio === 'right' ? 'selected' : ''"
         @click="selectedRadio = 'right'"
       >
@@ -303,45 +301,22 @@ export default {
     }
   },
 
-  // computed: {
-  //   // returns true if no image has been selected, or if the "next" button is disabled.
-  //   noneSelected () {
-  //     return this.disableNextBtn || (this.rightReproductionActive === false && this.leftReproductionActive === false)
-  //   }
-  // },
-
+  /**
+   * Fetch experiment meta data. Then determine if this is the users first time for this
+   * experiment. If so, fetch new stimuli queue, if not use existing from localStorage.
+   * Initialize the panzoom plugin for image container, and set experiment keyboard shortcuts as well.
+   */
   created () {
     this.getExperiment(this.$route.params.id).then(response => {
       this.experiment = response.data
 
-      // checkIfExperimentTaken() -> look for completed key in experimentResults table load index from localstorage or find num rows in results table
-      // -> deleteoldresults()
+      // Should we:
+      // checkIfExperimentTaken() -> look for completed key in experimentResults table
+      // deleteoldresults()
 
       /* eslint-env jquery */
       $(document).ready(function () {
         (function () {
-          // const elem = document.querySelector('.panzoom')
-          // if (elem) {
-          //   const panzoom = Panzoom(elem, {
-          //     maxScale: 1,
-          //     minScale: 1
-          //   })
-          //   elem.addEventListener('panzoomchange', (event) => {
-          //     panzoom2.setStyle('transform', `translate(${event.detail.x}px, ${event.detail.y}px)`)
-          //   })
-          // }
-
-          // const elem2 = document.querySelector('.panzoom2')
-          // if (elem2) {
-          //   const panzoom2 = elem2(elem, {
-          //     maxScale: 1,
-          //     minScale: 1
-          //   })
-          //   elem2.addEventListener('panzoomchange', (event) => {
-          //     panzoom.setStyle('transform', `translate(${event.detail.x}px, ${event.detail.y}px)`)
-          //   })
-          // }
-
           var $pictureContainer = $('.picture-container')
 
           $pictureContainer.find('.panzoom').panzoom({
@@ -353,46 +328,14 @@ export default {
         })()
       })
 
-      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        if (payload) {
-          this.stimuli = payload.data
-
-          var total2 = 0
-          this.experiment.sequences.forEach((sequence) => {
-            if (sequence.hasOwnProperty('picture_queue')) {
-              total2 += Number(sequence.picture_queue.picture_sequence_count)
-            }
-          })
-          this.totalComparisons = total2 / 2
-          // const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
-          // this.totalComparisons = total / 2
-          // console.log(total)
-
-          if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
-            localStorage.setItem(`${this.experiment.id}-index`, 0)
-          }
-
-          this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
-          this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
-
-          this.next()
-
-          this.$nextTick(() => {
-            let navMain = 30
-            let navMarker = this.$refs.navMarker.offsetHeight
-            let titles = this.$refs.titles.offsetHeight
-            let navAction = this.$refs.navAction.$el.offsetHeight
-            let minus = navMain + titles + navMarker + navAction
-
-            var height = document.body.scrollHeight - minus - 20
-            this.$refs.images.style.maxHeight = height + 'px'
-          })
-        } else {
-          alert('Something went wrong. Could not start the experiment.')
-        }
-      }).catch(err => {
-        console.warn(err)
-      })
+      const exists = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      console.log(exists)
+      // if localStorage does not exists for this experiment
+      if (exists === null || exists === 0) {
+        this.startNewExperiment()
+      } else {
+        this.continueExistingExperiment()
+      }
     })
 
     window.addEventListener('keydown', (e) => {
@@ -408,7 +351,6 @@ export default {
         if (this.disableNextBtn === false) {
           this.selectedRadio = 'left'
           this.next()
-          console.log('left')
         }
       }
 
@@ -417,7 +359,6 @@ export default {
         if (this.disableNextBtn === false) {
           this.selectedRadio = 'right'
           this.next()
-          console.log('right')
         }
       }
 
@@ -447,6 +388,79 @@ export default {
       this.next()
     },
 
+    startNewExperiment () {
+      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        if (payload) {
+          this.stimuli = payload.data
+          const stimuliQueue = JSON.stringify(this.stimuli)
+          localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
+
+          var total2 = 0
+          this.experiment.sequences.forEach((sequence) => {
+            if (sequence.hasOwnProperty('picture_queue')) {
+              total2 += Number(sequence.picture_queue.picture_sequence_count)
+            }
+          })
+          this.totalComparisons = total2 / 2
+
+          // if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
+          localStorage.setItem(`${this.experiment.id}-index`, 0)
+          // }
+
+          this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+          this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+          this.next()
+
+          // figure out how much height room is left on the page for the image panners to fill
+          this.$nextTick(() => {
+            let navMain = 30
+            let navMarker = this.$refs.navMarker.offsetHeight
+            let titles = this.$refs.titles.offsetHeight
+            let navAction = this.$refs.navAction.$el.offsetHeight
+            let minus = navMain + titles + navMarker + navAction
+
+            var height = document.body.scrollHeight - minus - 20
+            this.$refs.images.style.maxHeight = height + 'px'
+          })
+        } else {
+          alert('Something went wrong. Could not start the experiment.')
+        }
+      }).catch(err => {
+        console.warn(err)
+      })
+    },
+
+    continueExistingExperiment () {
+      // fetch the existing progress from localStorage
+      this.stimuli = JSON.parse(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
+      this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      this.index2 = this.index
+      this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+      var total2 = 0
+      this.experiment.sequences.forEach((sequence) => {
+        if (sequence.hasOwnProperty('picture_queue')) {
+          total2 += Number(sequence.picture_queue.picture_sequence_count)
+        }
+      })
+      this.totalComparisons = total2 / 2
+
+      this.next()
+
+      // figure out how much height room is left on the page for the image panners to fill
+      this.$nextTick(() => {
+        let navMain = 30
+        let navMarker = this.$refs.navMarker.offsetHeight
+        let titles = this.$refs.titles.offsetHeight
+        let navAction = this.$refs.navAction.$el.offsetHeight
+        let minus = navMain + titles + navMarker + navAction
+
+        var height = document.body.scrollHeight - minus - 20
+        this.$refs.images.style.maxHeight = height + 'px'
+      })
+    },
+
     /**
      * Load the next image queue stimuli, or instructions.
      */
@@ -462,11 +476,6 @@ export default {
         let selectedStimuli = null
         if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.index]
         if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.index + 1]
-
-        // set original if exists
-        if (this.stimuli[this.index].hasOwnProperty('original') && this.stimuli[this.index].hasOwnProperty('original') !== null && this.stimuli[this.index].original && this.stimuli[this.index].original.path) {
-          this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
-        }
 
         // only do stuff if stimuli has been selected
         if (this.selectedRadio !== null) {
@@ -551,6 +560,16 @@ export default {
     },
 
     loadStimuli () {
+      // set original if exists
+      if (
+        this.stimuli[this.index].hasOwnProperty('original') &&
+        this.stimuli[this.index].hasOwnProperty('original') !== null &&
+        this.stimuli[this.index].original &&
+        this.stimuli[this.index].original.path
+      ) {
+        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
+      }
+
       // prepare to load reproduction images
       var images = [
         { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.index].path },
@@ -587,22 +606,6 @@ export default {
               // starts or overrides existing timer
               this.timeElapsed = new Date()
               this.disableNextBtn = false
-
-              console.log(this.$refs.rightPanzoom.offsetHeight)
-              console.log(this.$refs.rightPanzoom.offsetWidth)
-
-              console.log(this.$refs.leftPanzoom.offsetHeight)
-              console.log(this.$refs.leftPanzoom.offsetWidth)
-
-              // console.log(images[0].img.width)
-              // console.log(images[0].img.height)
-
-              // console.log(images[1].img.width)
-              // console.log(images[1].img.height)
-
-              // $pictureContainer.find('.panzoom').on('panzoompan', function (e, panzoom, matrix) {
-              //   console.log(matrix)
-              // })
             }, this.experiment.delay)
           }
         }
@@ -637,6 +640,7 @@ export default {
 
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.finished = true
     },
 
@@ -644,6 +648,7 @@ export default {
       this.abortDialog = true
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.$router.push('/observer')
     }
   }
