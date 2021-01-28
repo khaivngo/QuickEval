@@ -275,46 +275,13 @@ export default {
         this.categories = payload.data
       })
 
-      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        if (payload) {
-          this.stimuli = payload.data
-
-          var total2 = 0
-          this.experiment.sequences.forEach((sequence) => {
-            if (sequence.hasOwnProperty('picture_queue')) {
-              total2 += Number(sequence.picture_queue.picture_sequence_count)
-            }
-          })
-          // console.log(total2)
-          this.totalComparisons = total2
-
-          // this.totalComparisons = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
-
-          if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
-            localStorage.setItem(`${this.experiment.id}-index`, 0)
-          }
-
-          this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
-          this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
-
-          this.next()
-
-          this.$nextTick(() => {
-            let navMain = 30
-            let navMarker = this.$refs.navMarker.offsetHeight
-            let titles = this.$refs.titles.offsetHeight
-            let navAction = this.$refs.navAction.offsetHeight
-            let minus = navMain + titles + navAction + navMarker
-
-            var height = document.body.scrollHeight - minus - 20
-            this.$refs.images.style.maxHeight = height + 'px'
-          })
-        } else {
-          alert('Something went wrong. Could not start the experiment.')
-        }
-      }).catch(err => {
-        console.warn(err)
-      })
+      const exists = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      // if localStorage does not exists for this experiment
+      if (exists === null || exists === 0) {
+        this.startNewExperiment()
+      } else {
+        this.continueExistingExperiment()
+      }
 
       window.addEventListener('keydown', (e) => {
         if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
@@ -351,6 +318,78 @@ export default {
       this.drawingTool = string
     },
 
+    continueExistingExperiment () {
+      // fetch the existing progress from localStorage
+      this.stimuli = JSON.parse(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
+      this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+      var total2 = 0
+      this.experiment.sequences.forEach((sequence) => {
+        if (sequence.hasOwnProperty('picture_queue')) {
+          total2 += Number(sequence.picture_queue.picture_sequence_count)
+        }
+      })
+      this.totalComparisons = total2
+
+      this.next()
+
+      this.$nextTick(() => {
+        let navMain = 30
+        let navMarker = this.$refs.navMarker.offsetHeight
+        let titles = this.$refs.titles.offsetHeight
+        let navAction = this.$refs.navAction.offsetHeight
+        let minus = navMain + titles + navAction + navMarker
+
+        var height = document.body.scrollHeight - minus - 20
+        this.$refs.images.style.maxHeight = height + 'px'
+      })
+    },
+
+    startNewExperiment () {
+      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        if (payload) {
+          this.stimuli = payload.data
+          const stimuliQueue = JSON.stringify(this.stimuli)
+          localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
+
+          var total2 = 0
+          this.experiment.sequences.forEach((sequence) => {
+            if (sequence.hasOwnProperty('picture_queue')) {
+              total2 += Number(sequence.picture_queue.picture_sequence_count)
+            }
+          })
+          this.totalComparisons = total2
+
+          // this.totalComparisons = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+
+          if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
+            localStorage.setItem(`${this.experiment.id}-index`, 0)
+          }
+
+          this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+          this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+          this.next()
+
+          this.$nextTick(() => {
+            let navMain = 30
+            let navMarker = this.$refs.navMarker.offsetHeight
+            let titles = this.$refs.titles.offsetHeight
+            let navAction = this.$refs.navAction.offsetHeight
+            let minus = navMain + titles + navAction + navMarker
+
+            var height = document.body.scrollHeight - minus - 20
+            this.$refs.images.style.maxHeight = height + 'px'
+          })
+        } else {
+          alert('Something went wrong. Could not start the experiment.')
+        }
+      }).catch(err => {
+        console.warn(err)
+      })
+    },
+
     /**
      * Load the next image stimuli queue, or instructions.
      */
@@ -361,20 +400,8 @@ export default {
         return
       }
 
-      this.focusSelect()
-
       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
-        // set original
-        if (
-          this.stimuli[this.index].hasOwnProperty('original') &&
-          this.stimuli[this.index].hasOwnProperty('original') !== null &&
-          this.stimuli[this.index].original &&
-          this.stimuli[this.index].original.path
-        ) {
-          this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
-        }
-
-        // this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
+        this.focusSelect()
 
         // don't do anything unless category has been selected
         if (this.selectedCategory !== null) {
@@ -425,6 +452,16 @@ export default {
     },
 
     loadStimuli () {
+      // set original
+      if (
+        this.stimuli[this.index].hasOwnProperty('original') &&
+        this.stimuli[this.index].hasOwnProperty('original') !== null &&
+        this.stimuli[this.index].original &&
+        this.stimuli[this.index].original.path
+      ) {
+        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
+      }
+
       var imgLeft = new Image()
       imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.index].path
       imgLeft.onload = () => {
@@ -473,12 +510,14 @@ export default {
 
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.finished = true
     },
 
     abort () {
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.abortDialog = true
       this.$router.push('/observer')
     }
