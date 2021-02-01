@@ -20,6 +20,30 @@ class Experiment extends Model
      */
     protected $with = ['type'];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'version' => 'integer',
+        'user_id' => 'integer',
+        'experiment_type_id' => 'integer',
+        'picture_sequence_algorithm' => 'integer',
+        'is_public' => 'integer',
+        'ishihara' => 'integer',
+        'artifact_marking' => 'integer',
+        'delay' => 'integer',
+        'allow_colour_blind' => 'integer',
+        'timer' => 'integer',
+        'allow_ties' => 'integer',
+        'show_original' => 'integer',
+        'show_progress' => 'integer',
+        // 'same_pair' => 'integer',
+        // 'horizontal_flip' => 'integer',
+        // 'natural_lighting' => 'integer',
+    ];
+
 
     public function results () {
         return $this->hasMany(ExperimentResult::class);

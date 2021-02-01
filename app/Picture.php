@@ -13,6 +13,16 @@ class Picture extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_original' => 'integer',
+        'picture_set_id' => 'integer',
+    ];
+
     public function picture_set () {
       return $this->belongsTo(PictureSet::class);
     }

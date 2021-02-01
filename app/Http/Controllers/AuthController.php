@@ -44,25 +44,43 @@ class AuthController extends Controller
       $anonymous = \App\User::create([
         'name'     => 'anonymous',
         'email'    => $auth_id . '@anonymous.com',
-        'password' => '',
+        'password' => Hash::make($auth_id),
         'auth_id'  => $auth_id,
         'role'     => 1
       ]);
 
-      $http = new \GuzzleHttp\Client;
-      $response = $http->post(config('services.passport.login_endpoint'), [
-        'form_params' => [
-          'grant_type'    => 'anonymous',
-          'client_id'     => config('services.passport.client_id'),
-          'client_secret' => config('services.passport.client_secret'),
-          // 'auth_id'    => 'some-unique-identifier',
-          'auth_id'       => $anonymous->auth_id,
-          // 'scope'      => '',
-        ]
-      ]);
+      return response($anonymous);
 
-      // return json_decode((string) $response->getBody(), true);
-      return $response->getBody();
+      // try {
+      //   $http = new \GuzzleHttp\Client;
+
+      //   $response = $http->post(config('services.passport.login_endpoint'), [
+      //     'form_params' => [
+      //       'grant_type'    => 'password',
+      //       'client_id'     => config('services.passport.client_id'),
+      //       'client_secret' => config('services.passport.client_secret'),
+      //       // 'auth_id'    => 'some-unique-identifier',
+      //       'username'       => $auth_id . '@anonymous.com',
+      //       'password'       => $auth_id,
+      //       // 'scope'      => '',
+      //     ]
+      //   ]);
+
+      //   // return json_decode((string) $response->getBody(), true);
+      //   return $response->getBody();
+      // } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+      //   switch ($e->getCode()) {
+      //     case 400:
+      //       return response()->json('Invalid Request. Please enter a username or a password.', $e->getCode());
+      //       break;
+
+      //     case 401:
+      //       return response()->json('Your credentials are incorrect. Please try again', $e->getCode());
+      //       break;
+      //   }
+
+      //   return response()->json('Something went wrong on the server.', $e->getCode());
+      // }
     }
 
     /**

@@ -218,32 +218,40 @@ export default {
         this.chartOptions.title.text = this.label
         this.chartLabels.title = this.label
 
-        let json = JSON.stringify(this.chartLabels)
-        localStorage.setItem(experiment + '-labels', json)
+        if (localStorage.getItem('cookies-preferences') === 'true') {
+          let json = JSON.stringify(this.chartLabels)
+          localStorage.setItem(experiment + '-labels', json)
+        }
       }
 
       if (this.type === 'subtitle') {
         this.chartOptions.subtitle.text = this.label
         this.chartLabels.subtitle = this.label
 
-        let json = JSON.stringify(this.chartLabels)
-        localStorage.setItem(experiment + '-labels', json)
+        if (localStorage.getItem('cookies-preferences') === 'true') {
+          let json = JSON.stringify(this.chartLabels)
+          localStorage.setItem(experiment + '-labels', json)
+        }
       }
 
       if (this.type === 'yAxisTitle') {
         this.chartOptions.yAxis.title.text = this.label
         this.chartLabels.yTitle = this.label
 
-        let json = JSON.stringify(this.chartLabels)
-        localStorage.setItem(experiment + '-labels', json)
+        if (localStorage.getItem('cookies-preferences') === 'true') {
+          let json = JSON.stringify(this.chartLabels)
+          localStorage.setItem(experiment + '-labels', json)
+        }
       }
 
       if (this.type === 'xAxisCategories') {
         this.chartOptions.xAxis[this.currentSet].categories[this.currentPos] = this.label
         this.chartLabels.labels[this.currentSet][this.currentPos] = this.label
 
-        let json = JSON.stringify(this.chartLabels)
-        localStorage.setItem(experiment + '-labels', json)
+        if (localStorage.getItem('cookies-preferences') === 'true') {
+          let json = JSON.stringify(this.chartLabels)
+          localStorage.setItem(experiment + '-labels', json)
+        }
 
         // hide then show in order to update the chart
         this.chartOptions.xAxis[this.currentSet].visible = false

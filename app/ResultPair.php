@@ -13,6 +13,20 @@ class ResultPair extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'experiment_result_id' => 'integer',
+        'picture_id_selected' => 'integer',
+        'picture_id_left' => 'integer',
+        'picture_id_right' => 'integer',
+        'chose_none' => 'integer',
+        'client_side_timer' => 'integer',
+    ];
+
     // protected $table = 'my_flights';
 
     public function experiment_result () {

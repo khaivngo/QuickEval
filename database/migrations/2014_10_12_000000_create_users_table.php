@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('institution')->nullable()->default(NULL);
             $table->string('nationality')->nullable()->default(NULL);
             $table->tinyInteger('role')->default(1);
+            // $table->tinyInteger('cookies_preferences')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

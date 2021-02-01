@@ -120,8 +120,8 @@ class ResultPairsController extends Controller
       $data = [];
       $data['title']            = ['title', $expMeta->title];
       $data['experiment_type']  = ['experiment type', $expMeta->type->name];
-      $data['delay']            = ['delay between stimuli switching', $expMeta->delay];
-      $data['background_colour']= ['Background colour', $expMeta->background_colour];
+      $data['delay']            = ['delay between stimuli switching', $expMeta->delay . 'ms'];
+      $data['background_colour']= ['Background colour', '#' . $expMeta->background_colour];
       $data['stimuli_spacing']  = ['Stimuli spacing', $expMeta->stimuli_spacing . 'px'];
       $data['same_pair']        = ['Same pair twice (flipped)', ($expMeta->same_pair == 1) ? 'yes' : 'no'];
       $data['show_original']    = ['Show original', ($expMeta->show_original == 1) ? 'yes' : 'no'];
@@ -195,6 +195,20 @@ class ResultPairsController extends Controller
       ->where($matchThese)
       ->get();
 
+    
+    $artifacts = ExperimentResult
+      ::with('image_artifact_results.picture')
+      ->where($matchThese)
+      ->get();
+    // $results['artifactss'] = $artifacts;
+    $merged_artifacts = [];
+    foreach ($artifacts as $hmm) {
+      array_push($merged_artifacts, $hmm->image_artifact_results);
+    }
+    $collected = collect($merged_artifacts)->flatten();
+    // $results['artifactssss'] = $collected;
+    $results['artifact'] = $collected->groupBy('picture_id');
+
     $data = [];
     foreach ($paired_results as $result)
     {
@@ -251,6 +265,23 @@ class ResultPairsController extends Controller
       'client_side_timer'     => $request->client_side_timer,
       'chose_none'            => $request->chose_none
     ]);
+
+    if ($request->artifact_marks) {
+      // $shapes = [];
+      foreach ($request->artifact_marks as $image) {
+        foreach ($image as $mark) {
+          $fill = json_encode($mark['fill']);
+          // array_push($shapes, $fill);
+          \App\ResultImageArtifact::create([
+            'experiment_result_id'  => $request->experiment_result_id,
+            'picture_id'            => $mark['picture_id'],
+            'selected_area'         => $fill,
+            'comment'               => null,
+            'client_side_timer'     => 0, // $request->client_side_timer
+          ]);
+        }
+      }
+    }
 
     if ($result) {
       return response('result_stored', 201);

@@ -9,8 +9,13 @@
       <router-view class="pa-0 ma-0"/>
     </v-main>
 
-    <!-- Show a login modal if not logged in. Unless we're on the frontpage (already has login form). -->
-    <LoginModal :open="showAuth" v-if="$route.path != '/'"/>
+    <!--
+      Show a login modal if not logged in. Unless we're on the frontpage (already has login form)
+      or reading the privacy policy.
+    -->
+    <LoginModal :open="showAuth" v-if="$route.path != '/' && $route.path != '/privacy' && $route.path != '/cookies'"/>
+
+    <CookiesConsent/>
 
     <v-snackbar
       v-model="snackbar"
@@ -37,6 +42,7 @@
 <script>
 import LoginModal from '@/components/LoginModal'
 import MainNavigation from '@/components/Navigation'
+import CookiesConsent from '@/components/CookiesConsent'
 import EventBus from '@/eventBus'
 
 export default {
@@ -44,7 +50,8 @@ export default {
 
   components: {
     MainNavigation,
-    LoginModal
+    LoginModal,
+    CookiesConsent
   },
 
   data () {
@@ -71,6 +78,7 @@ export default {
     }).catch(() => {
       this.showAuth = true
     })
+    // console.log()
   },
 
   mounted () {

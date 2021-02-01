@@ -1,80 +1,171 @@
 <template>
   <v-container fluid class="pa-0">
-    <v-timeline dense clipped v-if="events.length > 0">
-      <!-- <v-timeline-item fill-dot class="white--text mb-5" color="grey" large>
-        <template v-slot:icon>
-          <span>Step</span>
-        </template>
-      </v-timeline-item> -->
+    <v-slide-x-transition group>
+      <div
+        v-for="(group, i) in eventsGrouped"
+        :key="i"
+        class="mb-3"
+        color="grey lighten-1"
+      >
+        <template v-if="group[0].type === 'imageSet'">
+          <v-row class="pa-0 ma-0">
+            <v-col class="pa-0 ma-0 pr-12">
+              <v-row v-for="(event, k) in group" :key="k" align="center" class="ma-0 pa-0 mt-6">
+                <!-- <v-col cols="auto" class="pa-0 ma-0 pr-4">
+                  <div class="qe-step-circle d-flex justify-center align-center elevation-1">
+                    {{ event.id + 1 }}
+                  </div>
+                </v-col> -->
 
-      <v-slide-x-transition group>
-        <v-timeline-item
-          v-for="(event, i) in events"
-          :key="event.id"
-          class="mb-3"
-          color="grey lighten-1"
-          medium
-          fill-dot
-        >
-          <template v-slot:icon>
-            <span class="white--text">{{ i + 1 }}</span>
-          </template>
-          <v-layout justify-space-between>
-            <v-flex xs12>
-              <v-select
-                v-if="event.type === 'imageSet'"
-                :items="imageSets"
-                v-model="event.value"
-                item-text="title"
-                item-value="id"
-                label="Select image set"
-                outlined
-                dense
-              >
-                <template v-slot:append-outer>
-                  <div>
+                <v-col cols="auto" class="pa-0 ma-0">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon v-on="on" class="mr-2">
+                        <v-icon @click="remove(event.id)">
+                          mdi-delete
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <div class="pl-0 pr-0 pt-1 pb-1 body-1">
+                      Remove
+                    </div>
+                  </v-tooltip>
+                </v-col>
+
+                <v-col class="pa-0 ma-0">
+                  <v-select
+                    :items="imageSets"
+                    v-model="event.value"
+                    item-text="title"
+                    item-value="id"
+                    label="Select image set"
+                    outlined
+                    dense
+                    hide-details
+                    class="ma-0"
+                  ></v-select>
+                </v-col>
+
+                <v-col cols="auto" class="pa-0 ma-0 pl-4 pr-6">
+                  <div class="d-flex flex-column align-center">
+                    <h6 class="caption">Randomize</h6>
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on" class="mr-2">
-                          <v-icon @click="remove(i)">
-                            mdi-delete
-                          </v-icon>
-                        </v-btn>
+                        <v-checkbox
+                          v-on="on"
+                          v-model="event.randomize"
+                          class="ma-0 pa-0 pb-1 pl-1"
+                          color="success"
+                          hide-details
+                        ></v-checkbox>
                       </template>
-                      <div class="pl-1 pr-1 pt-2 pb-2 body-1">
-                        Remove
+                      <div class="pl-0 pr-0 pt-1 pb-1 body-1">
+                        Randomize order of stimuli.
                       </div>
                     </v-tooltip>
                   </div>
-                </template>
-              </v-select>
-
-              <v-row v-if="event.type === 'instruction'" align="center">
-                <v-col class="pr-0">
-                  <Tiptap v-model="event.value"/>
                 </v-col>
-                <v-col cols="auto">
-                  <div>
+
+                <v-col v-if="storage.experimentType === 1" cols="auto" class="pa-0 pr-6 ma-0">
+                  <div class="d-flex flex-column align-center">
+                    <h6 class="caption">Flipped</h6>
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on" class="mr-2">
-                          <v-icon @click="remove(i)">
-                            mdi-delete
-                          </v-icon>
-                        </v-btn>
+                        <v-checkbox
+                          v-on="on"
+                          v-model="event.flipped"
+                          class="ma-0 pa-0 pb-1 pl-1"
+                          color="success"
+                          hide-details
+                        ></v-checkbox>
                       </template>
-                      <div class="pl-1 pr-1 pt-2 pb-2 body-1">
-                        Remove
+                      <div class="pl-0 pr-0 pt-1 pb-1 body-1">
+                        Each pair of images will have their position flipped in the queue.<br>
+                        Leading to double the comparisons for the observer.
+                      </div>
+                    </v-tooltip>
+                  </div>
+                </v-col>
+
+                <v-col cols="auto" class="pa-0 ma-0" justify="center">
+                  <div class="d-flex flex-column align-center">
+                    <h6 class="caption">Original</h6>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-checkbox
+                          v-on="on"
+                          v-model="event.original"
+                          class="ma-0 pa-0 pb-1 pl-1"
+                          color="success"
+                          hide-details
+                        ></v-checkbox>
+                      </template>
+                      <div class="pl-0 pr-0 pt-1 pb-1 body-1">
+                        Display the original image of the image set alongside the reproductions.<br>
+                        As a reference for the observer.
                       </div>
                     </v-tooltip>
                   </div>
                 </v-col>
               </v-row>
-            </v-flex>
-          </v-layout>
-        </v-timeline-item>
-      </v-slide-x-transition>
-    </v-timeline>
+            </v-col>
+            <v-col v-if="group.length > 1" cols="auto" class="pa-0 ma-0 mt-6 mb-0" style="border-left: 1px solid #999;">
+              <v-container fluid fill-height class="pa-0 ma-0 pl-6">
+                <v-col cols="auto">
+                  <div class="d-flex flex-column align-center">
+                    <h6 class="caption">Randomize</h6>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-checkbox
+                          v-on="on"
+                          class="ma-0 pa-0 pl-1"
+                          color="success"
+                          hide-details
+                        ></v-checkbox>
+                      </template>
+                      <div class="pl-0 pr-0 pt-1 pb-1 body-1">
+                        Randomize order of image sets.
+                      </div>
+                    </v-tooltip>
+                  </div>
+                </v-col>
+              </v-container>
+            </v-col>
+          </v-row>
+        </template>
+
+        <template v-if="group[0].type === 'instruction'">
+          <v-row v-for="(event, k) in group" :key="k" class="pa-0 ma-0 mt-8" align="center">
+            <!-- <v-col cols="auto" class="pa-0 ma-0 pr-4">
+              <div class="qe-step-circle d-flex justify-center align-center elevation-1">
+                {{ event.id + 1 }}
+              </div>
+            </v-col> -->
+
+            <v-col cols="auto" class="pa-0 ma-0">
+              <div>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on" class="mr-2">
+                      <v-icon @click="remove(event.id)">
+                        mdi-delete
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+                    Remove
+                  </div>
+                </v-tooltip>
+              </div>
+            </v-col>
+
+            <v-col class="pa-0 ma-0">
+              <Tiptap v-model="event.value"/>
+            </v-col>
+          </v-row>
+        </template>
+      </div>
+    </v-slide-x-transition>
 
     <v-row class="mb-5 pa-0 ma-0">
       <v-col cols="auto" class="pl-0">
@@ -116,7 +207,7 @@
               </v-icon>
             </v-btn>
           </template>
-          <div class="pl-1 pr-1 pt-2 pb-2 body-1">
+          <div class="pl-1 pr-1 pt-2 ml-2 pb-2 body-1">
             Create new set
           </div>
         </v-tooltip>
@@ -237,6 +328,8 @@ import UppyOriginal from '@/components/scientist/UppyOriginal'
 import Uppy from '@/components/scientist/Uppy'
 import Tiptap from '@/components/Tiptap'
 
+import { storage } from '@/stores/store.js'
+
 export default {
   components: {
     UppyOriginal,
@@ -259,11 +352,14 @@ export default {
       handler (values) {
         values.forEach((item) => {
           let type  = (item.picture_queue_id != null) ? 'imageSet' : 'instruction'
-          let value = (item.picture_queue_id != null) ? item.picture_set_id : item.description
+          let value = (item.picture_queue_id != null) ? Number(item.picture_set_id) : item.description
 
           this.events.push({
             id: this.nonce++,
             value: value,
+            randomize: true,
+            original: false,
+            flipped: false,
             type: type
           })
 
@@ -284,6 +380,8 @@ export default {
     input: null,
     nonce: 0,
 
+    storage: storage,
+
     openInstructionsHistory: false,
     openNewImageSet: false,
     newImageSet: {
@@ -296,6 +394,25 @@ export default {
     orginal: [],
     reproductions: []
   }),
+
+  computed: {
+    /**
+     * Group adjucent event types:
+     * [instruction, imageSet, imageSet] -> [[instruction], [imageSet, imageSet]]
+     * We can now display a "randomize" order option for a image set group
+     * inbetween instructions.
+     */
+    eventsGrouped () {
+      return this.events.reduce(function (prev, curr) {
+        if (prev.length && curr.type === prev[prev.length - 1][0].type) {
+          prev[prev.length - 1].push(curr)
+        } else {
+          prev.push([curr])
+        }
+        return prev
+      }, [])
+    }
+  },
 
   async created () {
     // populate the instructions and image sets dropdowns
@@ -330,6 +447,9 @@ export default {
       this.events.push({
         id: this.nonce++,
         value: this.input,
+        randomize: true,
+        original: false,
+        flipped: false,
         type: type
       })
 
@@ -351,7 +471,8 @@ export default {
     },
 
     remove (id) {
-      this.events.splice(id, 1)
+      const index = this.events.findIndex(obj => obj.id === id)
+      this.events.splice(index, 1)
     },
 
     closeNewImageSet () {
@@ -385,6 +506,9 @@ export default {
         this.events.push({
           id: this.nonce++,
           value: response.data.id,
+          randomize: true,
+          original: false,
+          flipped: false,
           type: 'imageSet'
         })
         this.$emit('added', this.events)
@@ -411,5 +535,12 @@ export default {
   .not-interactable {
     pointer-events: none;
     opacity: 0.3;
+  }
+  .qe-step-circle {
+    background: #BDBDBD;
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
   }
 </style>

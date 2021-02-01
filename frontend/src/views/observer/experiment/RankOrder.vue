@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
-    <v-toolbar flat height="30" color="#282828">
+    <v-toolbar ref="navMain" flat height="30" color="#282828">
       <v-toolbar-items>
         <v-dialog persistent v-model="instructionDialog" max-width="500">
           <template v-slot:activator="{ on }">
@@ -39,7 +39,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index }}/{{ stimuli.length }}
+          {{ index }}/{{ totalComparison }}
         </h4>
       </v-toolbar-items>
 
@@ -63,9 +63,9 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout ml-3 mr-3 mt-3 pa-0 style="height: 72vh;" justify-center>
+    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
       <v-flex class="picture-container" mt-2 mb-1 ml-2 :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-left"
             class="picture"
@@ -82,7 +82,7 @@
         v-if="experiment.show_original === 1"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
       >
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-original"
             class="picture"
@@ -92,7 +92,7 @@
       </v-flex>
 
       <v-flex class="picture-container" mt-2 mb-1 mr-2>
-        <div class="panzoom">
+        <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-right"
             class="picture"
@@ -104,7 +104,7 @@
       </v-flex>
     </v-layout>
 
-    <v-layout mb-2>
+    <v-layout ref="titles" pb-2>
       <v-layout justify-center class="ml-2 mr-2">
         <div
           v-for="(label, i) in labels"
@@ -119,8 +119,8 @@
         </div>
       </v-layout>
 
-      <v-layout justify-center align-center class="text-center ml-2 mr-2" v-if="experiment.show_original === 1">
-        <h4 class="body-1 font-weight-regular">
+      <v-layout pa-0 ma-0 justify-center align-center class="text-center ml-2 mr-2">
+        <h4 class="subtitle-1 pt-3" v-if="experiment.show_original === 1">
           Original
         </h4>
       </v-layout>
@@ -140,12 +140,13 @@
       </v-layout>
     </v-layout>
 
-    <div class="rating mt-3">
-      <v-layout justify-center align-center class="mt-2 pa-0">
+    <div ref="navAction" class="rating pt-3">
+      <v-layout justify-center align-center class="pt-2 pa-0">
         <template v-if="rankings">
           <div class="text-center subheading" v-for="(num, i) in rankings.length" :key="i"
-            style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
+            style="width: 50px; margin-left: 3px; margin-right: 3px; margin-top: 3px;"
           >
+            <!-- style="width: 100px; margin-left: 3px; margin-right: 3px; margin-top: 3px;" -->
             #{{ num }}
           </div>
         </template>
@@ -162,10 +163,12 @@
         >
           <transition-group type="transition" :name="!beingDragged ? 'flip-list' : null" style="display: flex;">
             <div v-for="element in rankings" :key="element.id" class="moveable-image">
-              <div class="draggable-title headline">
+              <!-- <div class="draggable-title headline"> -->
+              <div class="draggable-title headline" style="background: none;">
                 {{ element.letter }}
               </div>
-              <img style="width: 100px; display: block;" :src="`${$UPLOADS_FOLDER}${element.path}`"/>
+              <div style="width: 50px; height: 50px; display: block; background: rgba(0,0,0,0.4);"></div>
+              <!-- <img style="width: 100px; display: block;" :src="`${$UPLOADS_FOLDER}${element.path}`"/> -->
             </div>
           </transition-group>
         </draggable>
@@ -238,9 +241,11 @@ export default {
       leftImage: '',
       rightImage: '',
 
-      timeElapsed: null
+      timeElapsed: null,
 
       // firstRound: 1
+
+      totalComparison: 0
     }
   },
 
@@ -276,20 +281,13 @@ export default {
         })()
       })
 
-      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        this.stimuli = payload.data
-
-        if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
-          localStorage.setItem(`${this.experiment.id}-index`, 0)
-        }
-
-        this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
-        this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
-
-        this.next()
-      }).catch((err) => {
-        window.alert(err)
-      })
+      const exists = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      // if localStorage does not exists for this experiment
+      if (exists === null || exists === 0) {
+        this.startNewExperiment()
+      } else {
+        this.continueExistingExperiment()
+      }
     })
   },
 
@@ -343,6 +341,61 @@ export default {
         this.timeElapsed = new Date()
         this.disableNextBtn = false
       }, this.experiment.delay)
+    },
+
+    continueExistingExperiment () {
+      // fetch the existing progress from localStorage
+      this.stimuli = JSON.parse(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
+      this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+      const amount = this.stimuli.filter(item => item.hasOwnProperty('picture_queue'))
+      this.totalComparison = amount.length
+
+      this.next()
+
+      this.$nextTick(() => {
+        let navMain = 30
+        // let navMarker = this.$refs.navMarker.offsetHeight
+        let titles = this.$refs.titles.offsetHeight
+        // let navAction = this.$refs.navAction.offsetHeight
+        let navAction = 159
+        let minus = navMain + titles + navAction // + navMarker
+        console.log(document.body.scrollHeight)
+        var height = document.body.scrollHeight - minus - 20
+        this.$refs.images.style.maxHeight = height + 'px'
+      })
+    },
+
+    startNewExperiment () {
+      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        this.stimuli = payload.data
+
+        const stimuliQueue = JSON.stringify(this.stimuli)
+        localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
+        localStorage.setItem(`${this.experiment.id}-index`, 0)
+
+        this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+        this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+        const amount = this.stimuli.filter(item => item.hasOwnProperty('picture_queue'))
+        this.totalComparison = amount.length
+
+        this.next()
+
+        this.$nextTick(() => {
+          let navMain = 30
+          // let navMarker = this.$refs.navMarker.offsetHeight
+          let titles = this.$refs.titles.offsetHeight
+          // let navAction = this.$refs.navAction.offsetHeight
+          let navAction = 159
+          let minus = navMain + titles + navAction // + navMarker
+          var height = document.body.scrollHeight - minus - 20
+          this.$refs.images.style.maxHeight = height + 'px'
+        })
+      }).catch((err) => {
+        window.alert(err)
+      })
     },
 
     /**
@@ -454,7 +507,7 @@ export default {
         rankings: this.rankings,
         client_side_timer: clientSideTimer
       }
-      console.log(data)
+
       return this.$axios.post('/rank-order-result', data)
     },
 
@@ -468,12 +521,14 @@ export default {
 
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.finished = true
     },
 
     abort () {
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.abortDialog = true
       this.$router.push('/observer')
     }
@@ -502,8 +557,10 @@ export default {
 
 .draggable-title {
   position: absolute;
-  top: 32%;
-  left: 36%;
+  // top: 32%;
+  // left: 36%;
+  top: 13%;
+  left: 23%;
   z-index: 20;
   color: white;
   padding-top: 2px;
@@ -520,7 +577,8 @@ export default {
 }
 
 .moveable-image {
-  width: 100px;
+  // width: 100px;
+  width: 50px;
   position: relative;
   margin: 3px;
   cursor: move;

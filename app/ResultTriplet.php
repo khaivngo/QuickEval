@@ -13,6 +13,23 @@ class ResultTriplet extends Model
      */
     protected $guarded = [];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'experiment_result_id' => 'integer',
+        'category_id_left' => 'integer',
+        'category_id_middle' => 'integer',
+        'category_id_right' => 'integer',
+        'picture_id_left' => 'integer',
+        'picture_id_middle' => 'integer',
+        'picture_id_right' => 'integer',
+        'chose_none' => 'integer',
+        'client_side_timer' => 'integer',
+    ];
+
     public function experiment_result () {
         return $this->belongsTo(ExperimentResult::class);
     }

@@ -91,7 +91,7 @@
               </v-col>
             </v-row>
 
-            <v-row align="center" class="pr-5">
+            <!-- <v-row align="center" class="pr-5">
               <v-col class="pb-0 pt-0 pr-0">
                 <v-select
                   class="mt-8"
@@ -106,19 +106,16 @@
                   ]"
                   item-text="text"
                   item-value="id"
-                  :menu-props="{maxHeight:'auto'}"
+                  :menu-props="{ maxHeight: 'auto', maxWidth: 900 }"
                   label="Randomization Algorithm"
                   outlined
                   dense
                 >
                   <template v-slot:item="data">
-                    {{ data.item.text }} {{ data.item.caption }}
-                    <!-- <v-list-item two-line>
-                      <v-list-item-content>
-                        <v-list-item-title>{{ data.item.text }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ data.item.caption }}</v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item> -->
+                    <div style="display: block;">
+                      <div>{{ data.item.text }}</div>
+                      <div class="caption">{{ data.item.caption }}</div>
+                    </div>
                   </template>
                 </v-select>
               </v-col>
@@ -168,17 +165,20 @@
                   </div>
                 </v-tooltip>
               </v-col>
-            </v-row>
+            </v-row> -->
 
-            <v-row align="center" class="mt-0 pt-0">
+            <v-row align="center" class="mt-0 mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.showProgress"
                   color="success"
                   :label="`Display progress indicator`"
+                  class="pb-0 mb-0"
+                  hide-details
                 ></v-checkbox>
+                <p class="caption pl-8 pt-0 mt-0">Display a progress indicator in the top right corner. Example: 3/34</p>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -189,7 +189,7 @@
                     Display a progress indicator in the top right corner. Example: 3/34
                   </div>
                 </v-tooltip>
-              </v-col>
+              </v-col> -->
             </v-row>
 
             <v-row align="center" class="mt-0 pt-0">
@@ -198,9 +198,13 @@
                   v-model="form.ishihara"
                   color="success"
                   :label="`(Beta!) Require Ishihara test`"
+                  hide-details
                 ></v-checkbox>
+                <p class="caption pl-8 pt-0 mt-0">
+                  Run a Ishihara test at the beginning of the experiment.
+                </p>
               </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
+              <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -212,7 +216,35 @@
                     Currently in beta.
                   </div>
                 </v-tooltip>
+              </v-col> -->
+            </v-row>
+
+            <v-row align="center" class="mt-0 pt-0">
+              <v-col cols="auto" class="pt-0 pb-0 pr-0">
+                <v-checkbox
+                  v-model="form.artifact_marking"
+                  color="success"
+                  :label="`(Beta!) Enable artifact marking pen`"
+                  hide-details
+                ></v-checkbox>
+                <p class="caption pl-8 pt-0 mt-0">
+                  Gives the observer access to a drawing pen, allowing them to mark artifacts or interesting objects
+                  in the images.
+                </p>
               </v-col>
+              <!-- <v-col cols="auto" class="pa-0 mb-1">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                    Gives the observer access to a drawing pen, allowing them to<br>mark artifacts or interesting objects
+                    in the images.
+                  </div>
+                </v-tooltip>
+              </v-col> -->
             </v-row>
 
           </v-card>
@@ -505,6 +537,8 @@ import Categories from '@/components/scientist/Categories'
 import EventBus from '@/eventBus'
 import { removeArrayItem } from '@/helpers.js'
 
+import { storage, mutations } from '@/stores/store.js'
+
 export default {
   components: {
     Sequence,
@@ -515,6 +549,8 @@ export default {
   data () {
     return {
       currentLevel: 1,
+
+      storage: storage,
 
       experimentTypes: [],
       loadingExperimentTypes: false,
@@ -541,6 +577,7 @@ export default {
         algorithm: 1,
         timer: null,
         ishihara: 0,
+        artifact_marking: 0,
         cvd: null,
         forcedChoice: false,
         samePairTwice: false,
@@ -627,6 +664,8 @@ export default {
         ++this.steps[4].id
         this.steps.splice(3, 0, { id: 4, title: 'Categories' })
       }
+
+      mutations.setExperimentType(newVal)
     }
   },
 
@@ -699,7 +738,8 @@ export default {
 
     update () {
       // has anyone taken the experiment?
-      if (this.experiment.results_count > 0) {
+      // if (this.experiment.results_count > 0) {
+      if (this.experiment.completed_results_count > 0) {
         this.disclaimerDialog = true
       } else {
         this.updateApproved()
@@ -753,6 +793,7 @@ export default {
           this.form.experimentType   = response.data.experiment_type_id
           this.form.timer            = response.data.title
           this.form.ishihara         = response.data.ishihara
+          this.form.artifact_marking = response.data.artifact_marking
           this.form.cvd              = response.data.allow_colour_blind
           this.form.bgColour         = response.data.background_colour || '808080'
           this.form.showOriginal     = (response.data.show_original === 1)

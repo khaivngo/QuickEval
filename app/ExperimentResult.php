@@ -2,10 +2,37 @@
 
 namespace App;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class ExperimentResult extends Model
 {
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'experiment_id' => 'integer',
+        'user_id' => 'integer',
+        'start_time' => 'integer',
+        'end_time' => 'integer',
+        'completed' => 'integer',
+        // 'x' => 'integer',
+        // 'y' => 'integer',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -31,5 +58,9 @@ class ExperimentResult extends Model
 
     public function category_results () {
         return $this->hasMany(ResultCategory::class);
+    }
+
+    public function image_artifact_results () {
+        return $this->hasMany(ResultImageArtifact::class);
     }
 }

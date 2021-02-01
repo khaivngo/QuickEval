@@ -80,6 +80,7 @@ class ExperimentsController extends Controller
         ['id', $request->id]
       ])
       ->withCount('results')
+      ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
       ->first();
 
       $sequences = DB::table('experiment_queues')
@@ -223,6 +224,7 @@ class ExperimentsController extends Controller
         'picture_sequence_algorithm' => $request->algorithm,
         'delay'             => $request->delay,
         'ishihara'          => $request->ishihara,
+        'artifact_marking'  => $request->artifact_marking,
         'stimuli_spacing'   => $request->stimuliSpacing,
         'short_description' => $request->shortDescription,
         'long_description'  => $request->longDescription,
@@ -478,9 +480,9 @@ class ExperimentsController extends Controller
      */
     public function visibility (Request $request, Experiment $experiment)
     {
-      if ($experiment->user_id !== auth()->user()->id) {
-        return response()->json('Unauthorized', 401);
-      }
+      // if ($experiment->user_id !== auth()->user()->id) {
+      //   return response()->json('Unauthorized', 401);
+      // }
 
       $data = $request->validate([
         'is_public' => 'required'
@@ -496,16 +498,6 @@ class ExperimentsController extends Controller
      */
     public function start (Experiment $experiment)
     {
-      // $newOrExists = $this->start_results($id);
-
-      // Experiment::with([
-      //     'sequences' => function ($query) {
-      //       $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
-      //         $query->with('picture_sequence');
-      //       }]);
-      //     }
-      //   ])->find($experiment->id);
-
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
         ->where('experiment_queues.experiment_id', $experiment->id)
@@ -530,8 +522,12 @@ class ExperimentsController extends Controller
           # shuffle the picture queue every time we fetch it,
           # to make sure every observer gets a different picture queue.
           if ($experiment->experiment_type_id == 1) {
-            $Algorithms = new Algorithms;
-            $result = $Algorithms->shuffle_the_cards($result);
+            # only shuffle if we have more than one step of stimuli, it's not needed if so, the shuffle_the_cards algorithm cannot handle
+            # only one step of stimuli either way
+            if (count($result) > 2) {
+              $Algorithms = new Algorithms;
+              $result = $Algorithms->shuffle_the_cards($result);
+            }
           } else {
             $result = $result->shuffle();
           }
@@ -603,32 +599,6 @@ class ExperimentsController extends Controller
       return response($flattened->all());
     }
 
-
-    /**
-     *
-     */
-    public function start_results ($id)
-    {
-      // replace with?
-      // Retrieve flight by name, or create it if it doesn't exist...
-      // $flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
-
-      $experimentResult = ExperimentResult::where([
-        ['experiment_id', (int)$id],
-        ['user_id', auth()->user()->id]
-      ])->get();
-
-      if (count($experimentResult) > 0) {
-        return response('exists', 200);
-      } else {
-        ExperimentResult::create([
-          'experiment_id' => (int)$id,
-          'user_id' => auth()->user()->id
-        ]);
-        return response('new', 200);
-      }
-    }
-
     /**
      * Set the experiment status to completed.
      */
@@ -690,6 +660,7 @@ class ExperimentsController extends Controller
           'picture_sequence_algorithm' => $request->algorithm,
           'delay'             => $request->delay,
           'ishihara'          => $request->ishihara,
+          'artifact_marking'  => $request->artifact_marking,
           'stimuli_spacing'   => $request->stimuliSpacing,
           'short_description' => $request->shortDescription,
           'long_description'  => $request->longDescription,
@@ -709,6 +680,7 @@ class ExperimentsController extends Controller
           'picture_sequence_algorithm' => $request->algorithm,
           'delay'             => $request->delay,
           'ishihara'          => $request->ishihara,
+          'artifact_marking'  => $request->artifact_marking,
           'stimuli_spacing'   => $request->stimuliSpacing,
           'short_description' => $request->shortDescription,
           'long_description'  => $request->longDescription,

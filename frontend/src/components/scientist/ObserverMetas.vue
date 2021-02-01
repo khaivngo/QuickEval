@@ -100,11 +100,9 @@ export default {
   },
 
   created () {
-    if (this.$route.params.id) {
-      this.$axios.get('/observer-metas')
-        .then(json => { this.items = json.data })
-        .catch(err => console.warn(err))
-    }
+    this.$axios.get('/observer-metas')
+      .then(json => { this.items = json.data })
+      .catch(err => console.warn(err))
   },
 
   methods: {
