@@ -18,7 +18,7 @@
     "@uppy/tus": "^1.0.2",
     "@uppy/url": "^1.0.2",
     "@uppy/xhr-upload": "^1.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "es6-promise": "^4.2.6",
     "highcharts": "^8.0.0",
     "highcharts-custom-events": "^3.0.9",
