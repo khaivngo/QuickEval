@@ -2,31 +2,10 @@
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar ref="navMain" flat height="30" color="#282828">
       <v-toolbar-items>
-        <v-dialog persistent v-model="instructionDialog" max-width="500">
-          <template v-slot:activator="{ on }">
-            <v-btn text dark color="#D9D9D9" v-on="on">
-              Instructions
-            </v-btn>
-          </template>
-          <v-card style="background-color: grey; color: #fff;">
-            <v-card-title class="headline">
-              Instructions
-            </v-card-title>
-
-            <v-card-text v-html="instructionText" style="color: #fff;"></v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="primary darken-1"
-                text
-                @click="closeInstructions"
-              >
-                Close
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <InstructionsDialog
+          :show="instructionDialog"
+          :text="instructionText"
+        />
       </v-toolbar-items>
 
       <v-toolbar-items>
@@ -91,7 +70,11 @@
     </v-layout>
 
     <v-layout ref="images" fill-height justify-center ml-3 mr-3 pa-0 pt-2>
-      <v-flex :style="(experiment.show_original) ? `margin-right: ${experiment.stimuli_spacing}px` : ''" mt-0 mr-2 mb-0 pb-2 class="picture-container">
+      <v-flex
+        :style="(experiment.show_original) ? `margin-right: ${experiment.stimuli_spacing}px` : ''"
+        mt-0 mr-2 mb-0 pb-2
+        class="picture-container"
+      >
         <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
@@ -143,13 +126,6 @@
             class="ml-2"
           >
             <span class="ml-1">next</span>
-            <!-- <h4 class="ml-1 mr-1">
-              ({{ index }}/{{ totalComparisons }})
-            </h4> -->
-
-            <!-- <h4 class="ml-4" style="color: #BDBDBD;">
-              {{ index }}/{{ totalComparisons }}
-            </h4> -->
             <h4 class="ml-1">
               ({{ index }}/{{ totalComparisons }})
             </h4>
@@ -162,36 +138,12 @@
       </v-flex>
     </v-layout>
 
-    <!-- <div style="position: fixed; bottom: 2%; left: 1.4%; right: 50.9%;">
-      <v-pagination
-        :length="6"
-      ></v-pagination>
-      <v-tabs color="rgb(195, 195, 195)" show-arrows style="border-radius: 2px;">
-        <v-tabs-slider color="#000"></v-tabs-slider>
-        <v-tab
-          v-for="(item, i) in ['good', 'best', 'very long criteria', 'unsure', 'I\'ve seen better', 'another critera with long text', 'excellent', 'terrible', 'terrific', 'perfect']"
-          :key="i"
-          :href="'#tab-' + i"
-        >
-          <span style="color: #000;">{{ item }}</span>
-        </v-tab>
-      </v-tabs>
-    </div> -->
-
-    <!-- <v-btn fixed bottom right color="#D9D9D9"
-      @click="next()"
-      :disabled="disableNextBtn || (selectedCategory === null)"
-      :loading="disableNextBtn"
-    >
-      <span class="ml-1">next</span>
-      <v-icon>mdi-chevron-right</v-icon>
-    </v-btn> -->
-
     <FinishedDialog :show="finished"/>
   </v-container>
 </template>
 
 <script>
+import InstructionsDialog from '@/components/observer/InstructionsDialog'
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
@@ -201,6 +153,7 @@ export default {
   name: 'category-experiment-view',
 
   components: {
+    InstructionsDialog,
     FinishedDialog,
     ArtifactMarkerToolbar,
     ArtifactMarker

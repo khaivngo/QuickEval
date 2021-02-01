@@ -329,7 +329,6 @@ export default {
       })
 
       const exists = Number(localStorage.getItem(`${this.experiment.id}-index`))
-      console.log(exists)
       // if localStorage does not exists for this experiment
       if (exists === null || exists === 0) {
         this.startNewExperiment()

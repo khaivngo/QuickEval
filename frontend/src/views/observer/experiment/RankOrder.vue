@@ -281,38 +281,13 @@ export default {
         })()
       })
 
-      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        this.stimuli = payload.data
-
-        if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
-          localStorage.setItem(`${this.experiment.id}-index`, 0)
-        }
-
-        this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
-        this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
-
-        const amount = this.stimuli.filter(item => item.hasOwnProperty('picture_queue'))
-        this.totalComparison = amount.length
-
-        this.next()
-
-        this.$nextTick(() => {
-          let navMain = 30
-          // let navMarker = this.$refs.navMarker.offsetHeight
-          let titles = this.$refs.titles.offsetHeight
-          // let navAction = this.$refs.navAction.offsetHeight
-          let navAction = 159
-          let minus = navMain + titles + navAction // + navMarker
-          // console.log(titles)
-          // console.log(navAction)
-          // console.log(minus)
-          console.log(document.body.scrollHeight)
-          var height = document.body.scrollHeight - minus - 20
-          this.$refs.images.style.maxHeight = height + 'px'
-        })
-      }).catch((err) => {
-        window.alert(err)
-      })
+      const exists = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      // if localStorage does not exists for this experiment
+      if (exists === null || exists === 0) {
+        this.startNewExperiment()
+      } else {
+        this.continueExistingExperiment()
+      }
     })
   },
 
@@ -366,6 +341,61 @@ export default {
         this.timeElapsed = new Date()
         this.disableNextBtn = false
       }, this.experiment.delay)
+    },
+
+    continueExistingExperiment () {
+      // fetch the existing progress from localStorage
+      this.stimuli = JSON.parse(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
+      this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+      const amount = this.stimuli.filter(item => item.hasOwnProperty('picture_queue'))
+      this.totalComparison = amount.length
+
+      this.next()
+
+      this.$nextTick(() => {
+        let navMain = 30
+        // let navMarker = this.$refs.navMarker.offsetHeight
+        let titles = this.$refs.titles.offsetHeight
+        // let navAction = this.$refs.navAction.offsetHeight
+        let navAction = 159
+        let minus = navMain + titles + navAction // + navMarker
+        console.log(document.body.scrollHeight)
+        var height = document.body.scrollHeight - minus - 20
+        this.$refs.images.style.maxHeight = height + 'px'
+      })
+    },
+
+    startNewExperiment () {
+      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        this.stimuli = payload.data
+
+        const stimuliQueue = JSON.stringify(this.stimuli)
+        localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
+        localStorage.setItem(`${this.experiment.id}-index`, 0)
+
+        this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
+        this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+
+        const amount = this.stimuli.filter(item => item.hasOwnProperty('picture_queue'))
+        this.totalComparison = amount.length
+
+        this.next()
+
+        this.$nextTick(() => {
+          let navMain = 30
+          // let navMarker = this.$refs.navMarker.offsetHeight
+          let titles = this.$refs.titles.offsetHeight
+          // let navAction = this.$refs.navAction.offsetHeight
+          let navAction = 159
+          let minus = navMain + titles + navAction // + navMarker
+          var height = document.body.scrollHeight - minus - 20
+          this.$refs.images.style.maxHeight = height + 'px'
+        })
+      }).catch((err) => {
+        window.alert(err)
+      })
     },
 
     /**
@@ -477,7 +507,7 @@ export default {
         rankings: this.rankings,
         client_side_timer: clientSideTimer
       }
-      console.log(data)
+
       return this.$axios.post('/rank-order-result', data)
     },
 
@@ -491,12 +521,14 @@ export default {
 
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.finished = true
     },
 
     abort () {
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
+      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
       this.abortDialog = true
       this.$router.push('/observer')
     }
