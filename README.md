@@ -1,5 +1,4 @@
 ## Description
-Rewrite of project in Vuejs and Laravel.
 
 ## Requisites
 * Composer PHP package manager
