@@ -174,7 +174,7 @@ export default {
           this.loading = false
         })
       } else {
-        return this.$axios.get('/experiments/public').then((response) => {
+        return this.$axios.get('/experiment/public').then((response) => {
           this.experiments = response.data
           this.loading = false
         }).catch(() => {

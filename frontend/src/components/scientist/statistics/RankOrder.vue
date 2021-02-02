@@ -167,7 +167,7 @@ export default {
     init () {
       this.loading = true
 
-      this.$axios.post(`/rank-order-result/${this.$route.params.id}/statistics`, {
+      this.$axios.post(`/result-rank-orders/${this.$route.params.id}/statistics`, {
         includeIncomplete: this.includeIncomplete
       }).then(data => {
         this.results = data.data

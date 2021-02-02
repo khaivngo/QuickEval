@@ -340,7 +340,7 @@ export default {
       })
 
       this.$axios({
-        url: `/${this.experiment.type.slug}-result/export`,
+        url: `/result-${this.experiment.type.slug}/export`,
         method: 'POST',
         responseType: 'blob', // important
         data: {

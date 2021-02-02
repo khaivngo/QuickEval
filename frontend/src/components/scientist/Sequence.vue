@@ -436,7 +436,7 @@ export default {
 
     getImageSets () {
       try {
-        return this.$axios.get('/image-sets')
+        return this.$axios.get('/picture-set')
       } catch (error) {
         console.log(error)
         return null
@@ -499,7 +499,7 @@ export default {
         description: this.newImageSet.description
       }
 
-      this.$axios.post('/imageSet', data).then((response) => {
+      this.$axios.post('/picture-set', data).then((response) => {
         this.newImageSet.imageSetId = response.data.id
         this.imageSets.push(response.data)
 

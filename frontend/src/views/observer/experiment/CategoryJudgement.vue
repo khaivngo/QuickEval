@@ -444,7 +444,7 @@ export default {
         chose_none: 0
       }
 
-      return this.$axios.post('/category-result', data)
+      return this.$axios.post('/result-categories', data)
     },
 
     focusSelect () {

@@ -3,11 +3,28 @@
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\UserController;
-// Route::get('mailable', function () {
+use App\Http\Controllers\ExperimentsController;
+use App\Http\Controllers\PictureSetsController;
+use App\Http\Controllers\ExperimentResultsController;
+use App\Http\Controllers\ExperimentTypesController;
+use App\Http\Controllers\ObserverMetasController;
+use App\Http\Controllers\ExperimentSequencesController;
+use App\Http\Controllers\ExperimentCategoriesController;
+use App\Http\Controllers\ExperimentObserverMetasController;
+use App\Http\Controllers\PicturesController;
+use App\Http\Controllers\ResultPairsController;
+use App\Http\Controllers\ResultCategoriesController;
+use App\Http\Controllers\ResultRankOrdersController;
+use App\Http\Controllers\ResultTripletsController;
+use App\Http\Controllers\ResultObserverMetasController;
+use App\Http\Controllers\InstructionsController;
+use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ScientistRequestsController;
+use App\Http\Controllers\AuthController;
 
+// Route::get('mailable', function () {
 //     // $experiment_results = \App\ExperimentResult::find(8);
 //     $observer_metas = \App\ExperimentResult::find(8)->observer_metas;
-
 
 //     // $user = \App\User::find(1);
 
@@ -15,120 +32,115 @@ use App\Http\Controllers\UserController;
 //     // // return new \App\Mail\Receipt($user);
 // });
 
-Route::post('/register',    'AuthController@register' );
-Route::post('/anonymous',   'AuthController@anonymous');
-Route::post('/login',       'AuthController@login'    );
+Route::post('/register',    [AuthController::class, 'register']);
+Route::post('/anonymous',   [AuthController::class, 'anonymous']);
+Route::post('/login',       [AuthController::class, 'login']);
 
 
 // TODO: these should be possible to add inside auth:api middleware
-Route::post('/paired-result/export',     'ResultPairsController@export'     );
-Route::post('/triplet-result/export',    'ResultTripletsController@export'  );
-Route::post('/rank-order-result/export', 'ResultRankOrdersController@export');
-Route::post('/category-result/export',   'ResultCategoriesController@export');
+Route::post('/result-paired/export',     [ResultPairsController::class, 'export']);
+Route::post('/result-triplet/export',    [ResultTripletsController::class, 'export']);
+Route::post('/result-rank-order/export', [ResultRankOrdersController::class, 'export']);
+Route::post('/result-category/export',   [ResultCategoriesController::class, 'export']);
 
 
-# auth:api middleware gives access to user object
+# Note: auth:api middleware gives access to the user object
 Route::middleware('auth:api')->group(function () {
     # user
-    Route::get(  '/user', function (Request $request) { return $request->user(); });
-    Route::patch('/user',     'UserController@update'         );
-    Route::patch('/user/role','UserController@updateRole'     );
+    Route::get(  '/user',     function (Request $request) { return $request->user(); });
+    Route::patch('/user',     [UserController::class, 'update']);
+    Route::patch('/user/role',[UserController::class, 'updateRole']);
     Route::get(  '/user/all', [UserController::class, 'index']);
 
     # experiments
-    Route::get(     '/experiment/{id}/observer-metas',      'ExperimentsController@observer_metas'  );
-    Route::get(     '/experiments',                         'ExperimentsController@index'           );
-    Route::get(     '/experiments/all',                     'ExperimentsController@all'             );
-    Route::get(     '/experiments/public',                  'ExperimentsController@all_public'      );
-    Route::get(     '/experiment/{id}',                     'ExperimentsController@find'            );
-    Route::get(     '/experiment/{id}/owner',               'ExperimentsController@is_owner'        );
-
-    Route::get(     '/experiment/{experiment}/start',       'ExperimentsController@start'           );
-    // Route::group(['middlewareGroups' => ['web']], function () {
-    Route::get(     '/experiment/{id}/public',              'ExperimentsController@find_public'     );
-    // });
-
-    Route::post(    '/experiment/store',                    'ExperimentsController@store'           );
-    Route::patch(   '/experiment/{experiment}/visibility',  'ExperimentsController@visibility'      );
-
+    Route::get   ('/experiment/{id}/observer-metas',       [ExperimentsController::class, 'observer_metas']);
+    Route::get   ('/experiments',                          [ExperimentsController::class, 'index']);
+    Route::get   ('/experiment/public',                    [ExperimentsController::class, 'all_public']);
+    Route::get   ('/experiment/{id}',                      [ExperimentsController::class, 'find']);
+    Route::get   ('/experiment/{id}/owner',                [ExperimentsController::class, 'is_owner']);
+    Route::get   ('/experiment/{experiment}/start',        [ExperimentsController::class, 'start']);
+    Route::get   ('/experiment/{id}/public',               [ExperimentsController::class, 'find_public']);
+    Route::post  ('/experiment/store',                     [ExperimentsController::class, 'store']);
+    Route::patch ('/experiment/{experiment}/visibility',   [ExperimentsController::class, 'visibility']);
     // we do not use patch on this "update" because we want to create a complete new experiment,
     // and tag the old one with "version 1"
-    Route::post(    '/experiment/{original_experiment}/update', 'ExperimentsController@update' );
-    Route::delete(  '/experiment/{experiment}',                 'ExperimentsController@destroy');
-
-    Route::get(     '/experiment/{term}/search/public',     'ExperimentsController@search'  );
-
-    # picture sets
-    Route::get(     '/picture-sets/original/{id}',  'PictureSetsController@original'    );
-    Route::post(    '/imageSet',                    'PictureSetsController@store'       );
-    Route::get(     '/image-sets',                  'PictureSetsController@index'       );
-    Route::get(     '/picture-sets',                'PictureSetsController@index'       );
-    Route::get(     '/picture-set/{id}',            'PictureSetsController@find'        );
-    Route::patch(   '/picture-set/{picture_set}',   'PictureSetsController@update'      );
-    Route::delete(  '/picture-set/{id}',            'PictureSetsController@destroy'     );
-
-    # pictures
-    Route::delete(  '/picture/{id}', 'PicturesController@destroy');
-    Route::get(     '/picture/{id}', 'PicturesController@index'  );
+    Route::post('/experiment/{original_experiment}/update', [ExperimentsController::class, 'update']);
+    Route::delete('/experiment/{experiment}',               [ExperimentsController::class, 'destroy']);
+    Route::get('/experiment/{term}/search/public',          [ExperimentsController::class, 'search']);
 
     # experiment results
-    Route::get(   '/experiment/{id}/experiment-results',  'ExperimentResultsController@index'     );
-    Route::get(   '/experiment-result/{id}',              'ExperimentResultsController@fetch'     );
-    Route::post(  '/experiment-result/create',            'ExperimentResultsController@store'     );
-    Route::patch( '/experiment-result/{result}/update',   'ExperimentResultsController@update'    );
-    Route::patch( '/experiment-result/{result}/completed','ExperimentResultsController@completed' );
-    Route::delete('/experiment-result',                   'ExperimentResultsController@destroy'   );
-
-    # paired results
-    Route::get( '/paired-result/{id}',            'ResultPairsController@index'      );
-    Route::post('/paired-result/{id}/statistics', 'ResultPairsController@statistics' );
-
-    // TODO: rename this to result-pairs, result-categories etc.
-    Route::post('/paired-result',     'ResultPairsController@store'      );
-    Route::post('/category-result',   'ResultCategoriesController@store' );
-    Route::post('/triplet-result',    'ResultTripletsController@store'   );
-    Route::post('/rank-order-result', 'ResultRankOrdersController@store' );
-
-    # rank order results
-    Route::post('/rank-order-result/{id}/statistics', 'ResultRankOrdersController@statistics');
-
-    # category results
-    Route::post('/result-categories/{id}/statistics', 'ResultCategoriesController@statistics');
-
-    # instructions
-    Route::get('/instructions', 'InstructionsController@index');
-
-    # experiment sequences
-    Route::get('/experiment-sequences/{id}', 'ExperimentSequencesController@index');
-
-    # experiment categories
-    Route::get('/experiment/{experiment}/categories', 'ExperimentCategoriesController@index');
-    // Route::get('/experiment-categories/{id}', 'ExperimentCategoriesController@index');
-
-    # observer metas
-    Route::get('/observer-metas', 'ObserverMetasController@index');
-
-    # experiment observer metas
-    Route::get('/experiment-observer-metas/{id}', 'ExperimentObserverMetasController@index');
-
-    # result observer metas
-    Route::post('/result-observer-metas', 'ResultObserverMetasController@store');
-
-    # categories
-    Route::get('/categories', 'CategoriesController@index');
+    // Route::get(   '/experiment/{id}/experiment-results',  'ExperimentResultsController@index'     );
+    Route::get   ('/experiment-result/{id}',              [ExperimentResultsController::class, 'fetch']);
+    Route::post  ('/experiment-result/create',            [ExperimentResultsController::class, 'store']);
+    Route::patch ('/experiment-result/{result}/update',   [ExperimentResultsController::class, 'update']);
+    Route::patch ('/experiment-result/{result}/completed',[ExperimentResultsController::class, 'completed']);
+    Route::delete('/experiment-result',                   [ExperimentResultsController::class, 'destroy']);
 
     # experiment types
-    Route::get('/experiment-types', 'ExperimentTypesController@all');
+    Route::get('/experiment-types', [ExperimentTypesController::class, 'all']);
+
+    # observer metas
+    Route::get('/observer-metas', [ObserverMetasController::class, 'index']);
+
+    # experiment sequences
+    Route::get('/experiment-sequences/{id}', [ExperimentSequencesController::class, 'index']);
+
+    # experiment categories
+    Route::get('/experiment/{experiment}/categories', [ExperimentCategoriesController::class, 'index']);
+
+    # experiment observer metas
+    Route::get('/experiment-observer-metas/{id}', [ExperimentObserverMetasController::class, 'index']);
+
+    # picture sets
+    Route::post(  '/picture-set',                 [PictureSetsController::class, 'store']);
+    Route::get(   '/picture-set',                 [PictureSetsController::class, 'index']);
+    Route::get(   '/picture-set/{id}',            [PictureSetsController::class, 'find']);
+    Route::patch( '/picture-set/{picture_set}',   [PictureSetsController::class, 'update']);
+    Route::delete('/picture-set/{id}',            [PictureSetsController::class, 'destroy']);
+
+    # pictures
+    Route::delete('/picture/{id}', [PicturesController::class, 'destroy']);
+    Route::get('/picture/{id}', [PicturesController::class, 'index']);
+
+    # paired results
+    Route::post('/result-pairs/{id}/statistics', [ResultPairsController::class, 'statistics']);
+    Route::post('/result-pairs',                 [ResultPairsController::class, 'store']);
+
+    # category results
+    Route::post('/result-categories/{id}/statistics', [ResultCategoriesController::class, 'statistics']);
+    Route::post('/result-categories', [ResultCategoriesController::class, 'store']);
+
+    # rank order results
+    Route::post('/result-rank-orders/{id}/statistics', [ResultRankOrdersController::class, 'statistics']);
+    Route::post('/result-rank-orders',  [ResultRankOrdersController::class, 'store']);
+
+    # triplet results
+    Route::post('/result-triplets', [ResultTripletsController::class, 'store']);
+
+    # result observer metas
+    Route::post('/result-observer-metas', [ResultObserverMetasController::class, 'store']);
+
+    # instructions
+    Route::get('/instructions', [InstructionsController::class, 'index']);
+
+    # categories
+    Route::get('/categories', [CategoriesController::class, 'index']);
 
     # scientist requests
-    Route::get( '/scientist-request',             'ScientistRequestsController@index' );
-    Route::post('/scientist-request/{id}/accept', 'ScientistRequestsController@accept');
-    Route::post('/scientist-request/{id}/reject', 'ScientistRequestsController@reject');
+    Route::get( '/scientist-request',             [ScientistRequestsController::class, 'index']);
+    Route::post('/scientist-request/{id}/accept', [ScientistRequestsController::class, 'accept']);
+    Route::post('/scientist-request/{id}/reject', [ScientistRequestsController::class, 'reject']);
 
     # misc
-    Route::post('/logout', 'AuthController@logout');
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-
 // TODO: move this inside... InvalidArgumentException: Route [login] not defined
-Route::post('/file', 'PicturesController@store');
+Route::post('/file', [PicturesController::class, 'store']);
+
+
+// Route::get('/experiments/all',                [ExperimentsController::class, 'all']  
+// Route::get(   '/experiment/{id}/experiment-results',  'ExperimentResultsController@index'     );
+// Route::get( '/paired-result/{id}',            'ResultPairsController@index'      );
+// Route::get(     '/picture-sets/original/{id}',  [PictureSetsController::class, 'original']);
+// Route::get('/experiment-categories/{id}', 'ExperimentCategoriesController@index');

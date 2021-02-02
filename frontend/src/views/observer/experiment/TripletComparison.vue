@@ -575,7 +575,7 @@ export default {
       }
       /* eslint-enable */
 
-      return this.$axios.post('/triplet-result', data)
+      return this.$axios.post('/result-triplets', data)
     },
 
     onFinish () {

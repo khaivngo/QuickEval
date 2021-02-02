@@ -508,7 +508,7 @@ export default {
         client_side_timer: clientSideTimer
       }
 
-      return this.$axios.post('/rank-order-result', data)
+      return this.$axios.post('/result-rank-orders', data)
     },
 
     onFinish () {

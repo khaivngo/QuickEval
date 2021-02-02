@@ -626,7 +626,7 @@ export default {
         artifact_marks: this.shapes
       }
 
-      return this.$axios.post('/paired-result', data)
+      return this.$axios.post('/result-pairs', data)
     },
 
     onFinish () {

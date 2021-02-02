@@ -87,7 +87,7 @@ export default {
 
   created () {
     this.loading = true
-    this.$axios.get('/picture-sets').then((response) => {
+    this.$axios.get('/picture-set').then((response) => {
       this.imageSets = response.data
 
       let activeIndex = this.imageSets.findIndex(set => set.id === parseInt(this.$route.params.id))
@@ -126,7 +126,7 @@ export default {
         description: ' '
       }
 
-      this.$axios.post('/imageSet', data).then((response) => {
+      this.$axios.post('/picture-set', data).then((response) => {
         this.imageSets.unshift(response.data)
         // set active first item in imageSets array
         this.active = 0
