@@ -27,7 +27,9 @@ class ExperimentsController extends Controller
       return Experiment
         ::where('user_id', auth()->user()->id)
         ->withCount('results')
-        ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
+        ->withCount(['results', 'results as completed_results_count' => function (Builder $query) {
+          $query->where('completed', 1);
+        }])
         ->orderBy('id', 'desc')
         ->get();
     }
@@ -185,7 +187,7 @@ class ExperimentsController extends Controller
         'experimentType' => 'required'
       ]);
 
-      // replace with slug
+      // TODO: replace with slug
       if ($request->experimentType == 3 || $request->experimentType == 5) // Category and Triplet
       {
         $request->validate([
@@ -234,7 +236,7 @@ class ExperimentsController extends Controller
         'show_original'     => $request->showOriginal,
         'show_progress'     => $request->showProgress,
         'version'           => 1
-      ]);
+      ]); 
 
       if ($experiment->id > 0)
       {
@@ -265,7 +267,7 @@ class ExperimentsController extends Controller
               ]);
             }
           }
-
+          // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
           {
             foreach ($request->categories as $category)
@@ -291,14 +293,19 @@ class ExperimentsController extends Controller
             }
           }
 
+          // TODO: check that the user owns the image set
+          // TODO: check that the user owns the instruction
+          // foreach ($request->sequences as $group_key => list($step)) {
 
-          foreach ($request->sequences as $step)
-          {
-            if ($step['type'] === 'imageSet') // TODO: check that the user owns the image set
+          foreach ($request->sequences as $group_key => $group) {
+            foreach ($group as $step)
             {
-              # random within image set OR within and between image sets
-              if ($experiment->picture_sequence_algorithm === 1 || $experiment->picture_sequence_algorithm === 2)
+              if ($step['type'] === 'imageSet')
               {
+                # THIS CAN BE REMOVED random within image set OR within and between image sets
+                // if ($experiment->picture_sequence_algorithm === 1 || $experiment->picture_sequence_algorithm === 2)
+                // {
+                // $experiment->type->slug === 'paired'
                 if ($experiment->experiment_type_id == 1)
                 {
                   $picture_queue_id = $this->random_paired_queue(
@@ -306,6 +313,7 @@ class ExperimentsController extends Controller
                     $experiment->same_pair
                   );
                 }
+                // $experiment->type->slug === 'triplet'
                 else if ($experiment->experiment_type_id == 5)
                 {
                   $picture_queue_id = $this->random_triplet_queue( $step['value'] );
@@ -315,38 +323,40 @@ class ExperimentsController extends Controller
                   $picture_queue_id = $this->make_category_queue( $step['value'] );
                 }
 
-                $this->add_queue_to_experiment(
+                $this->add_experiment_sequence(
                   $experiment_queue->id,
                   $picture_queue_id,
+                  null,
+                  $step['value'],
+                  $step['randomize'],
+                  $step['original'],
+                  $step['flipped'],
+                  $group[0]['randomizeGroup']
+                );
+                // }
+              }
+              else if ($step['type'] === 'instruction')
+              {
+                $instruction = \App\Instruction::create([
+                  'user_id' => auth()->user()->id,
+                  'description' => $step['value']
+                ]);
+
+                $this->add_experiment_sequence(
+                  $experiment_queue->id,
+                  null,
+                  $instruction->id
+                );
+              }
+              else if ($step['type'] === 'instructionFromHistory')
+              {
+                $this->add_experiment_sequence(
+                  $experiment_queue->id,
                   null,
                   $step['value']
                 );
               }
-            }
-            else if ($step['type'] === 'instruction')
-            {
-              $instruction = \App\Instruction::create([
-                'user_id' => auth()->user()->id,
-                'description' => $step['value']
-              ]);
 
-              $this->add_queue_to_experiment(
-                $experiment_queue->id,
-                null,
-                $instruction->id,
-                null
-              );
-            }
-            else if ($step['type'] === 'instructionFromHistory')
-            {
-              // TODO: check that the user owns the instruction
-
-              $this->add_queue_to_experiment(
-                $experiment_queue->id,
-                null,
-                $step['value'],
-                null
-              );
             }
           }
 
@@ -463,140 +473,97 @@ class ExperimentsController extends Controller
     /**
      * TODO: rename to add experiment_sequence, this function should be elsewhere as well?
      */
-    protected function add_queue_to_experiment ($experiment_queue_id, $picture_queue_id = null, $instruction_id = null, $picture_set_id = null)
-    {
+    protected function add_experiment_sequence (
+      $experiment_queue_id,
+      $picture_queue_id = null,
+      $instruction_id = null,
+      $picture_set_id = null,
+      $randomize = null,
+      $original = null,
+      $flipped = null,
+      $randomize_group = null
+    ) {
       $experiment_sequence = \App\ExperimentSequence::create([
         'experiment_queue_id' => $experiment_queue_id,
         'picture_queue_id'    => $picture_queue_id,
         'instruction_id'      => $instruction_id,
-        'picture_set_id'      => $picture_set_id
+        'picture_set_id'      => $picture_set_id,
+        'randomize'           => $randomize,
+        'randomize_group'     => $randomize_group,
+        'original'            => $original,
+        'flipped'             => $flipped
       ]);
 
       return $experiment_sequence;
     }
 
     /**
-     * Set whether the experiment should be visible to the public or not.
-     */
-    public function visibility (Request $request, Experiment $experiment)
-    {
-      // if ($experiment->user_id !== auth()->user()->id) {
-      //   return response()->json('Unauthorized', 401);
-      // }
-
-      $data = $request->validate([
-        'is_public' => 'required'
-      ]);
-
-      $experiment->update($data);
-
-      return response($experiment, 200);
-    }
-
-    /**
-     *
+     * Begin the experiment for a observer.
      */
     public function start (Experiment $experiment)
     {
-      $sequences = DB::table('experiment_queues')
-        ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-        ->where('experiment_queues.experiment_id', $experiment->id)
+      $sequences = \App\ExperimentQueue::with(['experiment_sequences' => function ($query) {
+          $query->with([
+            'picture_set.pictures' => function ($query) { $query->where('is_original', 1); },
+            'picture_queue.picture_sequence.picture',
+            'instruction'
+          ]);
+        }])
+        ->where('experiment_id', '=', $experiment->id)
         ->get();
 
-      $all = [];
+      # Group adjucent sequence types:
+      # [instruction, imageSet, imageSet] into -> [[instruction], [imageSet, imageSet]]
+      $current_type = '';
       $nounce = 0;
-      foreach ($sequences as $key => $sequence)
+      foreach ($sequences[0]->experiment_sequences as $key => $sequence)
       {
-        # if picture sequence
-        if ($sequence->picture_queue_id !== null)
-        {
-          # get all picture sequences
-          $result = DB::table('experiment_sequences')
-            ->join('picture_sequences', 'picture_sequences.picture_queue_id', '=', 'experiment_sequences.picture_queue_id')
-            ->join('pictures', 'picture_sequences.picture_id', '=', 'pictures.id')
-            ->where('experiment_sequences.id', $sequence->id)
-            ->get(['picture_sequences.*', 'pictures.path', 'pictures.name', 'pictures.is_original', 'pictures.picture_set_id']);
+        if ($sequence->instruction_id !== null) {
+          if ($current_type != 'instruction') {
+            ++$nounce;
+            $all[$nounce] = [$sequence];
+            $current_type = 'instruction';
+          } else {
+            $all[$nounce][] = $sequence;
+          }
+        }
 
-          // future: if $experiment->experiment_algorithm = 1 or 2
+        if ($sequence->picture_queue_id !== null) {
+          $sequence['stimuli'] = $sequence->picture_queue->picture_sequence;
 
-          # shuffle the picture queue every time we fetch it,
-          # to make sure every observer gets a different picture queue.
           if ($experiment->experiment_type_id == 1) {
-            # only shuffle if we have more than one step of stimuli, it's not needed if so, the shuffle_the_cards algorithm cannot handle
-            # only one step of stimuli either way
-            if (count($result) > 2) {
-              $Algorithms = new Algorithms;
-              $result = $Algorithms->shuffle_the_cards($result);
+            $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->groupBy('picture_order');
+          }
+
+          if ($sequence->randomize == 1) {
+            if ($experiment->experiment_type_id == 1) {
+              $sequence['stimuli'] = collect($sequence['stimuli'])->shuffle();
+            } else {
+              $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->shuffle();
             }
-          } else {
-            $result = $result->shuffle();
           }
 
-          # take the id of first image in the sequence, then the picture_set_id from that image, then find the orginal with that id
-          $picture = Picture::where('id', $result[0]->picture_id)->first();
-          $picture_set = \App\PictureSet::where('id', $picture->picture_set_id)->first();
-          $original = Picture::where([
-            ['picture_set_id', $picture_set->id],
-            ['is_original', 1]
-          ])->first();
-          $result[0]->original = $original;
-
-          # shuffle the order of image sets, make sure order of instructions is not affected (only shuffle inbetween instructions)
-          if ($experiment->picture_sequence_algorithm == 2) {
-            $all[$nounce][$key] = [ 'picture_queue' => $result ];
-            shuffle($all[$nounce]);
-          } else {
-            $all[] = [ 'picture_queue' => $result ];
-          }
-        }
-
-        if ($sequence->instruction_id !== null)
-        {
-          # get all instruction belonging to experiment sequence
-          $result = DB::table('experiment_sequences')
-            ->join('instructions', 'instructions.id', '=', 'experiment_sequences.instruction_id')
-            ->where('experiment_sequences.id', $sequence->id)
-            ->get(); // ->first();
-
-          if ($experiment->picture_sequence_algorithm == 2) {
+          if ($current_type != 'imageSet') {
             ++$nounce;
-            $all[$nounce] = [ 'instructions' => $result ];
-            ++$nounce;
+            $all[$nounce] = [$sequence];
+            $current_type = 'imageSet';
           } else {
-            $all[] = [ 'instructions' => $result ];
+            $all[$nounce][] = $sequence;
           }
         }
       }
 
-      // $flattened = $flattened->shuffle();
-      $collection = collect($all);
-
-      # if rank order
-      if ($experiment->experiment_type_id == 2) {
-        # if random between image sets
-        # flatten arrays by one level
-        if ($experiment->picture_sequence_algorithm == 2) {
-          $hello = [];
-          foreach ($all as $one) {
-            $key = key($one);
-            if ($key == 'picture_queue'){
-              foreach ($one as $b) {
-                $hello[] = $b;
-              }
-            } else if ($key == 'instructions') {
-              $hello[] = $one;
-            }
-          }
-          $collection = collect($hello);
-          return response($collection);
+      # randomize order of sequence groups if randomize_group is set to 1 for the group
+      $sequence_groups = collect($all);
+      $sequence_groups->transform(function ($group, $key) {
+        if ($group[0]->randomize_group === 1) {
+          return collect($group)->shuffle();
+        } else {
+          return collect($group);
         }
+      });
 
-        return response($collection);
-      }
-
-      $flattened = $collection->flatten();
-
-      return response($flattened->all());
+      return response($sequence_groups);
     }
 
     /**
@@ -778,7 +745,7 @@ class ExperimentsController extends Controller
                   $picture_queue_id = $this->make_category_queue( $step['value'] );
                 }
 
-                $this->add_queue_to_experiment(
+                $this->add_experiment_sequence(
                   $experiment_queue->id,
                   $picture_queue_id,
                   null,
@@ -793,7 +760,7 @@ class ExperimentsController extends Controller
                 'description' => $step['value']
               ]);
 
-              $this->add_queue_to_experiment(
+              $this->add_experiment_sequence(
                 $experiment_queue->id,
                 null,
                 $instruction->id,
@@ -804,7 +771,7 @@ class ExperimentsController extends Controller
             {
               // TODO: check that the user owns the instruction
 
-              $this->add_queue_to_experiment(
+              $this->add_experiment_sequence(
                 $experiment_queue->id,
                 null,
                 $step['value'],
@@ -822,6 +789,24 @@ class ExperimentsController extends Controller
       }
 
       // return response($experiment, 200);
+    }
+
+    /**
+     * Set whether the experiment should be visible to the public or not.
+     */
+    public function visibility (Request $request, Experiment $experiment)
+    {
+      // if ($experiment->user_id !== auth()->user()->id) {
+      //   return response()->json('Unauthorized', 401);
+      // }
+
+      $data = $request->validate([
+        'is_public' => 'required'
+      ]);
+
+      $experiment->update($data);
+
+      return response($experiment, 200);
     }
 
     /**

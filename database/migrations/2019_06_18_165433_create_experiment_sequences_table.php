@@ -21,6 +21,11 @@ class CreateExperimentSequencesTable extends Migration
             $table->bigInteger('picture_queue_id')->nullable(); # will be NULL if instruction_id is set
             $table->bigInteger('instruction_id')->nullable(); # will be NULL if picture_queue_id is set
 
+            $table->tinyInteger('randomize')->nullable();
+            $table->tinyInteger('randomize_group')->nullable();
+            $table->tinyInteger('original')->nullable();
+            $table->tinyInteger('flipped')->nullable();
+
             $table->timestamps();
         });
     }

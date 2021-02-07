@@ -102,7 +102,7 @@ export default {
   created () {
     this.$axios.get('/observer-metas')
       .then(json => { this.items = json.data })
-      .catch(err => console.warn(err))
+      .catch(err => console.log(err))
   },
 
   methods: {

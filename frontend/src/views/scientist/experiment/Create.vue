@@ -804,7 +804,7 @@ export default {
           this.loaders.fetching = false
         })
         .catch(err => {
-          console.warn(err)
+          console.log(err)
           this.loaders.fetching = false
         })
     }

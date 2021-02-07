@@ -427,7 +427,7 @@ export default {
           alert('Something went wrong. Could not start the experiment.')
         }
       }).catch(err => {
-        console.warn(err)
+        console.log(err)
       })
     },
 

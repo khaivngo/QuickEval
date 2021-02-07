@@ -46,9 +46,9 @@
         <v-icon>mdi-scissors-cutting</v-icon>
       </v-btn>
 
-      <!-- <v-btn x-small fab @click="mode = 'undo'" title="Undo last drawing">
+      <v-btn x-small fab @click="mode = 'undo'" title="Undo last drawing">
         <v-icon>mdi-undo</v-icon>
-      </v-btn> -->
+      </v-btn>
     </div>
   </div>
 </template>

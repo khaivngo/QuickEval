@@ -85,7 +85,7 @@ class ResultPairsController extends Controller
       $data =
         ExperimentQueue::with(['experiment_sequences' => function ($query) {
             $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
-              ->with('picture_set.pictures');
+              ->with('picture_set.pictures.picture');
         }])
         ->where('experiment_id', '=', $expID)
         ->get();

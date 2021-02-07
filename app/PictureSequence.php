@@ -27,4 +27,8 @@ class PictureSequence extends Model
     public function picture_queue () {
         return $this->belongsTo(ExperimentSequence::class);
     }
+
+    public function picture () {
+        return $this->belongsTo(Picture::class);
+    }
 }

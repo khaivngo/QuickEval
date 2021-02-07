@@ -118,6 +118,7 @@
                       <template v-slot:activator="{ on }">
                         <v-checkbox
                           v-on="on"
+                          v-model="group[0].randomizeGroup"
                           class="ma-0 pa-0 pl-1"
                           color="success"
                           hide-details
@@ -358,6 +359,7 @@ export default {
             id: this.nonce++,
             value: value,
             randomize: true,
+            randomizeGroup: false,
             original: false,
             flipped: false,
             type: type
@@ -429,7 +431,7 @@ export default {
       try {
         return this.$axios.get('/instructions')
       } catch (error) {
-        console.log(error)
+        alert(error)
         return null
       }
     },
@@ -438,7 +440,7 @@ export default {
       try {
         return this.$axios.get('/picture-set')
       } catch (error) {
-        console.log(error)
+        alert(error)
         return null
       }
     },
@@ -448,6 +450,7 @@ export default {
         id: this.nonce++,
         value: this.input,
         randomize: true,
+        randomizeGroup: false,
         original: false,
         flipped: false,
         type: type
@@ -455,7 +458,8 @@ export default {
 
       this.input = null
 
-      this.$emit('added', this.events)
+      // this.$emit('added', this.events)
+      this.$emit('added', this.eventsGrouped)
     },
 
     instructionFromHistory (instruction) {
@@ -466,7 +470,7 @@ export default {
       })
 
       // this.input = null
-      this.$emit('added', this.events)
+      this.$emit('added', this.eventsGrouped)
       this.openInstructionsHistory = false
     },
 
@@ -507,11 +511,12 @@ export default {
           id: this.nonce++,
           value: response.data.id,
           randomize: true,
+          randomizeGroup: false,
           original: false,
           flipped: false,
           type: 'imageSet'
         })
-        this.$emit('added', this.events)
+        this.$emit('added', this.eventsGrouped)
 
         this.creating = false
       })
