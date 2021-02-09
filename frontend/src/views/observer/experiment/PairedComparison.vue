@@ -270,7 +270,7 @@ export default {
 
       index: 0,
       index2: 0,
-      typeIndex: 1,
+      typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
       totalComparisons: 0,
@@ -392,9 +392,9 @@ export default {
 
     startNewExperiment () {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        console.log(payload)
         if (payload) {
-          this.stimuli = payload.data
+          this.stimuli = Object.values(payload.data)
+          this.stimuli.push(['finished'])
           const stimuliQueue = JSON.stringify(this.stimuli)
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
 
@@ -467,42 +467,101 @@ export default {
     /**
      * Load the next image queue stimuli, or instructions.
      */
-    next () {
+    async next () {
       // Have we reached the end?
-      // if (this.stimuli[this.index + 1] === undefined) {
-      //   this.onFinish()
-      //   return
-      // }
+      if (this.stimuli[this.typeIndex][0] === 'finished') {
+        this.onFinish()
+        return
+      }
 
+      // if the current experiment sequence is a picture queue
       if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
-        this.loadStimuli()
-        ++this.imagePairIndex
+        if (this.firstImages === 1) {
+          await this.loadStimuli()
+          ++this.imagePairIndex
 
-        // end of sequence stimuli?
-        if (
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length ===
-          this.imagePairIndex + 1
-        ) {
-          this.imagePairIndex = 0
-          ++this.sequenceIndex
+          // move on to the next picture sequence
+          if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
+            this.imagePairIndex = 0
+            ++this.sequenceIndex
+          }
+
+          // move on to the next experiment sequence
+          if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+            this.sequenceIndex = 0
+            this.imagePairIndex = 0
+            ++this.typeIndex
+          }
+
+          this.firstImages = 0
         }
 
-        // end of sequence group?
-        if (
-          this.stimuli[this.typeIndex][this.sequenceIndex].length ===
-          this.sequenceIndex + 1
-        ) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-          // this.imagePairIndex = 0
+        let selectedStimuli = null
+        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+        if (this.selectedRadio === 'left') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
 
-          // ++this.sequenceIndex
+        // only do stuff if stimuli has been selected
+        if (this.selectedRadio !== null) {
+          this.disableNextBtn = true
+
+          // record the current time
+          let endTime = new Date()
+          // subtract the current time with the start time (when images completed loading)
+          let timeDiff = endTime - this.timeElapsed // in ms
+          // strip the ms and get seconds
+          timeDiff /= 1000
+          let seconds = Math.round(timeDiff)
+
+          // store here
+          let response = await this.store(
+            selectedStimuli,
+            // this.stimuli[this.index],
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+            // this.stimuli[this.index + 1],
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+            seconds
+          )
+
+          if (response.data === 'result_stored') {
+            this.selectedRadio = null
+            this.index += 2
+            this.index2 += 2
+            localStorage.setItem(`${this.experiment.id}-index`, this.index)
+            if (this.experiment.artifact_marking) this.shapes = {}
+
+            await this.loadStimuli()
+            ++this.imagePairIndex
+
+            // move on to the next picture sequence
+            if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
+              this.imagePairIndex = 0
+              ++this.sequenceIndex
+            }
+
+            // move on to the next experiment sequence
+            if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+              this.sequenceIndex = 0
+              this.imagePairIndex = 0
+              ++this.typeIndex
+            }
+          } else {
+            alert(`
+              'Could not save your answer. Please try again. If the problem
+              persist please contact the researcher.'
+            `)
+          }
+
+          this.disableNextBtn = false
         }
       } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].description
+        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
         this.instructionDialog = true
-        ++this.typeIndex
-        console.log(this.typeIndex)
+        ++this.sequenceIndex
+        // move on to the next experiment sequence
+        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+          this.sequenceIndex = 0
+          ++this.typeIndex
+        }
       }
 
       // if (
@@ -597,14 +656,16 @@ export default {
     async loadStimuli () {
       this.disableNextBtn = false
       // set original if exists
-      // if (
-      //   this.stimuli[this.index].hasOwnProperty('original') &&
-      //   this.stimuli[this.index].hasOwnProperty('original') !== null &&
-      //   this.stimuli[this.index].original &&
-      //   this.stimuli[this.index].original.path
-      // ) {
-      //   this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.index].original.path
-      // }
+      if (
+        this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
+        this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
+        this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
+      ) {
+        this.originalImage = this.$UPLOADS_FOLDER +
+          this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+      } else {
+        this.originalImage = ''
+      }
 
       // prepare to load reproduction images
       var images = [
@@ -630,8 +691,8 @@ export default {
 
             // we use a object because sometimes the image is the same image but we still want
             // to trigger watch in child components
-            this.leftCanvas =  { path: images[1].img.src, image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path }
-            this.rightCanvas = { path: images[0].img.src, image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
+            // this.leftCanvas =  { path: images[1].img.src, image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path }
+            // this.rightCanvas = { path: images[0].img.src, image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
@@ -655,9 +716,9 @@ export default {
     async store (pictureIdSelected, pictureIdRight, pictureIdLeft, clientSideTimer) {
       let data = {
         experiment_result_id: this.experimentResult,
-        picture_id_selected: pictureIdSelected.picture_id,
-        picture_id_right: pictureIdRight.picture_id,
-        picture_id_left: pictureIdLeft.picture_id,
+        picture_id_selected: pictureIdSelected.id,
+        picture_id_right: pictureIdRight.id,
+        picture_id_left: pictureIdLeft.id,
         client_side_timer: clientSideTimer,
         chose_none: 0,
         artifact_marks: this.shapes
