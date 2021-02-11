@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar color="#1BA1E2" flat dark app clipped-left style="z-index: 400;">
+  <v-app-bar color="#1BA1E2" flat dark app clipped-left style="z-index: 100;">
     <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
     <div class="mr-3" @click="$router.push('/')">

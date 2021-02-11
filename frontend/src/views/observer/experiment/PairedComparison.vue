@@ -78,7 +78,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index2 / 2 }}/{{ totalComparisons }}
+          {{ index / 2 }}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
 
@@ -112,7 +112,11 @@
     </v-layout>
 
     <v-layout ref="titles" pa-0 ma-0 justify-center>
-      <h4 class="subtitle-1 pt-3" v-if="experiment.show_original === 1" style="padding-bottom: 0px; margin-bottom: 0;">
+      <h4
+        :class="(experiment.show_original === 1 && originalImage !== '') ? 'show' : 'hide'"
+        class="subtitle-1 pt-3"
+        style="padding-bottom: 0px; margin-bottom: 0;"
+      >
         Original
       </h4>
     </v-layout>
@@ -202,9 +206,9 @@
               color="#D9D9D9"
             >
               <!-- :disabled="noneSelected" -->
-              <!-- <span class="ml-1">next</span> -->
-              next
-              <!-- <v-icon>mdi-chevron-right</v-icon> -->
+              <span class="ml-1">next</span>
+              <!-- next -->
+              <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </div>
         </v-col>
@@ -217,20 +221,6 @@
         </v-col>
       </v-row>
     </v-radio-group>
-    <!-- </v-layout> -->
-
-    <!-- <div class="d-flex justify-center pt-4">
-      <v-btn
-        @click="next('click')"
-        :disabled="selectedRadio === null"
-        :loading="disableNextBtn"
-        color="#D9D9D9"
-      > -->
-        <!-- :disabled="noneSelected" -->
-        <!-- <span class="ml-1">next</span>
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
-    </div> -->
 
     <FinishedDialog :show="finished"/>
   </div>
@@ -268,8 +258,7 @@ export default {
 
       selectedRadio: null,
 
-      index: 0,
-      index2: 0,
+      index: 2,
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
@@ -313,10 +302,6 @@ export default {
     this.getExperiment(this.$route.params.id).then(response => {
       this.experiment = response.data
 
-      // Should we:
-      // checkIfExperimentTaken() -> look for completed key in experimentResults table
-      // deleteoldresults()
-
       /* eslint-env jquery */
       $(document).ready(function () {
         (function () {
@@ -331,43 +316,44 @@ export default {
         })()
       })
 
-      const exists = Number(localStorage.getItem(`${this.experiment.id}-index`))
-      // if localStorage does not exists for this experiment
+      // if localStorage does not exists for this experiment fetch new data
+      const exists = Number(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
       if (exists === null || exists === 0) {
         this.startNewExperiment()
       } else {
         this.continueExistingExperiment()
       }
-    })
 
-    window.addEventListener('keydown', (e) => {
-      // enter / space
-      if (e.keyCode === 13 || e.keyCode === 32) {
-        if (this.selectedRadio !== null) {
-          this.next()
+      // create some hotkeys
+      window.addEventListener('keydown', (e) => {
+        // enter / space
+        if (e.keyCode === 13 || e.keyCode === 32) {
+          if (this.selectedRadio !== null) {
+            this.next()
+          }
         }
-      }
 
-      // arrow left
-      if (e.keyCode === 37) {
-        if (this.disableNextBtn === false) {
-          this.selectedRadio = 'left'
-          this.next()
+        // arrow left
+        if (e.keyCode === 37) {
+          if (this.disableNextBtn === false) {
+            this.selectedRadio = 'left'
+            this.next()
+          }
         }
-      }
 
-      // arrow right
-      if (e.keyCode === 39) {
-        if (this.disableNextBtn === false) {
-          this.selectedRadio = 'right'
-          this.next()
+        // arrow right
+        if (e.keyCode === 39) {
+          if (this.disableNextBtn === false) {
+            this.selectedRadio = 'right'
+            this.next()
+          }
         }
-      }
 
-      // esc
-      if (e.keyCode === 27) {
-        this.abort()
-      }
+        // esc
+        if (e.keyCode === 27) {
+          this.abort()
+        }
+      })
     })
   },
 
@@ -376,92 +362,41 @@ export default {
   },
 
   methods: {
-    drawn (shapes) {
-      // shapes.uuid let's us distinguish between left and right image canvas
-      this.shapes[shapes.uuid] = shapes.shapes
-    },
-
-    changedDrawingTool (string) {
-      this.drawingTool = string
-    },
-
-    closeAndNext () {
-      this.instructionDialog = false
-      this.next()
-    },
-
     startNewExperiment () {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
           this.stimuli = Object.values(payload.data)
           this.stimuli.push(['finished'])
+
           const stimuliQueue = JSON.stringify(this.stimuli)
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
 
-          var total2 = 0
-          this.experiment.sequences.forEach((sequence) => {
-            if (sequence.hasOwnProperty('picture_queue')) {
-              total2 += Number(sequence.picture_queue.picture_sequence_count)
-            }
-          })
-          this.totalComparisons = total2 / 2
+          this.countTotalSteps()
 
-          // if (localStorage.getItem(`${this.experiment.id}-index`) === null) {
-          localStorage.setItem(`${this.experiment.id}-index`, 0)
-          // }
-
-          this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
-          this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+          this.resetProgress()
+          this.getProgress()
 
           this.next()
 
-          // figure out how much height room is left on the page for the image panners to fill
-          this.$nextTick(() => {
-            let navMain = 30
-            let navMarker = this.$refs.navMarker.offsetHeight
-            let titles = this.$refs.titles.offsetHeight
-            let navAction = this.$refs.navAction.$el.offsetHeight
-            let minus = navMain + titles + navMarker + navAction
-
-            var height = document.body.scrollHeight - minus - 20
-            this.$refs.images.style.maxHeight = height + 'px'
-          })
+          this.calculateLayout()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
       }).catch(error => {
-        console.log(error)
+        alert(error)
       })
     },
 
     continueExistingExperiment () {
-      // fetch the existing progress from localStorage
-      this.stimuli = JSON.parse(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
-      this.index = Number(localStorage.getItem(`${this.experiment.id}-index`))
-      this.index2 = this.index
-      this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
-
-      var total2 = 0
-      this.experiment.sequences.forEach((sequence) => {
-        if (sequence.hasOwnProperty('picture_queue')) {
-          total2 += Number(sequence.picture_queue.picture_sequence_count)
-        }
-      })
-      this.totalComparisons = total2 / 2
-
+      this.getProgress()
+      this.countTotalSteps()
       this.next()
+      this.calculateLayout()
+    },
 
-      // figure out how much height room is left on the page for the image panners to fill
-      this.$nextTick(() => {
-        let navMain = 30
-        let navMarker = this.$refs.navMarker.offsetHeight
-        let titles = this.$refs.titles.offsetHeight
-        let navAction = this.$refs.navAction.$el.offsetHeight
-        let minus = navMain + titles + navMarker + navAction
-
-        var height = document.body.scrollHeight - minus - 20
-        this.$refs.images.style.maxHeight = height + 'px'
-      })
+    closeAndNext () {
+      this.instructionDialog = false
+      this.next()
     },
 
     /**
@@ -525,9 +460,8 @@ export default {
           if (response.data === 'result_stored') {
             this.selectedRadio = null
             this.index += 2
-            this.index2 += 2
-            localStorage.setItem(`${this.experiment.id}-index`, this.index)
             if (this.experiment.artifact_marking) this.shapes = {}
+            this.saveProgress()
 
             await this.loadStimuli()
             ++this.imagePairIndex
@@ -556,6 +490,9 @@ export default {
       } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
         this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
         this.instructionDialog = true
+
+        this.saveProgress()
+
         ++this.sequenceIndex
         // move on to the next experiment sequence
         if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
@@ -563,108 +500,33 @@ export default {
           ++this.typeIndex
         }
       }
-
-      // if (
-      //   this.stimuli[this.index].hasOwnProperty('picture_queue_id') &&
-      //   this.stimuli[this.index].picture_queue_id !== null
-      // ) {
-      //   // if (this.timeElapsed === null) this.timeElapsed = new Date()
-      //   let selectedStimuli = null
-      //   if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.index]
-      //   if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.index + 1]
-
-      //   // only do stuff if stimuli has been selected
-      //   if (this.selectedRadio !== null) {
-      //     this.disableNextBtn = true
-
-      //     // record the current time
-      //     let endTime = new Date()
-      //     // subtract the current time with the start time (when images completed loading)
-      //     let timeDiff = endTime - this.timeElapsed // in ms
-      //     // strip the ms and get seconds
-      //     timeDiff /= 1000
-      //     let seconds = Math.round(timeDiff)
-
-      //     this.store(
-      //       selectedStimuli,
-      //       this.stimuli[this.index],
-      //       this.stimuli[this.index + 1],
-      //       seconds
-      //     ).then(response => {
-      //       if (response.data !== 'result_stored') {
-      //         alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
-      //       }
-
-      //       if (this.experiment.artifact_marking) { this.shapes = {} }
-
-      //       this.selectedRadio = null
-      //       this.index += 2
-      //       this.index2 += 2
-      //       localStorage.setItem(`${this.experiment.id}-index`, this.index)
-
-      //       // Have we reached the end?
-      //       if (this.stimuli[this.index + 1] === undefined) {
-      //         this.onFinish()
-      //         return
-      //       }
-
-      //       if (this.stimuli[this.index].hasOwnProperty('picture_queue_id') && this.stimuli[this.index].picture_queue_id !== null) {
-      //         this.loadStimuli()
-      //       } else {
-      //         this.disableNextBtn = false
-
-      //         this.instructionText = this.stimuli[this.index].description
-      //         this.instructionDialog = true
-
-      //         this.index += 1
-      //         this.index2 += 2
-      //         localStorage.setItem(`${this.experiment.id}-index`, this.index)
-
-      //         // Have we reached the end?
-      //         if (this.stimuli[this.index + 1] === undefined) {
-      //           this.onFinish()
-      //           // return
-      //         }
-      //         this.loadStimuli() // this could be replaced by resetting this.firstImages = 1
-      //       }
-      //     }).catch(() => {
-      //       this.disableNextBtn = false
-      //       alert('Could not save your answer. Please try again. If the problem persist please contact the researcher.')
-      //     })
-      //   }
-
-      //   if (this.firstImages === 1) {
-      //     this.loadStimuli()
-      //     this.firstImages = 2
-      //   }
-      // } else {
-      //   this.instructionText = this.stimuli[this.index].description
-      //   this.instructionDialog = true
-
-      //   this.index += 1
-      //   this.index2 += 2
-      //   localStorage.setItem(`${this.experiment.id}-index`, this.index)
-
-      //   // Have we reached the end?
-      //   if (this.stimuli[this.index + 1] === undefined) {
-      //     this.onFinish()
-      //     // return
-      //   }
-      // }
     },
 
     async loadStimuli () {
       this.disableNextBtn = false
-      // set original if exists
+      // set original if it exists for the current experiment sequence
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER +
-          this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+
+        // this.$nextTick(() => {
+        //   let titles = this.$refs.titles.offsetHeight
+        //   let currentHeight = this.$refs.images.style.maxHeight
+        //   let newHeight = parseInt(currentHeight) - titles
+        //   this.$refs.images.style.maxHeight = newHeight + 'px'
+        // })
       } else {
         this.originalImage = ''
+
+        // this.$nextTick(() => {
+        //   let titles = this.$refs.titles.offsetHeight
+        //   let currentHeight = this.$refs.images.style.maxHeight
+        //   let newHeight = parseInt(currentHeight) - titles
+        //   this.$refs.images.style.maxHeight = newHeight + 'px'
+        // })
       }
 
       // prepare to load reproduction images
@@ -727,26 +589,105 @@ export default {
       return this.$axios.post('/result-pairs', data)
     },
 
+    countTotalSteps () {
+      // let stimuliCount = this.stimuli.reduce((accumulator, currentValue) => {
+      //   if (currentValue[0].hasOwnProperty('stimuli')) {
+      //     let total = currentValue.reduce((accu, current) => {
+      //       return accu + 'hello'
+      //     })
+      //     return accumulator + total
+      //   } else {
+      //     return accumulator
+      //   }
+      // })
+      // console.log(stimuliCount)
+
+      let total = 0
+      this.stimuli.forEach((type) => {
+        let sequenceTotal = 0
+        if (type[0].hasOwnProperty('stimuli')) {
+          type.forEach((sequence) => {
+            sequenceTotal += sequence.stimuli.length
+          })
+        }
+        total += sequenceTotal
+      })
+      this.totalComparisons = total
+    },
+
+    /**
+     * Figure out how much height room is left on the page for the image panners to fill.
+     */
+    calculateLayout () {
+      this.$nextTick(() => {
+        let navMain = 30
+        let navMarker = this.$refs.navMarker.offsetHeight
+        let titles = this.$refs.titles.offsetHeight
+        let navAction = this.$refs.navAction.$el.offsetHeight
+        let minus = navMain + titles + navMarker + navAction
+
+        var height = document.body.scrollHeight - minus - 20
+        this.$refs.images.style.maxHeight = height + 'px'
+      })
+    },
+
+    drawn (shapes) {
+      // shapes.uuid let's us distinguish between left and right image canvas
+      this.shapes[shapes.uuid] = shapes.shapes
+    },
+
+    changedDrawingTool (string) {
+      this.drawingTool = string
+    },
+
     onFinish () {
       this.originalImage = ''
       this.leftImage = ''
       this.rightImage = ''
 
-      // spinner while await
+      // TODO: spinner while await
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
-      localStorage.removeItem(`${this.experiment.id}-index`)
-      localStorage.removeItem(`${this.experiment.id}-experimentResult`)
-      localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
+      this.removeProgress()
       this.finished = true
     },
 
     abort () {
       this.abortDialog = true
+      this.removeProgress()
+      this.$router.push('/observer')
+    },
+
+    saveProgress () {
+      localStorage.setItem(`${this.experiment.id}-index`, this.index)
+      localStorage.setItem(`${this.experiment.id}-imagePairIndex`, this.imagePairIndex)
+      localStorage.setItem(`${this.experiment.id}-sequenceIndex`, this.sequenceIndex)
+      localStorage.setItem(`${this.experiment.id}-typeIndex`, this.typeIndex)
+    },
+
+    getProgress () {
+      this.experimentResult = Number(localStorage.getItem(`${this.experiment.id}-experimentResult`))
+      this.index            = Number(localStorage.getItem(`${this.experiment.id}-index`))
+      this.imagePairIndex   = Number(localStorage.getItem(`${this.experiment.id}-imagePairIndex`))
+      this.sequenceIndex    = Number(localStorage.getItem(`${this.experiment.id}-sequenceIndex`))
+      this.typeIndex        = Number(localStorage.getItem(`${this.experiment.id}-typeIndex`))
+      this.stimuli          = JSON.parse(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
+    },
+
+    resetProgress () {
+      localStorage.setItem(`${this.experiment.id}-index`, 0)
+      localStorage.setItem(`${this.experiment.id}-imagePairIndex`, 0)
+      localStorage.setItem(`${this.experiment.id}-sequenceIndex`, 0)
+      localStorage.setItem(`${this.experiment.id}-typeIndex`, 0)
+    },
+
+    removeProgress () {
       localStorage.removeItem(`${this.experiment.id}-index`)
       localStorage.removeItem(`${this.experiment.id}-experimentResult`)
       localStorage.removeItem(`${this.experiment.id}-stimuliQueue`)
-      this.$router.push('/observer')
+      localStorage.removeItem(`${this.experiment.id}-imagePairIndex`)
+      localStorage.removeItem(`${this.experiment.id}-sequenceIndex`)
+      localStorage.removeItem(`${this.experiment.id}-typeIndex`)
     }
   }
 }
@@ -781,6 +722,7 @@ export default {
 
 .hide {
   opacity: 0;
+  visibility: none;
 }
 
 .scaled {
