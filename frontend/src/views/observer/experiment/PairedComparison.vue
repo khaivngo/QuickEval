@@ -78,7 +78,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index / 2 }}/{{ totalComparisons }}
+          {{ index }}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
 
@@ -87,7 +87,7 @@
           <template v-slot:activator="{ on }">
             <v-btn text dark color="#D9D9D9" v-on="on">
               Quit
-              <!-- <v-icon right small>logout</v-icon> -->
+              <!-- <v-icon right small>mdi-logout</v-icon> -->
             </v-btn>
           </template>
           <v-card>
@@ -234,7 +234,7 @@ import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
 
 export default {
-  name: 'experiment-view',
+  name: 'paired-experiment-view',
 
   components: {
     FinishedDialog,
@@ -258,7 +258,7 @@ export default {
 
       selectedRadio: null,
 
-      index: 2,
+      index: 0,
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
@@ -371,7 +371,7 @@ export default {
           const stimuliQueue = JSON.stringify(this.stimuli)
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
 
-          this.countTotalSteps()
+          this.countTotalComparisons()
 
           this.resetProgress()
           this.getProgress()
@@ -389,7 +389,7 @@ export default {
 
     continueExistingExperiment () {
       this.getProgress()
-      this.countTotalSteps()
+      this.countTotalComparisons()
       this.next()
       this.calculateLayout()
     },
@@ -414,6 +414,8 @@ export default {
         if (this.firstImages === 1) {
           await this.loadStimuli()
           ++this.imagePairIndex
+
+          ++this.index
 
           // move on to the next picture sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
@@ -459,12 +461,13 @@ export default {
 
           if (response.data === 'result_stored') {
             this.selectedRadio = null
-            this.index += 2
             if (this.experiment.artifact_marking) this.shapes = {}
             this.saveProgress()
 
             await this.loadStimuli()
             ++this.imagePairIndex
+
+            ++this.index
 
             // move on to the next picture sequence
             if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
@@ -488,6 +491,11 @@ export default {
           this.disableNextBtn = false
         }
       } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
+        this.leftImage = ''
+        this.originalImage = ''
+        this.rightImage = ''
+        // this.firstImages = 1
+
         this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
         this.instructionDialog = true
 
@@ -503,7 +511,6 @@ export default {
     },
 
     async loadStimuli () {
-      this.disableNextBtn = false
       // set original if it exists for the current experiment sequence
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
@@ -511,22 +518,8 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
         this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
-
-        // this.$nextTick(() => {
-        //   let titles = this.$refs.titles.offsetHeight
-        //   let currentHeight = this.$refs.images.style.maxHeight
-        //   let newHeight = parseInt(currentHeight) - titles
-        //   this.$refs.images.style.maxHeight = newHeight + 'px'
-        // })
       } else {
         this.originalImage = ''
-
-        // this.$nextTick(() => {
-        //   let titles = this.$refs.titles.offsetHeight
-        //   let currentHeight = this.$refs.images.style.maxHeight
-        //   let newHeight = parseInt(currentHeight) - titles
-        //   this.$refs.images.style.maxHeight = newHeight + 'px'
-        // })
       }
 
       // prepare to load reproduction images
@@ -553,8 +546,14 @@ export default {
 
             // we use a object because sometimes the image is the same image but we still want
             // to trigger watch in child components
-            // this.leftCanvas =  { path: images[1].img.src, image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path }
-            // this.rightCanvas = { path: images[0].img.src, image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
+            // this.leftCanvas = {
+            //   image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path,
+            //   path: images[1].img.src
+            // }
+            // this.rightCanvas = {
+            //   image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path,
+            //   path: images[0].img.src
+            // }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
@@ -589,30 +588,22 @@ export default {
       return this.$axios.post('/result-pairs', data)
     },
 
-    countTotalSteps () {
-      // let stimuliCount = this.stimuli.reduce((accumulator, currentValue) => {
-      //   if (currentValue[0].hasOwnProperty('stimuli')) {
-      //     let total = currentValue.reduce((accu, current) => {
-      //       return accu + 'hello'
-      //     })
-      //     return accumulator + total
-      //   } else {
-      //     return accumulator
-      //   }
-      // })
-      // console.log(stimuliCount)
-
-      let total = 0
-      this.stimuli.forEach((type) => {
-        let sequenceTotal = 0
-        if (type[0].hasOwnProperty('stimuli')) {
-          type.forEach((sequence) => {
-            sequenceTotal += sequence.stimuli.length
-          })
+    /**
+     * Loop through the stimuli array and count how many picture pairs we have.
+     */
+    countTotalComparisons () {
+      let stimuliCount = this.stimuli.reduce((accumulator, currentValue) => {
+        if (currentValue[0].hasOwnProperty('stimuli')) {
+          let total = currentValue.reduce((accu, current) => {
+            return accu + current.stimuli.length
+          }, 0)
+          return accumulator + total
+        } else {
+          return accumulator
         }
-        total += sequenceTotal
-      })
-      this.totalComparisons = total
+      }, 0)
+
+      this.totalComparisons = stimuliCount
     },
 
     /**
@@ -641,6 +632,7 @@ export default {
     },
 
     onFinish () {
+      this.selectedRadio = null
       this.originalImage = ''
       this.leftImage = ''
       this.rightImage = ''
@@ -693,19 +685,10 @@ export default {
 }
 </script>
 
-<!-- <style>
-  #app {
-    /*height: 80%;*/
-    background: red;
-  }
-</style> -->
-
 <style scoped lang="scss">
 .qe-wrapper {
   background-color: #808080;
-  // min-height: 100vh;
   height: 100%;
-  // overflow: hidden;
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -733,11 +716,4 @@ export default {
 .picture {
   user-select: none;
 }
-
-// .parent {
-//   overflow: hidden;
-//   position: relative;
-//   height: 100%;
-//   width: 100%;
-// }
 </style>

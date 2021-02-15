@@ -47,7 +47,7 @@ Route::post('/result-category/export',   [ResultCategoriesController::class, 'ex
 # Note: auth:api middleware gives access to the user object
 Route::middleware('auth:api')->group(function () {
     # user
-    Route::get(  '/user',     function (Request $request) { return $request->user(); });
+    Route::get(  '/user',     [UserController::class, 'you']        );
     Route::patch('/user',     [UserController::class, 'update']     );
     Route::patch('/user/role',[UserController::class, 'updateRole'] );
     Route::get(  '/user/all', [UserController::class, 'index']      );

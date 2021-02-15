@@ -1,5 +1,8 @@
 ## Description
-Rewrite of project in Vuejs and Laravel.
+### Psychometric image evaluation the quick way.
+
+Paired comparison / Category judgement / Artifact marking /
+Triplet comparison / Rank order
 
 ## Requisites
 * Composer PHP package manager

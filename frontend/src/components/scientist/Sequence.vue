@@ -400,7 +400,7 @@ export default {
   computed: {
     /**
      * Group adjucent event types:
-     * [instruction, imageSet, imageSet] -> [[instruction], [imageSet, imageSet]]
+     * [instruction, imageSet, imageSet] --> [[instruction], [imageSet, imageSet]]
      * We can now display a "randomize" order option for a image set group
      * inbetween instructions.
      */

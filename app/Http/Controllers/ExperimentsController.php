@@ -35,10 +35,9 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Search DB for any experiment title/scientist name/experiment type,
-     * that matches provided string.
-     * Return experiments with matching title, and experiments that belong to matching scientist name,
-     * and experiments of searched experiment type.
+     * Return experiments where the provided string matches experiment titles, and/or
+     * experiments that belong to matching scientist name, and/or experiments of
+     * searched experiment type.
      */
     public function search ($term)
     {
@@ -118,7 +117,8 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Find the first experiment matching the provided ID.
+     * Find the first experiment matching the provided ID. With the count of how many images
+     * are in every image sequence of experiment sequences of type picture queue.
      */
     public function find (Request $request)
     {
@@ -167,11 +167,13 @@ class ExperimentsController extends Controller
     public function observer_metas (Request $request)
     {
       $metas = DB::table('experiment_observer_metas')
-        ->join('observer_metas', 'observer_metas.id', '=', 'experiment_observer_metas.observer_meta_id')
+        ->join('observer_metas', 'observer_metas.id', '=',
+          'experiment_observer_metas.observer_meta_id')
         ->where('experiment_observer_metas.experiment_id', $request->id)
         ->get();
 
-      // ExperimentObserverMetas::find($id)->observer_meta;
+      // ExperimentObserverMetas::with('observer_metas')
+      //     ->where('experiment_id', $request->id);
 
       return $metas;
     }
@@ -470,9 +472,6 @@ class ExperimentsController extends Controller
       return $picture_queue->id;
     }
 
-    /**
-     * TODO: rename to add experiment_sequence, this function should be elsewhere as well?
-     */
     protected function add_experiment_sequence (
       $experiment_queue_id,
       $picture_queue_id = null,
@@ -498,7 +497,8 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Begin the experiment for a observer.
+     * Begin the experiment for a observer. Returns the whole stimuli queue
+     * for the experiment.
      */
     public function start (Experiment $experiment)
     {

@@ -9,21 +9,31 @@ use App\User;
 class UserController extends Controller
 {
     /**
+     * Return the logged in user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function you(Request $request)
+    {
+      return $request->user();
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        # abort if not admin
-        if (auth()->user()->role < 3)
-        {
-            return response()->json('Unauthorized', 401);
-        }
+      # abort if not admin
+      if (auth()->user()->role < 3) {
+        return response()->json('Unauthorized', 401);
+      }
 
-        return User::where('role', '>', 1)
-            ->orderBy('id', 'desc')
-            ->get();
+      return User::where('role', '>', 1)
+        ->orderBy('id', 'desc')
+        ->get();
     }
 
     /**

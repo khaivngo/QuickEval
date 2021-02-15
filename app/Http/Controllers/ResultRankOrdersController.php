@@ -37,8 +37,8 @@ class ResultRankOrdersController extends Controller
       $rankings = [];
       foreach ($request->rankings as $key => $image) {
         $rankings[$key]['experiment_result_id'] = $request->experiment_result_id;
-        $rankings[$key]['picture_set_id']       = $image['picture_set_id'];
-        $rankings[$key]['picture_id']           = $image['picture_id'];
+        $rankings[$key]['picture_set_id']       = $image['picture']['picture_set_id'];
+        $rankings[$key]['picture_id']           = $image['picture']['id'];
         $rankings[$key]['ranking']              = $key + 1;
         $rankings[$key]['client_side_timer']    = $request->client_side_timer;
       }
