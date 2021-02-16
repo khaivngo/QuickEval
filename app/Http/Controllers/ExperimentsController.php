@@ -199,23 +199,26 @@ class ExperimentsController extends Controller
 
       if ($request->experimentType == 5) // Triplet
       {
-        foreach ($request->sequences as $step)
+        foreach ($request->sequences as $group)
         {
-          if ($step['type'] === 'imageSet')
+          foreach ($group as $step)
           {
-            $images = Picture::where([
-              ['picture_set_id', $step['value']],
-              ['is_original', 0]
-            ])->get();
+            if ($step['type'] === 'imageSet')
+            {
+              $images = Picture::where([
+                ['picture_set_id', $step['value']],
+                ['is_original', 0]
+              ])->get();
 
-            # generating a triplets queue only work with a certain number of images
-            $data = new Request(['imageCount' => $images->count()]);
-            $this->validate($data, ['imageCount' => new AllowedTripletCount]);
+              # generating a triplets queue only work with a certain number of images
+              $data = new Request(['imageCount' => $images->count()]);
+              $this->validate($data, ['imageCount' => new AllowedTripletCount]);
 
-            // Validator::make(
-            //   ['num' => $images->count()],
-            //   ['num' => new AllowedTripletCount]
-            // );
+              // Validator::make(
+              //   ['num' => $images->count()],
+              //   ['num' => new AllowedTripletCount]
+              // );
+            }
           }
         }
       }
@@ -531,12 +534,14 @@ class ExperimentsController extends Controller
         if ($sequence->picture_queue_id !== null) {
           $sequence['stimuli'] = $sequence->picture_queue->picture_sequence;
 
-          if ($experiment->experiment_type_id == 1) {
+          // group belonging paired or triplet picture orders into arrays
+          if ($experiment->experiment_type_id == 1 || $experiment->experiment_type_id == 5) {
             $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->groupBy('picture_order');
           }
-
+          // return $sequence['stimuli'];
+          // exit;
           if ($sequence->randomize == 1) {
-            if ($experiment->experiment_type_id == 1) {
+            if ($experiment->experiment_type_id == 1 || $experiment->experiment_type_id == 5) {
               $sequence['stimuli'] = collect($sequence['stimuli'])->shuffle();
             } else {
               $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->shuffle();

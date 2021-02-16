@@ -219,7 +219,6 @@ export default {
       loadNextImages: true,
 
       index: 0,
-      index: 0,
       typeIndex: 0,
       sequenceIndex: 0,
       experimentResult: null,
