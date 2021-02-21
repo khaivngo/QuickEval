@@ -477,6 +477,7 @@ export default {
     remove (id) {
       const index = this.events.findIndex(obj => obj.id === id)
       this.events.splice(index, 1)
+      this.$emit('added', this.eventsGrouped)
     },
 
     closeNewImageSet () {
