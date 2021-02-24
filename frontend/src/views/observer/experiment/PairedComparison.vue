@@ -546,14 +546,16 @@ export default {
 
             // we use a object because sometimes the image is the same image but we still want
             // to trigger watch in child components
-            // this.leftCanvas = {
-            //   image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path,
-            //   path: images[1].img.src
-            // }
-            // this.rightCanvas = {
-            //   image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path,
-            //   path: images[0].img.src
-            // }
+            if (this.experiment.artifact_marking) {
+              this.leftCanvas = {
+                image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path,
+                path: images[1].img.src
+              }
+              this.rightCanvas = {
+                image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path,
+                path: images[0].img.src
+              }
+            }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
