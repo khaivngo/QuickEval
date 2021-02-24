@@ -714,7 +714,7 @@ export default {
       this.loaders.saving = (type === 'hidden')
 
       // convert values from boolean to integer before saving
-      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1 // REMOVE!!!!!!!
       this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       this.form.isPublic = (type === 'hidden') ? 0 : 1
 
@@ -753,14 +753,15 @@ export default {
       this.disclaimerDialog = false
 
       // convert values from boolean to integer before saving
-      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1 // REMOVE!!!!!!
       this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       // this.form.isPublic = (type === 'hidden') ? 0 : 1
       this.form.isPublic = 1
-      this.form.amountObservers = this.experiment.results_count
+      // this.form.amountObservers = this.experiment.results_count
+      this.form.amountObservers = this.experiment.completed_results_count
 
       this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
-        if (this.experiment.results_count === 0) {
+        if (this.form.amountObservers === 0) {
           EventBus.$emit('experiment-deleted', this.experiment)
         }
         EventBus.$emit('experiment-created', response.data)
@@ -791,7 +792,7 @@ export default {
           this.form.shortDescription = response.data.short_description
           this.form.longDescription  = response.data.long_description
           this.form.experimentType   = response.data.experiment_type_id
-          this.form.timer            = response.data.title
+          this.form.timer            = response.data.timer
           this.form.ishihara         = response.data.ishihara
           this.form.artifact_marking = response.data.artifact_marking
           this.form.cvd              = response.data.allow_colour_blind

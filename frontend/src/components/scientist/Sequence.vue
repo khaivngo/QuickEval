@@ -358,15 +358,15 @@ export default {
           this.events.push({
             id: this.nonce++,
             value: value,
-            randomize: true,
-            randomizeGroup: false,
-            original: false,
-            flipped: false,
+            randomize: item.randomize,
+            randomizeGroup: item.randomize_group,
+            original: item.original,
+            flipped: item.flipped,
             type: type
           })
 
           // this.input = null
-          this.$emit('added', this.events)
+          this.$emit('added', this.eventsGrouped)
         })
       }
     }
@@ -417,10 +417,11 @@ export default {
   },
 
   async created () {
-    // populate the instructions and image sets dropdowns
+    // populate the instructions...
     const instructions = await this.getInstructions()
     this.instructions = instructions.data
 
+    // ...and the image sets dropdowns
     const imageSets = await this.getImageSets()
     this.imageSets = imageSets.data
   },
@@ -517,6 +518,7 @@ export default {
           flipped: false,
           type: 'imageSet'
         })
+
         this.$emit('added', this.eventsGrouped)
 
         this.creating = false

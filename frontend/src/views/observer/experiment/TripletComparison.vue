@@ -416,8 +416,6 @@ export default {
       if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
         // The first time we want to load the images even though user has not selected anything
         if (this.loadNextImages === true) {
-          // this.focusSelect()
-
           await this.loadStimuli()
           ++this.imagePairIndex
 
@@ -480,8 +478,6 @@ export default {
               this.imagePairIndex = 0
               ++this.typeIndex
             }
-
-            // this.focusSelect()
           } else {
             alert(`
               'Could not save your answer. Please try again. If the problem
@@ -536,7 +532,6 @@ export default {
           // starts or overrides existing timer
           this.startTime = new Date()
           this.disableNextBtn = false
-          // console.log('left - ' + this.imageLeft)
         }, this.experiment.delay)
       }
 
@@ -551,7 +546,6 @@ export default {
           // starts or overrides existing timer
           this.startTime = new Date()
           this.disableNextBtn = false
-          // console.log('middle - ' + this.imageMiddle)
         }, this.experiment.delay)
       }
 
@@ -566,7 +560,6 @@ export default {
           // starts or overrides existing timer
           this.startTime = new Date()
           this.disableNextBtn = false
-          // console.log('right - ' + this.imageRight)
         }, this.experiment.delay)
       }
     },

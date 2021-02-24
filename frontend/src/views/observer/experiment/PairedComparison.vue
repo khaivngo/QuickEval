@@ -201,7 +201,7 @@
           <div class="d-flex justify-center">
             <v-btn
               @click="next"
-              :disabled="selectedRadio === null"
+              :disabled="selectedRadio === null || disableNextBtn"
               :loading="disableNextBtn"
               color="#D9D9D9"
             >

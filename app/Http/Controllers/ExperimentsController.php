@@ -197,6 +197,7 @@ class ExperimentsController extends Controller
         ]);
       }
 
+      # if triplet experiment: throw error if any image set does NOT contain exactly 
       if ($request->experimentType == 5) // Triplet
       {
         foreach ($request->sequences as $group)
@@ -213,11 +214,6 @@ class ExperimentsController extends Controller
               # generating a triplets queue only work with a certain number of images
               $data = new Request(['imageCount' => $images->count()]);
               $this->validate($data, ['imageCount' => new AllowedTripletCount]);
-
-              // Validator::make(
-              //   ['num' => $images->count()],
-              //   ['num' => new AllowedTripletCount]
-              // );
             }
           }
         }
@@ -272,6 +268,7 @@ class ExperimentsController extends Controller
               ]);
             }
           }
+
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
           {
@@ -315,7 +312,8 @@ class ExperimentsController extends Controller
                 {
                   $picture_queue_id = $this->random_paired_queue(
                     $step['value'],
-                    $experiment->same_pair
+                    // $experiment->same_pair
+                    $step['flipped']
                   );
                 }
                 // $experiment->type->slug === 'triplet'
@@ -500,7 +498,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Begin the experiment for a observer. Returns the whole stimuli queue
+     * Begin the experiment for the observer. Returns the whole stimuli queue
      * for the experiment.
      */
     public function start (Experiment $experiment)
@@ -515,13 +513,17 @@ class ExperimentsController extends Controller
         ->where('experiment_id', '=', $experiment->id)
         ->get();
 
-      # Group adjucent sequence types:
-      # [instruction, imageSet, imageSet] into -> [[instruction], [imageSet, imageSet]]
+      # used to figure out if previous sequence type is different from current
+      # if it is we the create a new sequence group array
       $current_type = '';
       $nounce = 0;
+      # Group adjucent sequence types:
+      # [instruction, imageSet, imageSet] into -> [[instruction], [imageSet, imageSet]]
       foreach ($sequences[0]->experiment_sequences as $key => $sequence)
       {
         if ($sequence->instruction_id !== null) {
+          # reached a new instruction sequence? Create an array and add instruction,
+          # else add instruction sequence to exsisting array
           if ($current_type != 'instruction') {
             ++$nounce;
             $all[$nounce] = [$sequence];
@@ -538,8 +540,7 @@ class ExperimentsController extends Controller
           if ($experiment->experiment_type_id == 1 || $experiment->experiment_type_id == 5) {
             $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->groupBy('picture_order');
           }
-          // return $sequence['stimuli'];
-          // exit;
+
           if ($sequence->randomize == 1) {
             if ($experiment->experiment_type_id == 1 || $experiment->experiment_type_id == 5) {
               $sequence['stimuli'] = collect($sequence['stimuli'])->shuffle();
@@ -548,6 +549,8 @@ class ExperimentsController extends Controller
             }
           }
 
+          # reached a new image set sequence? Create an array and add image set,
+          # else add image set sequence to exsisting array
           if ($current_type != 'imageSet') {
             ++$nounce;
             $all[$nounce] = [$sequence];
@@ -609,8 +612,11 @@ class ExperimentsController extends Controller
         'experimentType' => 'required'
       ]);
 
+      # has anyone completed the experiment?
       if ($request->amountObservers > 0)
       {
+        # has the experiment been edited before?
+        # if so get the latest version
         if ($original_experiment->first_version_id) {
           $last_version = Experiment::where('first_version_id', $original_experiment->first_version_id)
             ->latest()
@@ -665,12 +671,11 @@ class ExperimentsController extends Controller
         ]);
 
         // Delete original experiment
-        // TODO: delete everything related
+        // TODO: delete everything related, or check foreign keys on cascade
         Experiment::destroy($original_experiment->id);
       }
 
       // TODO: abstract store function into another file/class
-
       if ($experiment->id > 0)
       {
         $experiment_queue = \App\ExperimentQueue::create([
@@ -701,6 +706,7 @@ class ExperimentsController extends Controller
             }
           }
 
+          // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
           {
             foreach ($request->categories as $category)
@@ -726,21 +732,25 @@ class ExperimentsController extends Controller
             }
           }
 
+          // TODO: check that the user owns the image set
+          // TODO: check that the user owns the instruction
+          // foreach ($request->sequences as $group_key => list($step)) {
 
-          foreach ($request->sequences as $step)
-          {
-            if ($step['type'] === 'imageSet') // TODO: check that the user owns the image set
+          foreach ($request->sequences as $group_key => $group) {
+            foreach ($group as $step)
             {
-              # random within image set OR within and between image sets
-              if ($experiment->picture_sequence_algorithm === 1 || $experiment->picture_sequence_algorithm === 2)
+              if ($step['type'] === 'imageSet')
               {
+                // $experiment->type->slug === 'paired'
                 if ($experiment->experiment_type_id == 1)
                 {
                   $picture_queue_id = $this->random_paired_queue(
                     $step['value'],
-                    $experiment->same_pair
+                    // $experiment->same_pair
+                    $step['flipped']
                   );
                 }
+                // $experiment->type->slug === 'triplet'
                 else if ($experiment->experiment_type_id == 5)
                 {
                   $picture_queue_id = $this->random_triplet_queue( $step['value'] );
@@ -754,46 +764,46 @@ class ExperimentsController extends Controller
                   $experiment_queue->id,
                   $picture_queue_id,
                   null,
+                  $step['value'],
+                  $step['randomize'],
+                  $step['original'],
+                  $step['flipped'],
+                  $group[0]['randomizeGroup']
+                );
+              }
+              else if ($step['type'] === 'instruction')
+              {
+                $instruction = \App\Instruction::create([
+                  'user_id' => auth()->user()->id,
+                  'description' => $step['value']
+                ]);
+
+                $this->add_experiment_sequence(
+                  $experiment_queue->id,
+                  null,
+                  $instruction->id
+                );
+              }
+              else if ($step['type'] === 'instructionFromHistory')
+              {
+                $this->add_experiment_sequence(
+                  $experiment_queue->id,
+                  null,
                   $step['value']
                 );
               }
-            }
-            else if ($step['type'] === 'instruction')
-            {
-              $instruction = \App\Instruction::create([
-                'user_id' => auth()->user()->id,
-                'description' => $step['value']
-              ]);
-
-              $this->add_experiment_sequence(
-                $experiment_queue->id,
-                null,
-                $instruction->id,
-                null
-              );
-            }
-            else if ($step['type'] === 'instructionFromHistory')
-            {
-              // TODO: check that the user owns the instruction
-
-              $this->add_experiment_sequence(
-                $experiment_queue->id,
-                null,
-                $step['value'],
-                null
-              );
             }
           }
 
           return response($experiment, 201);
         } else {
-          return response('Something went wrong. Experiment could not be updated.', 404);
+          return response('Experiment queue could not be created.', 404);
+          // IF SOMETHING FAILS WE SHOULD DELETE THE EXPERIMENT
+          // $experiment->delete();
         }
       } else {
-        return response('Something went wrong. Experiment could not be updated.', 404);
+        return response('Experiment could not be created.', 404);
       }
-
-      // return response($experiment, 200);
     }
 
     /**

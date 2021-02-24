@@ -18,6 +18,9 @@ class CreateExperimentSequencesTable extends Migration
 
             $table->bigInteger('picture_set_id')->nullable(); // can this be removed?
             $table->bigInteger('experiment_queue_id');
+            // $table->foreign('experiment_queue_id')->references('id')->on('experiment_queues');
+            // $table->foreignId('experiment_queue_id')->constrained()->onDelete('cascade');
+
             $table->bigInteger('picture_queue_id')->nullable(); # will be NULL if instruction_id is set
             $table->bigInteger('instruction_id')->nullable(); # will be NULL if picture_queue_id is set
 

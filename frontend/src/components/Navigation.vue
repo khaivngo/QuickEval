@@ -98,7 +98,7 @@
             @click="$router.push('/privacy')"
           >
             <v-list-item-icon class="mr-4">
-              <!-- <v-icon>mdi-account-circle</v-icon> -->
+              <v-icon>mdi-file-document-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="pr-5">
@@ -111,7 +111,7 @@
             @click="$router.push('/cookies')"
           >
             <v-list-item-icon class="mr-4">
-              <!-- <v-icon>mdi-account-circle</v-icon> -->
+              <v-icon>mdi-file-document-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title class="pr-5">
