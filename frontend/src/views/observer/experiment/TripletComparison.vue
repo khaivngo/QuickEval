@@ -87,7 +87,7 @@
         mt-2 mb-2
         class="picture-container"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
-        v-if="experiment.show_original === 1"
+        v-show="originalImage"
       >
         <div class="panzoom d-flex justify-center align-center">
           <img id="picture-original" class="picture" :src="originalImage"/>
@@ -147,7 +147,12 @@
     </v-layout>
 
     <v-layout ref="navAction" class="justify-end pr-6">
-      <v-flex v-if="experiment.show_original === 1 && originalImage !== ''" ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
+      <v-flex
+        v-show="originalImage"
+        ml-2 mr-2
+        xs6
+        class="justify-center" align-center
+      >
         <h4 class="subtitle-1 pb-0 mb-0 text-center">
           Original
         </h4>
@@ -520,12 +525,28 @@ export default {
         this.originalImage = ''
       }
 
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
+        }
+
+        this.middleCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
+        }
+
+        this.rightCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.path
+        }
+      }
+
       const imgLeft = new Image()
       imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
       imgLeft.onload = () => {
         this.isLoadLeft = false
         this.imageLeft = imgLeft.src
-        // this.leftCanvas = { path: imgLeft.src, image: this.stimuli[this.index] }
 
         window.setTimeout(() => {
           this.isLoadLeft = true
@@ -540,7 +561,7 @@ export default {
       imgMiddle.onload = () => {
         this.isLoadMiddle = false
         this.imageMiddle = imgMiddle.src
-        // this.middleCanvas = { path: imgMiddle.src, image: this.stimuli[this.index + 1] }
+
         window.setTimeout(() => {
           this.isLoadMiddle = true
           // starts or overrides existing timer
@@ -554,7 +575,7 @@ export default {
       imgRight.onload = () => {
         this.isLoadRight = false
         this.imageRight = imgRight.src
-        // this.rightCanvas = { path: imgRight.src, image: this.stimuli[this.index + 2] }
+
         window.setTimeout(() => {
           this.isLoadRight = true
           // starts or overrides existing timer
@@ -579,7 +600,8 @@ export default {
         picture_id_middle:    pictureIdMiddle,
         picture_id_right:     pictureIdRight,
         client_side_timer:    clientSideTimer,
-        chose_none: 0
+        chose_none:           0,
+        artifact_marks:       this.shapes
       }
       /* eslint-enable */
 

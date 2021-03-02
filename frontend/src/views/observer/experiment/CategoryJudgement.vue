@@ -79,7 +79,7 @@
           />
         </div>
       </v-flex>
-      <v-flex ml-2 mr-2 xs6 v-if="experiment.show_original === 1" justify-center align-center>
+      <v-flex ml-2 mr-2 xs6 v-if="originalImage" justify-center align-center>
       </v-flex>
     </v-layout>
 
@@ -88,7 +88,7 @@
       </v-flex>
 
       <v-flex ml-2 mr-2 xs6 class="text-center">
-        <h4 class="subtitle-1 pb-0 mb-0" v-if="experiment.show_original === 1 && originalImage">
+        <h4 class="subtitle-1 pb-0 mb-0" v-show="originalImage">
           Original
         </h4>
       </v-flex>
@@ -96,7 +96,7 @@
 
     <v-layout ref="images" fill-height justify-center ml-3 mr-3 pa-0 pt-2>
       <v-flex
-        :style="(experiment.show_original) ? `margin-right: ${experiment.stimuli_spacing}px` : ''"
+        :style="(originalImage) ? `margin-right: ${experiment.stimuli_spacing}px` : ''"
         mt-0 mr-2 mb-0 pb-2
         class="picture-container"
       >
@@ -117,7 +117,7 @@
         </div>
       </v-flex>
 
-      <v-flex mt-0 ml-2 mb-0 pb-2 class="picture-container" v-if="experiment.show_original === 1">
+      <v-flex mt-0 ml-2 mb-0 pb-2 class="picture-container" v-show="originalImage">
         <div class="panzoom d-flex justify-center align-center stretch">
           <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
@@ -159,7 +159,7 @@
         </v-layout>
       </v-flex>
 
-      <v-flex ml-2 mr-2 xs6 v-if="experiment.show_original === 1" class="justify-center" justify-center align-center>
+      <v-flex ml-2 mr-2 xs6 v-show="originalImage" class="justify-center" justify-center align-center>
       </v-flex>
     </v-layout>
 
@@ -411,7 +411,10 @@ export default {
 
           this.disableNextBtn = false
         }
-      } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
         this.selectedCategory = null
         this.leftImage = ''
         this.originalImage = ''
@@ -443,17 +446,21 @@ export default {
         this.originalImage = ''
       }
 
+      // we use a object because sometimes the image is the same image but we still want
+      // to trigger watch in child components
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
+        }
+      }
+
       var imgLeft = new Image()
       imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
       imgLeft.onload = () => {
         this.isLoadLeft = false
         this.leftImage = imgLeft.src
-        // we use a object because sometimes the image is the same image but we still want
-        // to trigger watch in child components
-        // this.leftCanvas = {
-        //   image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path,
-        //   path: imgLeft.src
-        // }
+
         window.setTimeout(() => {
           this.isLoadLeft = true
           this.startTime = new Date()
@@ -479,6 +486,7 @@ export default {
 
     /**
      * Loop through the stimuli array and count how many picture pairs we have.
+     * With this number we can display how many comparions the user have to rate.
      */
     countTotalComparisons () {
       let stimuliCount = this.stimuli.reduce((accumulator, currentValue) => {
@@ -505,7 +513,8 @@ export default {
         category_id: this.selectedCategory,
         picture_id_left: pictureIdLeft.id,
         client_side_timer: clientSideTimer,
-        chose_none: 0
+        chose_none: 0,
+        artifact_marks: this.shapes
       }
 
       return this.$axios.post('/result-categories', data)

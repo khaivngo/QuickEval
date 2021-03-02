@@ -113,7 +113,7 @@
 
     <v-layout ref="titles" pa-0 ma-0 justify-center>
       <h4
-        :class="(experiment.show_original === 1 && originalImage !== '') ? 'show' : 'hide'"
+        :class="(originalImage !== '') ? 'show' : 'hide'"
         class="subtitle-1 pt-3"
         style="padding-bottom: 0px; margin-bottom: 0;"
       >
@@ -151,7 +151,7 @@
         mt-0 mb-0 pb-2
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         class="picture-container"
-        v-if="experiment.show_original === 1"
+        v-show="originalImage"
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
@@ -410,7 +410,10 @@ export default {
       }
 
       // if the current experiment sequence is a picture queue
-      if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
+      if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
+        this.stimuli[this.typeIndex][0].picture_queue_id !== null
+      ) {
         if (this.firstImages === 1) {
           await this.loadStimuli()
           ++this.imagePairIndex
@@ -490,7 +493,10 @@ export default {
 
           this.disableNextBtn = false
         }
-      } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
         this.leftImage = ''
         this.originalImage = ''
         this.rightImage = ''
@@ -527,6 +533,20 @@ export default {
         { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path },
         { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
       ]
+
+      // we use a object because sometimes the image is the same image but we still want
+      // to trigger watch in child components
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
+        }
+        this.rightCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
+        }
+      }
+
       var imageCount = images.length
       var imagesLoaded = 0
       // attach onload events to every reproduction image
@@ -543,19 +563,6 @@ export default {
             // hide left image, then set source
             this.isLoadLeft = false
             this.leftImage = images[1].img.src
-
-            // we use a object because sometimes the image is the same image but we still want
-            // to trigger watch in child components
-            if (this.experiment.artifact_marking) {
-              this.leftCanvas = {
-                image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path,
-                path: images[1].img.src
-              }
-              this.rightCanvas = {
-                image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path,
-                path: images[0].img.src
-              }
-            }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay

@@ -116,6 +116,21 @@ class ResultCategoriesController extends Controller
         'client_side_timer'     => $request->client_side_timer
       ]);
 
+      if ($request->artifact_marks) {
+        foreach ($request->artifact_marks as $image) {
+          foreach ($image as $mark) {
+            $fill = json_encode($mark['fill']);
+            \App\ResultImageArtifact::create([
+              'experiment_result_id'  => $request->experiment_result_id,
+              'picture_id'            => $mark['picture_id'],
+              'selected_area'         => $fill,
+              'comment'               => null,
+              'client_side_timer'     => 0, // $request->client_side_timer
+            ]);
+          }
+        }
+      }
+
       if ($result) {
         return response('result_stored', 201);
       }

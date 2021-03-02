@@ -309,7 +309,7 @@ export default {
                 // save all the x and y coordinates as well as any comment
                 let fillCalculated = this.calcFill(this.points)
                 this.savedShapes.push({
-                    picture_id: this.imageURL.image.picture_id,
+                    picture_id: this.imageURL.image.id,
                     points: this.points,
                     annotation: '',
                     fill: fillCalculated
@@ -321,7 +321,7 @@ export default {
             } else if (this.TOOL == "DELETE") {
                 let fillCalculated = this.calcFill(this.points)
                 this.deleteArea.push({
-                    picture_id: this.imageURL.image.picture_id,
+                    picture_id: this.imageURL.image.id,
                     points: this.points,
                     annotation: '',
                     fill: fillCalculated
