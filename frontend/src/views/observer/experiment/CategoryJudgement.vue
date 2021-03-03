@@ -283,7 +283,7 @@ export default {
 
     closeAndNext () {
       this.instructionDialog = false
-      // this.focusSelect()
+      this.focusSelect()
       this.next()
     },
 
@@ -340,7 +340,7 @@ export default {
       if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
         // The first time we want to load the images even though user has not selected anything
         if (this.loadNextImages === true) {
-          // this.focusSelect()
+          this.focusSelect()
 
           await this.loadStimuli()
           ++this.imagePairIndex
@@ -401,7 +401,7 @@ export default {
               ++this.typeIndex
             }
 
-            // this.focusSelect()
+            this.focusSelect()
           } else {
             alert(`
               'Could not save your answer. Please try again. If the problem
