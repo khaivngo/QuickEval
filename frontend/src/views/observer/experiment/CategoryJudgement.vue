@@ -126,36 +126,100 @@
 
     <v-layout ref="navAction" pt-4 pl-0 pr-0 pb-4 ma-0 justify-center align-center>
       <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center align-center>
-          <div class="pl-2 pr-2 category-select">
-            <v-select
-              ref="select"
-              v-model="selectedCategory"
-              :items="categories"
-              :disabled="disableNextBtn"
-              label="Select category"
-              item-text="title"
-              item-value="id"
-              :menu-props="{ maxHeight: 400, overflowY: true }"
-              hide-details
-              single-line
-              class="ma-0 pt-0"
-            ></v-select>
-          </div>
+        <v-layout pa-0 ma-0 justify-center align-center class="flex-column">
+          <div class="d-flex align-center">
+            <div class="pl-2 pr-2 mb-7 category-select">
+              <v-select
+                ref="select"
+                v-model="selectedCategory"
+                :items="categories"
+                :disabled="disableNextBtn"
+                label="Select category"
+                item-text="title"
+                item-value="id"
+                :menu-props="{ maxHeight: 400, overflowY: true }"
+                hide-details
+                single-line
+                dense
+                outlined
+                class="ma-0 pt-0"
+                background-color="#bbb"
+              >
+                <template slot="label">
+                  <div class="d-flex align-center">
+                    Click or select with
+                    <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="15"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        d="m 2.75,24 h 18.5 C 22.767,24 24,22.767 24,21.25 V 2.75 C 24,1.233 22.767,0 21.25,0 H 2.75 C 1.233,0 0,1.233 0,2.75 v 18.5 C 0,22.767 1.233,24 2.75,24 Z M 4.56,11.957 C 4.678,11.68 4.95,11.5 5.25,11.5 H 9 V 4.75 C 9,4.336 9.336,4 9.75,4 h 4.5 C 14.664,4 15,4.336 15,4.75 v 6.75 h 3.75 c 0.301,0 0.573,0.18 0.69,0.457 0.118,0.276 0.058,0.597 -0.15,0.813 l -6.75,7 c -0.283,0.293 -0.797,0.293 -1.08,0 l -6.75,-7 C 4.501,12.554 4.442,12.233 4.56,11.957 Z"
+                        id="path2"
+                      />
+                    </svg>
+                  </div>
+                </template>
+              </v-select>
+            </div>
 
-          <v-btn
-            color="#D9D9D9"
-            @click="next()"
-            :disabled="disableNextBtn || (selectedCategory === null)"
-            :loading="disableNextBtn"
-            class="ml-2"
-          >
-            <span class="ml-1">next</span>
-            <h4 class="ml-1">
-              ({{ index }}/{{ totalComparisons }})
-            </h4>
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
+            <div>
+              <v-btn
+                color="#D9D9D9"
+                @click="next()"
+                :disabled="disableNextBtn || (selectedCategory === null)"
+                :loading="disableNextBtn"
+                class="ml-2"
+              >
+                <span class="ml-1">next</span>
+                <h4 class="ml-1" v-if="experiment.show_progress">
+                  ({{ index }}/{{ totalComparisons }})
+                </h4>
+                <v-icon>mdi-chevron-right</v-icon>
+              </v-btn>
+              <div v-if="selectedCategory === null" style="height: 26px;"></div>
+              <div v-if="selectedCategory !== null" class="caption pa-0 ma-0 mt-1 pl-4 d-flex align-center" style="color: #333;">
+                <span class="mr-2">or press</span>
+                <svg
+                   xmlns="http://www.w3.org/2000/svg"
+                   style="opacity:0.9;"
+                   height="22.944914"
+                   viewBox="0 0 41.381356 28.983049"
+                   version="1.1"
+                   id="svg4"
+                   width="41.381355"
+                >
+                  <rect
+                     style="opacity:1;fill:#333;fill-opacity:1;stroke:none;stroke-width:1.58024037;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.01005028"
+                     id="rect20"
+                     width="52.271187"
+                     height="28.983049"
+                     x="-5.2436438"
+                     y="0"
+                     rx="4.0677967"
+                     ry="4.0677967"
+                  />
+                  <text
+                     xml:space="preserve"
+                     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';letter-spacing:0px;word-spacing:0px;fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.49189663"
+                     x="-0.50927722"
+                     y="19.566446"
+                     id="text24"
+                  >
+                    <tspan
+                       id="tspan22"
+                       x="-0.50927722"
+                       y="19.566446"
+                       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';fill:#808080;stroke-width:1.49189663"
+                    >
+                      Enter
+                    </tspan>
+                  </text>
+                </svg>
+              </div>
+            </div>
+          </div>
         </v-layout>
       </v-flex>
 
@@ -598,7 +662,7 @@ export default {
   .category-select {
     max-width: 250px;
     min-width: 250px;
-    background-color: #bbb;
+    // background-color: #bbb;
   }
 
   /* override default v-select dropdown colours */

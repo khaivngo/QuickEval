@@ -27,9 +27,8 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="primary darken-1"
-                text
-                outlined
+                color="#333 "
+                dark
                 @click="howToDialog = false"
               >
                 Close
@@ -56,9 +55,8 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="primary darken-1"
-                text
-                outlined
+                color="#333"
+                dark
                 @click="closeAndNext"
               >
                 Close
@@ -200,8 +198,8 @@
         <v-col cols="auto" class="pa-0 mt-0">
           <div class="d-flex justify-center">
             <v-btn
-              @click="next"
               :disabled="selectedRadio === null || disableNextBtn"
+              @click="saveAnswer()"
               :loading="disableNextBtn"
               color="#D9D9D9"
             >
@@ -286,7 +284,7 @@ export default {
 
       timeElapsed: null,
 
-      firstImages: 1,
+      firstImages: 0,
 
       shapes: {},
       drawingTool: ''
@@ -329,7 +327,7 @@ export default {
         // enter / space
         if (e.keyCode === 13 || e.keyCode === 32) {
           if (this.selectedRadio !== null) {
-            this.next()
+            this.nextStep()
           }
         }
 
@@ -337,7 +335,7 @@ export default {
         if (e.keyCode === 37) {
           if (this.disableNextBtn === false) {
             this.selectedRadio = 'left'
-            this.next()
+            this.nextStep()
           }
         }
 
@@ -345,7 +343,7 @@ export default {
         if (e.keyCode === 39) {
           if (this.disableNextBtn === false) {
             this.selectedRadio = 'right'
-            this.next()
+            this.nextStep()
           }
         }
 
@@ -376,7 +374,7 @@ export default {
           this.resetProgress()
           this.getProgress()
 
-          this.next()
+          this.nextStep()
 
           this.calculateLayout()
         } else {
@@ -390,13 +388,106 @@ export default {
     continueExistingExperiment () {
       this.getProgress()
       this.countTotalComparisons()
-      this.next()
+      this.nextStep()
       this.calculateLayout()
     },
 
     closeAndNext () {
       this.instructionDialog = false
-      this.next()
+      this.nextStep()
+    },
+
+    async nextStep () {
+      // Have we reached the end?
+      if (this.stimuli[this.typeIndex][0] === 'finished') {
+        this.onFinish()
+        return
+      }
+
+      if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
+        this.stimuli[this.typeIndex][0].picture_queue_id !== null
+      ) {
+        this.saveProgress()
+        console.log(this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture)
+
+        await this.loadStimuli()
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
+        this.leftImage     = ''
+        this.originalImage = ''
+        this.rightImage    = ''
+
+        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+        this.instructionDialog = true
+
+        this.saveProgress()
+
+        ++this.sequenceIndex
+        // move on to the next experiment sequence
+        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+          this.sequenceIndex = 0
+          ++this.typeIndex
+        }
+      }
+    },
+
+    async saveAnswer () {
+      // only do stuff if stimuli has been selected
+      if (this.selectedRadio !== null) {
+        this.disableNextBtn = true
+
+        // TODO: fetch this from a active_stimuli variable instead?
+        // that way we know to a higher degree that the one displayed is the same one sent
+        let selectedStimuli = null
+        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+        if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
+
+        // record the current time
+        let endTime = new Date()
+        // subtract the current time with the start time (when images completed loading)
+        let timeDiff = endTime - this.timeElapsed // in ms
+        // strip the ms and get seconds
+        timeDiff /= 1000
+        let seconds = Math.round(timeDiff)
+
+        let response = await this.store(
+          selectedStimuli,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+          seconds
+        )
+
+        if (response.data === 'result_stored') {
+          this.selectedRadio = null
+          this.shapes = {}
+
+          ++this.imagePairIndex
+          ++this.index
+          // move on to the next image sequence
+          if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
+            this.imagePairIndex = 0
+            ++this.sequenceIndex
+          }
+          // move on to the next experiment sequence
+          if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+            this.sequenceIndex = 0
+            this.imagePairIndex = 0
+            ++this.typeIndex
+          }
+
+          this.nextStep()
+        } else {
+          alert(
+            `Could not save your answer. Please try again. If the problem persist
+            please contact the researcher.`
+          )
+        }
+
+        this.disableNextBtn = false
+      }
     },
 
     /**
@@ -416,6 +507,63 @@ export default {
       ) {
         if (this.firstImages === 1) {
           await this.loadStimuli()
+          this.firstImages = 0
+        } else {
+          this.saveRating()
+        }
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
+        this.leftImage = ''
+        this.originalImage = ''
+        this.rightImage = ''
+        this.firstImages = 1
+
+        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+        this.instructionDialog = true
+
+        this.saveProgress()
+
+        ++this.sequenceIndex
+        // move on to the next experiment sequence
+        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+          this.sequenceIndex = 0
+          ++this.typeIndex
+        }
+      }
+    },
+
+    async saveRating () {
+      let selectedStimuli = null
+      if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+      if (this.selectedRadio === 'left') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+
+      // only do stuff if stimuli has been selected
+      if (this.selectedRadio !== null) {
+        this.disableNextBtn = true
+
+        // record the current time
+        let endTime = new Date()
+        // subtract the current time with the start time (when images completed loading)
+        let timeDiff = endTime - this.timeElapsed // in ms
+        // strip the ms and get seconds
+        timeDiff /= 1000
+        let seconds = Math.round(timeDiff)
+
+        let response = await this.store(
+          selectedStimuli,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+          seconds
+        )
+
+        if (response.data === 'result_stored') {
+          this.selectedRadio = null
+          if (this.experiment.artifact_marking) this.shapes = {}
+
+          this.saveProgress()
+
           ++this.imagePairIndex
 
           ++this.index
@@ -433,86 +581,48 @@ export default {
             ++this.typeIndex
           }
 
-          this.firstImages = 0
-        }
+          if (
+            this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
+            this.stimuli[this.typeIndex][0].picture_queue_id !== null
+          ) {
+            await this.loadStimuli()
+          } else if (
+            this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+            this.stimuli[this.typeIndex][0].instruction_id !== null
+          ) {
+            this.leftImage = ''
+            this.originalImage = ''
+            this.rightImage = ''
+            // this.firstImages = 1
 
-        let selectedStimuli = null
-        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
-        if (this.selectedRadio === 'left') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+            this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+            this.instructionDialog = true
 
-        // only do stuff if stimuli has been selected
-        if (this.selectedRadio !== null) {
-          this.disableNextBtn = true
-
-          // record the current time
-          let endTime = new Date()
-          // subtract the current time with the start time (when images completed loading)
-          let timeDiff = endTime - this.timeElapsed // in ms
-          // strip the ms and get seconds
-          timeDiff /= 1000
-          let seconds = Math.round(timeDiff)
-
-          // store here
-          let response = await this.store(
-            selectedStimuli,
-            // this.stimuli[this.index],
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-            // this.stimuli[this.index + 1],
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-            seconds
-          )
-
-          if (response.data === 'result_stored') {
-            this.selectedRadio = null
-            if (this.experiment.artifact_marking) this.shapes = {}
             this.saveProgress()
 
-            await this.loadStimuli()
-            ++this.imagePairIndex
-
-            ++this.index
-
-            // move on to the next picture sequence
-            if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
-              this.imagePairIndex = 0
-              ++this.sequenceIndex
-            }
-
+            ++this.sequenceIndex
             // move on to the next experiment sequence
             if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
               this.sequenceIndex = 0
-              this.imagePairIndex = 0
               ++this.typeIndex
             }
-          } else {
-            alert(`
-              'Could not save your answer. Please try again. If the problem
-              persist please contact the researcher.'
-            `)
+
+            // Have we reached the end?
+            if (this.stimuli[this.typeIndex][0] === 'finished') {
+              this.onFinish()
+              return
+            }
+
+            await this.loadStimuli()
           }
-
-          this.disableNextBtn = false
+        } else {
+          alert(`
+            'Could not save your answer. Please try again. If the problem
+            persist please contact the researcher.'
+          `)
         }
-      } else if (
-        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
-        this.stimuli[this.typeIndex][0].instruction_id !== null
-      ) {
-        this.leftImage = ''
-        this.originalImage = ''
-        this.rightImage = ''
-        // this.firstImages = 1
 
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-        this.instructionDialog = true
-
-        this.saveProgress()
-
-        ++this.sequenceIndex
-        // move on to the next experiment sequence
-        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-        }
+        this.disableNextBtn = false
       }
     },
 
@@ -583,12 +693,12 @@ export default {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
-    async store (pictureIdSelected, pictureIdRight, pictureIdLeft, clientSideTimer) {
+    async store (pictureSelected, pictureLeft, pictureRight, clientSideTimer) {
       let data = {
         experiment_result_id: this.experimentResult,
-        picture_id_selected: pictureIdSelected.id,
-        picture_id_right: pictureIdRight.id,
-        picture_id_left: pictureIdLeft.id,
+        picture_id_selected: pictureSelected.id,
+        picture_id_right: pictureRight.id,
+        picture_id_left: pictureLeft.id,
         client_side_timer: clientSideTimer,
         chose_none: 0,
         artifact_marks: this.shapes

@@ -25,5 +25,22 @@ class DatabaseSeeder extends Seeder
             ['id' => 5, 'name' => 'Triplet Comparison', 'slug' => 'triplet',    'description' => ''],
             // ['name' => 'Artifact Marking', 'description' => ''],
         ]);
+
+        // DB::table('experiments')->truncate();
+        // DB::table('experiment_categories')->truncate();
+        // DB::table('experiment_observer_metas')->truncate();
+        // DB::table('experiment_queues')->truncate();
+        // DB::table('experiment_results')->truncate();
+        // DB::table('experiment_sequences')->truncate();
+        // DB::table('instructions')->truncate();
+        // DB::table('observer_metas')->truncate();
+        // DB::table('picture_queues')->truncate();
+        // DB::table('picture_sequences')->truncate();
+        // DB::table('result_categories')->truncate();
+        // DB::table('result_image_artifacts')->truncate();
+        // DB::table('result_observer_metas')->truncate();
+        // DB::table('result_pairs')->truncate();
+        // DB::table('result_rank_orders')->truncate();
+        // DB::table('result_triplets')->truncate();
     }
 }
