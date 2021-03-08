@@ -22,8 +22,8 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="primary darken-1"
-                text
+                color="#333"
+                dark
                 @click="closeAndNext"
               >
                 Close
@@ -41,13 +41,13 @@
 
       <v-spacer></v-spacer>
 
-      <!-- <v-toolbar-items v-if="experiment.show_progress === 1">
-        <h4 class="pt-1 mr-4" style="color: #BDBDBD; padding-right: 240px;">
+      <v-toolbar-items v-if="experiment.show_progress === 1">
+        <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
           {{ index }}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
 
-      <v-spacer></v-spacer> -->
+      <!-- <v-spacer></v-spacer> -->
 
       <v-toolbar-items>
         <v-dialog v-model="abortDialog" max-width="500">
@@ -128,7 +128,7 @@
       <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
         <v-layout pa-0 ma-0 justify-center align-center class="flex-column">
           <div class="d-flex align-center">
-            <div class="pl-2 pr-2 mb-7 category-select">
+            <div class="pl-2 pr-2 category-select" style="position: relative;">
               <v-select
                 ref="select"
                 v-model="selectedCategory"
@@ -145,7 +145,7 @@
                 class="ma-0 pt-0"
                 background-color="#bbb"
               >
-                <template slot="label">
+                <!-- <template slot="label">
                   <div class="d-flex align-center">
                     Click or select with
                     <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
@@ -160,28 +160,39 @@
                       />
                     </svg>
                   </div>
-                </template>
+                </template> -->
               </v-select>
+
+              <div class="d-flex align-center" style="position: absolute; top: 13px; right: 50px;">
+                <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="15"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="m 2.75,24 h 18.5 C 22.767,24 24,22.767 24,21.25 V 2.75 C 24,1.233 22.767,0 21.25,0 H 2.75 C 1.233,0 0,1.233 0,2.75 v 18.5 C 0,22.767 1.233,24 2.75,24 Z M 4.56,11.957 C 4.678,11.68 4.95,11.5 5.25,11.5 H 9 V 4.75 C 9,4.336 9.336,4 9.75,4 h 4.5 C 14.664,4 15,4.336 15,4.75 v 6.75 h 3.75 c 0.301,0 0.573,0.18 0.69,0.457 0.118,0.276 0.058,0.597 -0.15,0.813 l -6.75,7 c -0.283,0.293 -0.797,0.293 -1.08,0 l -6.75,-7 C 4.501,12.554 4.442,12.233 4.56,11.957 Z"
+                    id="path2"
+                  />
+                </svg>
+              </div>
             </div>
 
             <div>
               <v-btn
                 color="#D9D9D9"
-                @click="next()"
+                @click="saveAnswer()"
                 :disabled="disableNextBtn || (selectedCategory === null)"
                 :loading="disableNextBtn"
                 class="ml-2"
               >
-                <span class="ml-1">next</span>
-                <h4 class="ml-1" v-if="experiment.show_progress">
-                  ({{ index }}/{{ totalComparisons }})
-                </h4>
-                <v-icon>mdi-chevron-right</v-icon>
-              </v-btn>
-              <div v-if="selectedCategory === null" style="height: 26px;"></div>
-              <div v-if="selectedCategory !== null" class="caption pa-0 ma-0 mt-1 pl-4 d-flex align-center" style="color: #333;">
-                <span class="mr-2">or press</span>
-                <svg
+                <span class="ml-1 mr-2">next</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 26 26" style="enable-background:new 0 0 26 26;" xml:space="preserve">
+                  <g>
+                    <path style="fill:#333;" :style="(selectedCategory === null) ? 'fill: #535353;' : ''" d="M25,2H9C8.449,2,8,2.449,8,3c0,0,0,7,0,9s-2,2-2,2H1c-0.551,0-1,0.449-1,1v8c0,0.551,0.449,1,1,1h24   c0.551,0,1-0.449,1-1V3C26,2.449,25.551,2,25,2z M22,14c0,1.436-1.336,4-4,4h-3.586l1.793,1.793c0.391,0.391,0.391,1.023,0,1.414   C16.012,21.402,15.756,21.5,15.5,21.5s-0.512-0.098-0.707-0.293l-3.5-3.5c-0.391-0.391-0.391-1.023,0-1.414l3.5-3.5   c0.391-0.391,1.023-0.391,1.414,0s0.391,1.023,0,1.414L14.414,16H18c1.398,0,2-1.518,2-2v-2c0-0.553,0.447-1,1-1s1,0.447,1,1V14z"/>
+                  </g>
+                </svg>
+                <!-- <svg
                    xmlns="http://www.w3.org/2000/svg"
                    style="opacity:0.9;"
                    height="22.944914"
@@ -216,8 +227,10 @@
                       Enter
                     </tspan>
                   </text>
-                </svg>
-              </div>
+                </svg> -->
+
+                <!-- <v-icon>mdi-chevron-right</v-icon> -->
+              </v-btn>
             </div>
           </div>
         </v-layout>
@@ -325,9 +338,11 @@ export default {
       }
 
       window.addEventListener('keydown', (e) => {
-        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
+        // enter / arrow right / space
+        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
           if (this.selectedCategory !== null && this.disableNextBtn !== true) {
-            this.next()
+            // this.nextStep()
+            this.saveAnswer()
           }
         }
 
@@ -348,7 +363,7 @@ export default {
     closeAndNext () {
       this.instructionDialog = false
       this.focusSelect()
-      this.next()
+      this.nextStep()
     },
 
     drawn (shapes) {
@@ -363,7 +378,7 @@ export default {
     continueExistingExperiment () {
       this.getProgress()
       this.countTotalComparisons()
-      this.next()
+      this.nextStep()
       this.calculateLayout()
     },
 
@@ -382,7 +397,7 @@ export default {
           this.resetProgress()
           this.getProgress()
 
-          this.next()
+          this.nextStep()
 
           this.calculateLayout()
         } else {
@@ -393,7 +408,7 @@ export default {
       })
     },
 
-    async next () {
+    async nextStep () {
       // Have we reached the end?
       if (this.stimuli[this.typeIndex][0] === 'finished') {
         this.onFinish()
@@ -401,15 +416,44 @@ export default {
       }
 
       // if the current experiment sequence is a picture queue
-      if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
-        // The first time we want to load the images even though user has not selected anything
-        if (this.loadNextImages === true) {
-          this.focusSelect()
+      if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
+        this.stimuli[this.typeIndex][0].picture_queue_id !== null
+      ) {
+        await this.loadStimuli()
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
+        this.loadInstructions()
+      }
+    },
 
-          await this.loadStimuli()
-          ++this.imagePairIndex
+    async saveAnswer () {
+      // only do stuff if stimuli has been selected
+      if (this.selectedCategory !== null) {
+        this.disableNextBtn = true
 
+        // record the current time
+        let endTime = new Date()
+        // get the number of seconds between endTime and startTime
+        let seconds = datetimeToSeconds(this.startTime, endTime)
+
+        // send results to db
+        let response = await this.store(
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
+          seconds
+        )
+
+        if (response.data === 'result_stored') {
+          this.selectedCategory = null
+          if (this.experiment.artifact_marking) this.shapes = {}
+          this.saveProgress()
+
+          // await this.loadStimuli()
           ++this.index
+
+          ++this.imagePairIndex
 
           // move on to the next picture sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
@@ -424,77 +468,34 @@ export default {
             ++this.typeIndex
           }
 
-          this.loadNextImages = false
+          this.focusSelect()
+          this.nextStep()
+        } else {
+          alert(`
+            'Could not save your answer. Please try again. If the problem
+            persist please contact the researcher.'
+          `)
         }
 
-        // only do stuff if stimuli has been selected
-        if (this.selectedCategory !== null) {
-          this.disableNextBtn = true
+        this.disableNextBtn = false
+      }
+    },
 
-          // record the current time
-          let endTime = new Date()
-          // get the number of seconds between endTime and startTime
-          let seconds = datetimeToSeconds(this.startTime, endTime)
+    loadInstructions () {
+      this.selectedCategory = null
+      this.leftImage = ''
+      this.originalImage = ''
 
-          // send results to db
-          let response = await this.store(
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
-            seconds
-          )
+      this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+      this.instructionDialog = true
 
-          if (response.data === 'result_stored') {
-            this.selectedCategory = null
-            if (this.experiment.artifact_marking) this.shapes = {}
-            this.saveProgress()
+      this.saveProgress()
 
-            await this.loadStimuli()
-            ++this.index
-
-            ++this.imagePairIndex
-
-            // move on to the next picture sequence
-            if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
-              this.imagePairIndex = 0
-              ++this.sequenceIndex
-            }
-
-            // move on to the next experiment sequence
-            if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-              this.sequenceIndex = 0
-              this.imagePairIndex = 0
-              ++this.typeIndex
-            }
-
-            this.focusSelect()
-          } else {
-            alert(`
-              'Could not save your answer. Please try again. If the problem
-              persist please contact the researcher.'
-            `)
-          }
-
-          this.disableNextBtn = false
-        }
-      } else if (
-        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
-        this.stimuli[this.typeIndex][0].instruction_id !== null
-      ) {
-        this.selectedCategory = null
-        this.leftImage = ''
-        this.originalImage = ''
-        this.loadNextImages = true
-
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-        this.instructionDialog = true
-
-        this.saveProgress()
-
-        ++this.sequenceIndex
-        // move on to the next experiment sequence
-        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-        }
+      ++this.sequenceIndex
+      // move on to the next experiment sequence
+      if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+        this.sequenceIndex = 0
+        ++this.typeIndex
       }
     },
 
@@ -506,6 +507,7 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
         this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        // this.calculateLayout()
       } else {
         this.originalImage = ''
       }
@@ -544,7 +546,7 @@ export default {
         let minus = navMain + titles + navAction + navMarker
 
         var height = document.body.scrollHeight - minus - 20
-        this.$refs.images.style.maxHeight = height + 'px'
+        this.$refs.images.style.height = height + 'px'
       })
     },
 

@@ -18,8 +18,8 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="primary darken-1"
-                text
+                color="#333"
+                dark
                 @click="closeAndNext()"
               >
                 Close
@@ -221,7 +221,7 @@
     <v-layout ref="navNext" class="justify-end pt-4 pr-6">
       <v-btn
         color="#D9D9D9"
-        @click="next()"
+        @click="saveAnswer()"
         :disabled="disableNextBtn || (selectedCategoryLeft === null || selectedCategoryMiddle === null || selectedCategoryRight === null)"
         :loading="disableNextBtn"
       >
@@ -342,11 +342,12 @@ export default {
       }
 
       window.addEventListener('keydown', (e) => {
-        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) { // enter / arrow right / space
-          if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
-            this.next()
-          }
-        }
+        // if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
+        // enter / arrow right / space
+        //   if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
+        //     this.next()
+        //   }
+        // }
 
         // esc
         if (e.keyCode === 27) {
@@ -371,13 +372,13 @@ export default {
     closeAndNext () {
       this.instructionDialog = false
       // this.focusSelect()
-      this.next()
+      this.nextStep()
     },
 
     continueExistingExperiment () {
       this.getProgress()
       this.countTotalComparisons()
-      this.next()
+      this.nextStep()
       this.calculateLayout()
     },
 
@@ -396,7 +397,7 @@ export default {
           this.resetProgress()
           this.getProgress()
 
-          this.next()
+          this.nextStep()
 
           this.calculateLayout()
         } else {
@@ -410,7 +411,7 @@ export default {
     /**
      * Load the next image queue stimuli, or instructions.
      */
-    async next () {
+    async nextStep () {
       // Have we reached the end?
       if (this.stimuli[this.typeIndex][0] === 'finished') {
         this.onFinish()
@@ -418,13 +419,51 @@ export default {
       }
 
       // if the current experiment sequence is a picture queue
-      if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
-        // The first time we want to load the images even though user has not selected anything
-        if (this.loadNextImages === true) {
-          await this.loadStimuli()
-          ++this.imagePairIndex
+      if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
+        this.stimuli[this.typeIndex][0].picture_queue_id !== null
+      ) {
+        await this.loadStimuli()
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
+        this.loadInstructions()
+      }
+    },
+
+    async saveAnswer () {
+      // don't do anything unless all categories has been selected
+      if (
+        this.selectedCategoryLeft !== null &&
+        this.selectedCategoryMiddle !== null &&
+        this.selectedCategoryRight !== null
+      ) {
+        this.disableNextBtn = true
+
+        // record the current time
+        let endTime = new Date()
+        // get the number of seconds between endTime and startTime
+        let seconds = datetimeToSeconds(this.startTime, endTime)
+
+        // send results to db
+        let response = await this.store(
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.id,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.id,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.id,
+          seconds
+        )
+
+        if (response.data === 'result_stored') {
+          this.selectedCategoryLeft = null
+          this.selectedCategoryMiddle = null
+          this.selectedCategoryRight = null
+          this.shapes = {}
+
+          this.saveProgress()
 
           ++this.index
+          ++this.imagePairIndex
 
           // move on to the next picture sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
@@ -439,77 +478,35 @@ export default {
             ++this.typeIndex
           }
 
-          this.loadNextImages = false
+          this.nextStep()
+        } else {
+          alert(`
+            'Could not save your answer. Please try again. If the problem
+            persist please contact the researcher.'
+          `)
         }
 
-        // don't do anything unless all categories has been selected
-        if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
-          this.disableNextBtn = true
+        this.disableNextBtn = false
+      }
+    },
 
-          // record the current time
-          let endTime = new Date()
-          // get the number of seconds between endTime and startTime
-          let seconds = datetimeToSeconds(this.startTime, endTime)
+    loadInstructions () {
+      this.imageLeft = ''
+      this.imageMiddle = ''
+      this.imageRight = ''
+      this.originalImage = ''
+      this.loadNextImages = true
 
-          // send results to db
-          let response = await this.store(
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.id,
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.id,
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.id,
-            seconds
-          )
+      this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+      this.instructionDialog = true
 
-          if (response.data === 'result_stored') {
-            this.selectedCategoryLeft = null
-            this.selectedCategoryMiddle = null
-            this.selectedCategoryRight = null
-            if (this.experiment.artifact_marking) this.shapes = {}
-            this.saveProgress()
+      this.saveProgress()
 
-            await this.loadStimuli()
-            ++this.index
-
-            ++this.imagePairIndex
-
-            // move on to the next picture sequence
-            if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
-              this.imagePairIndex = 0
-              ++this.sequenceIndex
-            }
-
-            // move on to the next experiment sequence
-            if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-              this.sequenceIndex = 0
-              this.imagePairIndex = 0
-              ++this.typeIndex
-            }
-          } else {
-            alert(`
-              'Could not save your answer. Please try again. If the problem
-              persist please contact the researcher.'
-            `)
-          }
-
-          this.disableNextBtn = false
-        }
-      } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
-        this.imageLeft = ''
-        this.imageMiddle = ''
-        this.imageRight = ''
-        this.originalImage = ''
-        this.loadNextImages = true
-
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-        this.instructionDialog = true
-
-        this.saveProgress()
-
-        ++this.sequenceIndex
-        // move on to the next experiment sequence
-        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-        }
+      ++this.sequenceIndex
+      // move on to the next experiment sequence
+      if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+        this.sequenceIndex = 0
+        ++this.typeIndex
       }
     },
 
@@ -617,7 +614,7 @@ export default {
         let minus = navMain + navNext + navAction + navMarker
 
         var height = document.body.scrollHeight - minus - 30
-        this.$refs.images.style.maxHeight = height + 'px'
+        this.$refs.images.style.height = height + 'px'
       })
     },
 

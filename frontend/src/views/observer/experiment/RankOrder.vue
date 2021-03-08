@@ -18,8 +18,8 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn
-                color="primary darken-1"
-                text
+                color="#333"
+                dark
                 @click="closeAndNext()"
               >
                 Close
@@ -176,7 +176,7 @@
     </div>
 
     <v-btn
-      @click="next('click')"
+      @click="saveAnswer()"
       :loading="disableNextBtn"
       fixed bottom right
       color="#D9D9D9"
@@ -294,10 +294,39 @@ export default {
   methods: {
     datetimeToSeconds: datetimeToSeconds,
 
+    continueExistingExperiment () {
+      this.getProgress()
+      this.countTotalComparisons()
+      this.nextStep()
+      this.calculateLayout()
+    },
+
+    startNewExperiment () {
+      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
+        this.stimuli = Object.values(payload.data)
+        this.stimuli.push(['finished'])
+
+        // save stimuli queue so that the observer will not lose progress if they refresh the page
+        const stimuliQueue = JSON.stringify(this.stimuli)
+        localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
+
+        this.countTotalComparisons()
+
+        this.resetProgress()
+        this.getProgress()
+
+        this.nextStep()
+
+        this.calculateLayout()
+      }).catch((err) => {
+        alert(err)
+      })
+    },
+
     closeAndNext () {
       this.instructionDialog = false
       // this.focusSelect()
-      this.next()
+      this.nextStep()
     },
 
     dragEnd (e) {
@@ -349,48 +378,49 @@ export default {
       }, this.experiment.delay)
     },
 
-    continueExistingExperiment () {
-      this.getProgress()
-      this.countTotalComparisons()
-      this.next()
-      this.calculateLayout()
-    },
-
-    startNewExperiment () {
-      this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
-        this.stimuli = Object.values(payload.data)
-        this.stimuli.push(['finished'])
-
-        // save stimuli queue so that the observer will not lose progress if they refresh the page
-        const stimuliQueue = JSON.stringify(this.stimuli)
-        localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
-
-        this.countTotalComparisons()
-
-        this.resetProgress()
-        this.getProgress()
-
-        this.next()
-
-        this.calculateLayout()
-      }).catch((err) => {
-        alert(err)
-      })
-    },
-
     /**
      * Load the next image set stimuli, or instructions.
      */
-    async next (action) {
+    async nextStep () {
       // Have we reached the end?
       if (this.stimuli[this.typeIndex][0] === 'finished') {
         this.onFinish()
         return
       }
 
-      if (this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') && this.stimuli[this.typeIndex][0].picture_queue_id !== null) {
-        if (this.loadNextImages === true) {
-          await this.loadStimuli()
+      if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
+        this.stimuli[this.typeIndex][0].picture_queue_id !== null
+      ) {
+        await this.loadStimuli()
+      } else if (
+        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
+        this.stimuli[this.typeIndex][0].instruction_id !== null
+      ) {
+        this.loadInstructions()
+      }
+    },
+
+    async saveAnswer () {
+      // has every image been viewed in the panner?
+      let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
+
+      // if rankings array is not empty, and every item in the array has been opened in the panner
+      if ((this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
+        this.disableNextBtn = true
+
+        // record the current time
+        let endTime = new Date()
+        // get the number of seconds between endTime and startTime
+        let seconds = datetimeToSeconds(this.timeElapsed, endTime)
+
+        let response = await this.store(seconds)
+
+        if (response.data === 'result_stored') {
+          this.labels = []
+          this.rankings = []
+
+          this.saveProgress()
 
           ++this.index
           ++this.sequenceIndex
@@ -401,58 +431,34 @@ export default {
             ++this.typeIndex
           }
 
-          this.loadNextImages = false
+          this.nextStep()
+        } else {
+          alert(
+            `Could not save your answer. Please try again. If the problem persist
+            please contact the researcher.`
+          )
         }
 
-        // has every image been viewed in the panner?
-        let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
+        this.disableNextBtn = false
+      }
+    },
 
-        // if rankings array is not empty, and every item in the array has been opened in the panner
-        if ((this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
-          this.disableNextBtn = true
+    loadInstructions () {
+      this.leftImage = ''
+      this.originalImage = ''
+      this.rightImage = ''
+      this.loadNextImages = true
 
-          // record the current time
-          let endTime = new Date()
-          // get the number of seconds between endTime and startTime
-          let seconds = datetimeToSeconds(this.timeElapsed, endTime)
+      this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+      this.instructionDialog = true
 
-          let response = await this.store(seconds)
+      this.saveProgress()
 
-          if (response.data === 'result_stored') {
-            this.labels = []
-            this.rankings = []
-
-            this.saveProgress()
-
-            await this.loadStimuli()
-
-            ++this.index
-            ++this.sequenceIndex
-
-            // move on to the next experiment sequence
-            if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-              this.sequenceIndex = 0
-              ++this.typeIndex
-            }
-          }
-        }
-      } else if (this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') && this.stimuli[this.typeIndex][0].instruction_id !== null) {
-        this.leftImage = ''
-        this.originalImage = ''
-        this.rightImage = ''
-        this.loadNextImages = true
-
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-        this.instructionDialog = true
-
-        this.saveProgress()
-
-        ++this.sequenceIndex
-        // move on to the next experiment sequence
-        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-        }
+      ++this.sequenceIndex
+      // move on to the next experiment sequence
+      if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+        this.sequenceIndex = 0
+        ++this.typeIndex
       }
     },
 
@@ -520,7 +526,7 @@ export default {
         let navAction = 159
         let minus = navMain + titles + navAction // + navMarker
         var height = document.body.scrollHeight - minus - 20
-        this.$refs.images.style.maxHeight = height + 'px'
+        this.$refs.images.style.height = height + 'px'
       })
     },
 

@@ -213,8 +213,8 @@
         <v-col class="pa-0 mt-0 pt-1">
           <div class="d-flex justify-center pa-0 mt-0">
             <v-radio color="default" value="right" class="scaled"></v-radio>
-            <!-- right
-            <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
+            <!-- right -->
+            <!-- <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
           </div>
         </v-col>
       </v-row>
@@ -327,7 +327,8 @@ export default {
         // enter / space
         if (e.keyCode === 13 || e.keyCode === 32) {
           if (this.selectedRadio !== null) {
-            this.nextStep()
+            // this.nextStep()
+            this.saveAnswer()
           }
         }
 
@@ -335,7 +336,7 @@ export default {
         if (e.keyCode === 37) {
           if (this.disableNextBtn === false) {
             this.selectedRadio = 'left'
-            this.nextStep()
+            this.saveAnswer()
           }
         }
 
@@ -343,7 +344,7 @@ export default {
         if (e.keyCode === 39) {
           if (this.disableNextBtn === false) {
             this.selectedRadio = 'right'
-            this.nextStep()
+            this.saveAnswer()
           }
         }
 
@@ -408,29 +409,12 @@ export default {
         this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
         this.stimuli[this.typeIndex][0].picture_queue_id !== null
       ) {
-        this.saveProgress()
-        console.log(this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture)
-
         await this.loadStimuli()
       } else if (
         this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
         this.stimuli[this.typeIndex][0].instruction_id !== null
       ) {
-        this.leftImage     = ''
-        this.originalImage = ''
-        this.rightImage    = ''
-
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-        this.instructionDialog = true
-
-        this.saveProgress()
-
-        ++this.sequenceIndex
-        // move on to the next experiment sequence
-        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-        }
+        this.loadInstructions()
       }
     },
 
@@ -442,8 +426,8 @@ export default {
         // TODO: fetch this from a active_stimuli variable instead?
         // that way we know to a higher degree that the one displayed is the same one sent
         let selectedStimuli = null
-        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
-        if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
+        if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
 
         // record the current time
         let endTime = new Date()
@@ -463,6 +447,8 @@ export default {
         if (response.data === 'result_stored') {
           this.selectedRadio = null
           this.shapes = {}
+
+          this.saveProgress()
 
           ++this.imagePairIndex
           ++this.index
@@ -490,139 +476,21 @@ export default {
       }
     },
 
-    /**
-     * Load the next image queue stimuli, or instructions.
-     */
-    async next () {
-      // Have we reached the end?
-      if (this.stimuli[this.typeIndex][0] === 'finished') {
-        this.onFinish()
-        return
-      }
+    loadInstructions () {
+      this.leftImage     = ''
+      this.originalImage = ''
+      this.rightImage    = ''
 
-      // if the current experiment sequence is a picture queue
-      if (
-        this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
-        this.stimuli[this.typeIndex][0].picture_queue_id !== null
-      ) {
-        if (this.firstImages === 1) {
-          await this.loadStimuli()
-          this.firstImages = 0
-        } else {
-          this.saveRating()
-        }
-      } else if (
-        this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
-        this.stimuli[this.typeIndex][0].instruction_id !== null
-      ) {
-        this.leftImage = ''
-        this.originalImage = ''
-        this.rightImage = ''
-        this.firstImages = 1
+      this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
+      this.instructionDialog = true
 
-        this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-        this.instructionDialog = true
+      this.saveProgress()
 
-        this.saveProgress()
-
-        ++this.sequenceIndex
-        // move on to the next experiment sequence
-        if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-          this.sequenceIndex = 0
-          ++this.typeIndex
-        }
-      }
-    },
-
-    async saveRating () {
-      let selectedStimuli = null
-      if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
-      if (this.selectedRadio === 'left') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
-
-      // only do stuff if stimuli has been selected
-      if (this.selectedRadio !== null) {
-        this.disableNextBtn = true
-
-        // record the current time
-        let endTime = new Date()
-        // subtract the current time with the start time (when images completed loading)
-        let timeDiff = endTime - this.timeElapsed // in ms
-        // strip the ms and get seconds
-        timeDiff /= 1000
-        let seconds = Math.round(timeDiff)
-
-        let response = await this.store(
-          selectedStimuli,
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-          seconds
-        )
-
-        if (response.data === 'result_stored') {
-          this.selectedRadio = null
-          if (this.experiment.artifact_marking) this.shapes = {}
-
-          this.saveProgress()
-
-          ++this.imagePairIndex
-
-          ++this.index
-
-          // move on to the next picture sequence
-          if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
-            this.imagePairIndex = 0
-            ++this.sequenceIndex
-          }
-
-          // move on to the next experiment sequence
-          if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-            this.sequenceIndex = 0
-            this.imagePairIndex = 0
-            ++this.typeIndex
-          }
-
-          if (
-            this.stimuli[this.typeIndex][0].hasOwnProperty('picture_queue_id') &&
-            this.stimuli[this.typeIndex][0].picture_queue_id !== null
-          ) {
-            await this.loadStimuli()
-          } else if (
-            this.stimuli[this.typeIndex][0].hasOwnProperty('instruction_id') &&
-            this.stimuli[this.typeIndex][0].instruction_id !== null
-          ) {
-            this.leftImage = ''
-            this.originalImage = ''
-            this.rightImage = ''
-            // this.firstImages = 1
-
-            this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
-            this.instructionDialog = true
-
-            this.saveProgress()
-
-            ++this.sequenceIndex
-            // move on to the next experiment sequence
-            if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-              this.sequenceIndex = 0
-              ++this.typeIndex
-            }
-
-            // Have we reached the end?
-            if (this.stimuli[this.typeIndex][0] === 'finished') {
-              this.onFinish()
-              return
-            }
-
-            await this.loadStimuli()
-          }
-        } else {
-          alert(`
-            'Could not save your answer. Please try again. If the problem
-            persist please contact the researcher.'
-          `)
-        }
-
-        this.disableNextBtn = false
+      ++this.sequenceIndex
+      // move on to the next experiment sequence
+      if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+        this.sequenceIndex = 0
+        ++this.typeIndex
       }
     },
 
@@ -668,11 +536,11 @@ export default {
           if (imagesLoaded === imageCount) {
             // hide right image, then set source
             this.isLoadRight = false
-            this.rightImage = images[0].img.src
+            this.leftImage = images[0].img.src
 
             // hide left image, then set source
             this.isLoadLeft = false
-            this.leftImage = images[1].img.src
+            this.rightImage = images[1].img.src
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
@@ -697,8 +565,8 @@ export default {
       let data = {
         experiment_result_id: this.experimentResult,
         picture_id_selected: pictureSelected.id,
-        picture_id_right: pictureRight.id,
         picture_id_left: pictureLeft.id,
+        picture_id_right: pictureRight.id,
         client_side_timer: clientSideTimer,
         chose_none: 0,
         artifact_marks: this.shapes
@@ -737,7 +605,7 @@ export default {
         let minus = navMain + titles + navMarker + navAction
 
         var height = document.body.scrollHeight - minus - 20
-        this.$refs.images.style.maxHeight = height + 'px'
+        this.$refs.images.style.height = height + 'px'
       })
     },
 
