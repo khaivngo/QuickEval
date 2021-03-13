@@ -336,25 +336,13 @@ export default {
       } else {
         this.continueExistingExperiment()
       }
-
-      window.addEventListener('keydown', (e) => {
-        // enter / arrow right / space
-        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
-          if (this.selectedCategory !== null && this.disableNextBtn !== true) {
-            // this.nextStep()
-            this.saveAnswer()
-          }
-        }
-
-        if (e.keyCode === 27) { // esc
-          this.abort()
-        }
-
-        // if (e.keyCode === 40) { // down arrow
-        //   this.$refs.select.activateMenu()
-        // }
-      })
     })
+  },
+
+  watch: {
+    originalImage () {
+      this.calculateLayout()
+    }
   },
 
   methods: {
@@ -380,6 +368,7 @@ export default {
       this.countTotalComparisons()
       this.nextStep()
       this.calculateLayout()
+      this.setKeyboardShortcuts()
     },
 
     startNewExperiment () {
@@ -400,6 +389,8 @@ export default {
           this.nextStep()
 
           this.calculateLayout()
+
+          this.setKeyboardShortcuts()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -447,13 +438,12 @@ export default {
 
         if (response.data === 'result_stored') {
           this.selectedCategory = null
-          if (this.experiment.artifact_marking) this.shapes = {}
-          this.saveProgress()
+          this.shapes = {}
 
-          // await this.loadStimuli()
           ++this.index
-
           ++this.imagePairIndex
+
+          this.saveProgress()
 
           // move on to the next picture sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
@@ -507,7 +497,6 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
         this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
-        // this.calculateLayout()
       } else {
         this.originalImage = ''
       }
@@ -547,6 +536,30 @@ export default {
 
         var height = document.body.scrollHeight - minus - 20
         this.$refs.images.style.height = height + 'px'
+      })
+    },
+
+    setKeyboardShortcuts () {
+      window.addEventListener('keydown', (e) => {
+        // enter / arrow right / space
+        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
+          if (this.selectedCategory !== null && this.disableNextBtn !== true) {
+            // this.nextStep()
+            this.saveAnswer()
+          }
+        }
+
+        if (e.keyCode === 27) { // esc
+          this.abort()
+        }
+
+        // down or up arrow
+        // if (e.keyCode === 40 || e.keyCode === 38) {
+        //   // console.log(this.$refs.select)
+        //   // if () {
+        //   //   this.$refs.select.activateMenu()
+        //   // }
+        // }
       })
     },
 

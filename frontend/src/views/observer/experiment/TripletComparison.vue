@@ -357,6 +357,12 @@ export default {
     })
   },
 
+  watch: {
+    originalImage () {
+      this.calculateLayout()
+    }
+  },
+
   methods: {
     datetimeToSeconds: datetimeToSeconds,
 
@@ -460,10 +466,10 @@ export default {
           this.selectedCategoryRight = null
           this.shapes = {}
 
-          this.saveProgress()
-
           ++this.index
           ++this.imagePairIndex
+
+          this.saveProgress()
 
           // move on to the next picture sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {

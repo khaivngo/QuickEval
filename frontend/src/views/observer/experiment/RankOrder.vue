@@ -39,7 +39,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index }}/{{ totalComparisons }}
+          {{ index + 1 }}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
 
@@ -291,6 +291,12 @@ export default {
     })
   },
 
+  watch: {
+    originalImage () {
+      this.calculateLayout()
+    }
+  },
+
   methods: {
     datetimeToSeconds: datetimeToSeconds,
 
@@ -420,10 +426,10 @@ export default {
           this.labels = []
           this.rankings = []
 
-          this.saveProgress()
-
           ++this.index
           ++this.sequenceIndex
+
+          this.saveProgress()
 
           // move on to the next experiment sequence
           if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
@@ -513,8 +519,10 @@ export default {
      * Loop through the stimuli array and count how many picture pairs we have.
      */
     countTotalComparisons () {
-      const amount = this.stimuli.filter(item => item[0].hasOwnProperty('picture_queue'))
-      this.totalComparisons = amount.length
+      // get all groups (arrays) that contain image queues
+      let imageGroups = this.stimuli.filter(item => item[0].hasOwnProperty('picture_queue') && item[0].picture_queue !== null)
+      // count total image queues all the groups contain together
+      this.totalComparisons = imageGroups.reduce((accu, current) => accu + current.length, 0)
     },
 
     calculateLayout () {
