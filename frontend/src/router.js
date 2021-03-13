@@ -85,7 +85,8 @@ export default new VueRouter({
         { path: '',                         component: loadView('admin/ScientistRoleRequest') },
         { path: 'dashboard',                component: loadView('admin/Dashboard') },
         { path: 'scientist-role-requests',  component: loadView('admin/ScientistRoleRequest') },
-        { path: 'all-users',                component: loadView('admin/AllUsers') }
+        { path: 'all-users',                component: loadView('admin/AllUsers') },
+        { path: 'changelog',                component: loadView('admin/ChangeLog') }
       ]
     },
 
