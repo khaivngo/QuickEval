@@ -216,7 +216,6 @@ export default {
 
       stimuli: [],
       currentStimuli: [],
-      loadNextImages: true,
 
       index: 0,
       typeIndex: 0,
@@ -342,32 +341,38 @@ export default {
     },
 
     changeLeftPannerImage (label) {
-      this.isLoadLeft = false
+      if (this.isLoadLeft !== false) {
+        this.isLoadLeft = false
 
-      let elem = this.rankings.find(e => e.picture.id === label)
-      this.$nextTick(() => {
-        this.leftImage = this.$UPLOADS_FOLDER + elem.picture.path
-      })
+        let elem = this.rankings.find(e => e.picture.id === label)
+        this.$nextTick(() => {
+          this.leftImage = this.$UPLOADS_FOLDER + elem.picture.path
+        })
 
-      this.activeLeft = label
-      // tag the stimuli as watched
-      elem.watched = true
+        this.activeLeft = label
+        // tag the stimuli as watched
+        elem.watched = true
+      }
     },
 
     changeRightPannerImage (label) {
-      this.isLoadRight = false
+      if (this.isLoadRight !== false) {
+        this.isLoadRight = false
 
-      let elem = this.rankings.find(e => e.picture.id === label)
-      this.$nextTick(() => {
-        this.rightImage = this.$UPLOADS_FOLDER + elem.picture.path
-      })
+        let elem = this.rankings.find(e => e.picture.id === label)
+        this.$nextTick(() => {
+          this.rightImage = this.$UPLOADS_FOLDER + elem.picture.path
+        })
 
-      this.activeRight = label
-      // tag the stimuli as watched
-      elem.watched = true
+        this.activeRight = label
+        // tag the stimuli as watched
+        elem.watched = true
+      }
     },
 
     loadedLeft () {
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+
       window.setTimeout(() => {
         this.isLoadLeft = true
         // starts or overrides existing timer
@@ -384,6 +389,8 @@ export default {
     },
 
     loadedRight () {
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+
       window.setTimeout(() => {
         this.isLoadRight = true
         this.timeElapsed = new Date()
@@ -426,7 +433,11 @@ export default {
       let watched = this.rankings.filter(element => element.hasOwnProperty('watched'))
 
       // if rankings array is not empty, and every item in the array has been opened in the panner
-      if ((this.rankings.length !== 0) && (watched.length === this.rankings.length)) {
+      // or images are hidden because timer ran out
+      if (
+        (this.rankings.length !== 0) && (watched.length === this.rankings.length) ||
+        this.isLoadLeft === false
+      ) {
         this.disableNextBtn = true
 
         // record the current time
@@ -467,7 +478,6 @@ export default {
       this.leftImage = ''
       this.originalImage = ''
       this.rightImage = ''
-      this.loadNextImages = true
 
       this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
       this.instructionDialog = true
@@ -492,7 +502,6 @@ export default {
         window.clearTimeout(window.hideTimeoutLeft)
         window.clearTimeout(window.hideTimeoutRight)
       }
-      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
       this.rankings = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli
       // put the two first images in the left and right panner
