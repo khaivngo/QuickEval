@@ -502,6 +502,14 @@ export default {
     },
 
     async loadStimuli () {
+      // clear the hide image timer to reset and ensure the timer always starts from the correct time
+      // or is wiped if we move to a new image set
+      if (window.hideTimeout) {
+        window.clearTimeout(window.hideTimeout)
+      }
+
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+
       // set original if it exists for the current experiment sequence
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
@@ -555,6 +563,14 @@ export default {
               // show left and right image
               this.isLoadLeft = true
               this.isLoadRight = true
+
+              if (hideTimer) {
+                window.hideTimeout = window.setTimeout(() => {
+                  this.isLoadLeft = false
+                  this.isLoadRight = false
+                }, hideTimer)
+              }
+
               // starts or overrides existing timer
               this.timeElapsed = new Date()
               this.disableNextBtn = false

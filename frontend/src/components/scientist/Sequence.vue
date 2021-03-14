@@ -9,7 +9,7 @@
       >
         <template v-if="group[0].type === 'imageSet'">
           <v-row class="pa-0 ma-0">
-            <v-col class="pa-0 ma-0 pr-12">
+            <v-col class="pa-0 ma-0 pr-6">
               <v-row v-for="(event, k) in group" :key="k" align="center" class="ma-0 pa-0 mt-6">
                 <!-- <v-col cols="auto" class="pa-0 ma-0 pr-4">
                   <div class="qe-step-circle d-flex justify-center align-center elevation-1">
@@ -106,6 +106,64 @@
                       </div>
                     </v-tooltip>
                   </div>
+                </v-col>
+
+                <v-col cols="auto" class="pl-4 pr-0 mr-0">
+                  <v-dialog v-model="displayExtraSettings[i+k]" max-width="500">
+                    <template v-slot:activator="{ on }">
+                      <v-btn v-on="on" icon class="ma-0">
+                        <v-icon>mdi-dots-horizontal-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-card>
+                      <v-card-title class="headline">
+                        Extra Settings
+                      </v-card-title>
+
+                      <v-card-text>
+                        <v-row class="mt-4" align="center">
+                          <v-col cols="10">
+                            <v-text-field
+                              v-model.number="event.hideImageTimer"
+                              label="Hide image after"
+                              outlined
+                              dense
+                              suffix="milliseconds"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                            cols="2"
+                            class="pa-0 mb-1"
+                          >
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <v-btn icon v-on="on">
+                                  <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                                </v-btn>
+                              </template>
+                              <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                                Show the image set's stimuli for the specified time before hiding it.
+                                If the observer does not rate the image before the time runs out,
+                                they will have to rate it based on their memory.
+                                Keep field empty to never hide.
+                              </div>
+                            </v-tooltip>
+                          </v-col>
+                        </v-row>
+                      </v-card-text>
+
+                      <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                          color="primary"
+                          text
+                          @click="closeExtraSettings(i+k)"
+                        >
+                          Done
+                        </v-btn>
+                      </v-card-actions>
+                    </v-card>
+                  </v-dialog>
                 </v-col>
               </v-row>
             </v-col>
@@ -362,6 +420,7 @@ export default {
             randomizeGroup: item.randomize_group,
             original: item.original,
             flipped: item.flipped,
+            hideImageTimer: item.hide_image_timer,
             type: type
           })
 
@@ -394,7 +453,9 @@ export default {
     creating: false,
 
     orginal: [],
-    reproductions: []
+    reproductions: [],
+
+    displayExtraSettings: {}
   }),
 
   computed: {
@@ -454,6 +515,7 @@ export default {
         randomizeGroup: false,
         original: false,
         flipped: false,
+        hideImageTimer: null,
         type: type
       })
 
@@ -489,6 +551,10 @@ export default {
       // removeFile in uppy
     },
 
+    closeExtraSettings (id) {
+      this.displayExtraSettings[id] = false
+    },
+
     addOrginal (files) {
       this.original.unshift(files[0])
     },
@@ -516,6 +582,7 @@ export default {
           randomizeGroup: false,
           original: false,
           flipped: false,
+          hideImageTimer: null,
           type: 'imageSet'
         })
 

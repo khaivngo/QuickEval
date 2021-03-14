@@ -517,6 +517,16 @@ export default {
     },
 
     async loadStimuli () {
+      // clear the hide image timer to reset and ensure the timer always starts from the correct time
+      // or is wiped if we move to a new image set
+      if (window.hideTimeoutLeft) {
+        window.clearTimeout(window.hideTimeoutLeft)
+        window.clearTimeout(window.hideTimeoutMiddle)
+        window.clearTimeout(window.hideTimeoutRight)
+      }
+
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+
       // set original
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
@@ -555,6 +565,13 @@ export default {
           this.isLoadLeft = true
           // starts or overrides existing timer
           this.startTime = new Date()
+
+          if (hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              this.isLoadLeft = false
+            }, hideTimer)
+          }
+
           this.disableNextBtn = false
         }, this.experiment.delay)
       }
@@ -568,7 +585,14 @@ export default {
         window.setTimeout(() => {
           this.isLoadMiddle = true
           // starts or overrides existing timer
+
           this.startTime = new Date()
+          if (hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              this.isLoadMiddle = false
+            }, hideTimer)
+          }
+
           this.disableNextBtn = false
         }, this.experiment.delay)
       }
@@ -583,6 +607,13 @@ export default {
           this.isLoadRight = true
           // starts or overrides existing timer
           this.startTime = new Date()
+
+          if (hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              this.isLoadRight = false
+            }, hideTimer)
+          }
+
           this.disableNextBtn = false
         }, this.experiment.delay)
       }

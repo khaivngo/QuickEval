@@ -490,7 +490,15 @@ export default {
     },
 
     async loadStimuli () {
-      // set original
+      // clear the hide image timer to reset and ensure the timer always starts from the correct time
+      // or is wiped if we move to a new image set
+      if (window.hideTimeout) {
+        window.clearTimeout(window.hideTimeout)
+      }
+
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+
+      // set or wipe original
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
@@ -520,6 +528,12 @@ export default {
           this.isLoadLeft = true
           this.startTime = new Date()
 
+          if (hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              this.isLoadLeft = false
+            }, hideTimer)
+          }
+
           // this.focusSelect()
           this.disableNextBtn = false
         }, this.experiment.delay)
@@ -543,7 +557,7 @@ export default {
       window.addEventListener('keydown', (e) => {
         // enter / arrow right / space
         if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
-          if (this.selectedCategory !== null && this.disableNextBtn !== true) {
+          if (this.selectedCategory !== null && this.disableNextBtn === false) {
             // this.nextStep()
             this.saveAnswer()
           }

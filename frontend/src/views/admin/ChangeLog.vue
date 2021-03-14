@@ -13,6 +13,11 @@
         Added
       </h2>
       <ul style="line-height: 1.6em;">
+        <li>
+          It's now possible to hide the images in a experiment after specified amount of time.
+          You can set different times for different image sets in one experiment.
+          (Find feature here: click the circle with three dots next to image set under experiment steps)
+        </li>
         <li>Showing keyboard shortcuts icons for select dropdown and button in category judgment.</li>
         <li>
           Options for original/flip pair/randomize images and sets have been moved into "experiment steps"
@@ -48,7 +53,7 @@
           Cookie concent.
         </li>
         <li>
-          This admin panel.
+          This changelog page.
         </li>
       </ul>
 

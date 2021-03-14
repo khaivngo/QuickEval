@@ -28,6 +28,7 @@ class CreateExperimentSequencesTable extends Migration
             $table->tinyInteger('randomize_group')->nullable();
             $table->tinyInteger('original')->nullable();
             $table->tinyInteger('flipped')->nullable();
+            $table->integer('hide_image_timer')->nullable();
 
             $table->timestamps();
         });

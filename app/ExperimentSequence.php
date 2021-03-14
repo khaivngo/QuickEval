@@ -27,6 +27,7 @@ class ExperimentSequence extends Model
         'randomize_group' => 'integer',
         'original' => 'integer',
         'flipped' => 'integer',
+        'hide_image_timer' => 'integer'
     ];
 
     public function picture_set () {

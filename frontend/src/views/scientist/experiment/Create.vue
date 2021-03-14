@@ -91,82 +91,6 @@
               </v-col>
             </v-row>
 
-            <!-- <v-row align="center" class="pr-5">
-              <v-col class="pb-0 pt-0 pr-0">
-                <v-select
-                  class="mt-8"
-                  v-model="form.algorithm"
-                  :items="[
-                    { id: 1, text: 'Order of images within image sets' },
-                    {
-                      id: 2,
-                      text: 'Order of images within image sets AND order of the image sets.',
-                      caption: '(Sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.)'
-                    }
-                  ]"
-                  item-text="text"
-                  item-value="id"
-                  :menu-props="{ maxHeight: 'auto', maxWidth: 900 }"
-                  label="Randomization Algorithm"
-                  outlined
-                  dense
-                >
-                  <template v-slot:item="data">
-                    <div style="display: block;">
-                      <div>{{ data.item.text }}</div>
-                      <div class="caption">{{ data.item.caption }}</div>
-                    </div>
-                  </template>
-                </v-select>
-              </v-col>
-            </v-row>
-
-            <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
-              <v-col cols="auto" class="pb-0 pt-0 pr-0">
-                <v-checkbox
-                  v-model="form.samePairTwice"
-                  color="success"
-                  :label="`Same pair twice (flipped)`"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="auto" class="pa-0">
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                    Each pair of images will have their position flipped in the queue.<br>
-                    Leading to double the comparisons for the observer.
-                  </div>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-
-            <v-row align="center" class="mt-4 pt-0">
-              <v-col cols="auto" class="pt-0 pb-0 pr-0">
-                <v-checkbox
-                  v-model="form.showOriginal"
-                  color="success"
-                  :label="`Display original image`"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                    Display the original image of the image set alongside the reproductions.<br>
-                    As a reference for the observer.
-                  </div>
-                </v-tooltip>
-              </v-col>
-            </v-row> -->
-
             <v-row align="center" class="mt-0 mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
@@ -176,7 +100,9 @@
                   class="pb-0 mb-0"
                   hide-details
                 ></v-checkbox>
-                <p class="caption pl-8 pt-0 mt-0">Display a progress indicator in the top right corner. Example: 3/34</p>
+                <p class="caption pl-8 pt-0 mt-0">
+                  Display a progress indicator in the top right corner. Example: 3/34
+                </p>
               </v-col>
               <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
@@ -583,6 +509,7 @@ export default {
         samePairTwice: false,
         bgColour: '808080',
         delay: 200,
+        hide_image_timer: null,
         stimuliSpacing: 15,
         showOriginal: false,
         showProgress: false,

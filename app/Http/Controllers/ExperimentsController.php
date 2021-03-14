@@ -304,9 +304,6 @@ class ExperimentsController extends Controller
             {
               if ($step['type'] === 'imageSet')
               {
-                # THIS CAN BE REMOVED random within image set OR within and between image sets
-                // if ($experiment->picture_sequence_algorithm === 1 || $experiment->picture_sequence_algorithm === 2)
-                // {
                 // $experiment->type->slug === 'paired'
                 if ($experiment->experiment_type_id == 1)
                 {
@@ -334,9 +331,9 @@ class ExperimentsController extends Controller
                   $step['randomize'],
                   $step['original'],
                   $step['flipped'],
-                  $group[0]['randomizeGroup']
+                  $group[0]['randomizeGroup'],
+                  $step['hideImageTimer']
                 );
-                // }
               }
               else if ($step['type'] === 'instruction')
               {
@@ -481,7 +478,8 @@ class ExperimentsController extends Controller
       $randomize = null,
       $original = null,
       $flipped = null,
-      $randomize_group = null
+      $randomize_group = null,
+      $hide_image_timer = null
     ) {
       $experiment_sequence = \App\ExperimentSequence::create([
         'experiment_queue_id' => $experiment_queue_id,
@@ -491,7 +489,8 @@ class ExperimentsController extends Controller
         'randomize'           => $randomize,
         'randomize_group'     => $randomize_group,
         'original'            => $original,
-        'flipped'             => $flipped
+        'flipped'             => $flipped,
+        'hide_image_timer'    => $hide_image_timer
       ]);
 
       return $experiment_sequence;
@@ -768,7 +767,8 @@ class ExperimentsController extends Controller
                   $step['randomize'],
                   $step['original'],
                   $step['flipped'],
-                  $group[0]['randomizeGroup']
+                  $group[0]['randomizeGroup'],
+                  $step['hideImageTimer']
                 );
               }
               else if ($step['type'] === 'instruction')

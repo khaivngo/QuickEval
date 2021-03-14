@@ -372,6 +372,13 @@ export default {
         this.isLoadLeft = true
         // starts or overrides existing timer
         this.timeElapsed = new Date()
+
+        if (hideTimer) {
+          window.hideTimeoutLeft = window.setTimeout(() => {
+            this.isLoadLeft = false
+          }, hideTimer)
+        }
+
         this.disableNextBtn = false
       }, this.experiment.delay)
     },
@@ -380,6 +387,13 @@ export default {
       window.setTimeout(() => {
         this.isLoadRight = true
         this.timeElapsed = new Date()
+
+        if (hideTimer) {
+          window.hideTimeoutRight = window.setTimeout(() => {
+            this.isLoadRight = false
+          }, hideTimer)
+        }
+
         this.disableNextBtn = false
       }, this.experiment.delay)
     },
@@ -472,6 +486,14 @@ export default {
      * Set stimuli images and labels, based on current index.
      */
     async loadStimuli () {
+      // clear the hide image timer to reset and ensure the timer always starts from the correct time
+      // or is wiped if we move to a new image set
+      if (window.hideTimeoutLeft) {
+        window.clearTimeout(window.hideTimeoutLeft)
+        window.clearTimeout(window.hideTimeoutRight)
+      }
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+
       this.rankings = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli
       // put the two first images in the left and right panner
       this.activeLeft = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[0].picture.id
