@@ -195,19 +195,19 @@ class ResultPairsController extends Controller
       ->where($matchThese)
       ->get();
 
-    
-    $artifacts = ExperimentResult
-      ::with('image_artifact_results.picture')
-      ->where($matchThese)
-      ->get();
+
+    // $artifacts = ExperimentResult
+    //   ::with('image_artifact_results.picture')
+    //   ->where($matchThese)
+    //   ->get();
     // $results['artifactss'] = $artifacts;
-    $merged_artifacts = [];
-    foreach ($artifacts as $hmm) {
-      array_push($merged_artifacts, $hmm->image_artifact_results);
-    }
-    $collected = collect($merged_artifacts)->flatten();
-    // $results['artifactssss'] = $collected;
-    $results['artifact'] = $collected->groupBy('picture_id');
+    // $merged_artifacts = [];
+    // foreach ($artifacts as $hmm) {
+    //   array_push($merged_artifacts, $hmm->image_artifact_results);
+    // }
+    // $collected = collect($merged_artifacts)->flatten();
+    // // $results['artifactssss'] = $collected;
+    // $results['artifact'] = $collected->groupBy('picture_id');
 
     $data = [];
     foreach ($paired_results as $result)

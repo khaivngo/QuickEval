@@ -16,7 +16,7 @@
         <li>
           It's now possible to hide the images in a experiment after specified amount of time.
           You can set different times for different image sets in one experiment.
-          (Find feature here: click the circle with three dots next to image set under experiment steps)
+          (Find feature here: click "more" on the right-hand side of a image set, under experiment steps)
         </li>
         <li>Showing keyboard shortcuts icons for select dropdown and button in category judgment.</li>
         <li>
@@ -36,7 +36,7 @@
                 To achieve this the stimuli queue had to be rewritten. The new way
                 is better if we want to add other stimuli types (video for example)
                 in the future, or allow for more ways of generating different queues for different observers.
-                This rewrite also fixes a problem when you had 
+                This rewrite also fixes a problem when you had
                 where if you set "show original" to true and had two image sets where only the
                 first one had
                 a original image, the queue wouldn't know a new image set was loaded, and the original
@@ -51,6 +51,9 @@
         </li>
         <li>
           Cookie concent.
+        </li>
+        <li>
+          Heatmap export for artifact markings. 
         </li>
         <li>
           This changelog page.
@@ -80,5 +83,5 @@ export default {
 <style scoped lang="css">
   li {
     margin-bottom: 0.8em;
-  }  
+  }
 </style>

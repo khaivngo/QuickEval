@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    <Heatmap :artifacts="results.artifact"/>
+    <Heatmap/>
   </div>
 </template>
 
@@ -145,7 +145,6 @@ export default {
   data () {
     return {
       results: {
-        artifact: [],
         resultsForEachImageSet: []
       },
       resultsArray: null,

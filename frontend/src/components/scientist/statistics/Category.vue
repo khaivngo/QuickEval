@@ -101,6 +101,8 @@
         </table>
       </div>
     </div>
+
+    <Heatmap/>
   </div>
 </template>
 
@@ -122,13 +124,15 @@ import {
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
 import { isNumber } from '@/helpers.js'
+import Heatmap from '@/components/scientist/Heatmap'
 
 const config = {}
 const math = create(all, config)
 
 export default {
   components: {
-    ScatterPlot
+    ScatterPlot,
+    Heatmap
   },
 
   data () {

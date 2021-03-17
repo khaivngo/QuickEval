@@ -108,62 +108,65 @@
                   </div>
                 </v-col>
 
-                <v-col cols="auto" class="pl-4 pr-0 mr-0">
-                  <v-dialog v-model="displayExtraSettings[i+k]" max-width="500">
-                    <template v-slot:activator="{ on }">
-                      <v-btn v-on="on" icon class="ma-0">
-                        <v-icon>mdi-dots-horizontal-circle-outline</v-icon>
-                      </v-btn>
-                    </template>
-                    <v-card>
-                      <v-card-title class="headline">
-                        Extra Settings
-                      </v-card-title>
-
-                      <v-card-text>
-                        <v-row class="mt-4" align="center">
-                          <v-col cols="10">
-                            <v-text-field
-                              v-model.number="event.hideImageTimer"
-                              label="Hide image after"
-                              outlined
-                              dense
-                              suffix="milliseconds"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col
-                            cols="2"
-                            class="pa-0 mb-1"
-                          >
-                            <v-tooltip top>
-                              <template v-slot:activator="{ on }">
-                                <v-btn icon v-on="on">
-                                  <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                                </v-btn>
-                              </template>
-                              <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                                Show the image set's stimuli for the specified time before hiding it.
-                                If the observer does not rate the image before the time runs out,
-                                they will have to rate it based on their memory.
-                                Keep field empty to never hide.
-                              </div>
-                            </v-tooltip>
-                          </v-col>
-                        </v-row>
-                      </v-card-text>
-
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn
-                          color="primary"
-                          text
-                          @click="closeExtraSettings(i+k)"
-                        >
-                          Done
+                <v-col cols="auto" class="pl-6 pr-0 pt-0 pb-0 mr-0">
+                  <div class="d-flex flex-column align-center">
+                    <h6 class="caption" style="margin-bottom: -6px;">More</h6>
+                    <v-dialog v-model="displayExtraSettings[i+k]" max-width="500">
+                      <template v-slot:activator="{ on }">
+                        <v-btn v-on="on" icon class="ma-0pa-0" style="margin-bottom: -3px;">
+                          <v-icon>mdi-dots-horizontal-circle-outline</v-icon>
                         </v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
+                      </template>
+                      <v-card>
+                        <v-card-title class="headline">
+                          Extra Settings
+                        </v-card-title>
+
+                        <v-card-text>
+                          <v-row class="mt-4" align="center">
+                            <v-col cols="10">
+                              <v-text-field
+                                v-model.number="event.hideImageTimer"
+                                label="Hide image after"
+                                outlined
+                                dense
+                                suffix="milliseconds"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col
+                              cols="2"
+                              class="pa-0 mb-1"
+                            >
+                              <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                  <v-btn icon v-on="on">
+                                    <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                                  </v-btn>
+                                </template>
+                                <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                                  Show the image set's stimuli for the specified time before hiding it.
+                                  If the observer does not rate the image before the time runs out,
+                                  they will have to rate it based on their memory.
+                                  Keep field empty to never hide.
+                                </div>
+                              </v-tooltip>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="primary"
+                            text
+                            @click="closeExtraSettings(i+k)"
+                          >
+                            Done
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </div>
                 </v-col>
               </v-row>
             </v-col>

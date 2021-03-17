@@ -17,6 +17,7 @@ use App\Http\Controllers\ResultCategoriesController;
 use App\Http\Controllers\ResultRankOrdersController;
 use App\Http\Controllers\ResultTripletsController;
 use App\Http\Controllers\ResultObserverMetasController;
+use App\Http\Controllers\ResultImageArtifactsController;
 use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ScientistRequestsController;
@@ -118,6 +119,9 @@ Route::middleware('auth:api')->group(function () {
 
     # result observer metas
     Route::post('/result-observer-metas', [ResultObserverMetasController::class, 'store']);
+
+    # result image artifacts
+    Route::get('/result-image-artifacts/{id}', [ResultImageArtifactsController::class, 'index']);
 
     # instructions
     Route::get('/instructions', [InstructionsController::class, 'index']);
