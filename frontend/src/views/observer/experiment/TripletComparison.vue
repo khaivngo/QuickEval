@@ -20,7 +20,7 @@
               <v-btn
                 color="#333"
                 dark
-                @click="closeAndNext()"
+                @click="closeAndNext"
               >
                 Close
               </v-btn>

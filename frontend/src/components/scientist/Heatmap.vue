@@ -126,7 +126,7 @@ export default {
         }
       }
 
-      // Create matrix with the same dimensions as the image
+      // Create a matrix with the same dimensions as the image
       // (one array for each row, and one array object for each pixel in the image):
       // [
       //   [ { val: 0 }, { val: 0 }, { val: 0 } ],

@@ -20,7 +20,7 @@
               <v-btn
                 color="#333"
                 dark
-                @click="closeAndNext()"
+                @click="closeAndNext"
               >
                 Close
               </v-btn>
@@ -375,8 +375,6 @@ export default {
 
       window.setTimeout(() => {
         this.isLoadLeft = true
-        // starts or overrides existing timer
-        this.timeElapsed = new Date()
 
         if (hideTimer) {
           window.hideTimeoutLeft = window.setTimeout(() => {
@@ -393,7 +391,6 @@ export default {
 
       window.setTimeout(() => {
         this.isLoadRight = true
-        this.timeElapsed = new Date()
 
         if (hideTimer) {
           window.hideTimeoutRight = window.setTimeout(() => {
@@ -435,7 +432,7 @@ export default {
       // if rankings array is not empty, and every item in the array has been opened in the panner
       // or images are hidden because timer ran out
       if (
-        (this.rankings.length !== 0) && (watched.length === this.rankings.length) ||
+        (this.rankings.length !== 0 && watched.length === this.rankings.length) ||
         this.isLoadLeft === false
       ) {
         this.disableNextBtn = true
@@ -530,6 +527,9 @@ export default {
       }
       this.leftImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[0].picture.path
       this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[1].picture.path
+
+      // starts or overrides existing timer
+      this.timeElapsed = new Date()
     },
 
     async getExperiment (experimentId) {

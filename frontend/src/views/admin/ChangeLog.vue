@@ -14,9 +14,9 @@
       </h2>
       <ul style="line-height: 1.6em;">
         <li>
-          It's now possible to hide the images in a experiment after specified amount of time.
+          It's now possible to hide the images in a experiment after a specified amount of time.
           You can set different times for different image sets in one experiment.
-          (Find feature here: click "more" on the right-hand side of a image set, under experiment steps)
+          (Find feature here: under experiment steps click "more" on the right-hand side of a image set)
         </li>
         <li>Showing keyboard shortcuts icons for select dropdown and button in category judgment.</li>
         <li>
@@ -53,10 +53,19 @@
           Cookie concent.
         </li>
         <li>
-          Heatmap export for artifact markings. 
+          Heatmap export for artifact markings.
         </li>
         <li>
           This changelog page.
+        </li>
+      </ul>
+
+      <h2 class="text-h5 mt-6 mb-4">
+        Changes
+      </h2>
+      <ul>
+        <li>
+          In rank order: dropped small "thumbnail" images, keeping just the letter as the draggable elements.
         </li>
       </ul>
 
