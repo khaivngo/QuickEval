@@ -131,6 +131,7 @@
                                 outlined
                                 dense
                                 suffix="milliseconds"
+                                @keydown.enter="displayExtraSettings[i+k] = false"
                               ></v-text-field>
                             </v-col>
                             <v-col

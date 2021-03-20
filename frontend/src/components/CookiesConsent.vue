@@ -85,6 +85,8 @@
 </template>
 
 <script>
+import EventBus from '@/eventBus'
+
 export default {
   data () {
     return {
@@ -98,6 +100,13 @@ export default {
     if (localStorage.getItem('cookies-consented') === 'true') {
       this.show = false
     }
+  },
+  mounted () {
+    EventBus.$on('cookie-consent-change', () => {
+      localStorage.setItem('cookies-consented', false)
+      localStorage.setItem('cookies-preferences', false)
+      this.show = true
+    })
   },
   methods: {
     accepted (all) {

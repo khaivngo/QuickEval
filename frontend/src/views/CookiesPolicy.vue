@@ -12,7 +12,7 @@
         <p>We do not store sensitive personal information, such as mailing addresses, account passwords, etc. in the Cookies We use.</p>
 
         <p>If you wish to change cookie consent:</p>
-        <v-btn class="text-none" color="primary" @click="$emit('cookie-consent-change')">
+        <v-btn class="text-none" color="primary" @click="retractConsent">
           Change cookie consent
         </v-btn>
 
@@ -92,6 +92,17 @@
     </v-row>
   </v-container>
 </template>
+
+<script>
+import EventBus from '@/eventBus'
+export default {
+  methods: {
+    retractConsent () {
+      EventBus.$emit('cookie-consent-change')
+    }
+  }
+}
+</script>
 
 <style scoped lang="css">
   p {
