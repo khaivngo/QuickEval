@@ -1,6 +1,6 @@
 <template>
   <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1">
-    <div class="mb-8 mt-6">
+    <div class="mb-8 mt-6" style="width: 800px;">
       <h2 class="display-1">
         Changelog
       </h2>
@@ -18,7 +18,7 @@
           You can set different times for different image sets in one experiment.
           (Find feature here: under experiment steps click "more" on the right-hand side of a image set)
         </li>
-        <li>Showing keyboard shortcuts icons for select dropdown and button in category judgment.</li>
+        <li>Category judgment: Keyboard shortcuts is now shown for the select list and next-button, in form of icons.</li>
         <li>
           Options for original/flip pair/randomize images and sets have been moved into "experiment steps"
           so that they can be controlled on a step by step basis, not just globally.
@@ -47,13 +47,23 @@
           </v-expand-transition> -->
         </li>
         <li>
-          Remember users progress if user hits the browsers "refresh" button, instead of loading a new one.
-        </li>
-        <li>
-          Cookie concent.
-        </li>
-        <li>
           Heatmap export for artifact markings.
+        </li>
+        <li>
+          An email is automatically sent out when a new user is registered.<br>
+          One confirmation is sent to the new user.
+          One notification mail is sent to Marius.
+          And one "accepted/rejected" mail is sent to the user that has been approved or rejected.
+        </li>
+        <li>
+          Remember users progress if user hits the browsers "refresh" button, instead of loading a new stimuli queue.
+        </li>
+        <li>
+          Cookie concent promp for the user.
+        </li>
+        <li>
+          Cookie policy page. Where the user can also find the option for retract their concent.
+          https://quickeval.no/cookies
         </li>
         <li>
           This changelog page.
@@ -65,7 +75,8 @@
       </h2>
       <ul>
         <li>
-          In rank order: dropped small "thumbnail" images, keeping just the letter as the draggable elements.
+          In rank order: small thumbnail images has been droppped, keeping just the letter as the draggable elements.
+          This was done to simplify amount of visual elements, as well as improve loading times.
         </li>
       </ul>
 

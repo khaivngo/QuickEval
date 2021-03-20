@@ -13,18 +13,6 @@ class Receipt extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
-
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
     /**
      * Build the message.
      *
@@ -32,8 +20,6 @@ class Receipt extends Mailable
      */
     public function build()
     {
-        return $this
-            ->from('no-reply@quickeval.no')
-            ->view('mail.receipt');
+        return $this->view('mail.receipt');
     }
 }

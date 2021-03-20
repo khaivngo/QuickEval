@@ -119,10 +119,16 @@ class AuthController extends Controller
             'user_id'  => $user->id,
             'accepted' => 0
           ]);
-          // use App\Mail\OrderShipped;
-          // Mail::to('robin.vigdal.bekkevold@gmail.com')->send(new \App\Mail\ScientistRequest($user));
 
-          // Mail::to($user->email)->send(new \App\Mail\Receipt($user));
+          try {
+            Mail::to('robin.vigdal.bekkevold@gmail.com')
+              ->send(new \App\Mail\ScientistRequest($user));
+
+            // Mail::to($user->email)
+              // ->send(new \App\Mail\Receipt($user));
+          } catch (Exception $ex) {
+            return $user;
+          }
         }
 
         return $user;
