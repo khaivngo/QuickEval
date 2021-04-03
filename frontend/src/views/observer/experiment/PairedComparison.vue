@@ -457,8 +457,6 @@ export default {
           ++this.imagePairIndex
           ++this.index
 
-          this.saveProgress()
-
           // move on to the next image sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
             this.imagePairIndex = 0
@@ -471,6 +469,7 @@ export default {
             ++this.typeIndex
           }
 
+          this.saveProgress()
           this.nextStep()
         } else {
           alert(

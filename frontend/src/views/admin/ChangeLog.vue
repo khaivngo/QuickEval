@@ -51,15 +51,15 @@
         </li>
         <li>
           An email is automatically sent out when a new user is registered.<br>
-          One confirmation is sent to the new user.
+          One confirmation mail is sent to the new user.
           One notification mail is sent to Marius.
           And one "accepted/rejected" mail is sent to the user that has been approved or rejected.
         </li>
         <li>
-          Remember users progress if user hits the browsers "refresh" button, instead of loading a new stimuli queue.
+          Remember the observer's experiment progress if they hit the browsers "refresh" button, instead of loading a new stimuli queue.
         </li>
         <li>
-          Cookie concent promp for the user.
+          Cookie concent prompt for the user.
         </li>
         <li>
           Cookie policy page. Where the user can also find the option for retract their concent.

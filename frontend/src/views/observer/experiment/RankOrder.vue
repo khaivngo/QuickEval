@@ -451,14 +451,13 @@ export default {
           ++this.index
           ++this.sequenceIndex
 
-          this.saveProgress()
-
           // move on to the next experiment sequence
           if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
             this.sequenceIndex = 0
             ++this.typeIndex
           }
 
+          this.saveProgress()
           this.nextStep()
         } else {
           alert(

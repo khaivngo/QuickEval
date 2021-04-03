@@ -54,11 +54,12 @@ class ResultCategoriesController extends Controller
         $results['results'] = $data;
       }
 
-      # get all the image sets, with images, used in the experiments experiment_sequences
+      # get all the image sets, with images, used in the experiment
       if ($request->flags['imageSets']) {
         $data =
           ExperimentQueue::with(['experiment_sequences' => function ($query) {
-              $query->where('experiment_sequences.picture_queue_id', '!=', NULL)->with('picture_set.pictures');
+              $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
+                ->with('picture_set.pictures');
           }])
           ->where('experiment_id', '=', $expID)
           ->get();

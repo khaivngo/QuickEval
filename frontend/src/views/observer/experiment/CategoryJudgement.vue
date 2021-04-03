@@ -443,8 +443,6 @@ export default {
           ++this.index
           ++this.imagePairIndex
 
-          this.saveProgress()
-
           // move on to the next picture sequence
           if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
             this.imagePairIndex = 0
@@ -458,6 +456,7 @@ export default {
             ++this.typeIndex
           }
 
+          this.saveProgress()
           this.focusSelect()
           this.nextStep()
         } else {
