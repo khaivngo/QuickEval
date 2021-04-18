@@ -155,15 +155,41 @@ class ResultCategoriesController extends Controller
 
       $matchThese = ['experiment_id' => $id];
       // exclude incomplete data?
-      if ($request->includeIncomplete == false) {
-        $matchThese['completed'] = 1;
-      }
+      // if ($request->includeIncomplete == false) {
+      //   $matchThese['completed'] = 1;
+      // }
 
       # get all results for each observer
       $observers = ExperimentResult
         ::with('category_results.picture.picture_set', 'category_results.category')
+        ->withCount('category_results')
         ->where($matchThese)
         ->get();
+
+      # filter unfinished experiments
+      if ($request->includeIncomplete == false) {
+        $sequences = Experiment::with([
+          # for every picture set experiment_sequence get the count of pictures used
+          'sequences' => function ($query) {
+            $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+              $query->withCount('picture_sequence');
+            }]);
+          }
+        ])->find($id);
+
+        # get total comparisons in experiment
+        $total_comparisons = $sequences->sequences->reduce(function ($carry, $item) {
+          return $carry + $item->picture_queue->picture_sequence_count;
+        }, 0);
+        $total = $total_comparisons;
+
+        # only get completed results
+        $filtered = $observers->filter(function ($value, $key) use ($total) {
+          return $total == $value->category_results_count;
+        });
+
+        $observers = $filtered;
+      }
 
       $data = [];
       // $hello = $observers->groupBy('picture_id_left');

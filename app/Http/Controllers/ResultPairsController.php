@@ -190,14 +190,40 @@ class ResultPairsController extends Controller
 
     $matchThese = ['experiment_id' => $id];
     // exclude incomplete data?
-    if ($request->includeIncomplete == false) {
-      $matchThese['completed'] = 1;
-    }
+    // if ($request->includeIncomplete == false) {
+    //   $matchThese['completed'] = 1;
+    // }
 
     $paired_results = ExperimentResult
       ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+      ->withCount('paired_results')
       ->where($matchThese)
       ->get();
+
+    # filter unfinished experiments
+    if ($request->includeIncomplete == false) {
+      $sequences = Experiment::with([
+        # for every picture set experiment_sequence get the count of pictures used
+        'sequences' => function ($query) {
+          $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+            $query->withCount('picture_sequence');
+          }]);
+        }
+      ])->find($id);
+
+      # get total comparisons in experiment
+      $total_comparisons = $sequences->sequences->reduce(function ($carry, $item) {
+        return $carry + $item->picture_queue->picture_sequence_count;
+      }, 0);
+      $total = $total_comparisons / 2;
+
+      # only get completed results
+      $filtered = $paired_results->filter(function ($value, $key) use ($total) {
+        return $total == $value->paired_results_count;
+      });
+
+      $paired_results = $filtered;
+    }
 
 
     // $artifacts = ExperimentResult
@@ -227,7 +253,6 @@ class ResultPairsController extends Controller
         $arr['name']      = $res->picture_selected->name;
 
         $arr['won'] = 1; // if none chosen = 0?     @param  {int} $points   amount of points to add... 1 for paired?
-        // $arr['po'] = 3;
 
         # if right was selected, it won against left
         if ($arr['pictureId'] == $arr['right']) {

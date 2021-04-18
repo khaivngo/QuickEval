@@ -70,7 +70,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get(   '/experiment/{term}/search/public',         [ExperimentsController::class, 'search']      );
 
     # experiment results
-    Route::get   ('/experiment-result/{id}',              [ExperimentResultsController::class, 'fetch']     );
+    Route::get   ('/experiment-result/{experiment}',      [ExperimentResultsController::class, 'fetch']     );
     Route::post  ('/experiment-result/create',            [ExperimentResultsController::class, 'store']     );
     Route::patch ('/experiment-result/{result}/update',   [ExperimentResultsController::class, 'update']    );
     Route::patch ('/experiment-result/{result}/completed',[ExperimentResultsController::class, 'completed'] );

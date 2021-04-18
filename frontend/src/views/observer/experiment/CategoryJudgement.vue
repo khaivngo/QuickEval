@@ -369,6 +369,7 @@ export default {
       this.nextStep()
       this.calculateLayout()
       this.setKeyboardShortcuts()
+      this.focusSelect()
     },
 
     startNewExperiment () {
@@ -391,6 +392,7 @@ export default {
           this.calculateLayout()
 
           this.setKeyboardShortcuts()
+          this.focusSelect()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -479,6 +481,7 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
+      this.focusSelect()
 
       ++this.sequenceIndex
       // move on to the next experiment sequence

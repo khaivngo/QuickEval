@@ -112,7 +112,8 @@
             :items-per-page="100"
           >
             <template v-slot:item.completed="{ item }">
-              <span>{{ (item.completed === 1) ? 1 : 0 }}</span>
+              <!-- <span>{{ (item.completed === 1) ? 1 : 0 }}</span> -->
+              <span>{{ item.finished }}</span>
               <!-- {{ item.paired_results_count }} / {{ totalComparisons }} -->
             </template>
           </v-data-table>
@@ -321,7 +322,6 @@ export default {
     this.loading = true
 
     this.getExperiment()
-    this.getExperimentResults()
   },
 
   methods: {
@@ -412,7 +412,15 @@ export default {
           if (this.experiment.type.slug === 'paired') {
             const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
             this.totalComparisons = total / 2
+          } else if (this.experiment.type.slug === 'triplet') {
+            const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+            this.totalComparisons = total / 3
+          } else {
+            const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+            this.totalComparisons = total
           }
+
+          this.getExperimentResults()
 
           this.loading = false
         }).catch(() => {
@@ -431,8 +439,17 @@ export default {
           })
 
           this.experimentResults.forEach(item => {
-            item.ishihara = (item.vision) ? `${item.vision}, ${item.post_eval}, ${item.degree}` : 'unknown'
-            // (${item.perc}%)
+            item.ishihara = (item.vision) ? `${item.vision}, ${item.post_eval}, ${item.degree}` : 'unknown' // ${item.perc}%
+
+            if (this.experiment.type.slug === 'paired') {
+              item.finished = (this.totalComparisons > item.paired_results_count) ? 0 : 1
+            } else if (this.experiment.type.slug === 'category') {
+              item.finished = (this.totalComparisons > item.category_results_count) ? 0 : 1
+            } else if (this.experiment.type.slug === 'rank-order') {
+              item.finished = (this.totalComparisons > item.rank_order_results_count) ? 0 : 1
+            } else if (this.experiment.type.slug === 'triplet') {
+              item.finished = (this.totalComparisons > item.triplet_results_count) ? 0 : 1
+            }
           })
 
           this.loading = false

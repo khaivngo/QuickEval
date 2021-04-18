@@ -6,29 +6,38 @@ use Illuminate\Http\Request;
 use PDO;
 use DB;
 
+use App\Experiment;
 use App\ExperimentResult;
 
 class ExperimentResultsController extends Controller
 {
     public function index ($experiment_id) {
       return \App\Experiment::find($experiment_id)
-        ->results(); // replace ::with('')
+        ->results(); // replace with ::with('')
         // ->get();
     }
 
-    public function fetch ($id) {
+    public function fetch (Experiment $experiment)
+    {
+      if ($experiment->type->slug == 'rank-order') {
+        $slug = 'rank_order';
+      } else {
+        $slug = $experiment->type->slug;
+      }
+
       return ExperimentResult
         ::with('user')
-        // ->withCount('paired_results')
-        ->where('experiment_id', $id)
+        ->withCount($slug . '_results')
+        ->where('experiment_id', $experiment->id)
         ->get();
     }
 
-    public function store (Request $request) {
+    public function store (Request $request)
+    {
       $experimentResult = ExperimentResult::create([
         'user_id' => auth()->user()->id,
         'experiment_id' => $request->experimentId,
-        'start_time' => time() // or microtime()?
+        'start_time' => time()
       ]);
 
       if ($experimentResult) {
@@ -58,7 +67,6 @@ class ExperimentResultsController extends Controller
     public function update (Request $request, ExperimentResult $result)
     {
       $result->update($request->all());
-
       return response($result, 200);
     }
 
