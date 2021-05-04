@@ -466,9 +466,8 @@ export default {
             'Could not save your answer. Please try again. If the problem
             persist please contact the researcher.'
           `)
+          this.disableNextBtn = false
         }
-
-        this.disableNextBtn = false
       }
     },
 

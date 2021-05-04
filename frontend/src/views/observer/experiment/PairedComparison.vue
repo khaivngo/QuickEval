@@ -476,9 +476,8 @@ export default {
             `Could not save your answer. Please try again. If the problem persist
             please contact the researcher.`
           )
+          this.disableNextBtn = false
         }
-
-        this.disableNextBtn = false
       }
     },
 
@@ -548,12 +547,13 @@ export default {
           imagesLoaded++
           // when all images loaded
           if (imagesLoaded === imageCount) {
-            // hide right image, then set source
-            this.isLoadRight = false
-            this.leftImage = images[0].img.src
-
-            // hide left image, then set source
+            // hide images
             this.isLoadLeft = false
+            this.isLoadRight = false
+            // this.leftImage = ''
+            // this.rightImage = ''
+            // then set source
+            this.leftImage = images[0].img.src
             this.rightImage = images[1].img.src
 
             // show a blank screen inbetween image switching,

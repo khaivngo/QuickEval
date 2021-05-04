@@ -22,6 +22,7 @@ class ResultImageArtifact extends Model
         'experiment_result_id' => 'integer',
         'picture_id' => 'integer',
         'client_side_timer' => 'integer',
+        // 'selected_area' => 'array'
     ];
 
     public function experiment_result () {
