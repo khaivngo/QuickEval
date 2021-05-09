@@ -452,15 +452,16 @@ export default {
         // get the number of seconds between endTime and startTime
         let seconds = datetimeToSeconds(this.startTime, endTime)
 
-        // send results to db
-        let response = await this.store(
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.id,
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.id,
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.id,
-          seconds
-        )
+        try {
+          // send results to db
+          // let response =
+          await this.store(
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.id,
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.id,
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.id,
+            seconds
+          )
 
-        if (response.data === 'result_stored') {
           // reset stuff
           this.selectedCategoryLeft = null
           this.selectedCategoryMiddle = null
@@ -484,11 +485,9 @@ export default {
 
           this.saveProgress()
           this.nextStep()
-        } else {
-          alert(`
-            'Could not save your answer. Please try again. If the problem
-            persist please contact the researcher.'
-          `)
+        } catch (err) {
+          alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
+          this.disableNextBtn = false
         }
 
         this.disableNextBtn = false

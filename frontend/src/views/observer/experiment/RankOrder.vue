@@ -245,8 +245,6 @@ export default {
 
       timeElapsed: null,
 
-      // firstRound: 1
-
       totalComparisons: 0
     }
   },
@@ -442,9 +440,10 @@ export default {
         // get the number of seconds between endTime and startTime
         let seconds = datetimeToSeconds(this.timeElapsed, endTime)
 
-        let response = await this.store(seconds)
+        try {
+          // let response =
+          await this.store(seconds)
 
-        if (response.data === 'result_stored') {
           this.labels = []
           this.rankings = []
 
@@ -459,11 +458,9 @@ export default {
 
           this.saveProgress()
           this.nextStep()
-        } else {
-          alert(
-            `Could not save your answer. Please try again. If the problem persist
-            please contact the researcher.`
-          )
+        } catch (err) {
+          alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
+          this.disableNextBtn = false
         }
 
         this.disableNextBtn = false

@@ -120,15 +120,11 @@ class AuthController extends Controller
             'accepted' => 0
           ]);
 
-          // try {
-          //   Mail::to('robin.vigdal.bekkevold@gmail.com')
-          //     ->send(new \App\Mail\ScientistRequest($user));
+          Mail::to('marius.pedersen@ntnu.no')
+            ->send(new \App\Mail\ScientistRequest($user));
 
-          //   // Mail::to($user->email)
-          //     // ->send(new \App\Mail\Receipt($user));
-          // } catch (Exception $ex) {
-          //   return $user;
-          // }
+          // Mail::to($user->email)
+          //   ->send(new \App\Mail\Receipt($user));
         }
 
         return $user;

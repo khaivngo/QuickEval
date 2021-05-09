@@ -5,6 +5,26 @@
         v-model="includeIncomplete"
         :label="`Include unfinished experiments in calculations`"
       ></v-checkbox>
+
+      <div class="mt-6">
+        <h5 class="body-2 mb-0 pb-0">Confidence interval</h5>
+        <v-radio-group v-model="confidenceIntervalType">
+          <v-row class="mt-0">
+            <v-col cols="auto" class="pr-12 pt-0">
+              <v-radio
+                :label="`Standard`"
+                :value="'standard'"
+              ></v-radio>
+            </v-col>
+            <v-col cols="auto" class="pt-0">
+              <v-radio
+                :label="`Montag`"
+                :value="'montag'"
+              ></v-radio>
+            </v-col>
+          </v-row>
+        </v-radio-group>
+      </div>
     </div>
 
     <div class="mt-12 mb-12" v-if="loading">
@@ -116,6 +136,7 @@ import {
   calculateZScoreMatrix,
   calculateMeanZScore,
   calculateSDMatrix,
+  calculateSDMatrixMontag,
   convertRankToPair
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
@@ -135,7 +156,8 @@ export default {
 
       rankedResults: [],
 
-      includeIncomplete: false
+      includeIncomplete: false,
+      confidenceIntervalType: 'standard'
     }
   },
 
@@ -144,6 +166,11 @@ export default {
       if (oldVal !== null) {
         localStorage.setItem(this.$route.params.id + '-includeIncomplete', newVal)
       }
+      // re-calculate statistics
+      this.init()
+    },
+    confidenceIntervalType (newVal, oldVal) {
+      this.confidenceIntervalType = newVal
       // re-calculate statistics
       this.init()
     }
@@ -263,7 +290,12 @@ export default {
 
       // var standardDeviation = 1.96 * (1 / Math.sqrt(2)) / Math.sqrt(observerAmount) //Must be changed
 
-      var SDArray = calculateSDMatrix($frequencyMatrix)
+      // var SDArray = calculateSDMatrix($frequencyMatrix)
+      if (this.confidenceIntervalType === 'montag') {
+        var SDArray = calculateSDMatrixMontag($frequencyMatrix)
+      } else {
+        var SDArray = calculateSDMatrix($frequencyMatrix)
+      }
 
       // Calculates the high confidence interval limits
       var highCILimit = meanZScore.map(function (num, i) {

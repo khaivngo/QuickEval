@@ -424,63 +424,6 @@ export default {
       }
     },
 
-    async saveAnswer () {
-      // only do stuff if stimuli has been selected
-      if (this.selectedRadio !== null) {
-        this.disableNextBtn = true
-
-        // TODO: fetch this from a active_stimuli variable instead?
-        // that way we know to a higher degree that the one displayed is the same one sent
-        let selectedStimuli = null
-        if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
-        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
-
-        // record the current time
-        let endTime = new Date()
-        // subtract the current time with the start time (when images completed loading)
-        let timeDiff = endTime - this.timeElapsed // in ms
-        // strip the ms and get seconds
-        timeDiff /= 1000
-        let seconds = Math.round(timeDiff)
-
-        let response = await this.store(
-          selectedStimuli,
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-          seconds
-        )
-
-        if (response.data === 'result_stored') {
-          this.selectedRadio = null
-          this.shapes = {}
-
-          ++this.imagePairIndex
-          ++this.index
-
-          // move on to the next image sequence
-          if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
-            this.imagePairIndex = 0
-            ++this.sequenceIndex
-          }
-          // move on to the next experiment sequence
-          if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
-            this.sequenceIndex = 0
-            this.imagePairIndex = 0
-            ++this.typeIndex
-          }
-
-          this.saveProgress()
-          this.nextStep()
-        } else {
-          alert(
-            `Could not save your answer. Please try again. If the problem persist
-            please contact the researcher.`
-          )
-          this.disableNextBtn = false
-        }
-      }
-    },
-
     loadInstructions () {
       this.leftImage     = ''
       this.originalImage = ''
@@ -575,6 +518,61 @@ export default {
               this.disableNextBtn = false
             }, this.experiment.delay)
           }
+        }
+      }
+    },
+
+    async saveAnswer () {
+      // only do stuff if stimuli has been selected
+      if (this.selectedRadio !== null) {
+        this.disableNextBtn = true
+
+        // TODO: fetch this from a active_stimuli variable instead?
+        // that way we know to a higher degree that the one displayed is the same one sent
+        let selectedStimuli = null
+        if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
+        if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
+
+        // record the current time
+        let endTime = new Date()
+        // subtract the current time with the start time (when images completed loading)
+        let timeDiff = endTime - this.timeElapsed // in ms
+        // strip the ms and get seconds
+        timeDiff /= 1000
+        let seconds = Math.round(timeDiff)
+
+        try {
+          await this.store(
+            selectedStimuli,
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+            seconds
+          )
+          // let response =
+
+          this.selectedRadio = null
+          this.shapes = {}
+
+          ++this.imagePairIndex
+          ++this.index
+
+          // move on to the next image sequence
+          if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
+            this.imagePairIndex = 0
+            ++this.sequenceIndex
+          }
+          // move on to the next experiment sequence
+          if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
+            this.sequenceIndex = 0
+            this.imagePairIndex = 0
+            ++this.typeIndex
+          }
+
+          this.saveProgress()
+          this.nextStep()
+        } catch (err) {
+          alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
+          this.disableNextBtn = false
         }
       }
     },

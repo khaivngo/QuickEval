@@ -432,13 +432,14 @@ export default {
         // get the number of seconds between endTime and startTime
         let seconds = datetimeToSeconds(this.startTime, endTime)
 
-        // send results to db
-        let response = await this.store(
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
-          seconds
-        )
+        try {
+          // send results to db
+          // let response =
+          await this.store(
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
+            seconds
+          )
 
-        if (response.data === 'result_stored') {
           this.selectedCategory = null
           this.shapes = {}
 
@@ -461,11 +462,8 @@ export default {
           this.saveProgress()
           this.focusSelect()
           this.nextStep()
-        } else {
-          alert(`
-            'Could not save your answer. Please try again. If the problem
-            persist please contact the researcher.'
-          `)
+        } catch (err) {
+          alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
           this.disableNextBtn = false
         }
       }

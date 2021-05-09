@@ -8,8 +8,9 @@
   <body>
     <h2>
       Your QuickEval account has been approved.<br>
-      Login at https://quickeval.no
     </h2>
+
+    <a href="https://quickeval.no">Login</a>
 
     <p>
       If you have any questions please send an email to

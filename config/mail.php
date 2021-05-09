@@ -58,7 +58,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'no-reply@quickeval.no'),
-        'name' => env('MAIL_FROM_NAME', 'QuickEval - pending user request'),
+        'name' => env('MAIL_FROM_NAME', 'QuickEval - scientist role request'),
     ],
 
     /*
