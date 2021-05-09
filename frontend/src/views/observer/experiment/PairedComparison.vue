@@ -119,14 +119,13 @@
       </h4>
     </v-layout>
 
-    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
-      <v-flex
-        mt-0 mb-0 pb-2
-        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
-        class="picture-container"
+    <v-row ref="images" class="fill-height justify-center ml-3 mt-0 mb-0 mr-3 pa-0">
+      <v-col
+        class="picture-container fill-height mt-0 mb-0 pb-2"
         :class="selectedRadio === 'left' ? 'selected' : ''"
-        @click="selectedRadio = 'left'"
+        :style="`margin-right: ${experiment.stimuli_spacing}px;`"
       >
+        <!-- @click="selectedRadio = 'left'" -->
         <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
@@ -143,12 +142,11 @@
             :tool="drawingTool"
           />
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        mt-0 mb-0 pb-2
+      <v-col
+        class="picture-container fill-height mt-0 mb-0 pb-2"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
-        class="picture-container"
         v-show="originalImage"
       >
         <div class="panzoom d-flex justify-center align-center">
@@ -158,14 +156,13 @@
             :src="originalImage"
           />
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        class="picture-container"
-        mt-0 mb-0 pb-2
+      <v-col
+        class="picture-container fill-height mt-0 mb-0 pb-2"
         :class="selectedRadio === 'right' ? 'selected' : ''"
-        @click="selectedRadio = 'right'"
       >
+        <!-- @click="selectedRadio = 'right'" -->
         <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
@@ -182,39 +179,38 @@
             :tool="drawingTool"
           />
         </div>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
-    <!-- <v-layout ref="navAction"> -->
     <v-radio-group ref="navAction" v-model="selectedRadio">
-      <v-row class="pt-0 pl-0 pr-0 pb-4 ma-0 align-center">
+      <v-progress-circular
+        v-show="selectedRadio !== null && disableNextBtn"
+        indeterminate
+        :value="20" :size="30" :width="3"
+        color="#3B3B3B"
+        style="position: absolute; left: 48%;"
+      ></v-progress-circular>
+
+      <v-row class="justify-center align-center pt-0 pl-0 pr-0 pb-4 ma-0">
         <v-col class="pa-0 mt-0 pt-1">
           <div class="d-flex justify-center pa-0 mt-0">
-            <!-- <v-icon class="mr-2">mdi-arrow-left-box</v-icon> -->
-            <!-- left -->
-            <v-radio color="default" value="left" class="scaled"></v-radio>
+            <v-icon class="mr-1">mdi-arrow-left-box</v-icon>
+            <v-radio
+              color="default" value="left" class="scaled"
+              :disabled="disableNextBtn"
+            ></v-radio>
           </div>
         </v-col>
-        <v-col cols="auto" class="pa-0 mt-0">
-          <div class="d-flex justify-center">
-            <v-btn
-              :disabled="selectedRadio === null || disableNextBtn"
-              @click="saveAnswer()"
-              :loading="disableNextBtn"
-              color="#D9D9D9"
-            >
-              <!-- :disabled="noneSelected" -->
-              <span class="ml-1">next</span>
-              <!-- next -->
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-btn>
-          </div>
+        <v-col v-show="originalImage" class="pa-0 mt-0">
+          <div class="d-flex justify-center"></div>
         </v-col>
         <v-col class="pa-0 mt-0 pt-1">
           <div class="d-flex justify-center pa-0 mt-0">
-            <v-radio color="default" value="right" class="scaled"></v-radio>
-            <!-- right -->
-            <!-- <v-icon class="ml-2 mb-2">mdi-arrow-right-box</v-icon> -->
+            <v-radio
+              color="default" value="right" class="scaled"
+              :disabled="disableNextBtn"
+            ></v-radio>
+            <v-icon class="mb-2" style="margin-left: 10px;">mdi-arrow-right-box</v-icon>
           </div>
         </v-col>
       </v-row>
@@ -270,6 +266,8 @@ export default {
 
       disableNextBtn: false,
 
+      cols: 6,
+
       instructionText: 'Rate the images.',
 
       abortDialog: false,
@@ -283,8 +281,6 @@ export default {
       rightCanvas: '',
 
       timeElapsed: null,
-
-      firstImages: 0,
 
       shapes: {},
       drawingTool: ''
@@ -324,19 +320,10 @@ export default {
 
       // create some hotkeys
       window.addEventListener('keydown', (e) => {
-        // enter / space
-        if (e.keyCode === 13 || e.keyCode === 32) {
-          if (this.selectedRadio !== null) {
-            // this.nextStep()
-            this.saveAnswer()
-          }
-        }
-
         // arrow left
         if (e.keyCode === 37) {
           if (this.disableNextBtn === false) {
             this.selectedRadio = 'left'
-            this.saveAnswer()
           }
         }
 
@@ -344,7 +331,6 @@ export default {
         if (e.keyCode === 39) {
           if (this.disableNextBtn === false) {
             this.selectedRadio = 'right'
-            this.saveAnswer()
           }
         }
 
@@ -359,6 +345,11 @@ export default {
   watch: {
     originalImage () {
       this.calculateLayout()
+    },
+    selectedRadio (newVal, oldVal) {
+      if (newVal !== null && ['left', 'right'].includes(newVal)) {
+        this.saveAnswer()
+      }
     }
   },
 
@@ -626,6 +617,8 @@ export default {
 
         var height = document.body.scrollHeight - minus - 20
         this.$refs.images.style.height = height + 'px'
+        // console.log(this.$refs.image)
+        // this.$refs.image.style.height = height + 'px'
       })
     },
 
