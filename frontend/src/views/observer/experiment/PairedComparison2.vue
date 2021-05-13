@@ -134,6 +134,8 @@
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
             tabindex="0"
+            @load="hideUntilLoaded"
+            @error="hideUntilLoaded"
           />
           <ArtifactMarker
             v-if="experiment.artifact_marking"
@@ -171,6 +173,8 @@
             :class="isLoadRight === false ? 'hide' : ''"
             :src="rightImage"
             tabindex="0"
+            @load="hideUntilLoaded"
+            @error="hideUntilLoaded"
           />
           <ArtifactMarker
             v-if="experiment.artifact_marking"
@@ -281,6 +285,9 @@ export default {
       rightCanvas: '',
 
       timeElapsed: null,
+
+      totalLoaded: 0,
+      hideTimer: null,
 
       shapes: {},
       drawingTool: ''
@@ -424,7 +431,6 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
-      this.disableNextBtn = false
 
       ++this.sequenceIndex
       // move on to the next experiment sequence
@@ -441,7 +447,7 @@ export default {
         window.clearTimeout(window.hideTimeout)
       }
 
-      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+      this.hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
       // set original if it exists for the current experiment sequence
       if (
@@ -453,12 +459,6 @@ export default {
       } else {
         this.originalImage = ''
       }
-
-      // prepare to load reproduction images
-      var images = [
-        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path },
-        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
-      ]
 
       // we use a object because sometimes the image is the same image but we still want
       // to trigger watch in child components
@@ -473,6 +473,12 @@ export default {
         }
       }
 
+      // prepare to load reproduction images
+      var images = [
+        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path },
+        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
+      ]
+
       var imageCount = images.length
       var imagesLoaded = 0
       // attach onload events to every reproduction image
@@ -485,32 +491,50 @@ export default {
             // hide images
             this.isLoadLeft = false
             this.isLoadRight = false
-            // this.leftImage = ''
-            // this.rightImage = ''
+
+            // if the new image is the same as the current @load won't trigger
+            // so we manually add it to the totalLoaded
+            if (this.leftImage === images[0].img.src) {
+              this.totalLoaded += 1
+            }
+
+            if (this.rightImage === images[1].img.src) {
+              this.totalLoaded += 1
+            }
+
             // then set source
             this.leftImage = images[0].img.src
             this.rightImage = images[1].img.src
-
-            // show a blank screen inbetween image switching,
-            // if scientist set up delay
-            window.setTimeout(() => {
-              // show left and right image
-              this.isLoadLeft = true
-              this.isLoadRight = true
-
-              if (hideTimer) {
-                window.hideTimeout = window.setTimeout(() => {
-                  this.isLoadLeft = false
-                  this.isLoadRight = false
-                }, hideTimer)
-              }
-
-              // starts or overrides existing timer
-              this.timeElapsed = new Date()
-              this.disableNextBtn = false
-            }, this.experiment.delay)
           }
         }
+      }
+    },
+
+    hideUntilLoaded () {
+      this.totalLoaded += 1
+
+      if (this.totalLoaded === 2) {
+        this.totalLoaded = 0
+
+        // show a blank screen inbetween image switching,
+        // if scientist set up delay
+        window.setTimeout(() => {
+          // show left and right image
+          this.isLoadLeft = true
+          this.isLoadRight = true
+
+          // hide current stimuli images permanently after set time
+          if (this.hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              this.isLoadLeft = false
+              this.isLoadRight = false
+            }, this.hideTimer)
+          }
+
+          // starts or overrides existing timer
+          this.timeElapsed = new Date()
+          this.disableNextBtn = false
+        }, this.experiment.delay)
       }
     },
 
@@ -634,7 +658,6 @@ export default {
 
     onFinish () {
       this.selectedRadio = null
-      this.disableNextBtn = false
       this.originalImage = ''
       this.leftImage = ''
       this.rightImage = ''

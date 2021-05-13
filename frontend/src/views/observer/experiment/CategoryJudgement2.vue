@@ -1,4 +1,4 @@
-<template>
+    <template>
   <v-container fluid class="qe-wrapper" :style="'background-color: #' + experiment.background_colour">
     <v-toolbar ref="navMain" flat height="30" color="#282828">
       <v-toolbar-items>
@@ -106,6 +106,7 @@
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
+            @load="hideUntilLoaded"
           />
           <ArtifactMarker
             v-if="experiment.artifact_marking"
@@ -181,7 +182,7 @@
               <v-btn
                 color="#D9D9D9"
                 @click="saveAnswer()"
-                :disabled="disableNextBtn || (selectedCategory === null)"
+                :disabled="disableNextBtn"
                 :loading="disableNextBtn"
                 class="ml-2"
               >
@@ -191,44 +192,6 @@
                     <path style="fill:#333;" :style="(selectedCategory === null) ? 'fill: #535353;' : ''" d="M25,2H9C8.449,2,8,2.449,8,3c0,0,0,7,0,9s-2,2-2,2H1c-0.551,0-1,0.449-1,1v8c0,0.551,0.449,1,1,1h24   c0.551,0,1-0.449,1-1V3C26,2.449,25.551,2,25,2z M22,14c0,1.436-1.336,4-4,4h-3.586l1.793,1.793c0.391,0.391,0.391,1.023,0,1.414   C16.012,21.402,15.756,21.5,15.5,21.5s-0.512-0.098-0.707-0.293l-3.5-3.5c-0.391-0.391-0.391-1.023,0-1.414l3.5-3.5   c0.391-0.391,1.023-0.391,1.414,0s0.391,1.023,0,1.414L14.414,16H18c1.398,0,2-1.518,2-2v-2c0-0.553,0.447-1,1-1s1,0.447,1,1V14z"/>
                   </g>
                 </svg>
-                <!-- <svg
-                   xmlns="http://www.w3.org/2000/svg"
-                   style="opacity:0.9;"
-                   height="22.944914"
-                   viewBox="0 0 41.381356 28.983049"
-                   version="1.1"
-                   id="svg4"
-                   width="41.381355"
-                >
-                  <rect
-                     style="opacity:1;fill:#333;fill-opacity:1;stroke:none;stroke-width:1.58024037;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.01005028"
-                     id="rect20"
-                     width="52.271187"
-                     height="28.983049"
-                     x="-5.2436438"
-                     y="0"
-                     rx="4.0677967"
-                     ry="4.0677967"
-                  />
-                  <text
-                     xml:space="preserve"
-                     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';letter-spacing:0px;word-spacing:0px;fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.49189663"
-                     x="-0.50927722"
-                     y="19.566446"
-                     id="text24"
-                  >
-                    <tspan
-                       id="tspan22"
-                       x="-0.50927722"
-                       y="19.566446"
-                       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';fill:#808080;stroke-width:1.49189663"
-                    >
-                      Enter
-                    </tspan>
-                  </text>
-                </svg> -->
-
-                <!-- <v-icon>mdi-chevron-right</v-icon> -->
               </v-btn>
             </div>
           </div>
@@ -297,7 +260,8 @@ export default {
 
       startTime: null,
 
-      loadNextImages: true,
+      totalLoaded: 0,
+      hideTimer: null,
 
       // artifact marking
       leftCanvas: '',
@@ -498,7 +462,7 @@ export default {
         window.clearTimeout(window.hideTimeout)
       }
 
-      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
+      this.hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
       // set or wipe original
       if (
@@ -524,20 +488,36 @@ export default {
       imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
       imgLeft.onload = () => {
         this.isLoadLeft = false
+        if (this.leftImage === imgLeft.src) {
+          this.totalLoaded += 1
+        }
         this.leftImage = imgLeft.src
+      }
+    },
 
+    hideUntilLoaded () {
+      this.totalLoaded += 1
+
+      if (this.totalLoaded === 1) {
+        this.totalLoaded = 0
+
+        // show a blank screen inbetween image switching,
+        // if scientist set up delay
         window.setTimeout(() => {
+          // show left and right image
           this.isLoadLeft = true
-          this.startTime = new Date()
 
-          if (hideTimer) {
+          if (this.hideTimer) {
             window.hideTimeout = window.setTimeout(() => {
               this.isLoadLeft = false
-            }, hideTimer)
+            }, this.hideTimer)
           }
 
-          // this.focusSelect()
+          // starts or overrides existing timer
+          this.timeElapsed = new Date()
           this.disableNextBtn = false
+
+          this.focusSelect()
         }, this.experiment.delay)
       }
     },

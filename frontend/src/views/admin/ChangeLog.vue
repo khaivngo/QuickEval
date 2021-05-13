@@ -6,6 +6,22 @@
       </h2>
 
       <h2 class="text-h6 mt-12 first font-weight-bold">
+        Version [1.1.0]
+      </h2>
+
+      <h2 class="text-h5 mt-6 mb-4">
+        Added
+      </h2>
+      <ul style="line-height: 1.6em;">
+        <li>
+          Remove the "next"-button in paired comparison. And show keyboard shortcut icons next to radio buttons.
+        </li>
+        <li>
+          Buttons for calculating confidence intervals the Montag way or a standard way.
+        </li>
+      </ul>
+
+      <h2 class="text-h6 mt-12 first font-weight-bold">
         Version [1.0.0]
       </h2>
 

@@ -82,19 +82,21 @@
       <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center></v-flex>
     </v-layout> -->
 
-    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-0 justify-center>
-      <v-flex
-        mt-2 mb-2
-        class="picture-container"
+    <v-row ref="images" class="fill-height justify-center ml-3 mt-0 mb-0 mr-3 pa-0 pt-0">
+      <v-col
+        class="picture-container fill-height mt-2"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
         v-show="originalImage"
       >
         <div class="panzoom d-flex justify-center align-center">
           <img id="picture-original" class="picture" :src="originalImage"/>
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex mt-2 mb-2 class="picture-container" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+      <v-col
+        class="picture-container fill-height mt-2"
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+      >
         <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
@@ -109,9 +111,12 @@
             :tool="drawingTool"
           />
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex mt-2 mb-2 class="picture-container" :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+      <v-col
+        class="picture-container fill-height mt-2"
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+      >
         <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
@@ -126,9 +131,9 @@
             :tool="drawingTool"
           />
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex mt-2 mb-2 class="picture-container">
+      <v-col class="picture-container fill-height mt-2 mb-2">
         <div class="panzoom d-flex justify-center align-center">
           <img
             v-if="!experiment.artifact_marking"
@@ -143,22 +148,20 @@
             :tool="drawingTool"
           />
         </div>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
-    <v-layout ref="navAction" class="justify-end pr-6">
-      <v-flex
+    <v-row ref="navAction" class="justify-end pr-6 pt-2">
+      <v-col
         v-show="originalImage"
-        ml-2 mr-2
-        xs6
-        class="justify-center" align-center
+        class="justify-center align-center ml-2 mr-2"
       >
         <h4 class="subtitle-1 pb-0 mb-0 text-center">
           Original
         </h4>
-      </v-flex>
-      <v-flex ml-2 mr-2 xs6>
-        <v-layout pa-0 ma-0 justify-center>
+      </v-col>
+      <v-col class="ml-2 mr-2">
+        <v-row class="pa-0 ma-0 justify-center">
           <div class="pl-2 pr-2 category-select">
             <v-select
               v-model="selectedCategoryLeft"
@@ -174,11 +177,11 @@
               color="#808080"
             ></v-select>
           </div>
-        </v-layout>
-      </v-flex>
+        </v-row>
+      </v-col>
 
-      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center>
+      <v-col class="justify-center align-center ml-2 mr-2">
+        <v-row class="pa-0 ma-0 justify-center">
           <div class="pl-2 pr-2 category-select">
             <v-select
               v-model="selectedCategoryMiddle"
@@ -194,11 +197,11 @@
               color="#808080"
             ></v-select>
           </div>
-        </v-layout>
-      </v-flex>
+        </v-row>
+      </v-col>
 
-      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-        <v-layout pa-0 ma-0 justify-center>
+      <v-col class="justify-center align-center ml-2 mr-2">
+        <v-row class="pa-0 ma-0 justify-center">
           <div class="pl-2 pr-2 category-select">
             <v-select
               v-model="selectedCategoryRight"
@@ -214,9 +217,9 @@
               color="#808080"
             ></v-select>
           </div>
-        </v-layout>
-      </v-flex>
-    </v-layout>
+        </v-row>
+      </v-col>
+    </v-row>
 
     <v-layout ref="navNext" class="justify-end pt-4 pr-6">
       <v-btn

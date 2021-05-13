@@ -211,13 +211,13 @@ class ResultPairsController extends Controller
         }
       ])->find($id);
 
-      # get total comparisons in experiment
+      # get the total comparisons in the experiment
       $total_comparisons = $sequences->sequences->reduce(function ($carry, $item) {
         return $carry + $item->picture_queue->picture_sequence_count;
       }, 0);
       $total = $total_comparisons / 2;
 
-      # only get completed results
+      # only get the completed results
       $filtered = $paired_results->filter(function ($value, $key) use ($total) {
         return $total == $value->paired_results_count;
       });
@@ -300,6 +300,7 @@ class ResultPairsController extends Controller
       foreach ($request->artifact_marks as $image) {
         foreach ($image as $mark) {
           $fill = json_encode($mark['fill']);
+          // $fill = $mark['fill'];
           // array_push($shapes, $fill);
           \App\ResultImageArtifact::create([
             'experiment_result_id'  => $request->experiment_result_id,

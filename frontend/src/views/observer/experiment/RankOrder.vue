@@ -63,8 +63,11 @@
       </v-toolbar-items>
     </v-toolbar>
 
-    <v-layout ref="images" fill-height ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 justify-center>
-      <v-flex class="picture-container" mt-2 mb-1 ml-2 :style="'margin-right:' + experiment.stimuli_spacing + 'px'">
+    <v-row ref="images" class="fill-height justify-center ml-3 mt-0 mb-0 mr-3 pa-0 pt-2 pb-4">
+      <v-col
+        class="picture-container fill-height mt-2 ml-2"
+        :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
+      >
         <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-left"
@@ -74,12 +77,11 @@
             :src="leftImage"
           />
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex
-        class="picture-container"
-        mt-2 mb-1
-        v-if="experiment.show_original === 1"
+      <v-col
+        class="picture-container fill-height mt-2"
+        v-show="originalImage"
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
       >
         <div class="panzoom d-flex justify-center align-center">
@@ -89,9 +91,9 @@
             :src="originalImage"
           />
         </div>
-      </v-flex>
+      </v-col>
 
-      <v-flex class="picture-container" mt-2 mb-1 mr-2>
+      <v-col class="picture-container fill-height mt-2 mr-2">
         <div class="panzoom d-flex justify-center align-center">
           <img
             id="picture-right"
@@ -101,10 +103,10 @@
             :src="rightImage"
           />
         </div>
-      </v-flex>
-    </v-layout>
+      </v-col>
+    </v-row>
 
-    <v-layout ref="titles" pb-2>
+    <v-layout ref="titles">
       <v-layout justify-center class="ml-2 mr-2">
         <div
           v-for="(label, i) in labels"
@@ -119,8 +121,8 @@
         </div>
       </v-layout>
 
-      <v-layout pa-0 ma-0 justify-center align-center class="text-center ml-2 mr-2">
-        <h4 class="subtitle-1 pt-3" v-if="experiment.show_original === 1">
+      <v-layout v-show="originalImage" pa-0 ma-0 justify-center align-center class="text-center ml-2 mr-2">
+        <h4 class="subtitle-1 pt-3">
           Original
         </h4>
       </v-layout>
