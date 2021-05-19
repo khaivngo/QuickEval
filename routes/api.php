@@ -48,10 +48,11 @@ Route::post('/result-category/export',   [ResultCategoriesController::class, 'ex
 # Note: auth:api middleware gives access to the user object
 Route::middleware('auth:api')->group(function () {
     # user
-    Route::get(  '/user',     [UserController::class, 'you']        );
-    Route::patch('/user',     [UserController::class, 'update']     );
-    Route::patch('/user/role',[UserController::class, 'updateRole'] );
-    Route::get(  '/user/all', [UserController::class, 'index']      );
+    Route::get(  '/user',        [UserController::class, 'you']        );
+    Route::patch('/user',        [UserController::class, 'update']     );
+    Route::patch('/user/role',   [UserController::class, 'updateRole'] );
+    Route::get(  '/user/all',    [UserController::class, 'index']      );
+    Route::get(  '/user/search/{term}', [UserController::class, 'search']     );
 
     # experiments
     Route::get(   '/experiment/{id}/observer-metas',       [ExperimentsController::class, 'observer_metas'] );

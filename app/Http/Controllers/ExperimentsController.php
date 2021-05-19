@@ -19,12 +19,12 @@ use App\Rules\AllowedTripletCount;
 class ExperimentsController extends Controller
 {
     /**
-     * Get all experiments owned by the user. With the count of total experiments results,
-     * and completed results.
+     * Get all experiments created by the user. With the count of total experiments results,
+     * and completed results. And all experiments the user has been invited to.
      */
     public function index ()
     {
-      return Experiment
+      $experiments = Experiment
         ::where('user_id', auth()->user()->id)
         ->withCount('results')
         ->withCount(['results', 'results as completed_results_count' => function (Builder $query) {
@@ -32,6 +32,15 @@ class ExperimentsController extends Controller
         }])
         ->orderBy('id', 'desc')
         ->get();
+
+      $experiments_invited = \App\ExperimentScientist
+        ::with('experiment')
+        ->where('user_id', auth()->user()->id)
+        ->get()
+        ->pluck('experiment');
+
+      $merged = $experiments->merge($experiments_invited);
+      return $merged;
     }
 
     /**
@@ -75,14 +84,28 @@ class ExperimentsController extends Controller
      * Return experiment if user is owner. With experiment queues, experiment observer metas,
      * and experiment categories if category or triplet exmperiment type.
      */
-    public function is_owner (Request $request) {
+    public function is_owner (Request $request)
+    {
       $experiment = Experiment::where([
-        ['user_id', auth()->user()->id],
+        // ['user_id', auth()->user()->id],
         ['id', $request->id]
       ])
       ->withCount('results')
       ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
       ->first();
+
+      $experiment['collaborators'] = \App\ExperimentScientist::with('user')
+        ->where('experiment_id', $request->id)
+        ->get()
+        ->pluck('user');
+
+      $isOwner = (auth()->user()->id == $experiment->user_id) ? true : false;
+      $user_ids = $experiment['collaborators']->pluck('id')->toArray();
+      $isCollaborator = in_array(auth()->user()->id, $user_ids) ? true : false;
+      // abort if you're not the creator of the experiment or an invited collaborator
+      if ($isOwner === false && $isCollaborator === false) {
+        return response('access to requested area is forbidden', 403);
+      }
 
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
@@ -100,6 +123,11 @@ class ExperimentsController extends Controller
 
       // $concatenated = $experiment->concat($sequences)->concat($metas);
       // return $concatenated->all();
+
+      // $metas = DB::table('experiment_observer_metas')
+      //   ->join('observer_metas', 'observer_metas.id', '=', 'experiment_observer_metas.observer_meta_id')
+      //   ->where('experiment_observer_metas.experiment_id', $request->id)
+      //   ->get();
 
       # category or triplet
       if ($experiment->experiment_type_id === 3 || $experiment->experiment_type_id === 5) {
@@ -197,7 +225,7 @@ class ExperimentsController extends Controller
         ]);
       }
 
-      # if triplet experiment: throw error if any image set does NOT contain exactly 
+      # if triplet experiment: throw error if any image set does NOT contain exactly the correct amount of images
       if ($request->experimentType == 5) // Triplet
       {
         foreach ($request->sequences as $group)
@@ -268,6 +296,15 @@ class ExperimentsController extends Controller
               ]);
             }
           }
+
+          $collaborators = collect($request->collaborators)->map(function ($collaborator) use ($experiment) {
+            return [
+              'experiment_id' => $experiment->id,
+              'user_id' => $collaborator['id']
+            ];
+          });
+          \App\ExperimentScientist::insert($collaborators->toArray());
+          // \App\ExperimentScientist::upsert($collaborators->toArray(), ['experiment_id', 'user_id'], []);
 
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
@@ -704,6 +741,14 @@ class ExperimentsController extends Controller
               ]);
             }
           }
+
+          $collaborators = collect($request->collaborators)->map(function ($collaborator) use ($experiment) {
+            return [
+              'experiment_id' => $experiment->id,
+              'user_id' => $collaborator['id']
+            ];
+          });
+          \App\ExperimentScientist::insert($collaborators->toArray());
 
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)

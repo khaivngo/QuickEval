@@ -41,6 +41,23 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function search($term)
+    {
+        // with('user:id,name', 'observer_metas.observer_meta')
+        return User::where([
+            ['role', '>', 1],
+            ['name', 'LIKE', '%'.$term.'%']
+        ])
+        // LIMIT?
+        // ->orderBy('id', 'desc')
+        ->get();
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function create()
     {
         //

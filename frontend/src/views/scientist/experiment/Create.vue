@@ -91,6 +91,28 @@
               </v-col>
             </v-row>
 
+            <v-row align="center" class="mt-6">
+              <v-col class="pb-0 pt-0 pr-0">
+                <CollaboratorsAutocomplete
+                  :collaborators="experiment.collaborators"
+                  @added="onCollaborators"
+                />
+              </v-col>
+              <v-col cols="auto">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon v-on="on">
+                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
+                    Share the experiment with other scientists.<br>
+                    They will have full access to the experiment and results.
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+
             <v-row align="center" class="mt-0 mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
@@ -460,6 +482,7 @@
 import Sequence from '@/components/scientist/Sequence'
 import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
+import CollaboratorsAutocomplete from '@/components/scientist/CollaboratorsAutocomplete'
 import EventBus from '@/eventBus'
 import { removeArrayItem } from '@/helpers.js'
 
@@ -469,7 +492,8 @@ export default {
   components: {
     Sequence,
     ObserverMetas,
-    Categories
+    Categories,
+    CollaboratorsAutocomplete
   },
 
   data () {
@@ -492,7 +516,8 @@ export default {
       experiment: {
         sequences: [],
         metas: [],
-        categories: []
+        categories: [],
+        collaborators: []
       },
 
       form: {
@@ -516,7 +541,8 @@ export default {
         isPublic: 0,
         sequences: [],
         observerMetas: [],
-        categories: []
+        categories: [],
+        collaborators: []
       },
 
       loaders: {
@@ -633,6 +659,10 @@ export default {
 
     onCategory (values) {
       this.form.categories = values
+    },
+
+    onCollaborators (values) {
+      this.form.collaborators = values
     },
 
     store (type) {

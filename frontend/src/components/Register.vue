@@ -202,6 +202,7 @@ export default {
           // EventBus.$emit('registered')
           this.serverErrors = ''
           this.registering = false
+          this.dialog = false
           this.$emit('success')
         }).catch((error) => {
           console.log(error)
