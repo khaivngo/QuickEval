@@ -143,11 +143,19 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy ()
     {
-        //
+      // if ($user->id != auth()->user()->id) {
+      //   return response('Unauthorized', 401);
+      // }
+      $user = User::find(auth()->user()->id);
+
+      // delete images, experiments? if owner. Remove collaborator statuses.
+
+      $user->delete();
+
+      return response($user, 200);
     }
 }

@@ -56,6 +56,19 @@
         </v-layout>
       </v-form>
     </v-card>
+
+    <v-card class="mt-12 pa-4">
+      <h3 class="headline">Delete account</h3>
+      <p>Permanently delete your account and all belonging experiments.</p>
+      <v-btn
+        @click="destroy()"
+        class="mt-4"
+        color="error"
+        :loading="isDeleting"
+      >
+        Delete account
+      </v-btn>
+    </v-card>
   </v-container>
 </template>
 
@@ -80,6 +93,7 @@ export default {
       },
 
       updating: false,
+      isDeleting: false,
 
       serverErrors: ''
     }
@@ -109,6 +123,24 @@ export default {
           }
           this.updating = false
         })
+      }
+    },
+
+    destroy () {
+      this.isDeleting = true
+
+      if (confirm('Permanently delete your account and all belonging experiments?')) {
+        this.$axios.delete('/user').then(response => {
+          EventBus.$emit('logged', { id: 0, role: 0 })
+          localStorage.clear()
+          this.$router.go()
+          // window.location.reload(true);
+          EventBus.$emit('success', 'Your account has been deleted.')
+        }).catch((error) => {
+          console.log(error)
+        }).finally(() => (this.isDeleting = false))
+      } else {
+        this.isDeleting = false
       }
     }
   }

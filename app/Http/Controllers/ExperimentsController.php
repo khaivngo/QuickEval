@@ -876,6 +876,8 @@ class ExperimentsController extends Controller
      */
     public function destroy (Experiment $experiment)
     {
+      // delete if collaborator?
+
       if ($experiment->user_id != auth()->user()->id) {
         return response('Unauthorized', 401);
       }

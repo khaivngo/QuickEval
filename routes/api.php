@@ -52,7 +52,8 @@ Route::middleware('auth:api')->group(function () {
     Route::patch('/user',        [UserController::class, 'update']     );
     Route::patch('/user/role',   [UserController::class, 'updateRole'] );
     Route::get(  '/user/all',    [UserController::class, 'index']      );
-    Route::get(  '/user/search/{term}', [UserController::class, 'search']     );
+    Route::get(  '/user/search/{term}', [UserController::class, 'search']);
+    Route::delete('/user',      [UserController::class, 'destroy']     );
 
     # experiments
     Route::get(   '/experiment/{id}/observer-metas',       [ExperimentsController::class, 'observer_metas'] );
