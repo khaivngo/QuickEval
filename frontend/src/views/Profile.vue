@@ -134,6 +134,7 @@ export default {
           EventBus.$emit('logged', { id: 0, role: 0 })
           localStorage.clear()
           this.$router.go()
+          // this.$router.push('/')
           // window.location.reload(true);
           EventBus.$emit('success', 'Your account has been deleted.')
         }).catch((error) => {

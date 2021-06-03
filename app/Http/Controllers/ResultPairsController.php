@@ -148,8 +148,19 @@ class ResultPairsController extends Controller
     return ResultPair::where('experiment_result_id', $id)->get();
   }
 
-  public function statistics (Request $request, int $id) {
+  public function statistics (Request $request, int $id)
+  {
     $results = [];
+
+    // $data =
+    //     ExperimentQueue::with(['experiment_sequences' => function ($query) {
+    //         $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
+    //           ->with('picture_set.pictures');
+    //     }])
+    //     ->where('experiment_id', '=', $id)
+    //     ->get();
+
+    //   $results['experimentSequences'] = $data[0]->experiment_sequences;
 
     # REPLACE WITH RELATIONSHIP QUERY ABOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # get the image sets used in a experiment
@@ -224,20 +235,6 @@ class ResultPairsController extends Controller
 
       $paired_results = $filtered;
     }
-
-
-    // $artifacts = ExperimentResult
-    //   ::with('image_artifact_results.picture')
-    //   ->where($matchThese)
-    //   ->get();
-    // $results['artifactss'] = $artifacts;
-    // $merged_artifacts = [];
-    // foreach ($artifacts as $hmm) {
-    //   array_push($merged_artifacts, $hmm->image_artifact_results);
-    // }
-    // $collected = collect($merged_artifacts)->flatten();
-    // // $results['artifactssss'] = $collected;
-    // $results['artifact'] = $collected->groupBy('picture_id');
 
     $data = [];
     foreach ($paired_results as $result)

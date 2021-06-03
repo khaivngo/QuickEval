@@ -403,7 +403,7 @@
 
             <div class="mt-12 pt-12">
               <v-row v-if="original.length > 0">
-                <v-col cols="12">
+                <v-col cols="12" class="pl-0 ml-0">
                   <h3 class="text-h6">
                     Reference/original image
                   </h3>
@@ -461,7 +461,7 @@
 
               <div v-if="original.length === 0" class="ma-0 pa-0">
                 <v-row align="center">
-                  <h2 class="text-h6 mb-2">
+                  <h2 class="text-h6 mb-2 pl-0 ml-0">
                     Reference image/original
                     <span class="body-1">(optional)</span>
                   </h2>
