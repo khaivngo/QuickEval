@@ -105,7 +105,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get(   '/picture/{id}', [PicturesController::class, 'index']     );
 
     # paired results
-    Route::post('/result-pairs/{id}/statistics', [ResultPairsController::class, 'statistics']   );
+    Route::post('/result-pairs/{id}/statistics', [ResultPairsController::class, 'results_grouped_by_image_sets']   );
     Route::post('/result-pairs',                 [ResultPairsController::class, 'store']        );
 
     # category results

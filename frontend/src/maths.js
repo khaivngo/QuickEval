@@ -419,7 +419,7 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
         if (myArray[i][property] === searchTerm)
             return i
     }
-    return -1;
+    return -1
 }
 
 export {

@@ -43,7 +43,7 @@
 
       <h3 class="text-h6 mb-6 mt-4 font-weight-light">
         <span v-for="(imageSet, k) in rawDataMap" :key="k">
-          {{ results.imageSets[k].title }}<span v-if="k !== rawDataMap.length - 1">,</span>
+          {{ results.imageSetSequences[k].picture_set.title }}<span v-if="k !== rawDataMap.length - 1">,</span>
         </span>
       </h3>
 
@@ -59,7 +59,7 @@
           :key="f"
         >
           <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-            {{ results.imageSets[f].title }}
+            {{ results.imageSetSequences[f].picture_set.title }}
           </h3>
 
           <table class="table bordered hovered body-1">
@@ -78,13 +78,13 @@
                     </div>
                   </v-tooltip>
                 </th>
-                <th v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j" class="overflow-wrap">
+                <th v-for="(y, j) in results.imageSetSequences[f].picture_set.pictures" :key="j" class="overflow-wrap">
                   {{ y.name }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(y, j) in results.imagesForEachImageSet[f]" :key="j">
+              <tr v-for="(y, j) in results.imageSetSequences[f].picture_set.pictures" :key="j">
                 <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
                 <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
@@ -106,7 +106,7 @@
           :key="p"
         >
           <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-            {{ results.imageSets[p].title }}
+            {{ results.imageSetSequences[p].picture_set.title }}
           </h3>
 
           <p v-if="zScoreMap[p][3] == 1">
@@ -123,7 +123,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(y, j) in results.imagesForEachImageSet[p]" :key="j">
+              <tr v-for="(y, j) in results.imageSetSequences[p].picture_set.pictures" :key="j">
                 <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
                 <td>{{ isNumber(zScoreMap[p][0][j]) }}</td>
@@ -169,7 +169,7 @@ export default {
       results: {
         resultsForEachImageSet: []
       },
-      resultsArray: null,
+      resultsMatrix: null,
       rawDataMap: [],
       zScoreMap: [],
       plotData: [],
@@ -224,43 +224,43 @@ export default {
       }).then(data => {
         this.results = data.data
 
-        this.resultsArray = null
+        this.resultsMatrix = null
         this.rawDataMap = []
         this.zScoreMap = []
         this.plotData = []
 
-        this.results.imageSets.forEach((imageSet, i) => {
-          // create an empty this.resultsArray array with the length of the number of images in the image set
-          // push empty this.resultsArray[it] array with length of data['imagesForEachImageSet'][i].length in each spot of this.resultsArray
-          // push a 0 value in every slot of the sub arrays
-          this.resultsArray = new Array(this.results.imagesForEachImageSet[i].length)
-          for (var it = 0; it < this.resultsArray.length; it++) {
-            this.resultsArray[it] = new Array(this.results.imagesForEachImageSet[i].length)
+        this.results.imageSetSequences.forEach((sequence, i) => {
+          // create a two-dimensional array of 0 values, with the dimentions of image set length * image set length
+          this.resultsMatrix = new Array(sequence.picture_set.pictures.length)
 
-            for (var ita = 0; ita < this.resultsArray[it].length; ita++) {
-              this.resultsArray[it][ita] = 0
+          for (var k = 0; k < this.resultsMatrix.length; k++) {
+            this.resultsMatrix[k] = new Array(sequence.picture_set.pictures.length)
+
+            for (var j = 0; j < this.resultsMatrix[k].length; j++) {
+              this.resultsMatrix[k][j] = 0
             }
           }
 
+          //
           if (this.results.resultsForEachImageSet.length) {
             this.results.resultsForEachImageSet[i].forEach((result, index) => {
-              let row = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.pictureId,  'id')
-              let column = arrayObjectIndexOf(this.results.imagesForEachImageSet[i], result.wonAgainst, 'id')
-              this.resultsArray[row][column] += 1 // result['won'] here?
+              let row = arrayObjectIndexOf(sequence.picture_set.pictures, result.pictureId,  'id')
+              let column = arrayObjectIndexOf(sequence.picture_set.pictures, result.wonAgainst, 'id')
+              this.resultsMatrix[row][column] += 1 // result['won'] here?
             })
           }
 
           // save all raw data maps
-          this.rawDataMap.push(this.resultsArray)
+          this.rawDataMap.push(this.resultsMatrix)
 
           // stores calculated data for one image set
-          let zScoreArray = this.calculatePlots(this.resultsArray)
+          let zScoreArray = this.calculatePlots(this.resultsMatrix)
           this.zScoreMap.push(zScoreArray)
 
           // add z-score and image set names for one image set to the array used by the scatter plot
           this.plotData.push({
-            imageSet: imageSet,
-            label: this.results.imagesForEachImageSet[i].map(obj => obj.name), // only get the file names
+            imageSet: sequence.picture_set,
+            label: sequence.picture_set.pictures.map(obj => obj.name), // only get the file names
             zScores: zScoreArray
           })
         })
