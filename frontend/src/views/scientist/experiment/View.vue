@@ -180,7 +180,7 @@
                       <v-col cols="12" sm="6" md="6" class="pa-0">
                         <v-checkbox
                           v-model="exportFlags.expMeta"
-                          label="Experiment paramaters"
+                          label="Experiment parameters"
                           class="mt-0"
                         ></v-checkbox>
                       </v-col>
