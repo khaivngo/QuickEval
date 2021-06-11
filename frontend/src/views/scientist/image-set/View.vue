@@ -205,8 +205,8 @@
         </v-row>
 
         <div v-if="original.length === 0" class="ma-0 pa-0">
-          <v-row align="center" class="ml-0 pl-0">
-            <v-col>
+          <v-row align="center">
+            <v-col class="pl-0 ml-0">
               <h2 class="text-h6 mb-2 ml-0 pl-0">
                 Reference image/original
                 <span class="body-1">(optional)</span>

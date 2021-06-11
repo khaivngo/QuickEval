@@ -105,16 +105,16 @@ Route::middleware('auth:api')->group(function () {
     Route::get(   '/picture/{id}', [PicturesController::class, 'index']     );
 
     # paired results
-    Route::post('/result-pairs/{id}/statistics', [ResultPairsController::class, 'results_grouped_by_image_sets']   );
-    Route::post('/result-pairs',                 [ResultPairsController::class, 'store']        );
+    Route::post('/result-pairs/{id}/statistics', [ResultPairsController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-pairs',                 [ResultPairsController::class, 'store']);
 
     # category results
-    Route::post('/result-categories/{id}/statistics', [ResultCategoriesController::class, 'statistics']  );
-    Route::post('/result-categories',                 [ResultCategoriesController::class, 'store']       );
+    Route::post('/result-categories/{id}/statistics', [ResultCategoriesController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-categories',                 [ResultCategoriesController::class, 'store']);
 
     # rank order results
-    Route::post('/result-rank-orders/{id}/statistics', [ResultRankOrdersController::class, 'statistics'] );
-    Route::post('/result-rank-orders',                 [ResultRankOrdersController::class, 'store']      );
+    Route::post('/result-rank-orders/{id}/statistics', [ResultRankOrdersController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-rank-orders',                 [ResultRankOrdersController::class, 'store']);
 
     # triplet results
     Route::post('/result-triplets', [ResultTripletsController::class, 'store']);

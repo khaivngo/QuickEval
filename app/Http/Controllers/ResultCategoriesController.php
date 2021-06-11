@@ -137,7 +137,7 @@ class ResultCategoriesController extends Controller
       }
     }
 
-    public function statistics (Request $request, int $id) {
+    public function results_grouped_by_image_sets (Request $request, int $id) {
       $results = [];
 
       # Get the image sets used in the experiment (every image set used in experiment sequences).

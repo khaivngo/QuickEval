@@ -572,16 +572,31 @@ class ExperimentsController extends Controller
         if ($sequence->picture_queue_id !== null) {
           $sequence['stimuli'] = $sequence->picture_queue->picture_sequence;
 
-          // group belonging paired or triplet picture orders into arrays
+          # group belonging paired or triplet picture orders into arrays
           if ($experiment->experiment_type_id == 1 || $experiment->experiment_type_id == 5) {
-            $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->groupBy('picture_order');
+            $sequence['stimuli'] = $sequence
+              ->picture_queue
+              ->picture_sequence
+              ->groupBy('picture_order');
+
+            # shuffle the contents of these arrays
+            $shuffledAgain = [];
+            foreach (collect($sequence['stimuli']) as $stimuliGroup) {
+              array_push($shuffledAgain, $stimuliGroup->shuffle());
+            }
+
+            $sequence['stimuli'] = $shuffledAgain;
           }
 
           if ($sequence->randomize == 1) {
             if ($experiment->experiment_type_id == 1 || $experiment->experiment_type_id == 5) {
-              $sequence['stimuli'] = collect($sequence['stimuli'])->shuffle();
+              $sequence['stimuli'] = collect($sequence['stimuli'])
+                ->shuffle();
             } else {
-              $sequence['stimuli'] = $sequence->picture_queue->picture_sequence->shuffle();
+              $sequence['stimuli'] = $sequence
+                ->picture_queue
+                ->picture_sequence
+                ->shuffle();
             }
           }
 
