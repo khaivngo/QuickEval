@@ -14,7 +14,7 @@
 import lodashGroupBy from 'lodash/groupBy'
 import lodashEach from 'lodash/each'
 
-// keep track of unique id for each instance of this component
+// keep track of a unique id for each instance of this component
 let uuid = 0
 
 export default {

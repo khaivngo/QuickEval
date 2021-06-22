@@ -107,12 +107,13 @@
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
           />
-          <ArtifactMarker
-            v-if="experiment.artifact_marking"
-            @updated="drawn"
-            :imageURL="leftCanvas"
-            :tool="drawingTool"
-          />
+          <div v-if="experiment.artifact_marking">
+            <ArtifactMarker
+              @updated="drawn"
+              :imageURL="leftCanvas"
+              :tool="drawingTool"
+            />
+          </div>
         </div>
       </v-col>
 

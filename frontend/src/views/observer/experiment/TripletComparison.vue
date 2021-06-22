@@ -104,12 +104,13 @@
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="imageLeft"
           />
-          <ArtifactMarker
-            v-if="experiment.artifact_marking"
-            @updated="drawn"
-            :imageURL="leftCanvas"
-            :tool="drawingTool"
-          />
+          <div v-if="experiment.artifact_marking">
+            <ArtifactMarker
+              @updated="drawn"
+              :imageURL="leftCanvas"
+              :tool="drawingTool"
+            />
+          </div>
         </div>
       </v-col>
 
@@ -124,12 +125,13 @@
             :class="isLoadMiddle === false ? 'hide' : ''"
             :src="imageMiddle"
           />
-          <ArtifactMarker
-            v-if="experiment.artifact_marking"
-            @updated="drawn"
-            :imageURL="middleCanvas"
-            :tool="drawingTool"
-          />
+          <div v-if="experiment.artifact_marking">
+            <ArtifactMarker
+              @updated="drawn"
+              :imageURL="middleCanvas"
+              :tool="drawingTool"
+            />
+          </div>
         </div>
       </v-col>
 
@@ -141,12 +143,13 @@
             :class="isLoadRight === false ? 'hide' : ''"
             :src="imageRight"
           />
-          <ArtifactMarker
-            v-if="experiment.artifact_marking"
-            @updated="drawn"
-            :imageURL="rightCanvas"
-            :tool="drawingTool"
-          />
+          <div v-if="experiment.artifact_marking">
+            <ArtifactMarker
+              @updated="drawn"
+              :imageURL="rightCanvas"
+              :tool="drawingTool"
+            />
+          </div>
         </div>
       </v-col>
     </v-row>
