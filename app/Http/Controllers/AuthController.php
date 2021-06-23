@@ -120,7 +120,8 @@ class AuthController extends Controller
             'accepted' => 0
           ]);
 
-          Mail::to('marius.pedersen@ntnu.no')
+          Mail::to('robinvb@stud.ntnu.no')
+          // Mail::to('marius.pedersen@ntnu.no')
             ->send(new \App\Mail\ScientistRequest($user));
 
           // Mail::to($user->email)
