@@ -66,6 +66,7 @@ export default {
     this.loadingRequests = true
 
     this.$axios.get(`/scientist-request`).then(response => {
+      // add props to every request object so we can keep track of loading status for each
       response.data.forEach(request => {
         request.accepting = false
         request.rejecting = false

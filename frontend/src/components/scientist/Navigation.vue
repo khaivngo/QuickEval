@@ -20,6 +20,20 @@
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <v-list-item
+          link
+          @click="$router.push('/scientist/changelog')"
+          class="qe-changelog-link"
+        >
+          <v-list-item-icon>
+            <v-icon>mdi-format-list-bulleted</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>Changelog</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list-item-group>
     </v-list>
   </div>
@@ -33,6 +47,7 @@ export default {
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'mdi-view-dashboard-outline' },
         { title: 'Your Image Sets', url: '/scientist/image-sets', icon: 'mdi-tooltip-image-outline' },
         { title: 'Your Experiments', url: '/scientist/experiments', icon: 'mdi-picture-in-picture-top-right-outline' }
+        // { title: 'Changelog', url: '/scientist/changelog', icon: 'mdi-format-list-bulleted' }
         // picture-in-picture-top-right-outline
         // form-select
         // lightbulb-on-outline
@@ -47,6 +62,8 @@ export default {
       this.active = 2
     } else if (this.$route.path.split('/')[2] === 'image-sets') {
       this.active = 1
+    } else if (this.$route.path.split('/')[2] === 'changelog') {
+      this.active = 3
     } else {
       this.active = 0
     }
@@ -67,8 +84,17 @@ export default {
     border-right: 1px solid #ddd;
     background: #fff;
   }
+  .qe-changelog-link {
+    position: fixed;
+    bottom: 15px;
+    width: 240px;
+  }
   @media (max-width: 1150px) {
     .qe-nav-drawer {
+      width: 58px;
+    }
+    /* manually crop the changelog link */
+    .qe-changelog-link {
       width: 58px;
     }
   }

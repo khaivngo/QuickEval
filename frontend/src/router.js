@@ -50,13 +50,14 @@ export default new VueRouter({
       children: [
         { path: '',          component: loadView('scientist/Dashboard') },
         { path: 'dashboard', component: loadView('scientist/Dashboard') },
+        { path: 'changelog', component: loadView('scientist/ChangeLog') },
         {
           path: 'experiments',
           component: loadView('scientist/experiment/Index'),
           children: [
             { path: 'create',   component: loadView('scientist/experiment/Create') },
             { path: 'view/:id', component: loadView('scientist/experiment/View') },
-            { path: 'edit/:id', component: loadView('scientist/experiment/Create') }
+            { path: 'edit/:id', component: loadView('scientist/experiment/Create') },
           ]
         },
         {
@@ -85,8 +86,7 @@ export default new VueRouter({
         { path: '',                         component: loadView('admin/ScientistRoleRequest') },
         { path: 'dashboard',                component: loadView('admin/Dashboard') },
         { path: 'scientist-role-requests',  component: loadView('admin/ScientistRoleRequest') },
-        { path: 'all-users',                component: loadView('admin/AllUsers') },
-        { path: 'changelog',                component: loadView('admin/ChangeLog') }
+        { path: 'all-users',                component: loadView('admin/AllUsers') }
       ]
     },
 
