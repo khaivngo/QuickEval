@@ -1,6 +1,6 @@
 <template>
   <div style="position: fixed; z-index: 100; top: 0; bottom: 0; left: 0; right: 0; background: #fff; overflow-x: hidden;">
-    <v-toolbar flat>
+    <!-- <v-toolbar flat>
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
@@ -27,7 +27,26 @@
           </v-card>
         </v-dialog>
       </v-toolbar-items>
-    </v-toolbar>
+    </v-toolbar> -->
+
+    <div style="position: fixed; top: 7px; right: 20px;">
+      <v-dialog v-model="abortDialog" max-width="500">
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">
+            Quit
+          </v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="headline">Do you want to quit the experiment?</v-card-title>
+          <v-card-text></v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
+            <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
 
     <div>
       <v-row class="mt-6 justify-center">
@@ -59,6 +78,9 @@
               mdi-arrow-right
             </v-icon>
           </v-btn>
+          <p class="caption text-center mt-1">
+            ({{ index + 1 }}/17)
+          </p>
         </v-col>
       </v-row>
 
