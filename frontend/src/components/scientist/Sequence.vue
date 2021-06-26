@@ -583,10 +583,10 @@ export default {
           this.events.push({
             id: this.nonce++,
             value: value,
-            randomize: item.randomize,
-            randomizeGroup: item.randomize_group,
-            original: item.original,
-            flipped: item.flipped,
+            randomize: Number(item.randomize),
+            randomizeGroup: Number(item.randomize_group),
+            original: Number(item.original),
+            flipped: Number(item.flipped),
             hideImageTimer: item.hide_image_timer,
             type: type
           })

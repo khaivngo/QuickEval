@@ -109,7 +109,7 @@
             :loading="loading"
             loading-text="Loading... Please wait"
             hide-default-footer
-            :items-per-page="100"
+            :items-per-page="200"
           >
             <template v-slot:item.completed="{ item }">
               <!-- <span>{{ (item.completed === 1) ? 1 : 0 }}</span> -->

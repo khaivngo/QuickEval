@@ -11,6 +11,7 @@
         :items="requests"
         no-data-text="No pending requests"
         hide-default-footer
+        :items-per-page="200"
         class="mt-12"
       >
         <template v-slot:item.action="{ item }">

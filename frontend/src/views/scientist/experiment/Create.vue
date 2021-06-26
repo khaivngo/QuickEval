@@ -696,7 +696,7 @@ export default {
     update () {
       // has anyone taken the experiment?
       // if (this.experiment.results_count > 0) {
-      if (this.experiment.completed_results_count > 0) {
+      if (Number(this.experiment.completed_results_count) > 0) {
         this.disclaimerDialog = true
       } else {
         this.updateApproved()
@@ -715,7 +715,7 @@ export default {
       // this.form.isPublic = (type === 'hidden') ? 0 : 1
       this.form.isPublic = 1
       // this.form.amountObservers = this.experiment.results_count
-      this.form.amountObservers = this.experiment.completed_results_count
+      this.form.amountObservers = Number(this.experiment.completed_results_count)
 
       this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
         if (this.form.amountObservers === 0) {
