@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="mt-5">
-    <v-container>
+    <v-container class="pl-8">
       <v-row class="mb-12" align="center">
         <v-img
           :src="require('@/assets/logo.png')"
@@ -53,21 +53,21 @@
       </v-row>
     </v-container>
 
-    <v-footer style="background: #F6F6F6; margin-top: 100px;">
-      <v-container class="pb-12">
+    <v-footer style="background: #F6F6F6; margin-top: 200px;">
+      <v-container class="pb-12 pl-8">
         <v-row>
           <!-- <p class="mt-5 mb-0 mb-12">
             The tool is provided by The Norwegian Colour and Visual Computing Laboratory.
           </p> -->
         </v-row>
 
-        <v-row>
+        <v-row justify="center">
           <v-col cols="auto" class="pr-12">
             <v-img
               :src="require('@/assets/colourlab-logo.png')"
               contain
               class="mt-4"
-              max-width="300"
+              max-width="280"
             ></v-img>
           </v-col>
           <v-col>
@@ -75,7 +75,7 @@
               :src="require('@/assets/ntnu-logo-slogan.png')"
               contain
               class="mt-5"
-              max-width="170"
+              max-width="200"
             ></v-img>
           </v-col>
         </v-row>

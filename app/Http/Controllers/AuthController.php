@@ -120,12 +120,15 @@ class AuthController extends Controller
             'accepted' => 0
           ]);
 
-          // Mail::to('robinvb@stud.ntnu.no')
-          Mail::to('marius.pedersen@ntnu.no')
+          # notify admin, so they can accept/reject request
+          Mail
+            ::to(env('MAIL_USERNAME_ADMIN', false))
             ->send(new \App\Mail\ScientistRequest($user));
 
-          // Mail::to($user->email)
-          //   ->send(new \App\Mail\Receipt($user));
+          # notify requester, that their account is created and awaiting admin review
+          Mail
+            ::to($user->email)
+            ->send(new \App\Mail\Receipt($user));
         }
 
         return $user;

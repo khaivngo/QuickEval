@@ -210,6 +210,10 @@ export default {
           this.serverErrors = ''
           this.serverErrors = error.response.data
           this.registering = false
+        }).finally(() => {
+          this.registering = false
+          // this.$emit('success')
+          // EventBus.$emit('success', '')
         })
       }
     },
