@@ -12,7 +12,7 @@
           link
           @click="$router.push(item.url)"
         >
-          <v-list-item-icon>
+          <v-list-item-icon class="mr-5">
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
@@ -26,7 +26,7 @@
           @click="$router.push('/scientist/changelog')"
           class="qe-changelog-link"
         >
-          <v-list-item-icon>
+          <v-list-item-icon class="mr-5">
             <v-icon>mdi-format-list-bulleted</v-icon>
           </v-list-item-icon>
 

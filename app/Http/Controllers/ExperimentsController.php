@@ -24,23 +24,29 @@ class ExperimentsController extends Controller
      */
     public function index ()
     {
-      $experiments = Experiment
+      $owned_experiments = Experiment
         ::where('user_id', auth()->user()->id)
         ->withCount('results')
-        ->withCount(['results', 'results as completed_results_count' => function (Builder $query) {
-          $query->where('completed', 1);
-        }])
+        ->withCount([
+          'results', 'results as completed_results_count' => function (Builder $query) {
+            $query->where('completed', 1);
+          }
+        ])
         ->orderBy('id', 'desc')
         ->get();
 
-      $experiments_invited = \App\ExperimentScientist
-        ::with('experiment')
-        ->where('user_id', auth()->user()->id)
+      $invited_experiments = \App\User
+        ::where('id', auth()->user()->id)
+        ->with('invited_experiments')
+        ->orderBy('id', 'desc')
         ->get()
-        ->pluck('experiment');
+        ->pluck('invited_experiments')
+        ->flatten();
 
-      $merged = $experiments->merge($experiments_invited);
-      return $merged;
+      # merge 'em
+      $all_experiments = $owned_experiments->concat($invited_experiments);
+
+      return response($all_experiments);
     }
 
     /**
@@ -81,7 +87,7 @@ class ExperimentsController extends Controller
     }
 
     /**
-     * Return experiment if user is owner. With experiment queues, experiment observer metas,
+     * Return experiment if user is owner, or has been invited. With experiment queues, experiment observer metas,
      * and experiment categories if category or triplet exmperiment type.
      */
     public function is_owner (Request $request)
@@ -94,17 +100,19 @@ class ExperimentsController extends Controller
       ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
       ->first();
 
-      $experiment['collaborators'] = \App\ExperimentScientist::with('user')
-        ->where('experiment_id', $request->id)
+      $experiment['collaborators'] = Experiment::where('id', $request->id)
+        ->with('users')
         ->get()
-        ->pluck('user');
+        ->pluck('users')
+        ->flatten();
 
       $isOwner = (auth()->user()->id == $experiment->user_id) ? true : false;
       $user_ids = $experiment['collaborators']->pluck('id')->toArray();
       $isCollaborator = in_array(auth()->user()->id, $user_ids) ? true : false;
-      // abort if you're not the creator of the experiment or an invited collaborator
+
+      # abort if you're not the creator of the experiment or an invited collaborator
       if ($isOwner === false && $isCollaborator === false) {
-        return response('access to requested area is forbidden', 403);
+        return response('Access to requested area is forbidden.', 403);
       }
 
       $sequences = DB::table('experiment_queues')
@@ -177,6 +185,9 @@ class ExperimentsController extends Controller
       ->first();
     }
 
+    /**
+     * Get all experiments.
+     */
     public function all ()
     {
       return Experiment::with('user:id,name')
@@ -184,9 +195,13 @@ class ExperimentsController extends Controller
         ->get();
     }
 
+    /**
+     * 
+     */
     public function all_public ()
     {
-      return Experiment::where('is_public', 1)
+      return Experiment
+        ::where('is_public', 1)
         ->with('user:id,name', 'observer_metas.observer_meta')
         ->orderBy('id', 'desc')
         ->get();
@@ -206,7 +221,8 @@ class ExperimentsController extends Controller
       return $metas;
     }
 
-    public function store (Request $request) {
+    public function store (Request $request)
+    {
       # abort if not scientist or admin
       if (auth()->user()->role < 2) {
         return response()->json('Unauthorized', 401);
@@ -252,7 +268,7 @@ class ExperimentsController extends Controller
         'user_id'           => auth()->user()->id,
         'title'             => $request->title,
         'experiment_type_id'=> $request->experimentType,
-        'picture_sequence_algorithm' => $request->algorithm,
+        'picture_sequence_algorithm' => $request->algorithm, // remove
         'delay'             => $request->delay,
         'ishihara'          => $request->ishihara,
         'artifact_marking'  => $request->artifact_marking,
@@ -265,7 +281,11 @@ class ExperimentsController extends Controller
         'show_original'     => $request->showOriginal,
         'show_progress'     => $request->showProgress,
         'version'           => 1
-      ]); 
+      ]);
+
+      # add invited collaborators to pivot table
+      $user_ids = collect($request->collaborators)->pluck('id')->toArray();
+      $experiment->users()->attach($user_ids);
 
       if ($experiment->id > 0)
       {
@@ -296,15 +316,6 @@ class ExperimentsController extends Controller
               ]);
             }
           }
-
-          $collaborators = collect($request->collaborators)->map(function ($collaborator) use ($experiment) {
-            return [
-              'experiment_id' => $experiment->id,
-              'user_id' => $collaborator['id']
-            ];
-          });
-          \App\ExperimentScientist::insert($collaborators->toArray());
-          // \App\ExperimentScientist::upsert($collaborators->toArray(), ['experiment_id', 'user_id'], []);
 
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
@@ -371,6 +382,8 @@ class ExperimentsController extends Controller
                   $group[0]['randomizeGroup'],
                   $step['hideImageTimer']
                 );
+
+                $this->add_picture_set_users($step['value'], $user_ids);
               }
               else if ($step['type'] === 'instruction')
               {
@@ -646,17 +659,33 @@ class ExperimentsController extends Controller
       return response($experimentResult, 200);
     }
 
-
-    public function update (Request $request, Experiment $original_experiment) {
+    // TODO: abstract store function into another file/class
+    public function update (Request $request, Experiment $original_experiment)
+    {
       # abort if not scientist or admin
       if (auth()->user()->role < 2) {
         return response()->json('Unauthorized', 401);
       }
 
-      # abort if not owner of original experiment
-      if ($original_experiment->user_id !== auth()->user()->id) {
-        return response()->json('Unauthorized', 401);
+      $collaborators = Experiment::where('id', $original_experiment->id)
+        ->with('users')
+        ->get()
+        ->pluck('users')
+        ->flatten();
+
+      $isOwner = (auth()->user()->id == $original_experiment->user_id) ? true : false;
+      $user_ids = $collaborators->pluck('id')->toArray();
+      $isCollaborator = in_array(auth()->user()->id, $user_ids) ? true : false;
+
+      # abort if you're not the creator of the experiment or an invited collaborator
+      if ($isOwner === false && $isCollaborator === false) {
+        return response('Access to requested area is forbidden.', 403);
       }
+
+      # abort if not owner of original experiment
+      // if ($original_experiment->user_id !== auth()->user()->id) {
+      //   return response()->json('Unauthorized', 401);
+      // }
 
       $data = $request->validate([
         'title'          => 'required|string',
@@ -678,12 +707,14 @@ class ExperimentsController extends Controller
             ->first();
         }
 
-        # have we updated before?
+        # has the experiment been edited before?
+        # if so increment the version number by 1
         $version  = ($last_version) ? ++$last_version->version : 2;
         $original = ($original_experiment->first_version_id) ? $original_experiment->first_version_id : $original_experiment->id;
 
         $experiment = Experiment::create([
-          'user_id'           => auth()->user()->id,
+          // 'user_id'           => auth()->user()->id,
+          'user_id'           => $original_experiment->user_id,
           'title'             => $request->title,
           'experiment_type_id'=> $request->experimentType,
           'picture_sequence_algorithm' => $request->algorithm,
@@ -703,7 +734,8 @@ class ExperimentsController extends Controller
         ]);
       } else {
         $experiment = Experiment::create([
-          'user_id'           => auth()->user()->id,
+          // 'user_id'           => auth()->user()->id,
+          'user_id'           => $original_experiment->user_id,
           'title'             => $request->title,
           'experiment_type_id'=> $request->experimentType,
           'picture_sequence_algorithm' => $request->algorithm,
@@ -726,7 +758,14 @@ class ExperimentsController extends Controller
         Experiment::destroy($original_experiment->id);
       }
 
-      // TODO: abstract store function into another file/class
+      # remove any $user_ids not in the db and add any $user_ids that aren't in the database
+      $user_ids = collect($request->collaborators)
+        ->pluck('id')
+        ->toArray();
+      // $experiment->users()->attach($user_ids);
+      $experiment->users()->sync($user_ids);
+
+
       if ($experiment->id > 0)
       {
         $experiment_queue = \App\ExperimentQueue::create([
@@ -756,14 +795,6 @@ class ExperimentsController extends Controller
               ]);
             }
           }
-
-          $collaborators = collect($request->collaborators)->map(function ($collaborator) use ($experiment) {
-            return [
-              'experiment_id' => $experiment->id,
-              'user_id' => $collaborator['id']
-            ];
-          });
-          \App\ExperimentScientist::insert($collaborators->toArray());
 
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
@@ -830,6 +861,8 @@ class ExperimentsController extends Controller
                   $group[0]['randomizeGroup'],
                   $step['hideImageTimer']
                 );
+
+                $this->add_picture_set_users($step['value'], $user_ids);
               }
               else if ($step['type'] === 'instruction')
               {
@@ -864,6 +897,12 @@ class ExperimentsController extends Controller
       } else {
         return response('Experiment could not be created.', 404);
       }
+    }
+
+    private function add_picture_set_users ($set_id, $user_ids)
+    {
+      $picture_set = \App\PictureSet::where('id', $set_id)->first();
+      $picture_set->users()->attach($user_ids);
     }
 
     /**

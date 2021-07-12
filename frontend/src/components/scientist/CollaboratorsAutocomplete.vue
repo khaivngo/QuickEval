@@ -42,8 +42,8 @@
 
         <!-- v-show="data.item.hidden === false" -->
         <v-list-item-content>
-          <v-list-item-title v-html="data.item.name"></v-list-item-title>
-          <v-list-item-subtitle v-html="data.item.institution"></v-list-item-subtitle>
+          <v-list-item-title>{{ data.item.name }}</v-list-item-title>
+          <v-list-item-subtitle>{{ data.item.email }}</v-list-item-subtitle>
         </v-list-item-content>
       </template>
     </template>

@@ -91,7 +91,7 @@
               </v-col>
             </v-row>
 
-            <!-- <v-row align="center" class="mt-6">
+            <v-row align="center" class="mt-6">
               <v-col class="pb-0 pt-0 pr-0">
                 <CollaboratorsAutocomplete
                   :collaborators="experiment.collaborators"
@@ -111,7 +111,7 @@
                   </div>
                 </v-tooltip>
               </v-col>
-            </v-row> -->
+            </v-row>
 
             <v-row align="center" class="mt-0 mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
@@ -290,14 +290,15 @@
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Spacing in pixels between stimuli images.<br>
                     Images will not get closer than amount specified,<br>
-                    but may be further apart if images are small or user's screen is large.
+                    but may be further apart if images are small<br>
+                    or the user's screen resolution is large.
                   </div>
                 </v-tooltip>
               </v-col>
             </v-row>
             <div class="text-caption">
               Note: Images will not get closer than amount specified, but may be further apart<br>if images
-              are small or user's screen is large.
+              are small or the user's screen resolution is large.
             </div>
           </v-card>
         </v-stepper-content>
@@ -482,7 +483,7 @@
 import Sequence from '@/components/scientist/Sequence'
 import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
-// import CollaboratorsAutocomplete from '@/components/scientist/CollaboratorsAutocomplete'
+import CollaboratorsAutocomplete from '@/components/scientist/CollaboratorsAutocomplete'
 import EventBus from '@/eventBus'
 import { removeArrayItem } from '@/helpers.js'
 
@@ -492,8 +493,8 @@ export default {
   components: {
     Sequence,
     ObserverMetas,
-    Categories
-    // CollaboratorsAutocomplete
+    Categories,
+    CollaboratorsAutocomplete
   },
 
   data () {

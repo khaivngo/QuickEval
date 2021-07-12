@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\PictureSet;
+use App\User;
 use Storage;
 
 use Illuminate\Http\Request;
@@ -11,37 +12,55 @@ class PictureSetsController extends Controller
     /**
      * All image sets belonging to the user.
      */
-    public function index () {
-      return PictureSet
+    public function index ()
+    {
+      # get the picture sets which the user has created
+      $owned_sets = PictureSet
         ::where('user_id', auth()->user()->id)
         ->orderBy('id', 'desc')
         ->get();
+
+      # get the picture sets which belongs to experiments the user has been invited to
+      $invited_sets = User::where('id', auth()->user()->id)
+        ->with('picture_sets')
+        ->get()
+        ->pluck('picture_sets')
+        ->flatten();
+
+      return $owned_sets->concat($invited_sets);
     }
 
-    public function all () {
-      return PictureSet
-        ::orderBy('id', 'desc')
-        ->get();
+    /**
+     * Get the specified resource.
+     */
+    public function find ($id)
+    {
+      return PictureSet::with('pictures')
+        ->find($id);
     }
 
-    public function find ($id) {
-      return PictureSet::with('pictures')->find($id);
-    }
-
-    // public function getSet ($picture_set_id) {
-    //   return \App\Picture
-    //     ::where('picture_set_id', $picture_set_id)
-    //     ->get();
-    // }
-
-    public function original ($picture_set_id) {
+    /**
+     * Get the original image of the picture set.
+     *
+     * @param  int  $picture_set_id
+     * @return \Illuminate\Http\Response
+     */
+    public function original ($picture_set_id)
+    {
       return \App\Picture::where([
         ['picture_set_id', $picture_set_id],
         ['is_original', 1]
       ])->get();
     }
 
-    public function store (Request $request) {
+    /**
+     * Save the specified resource to storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store (Request $request)
+    {
       // $data = $request->validate([
       //     'title' => 'required|string',
       //     'user_id' => 'required'

@@ -521,6 +521,8 @@ export default {
     },
 
     async loadStimuli () {
+      this.disableNextBtn = true
+
       // clear the hide image timer to reset and ensure the timer always starts from the correct time
       // or is wiped if we move to a new image set
       if (window.hideTimeoutLeft) {

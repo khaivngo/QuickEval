@@ -43,7 +43,7 @@
 
       <h3 class="text-h6 mb-6 mt-4 font-weight-light">
         <span v-for="(imageSet, k) in rawDataMap" :key="k">
-          {{ results.imageSetSequences[k].picture_set.title }}<span v-if="k !== rawDataMap.length - 1">,</span>
+          {{ resultsByImageSet[k].picture_set.title }}<span v-if="k !== rawDataMap.length - 1">,</span>
         </span>
       </h3>
 
@@ -52,14 +52,15 @@
       />
 
       <!-- Raw data -->
-      <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+      <!-- v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0" -->
+      <div>
         <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
         <div
           v-for="(imageSet, f) in rawDataMap"
           :key="f"
         >
           <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-            {{ results.imageSetSequences[f].picture_set.title }}
+            {{ resultsByImageSet[f].picture_set.title }}
           </h3>
 
           <table class="table bordered hovered body-1">
@@ -78,13 +79,13 @@
                     </div>
                   </v-tooltip>
                 </th>
-                <th v-for="(y, j) in results.imageSetSequences[f].picture_set.pictures" :key="j" class="overflow-wrap">
+                <th v-for="(y, j) in resultsByImageSet[f].picture_set.pictures" :key="j" class="overflow-wrap">
                   {{ y.name }}
                 </th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(y, j) in results.imageSetSequences[f].picture_set.pictures" :key="j">
+              <tr v-for="(y, j) in resultsByImageSet[f].picture_set.pictures" :key="j">
                 <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
                 <td v-for="(score, scoreIndex) in imageSet[j]" :key="scoreIndex">
@@ -99,21 +100,23 @@
       </div>
 
       <!-- Z-scores -->
-      <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+      <!-- v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0" -->
+      <div>
         <h2 class="mb-3 mt-12 pt-12">Z-score</h2>
         <div
           v-for="(imageSet, p) in rawDataMap"
           :key="p"
         >
           <h3 class="text-h6 mb-3 mt-8 font-weight-light">
-            {{ results.imageSetSequences[p].picture_set.title }}
+            {{ resultsByImageSet[p].picture_set.title }}
           </h3>
 
           <p v-if="zScoreMap[p][3] == 1">
             Need more observer data to calculate z-scores properly.
           </p>
 
-          <table v-if="zScoreMap[p][3] == 0" class="table bordered hovered">
+          <!-- v-if="zScoreMap[p][3] == 0" -->
+          <table class="table bordered hovered">
             <thead>
               <tr>
                 <th class="overflow-wrap">Title</th>
@@ -123,7 +126,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(y, j) in results.imageSetSequences[p].picture_set.pictures" :key="j">
+              <tr v-for="(y, j) in resultsByImageSet[p].picture_set.pictures" :key="j">
                 <td class="overflow-wrap"><b>{{ y.name }}</b></td>
 
                 <td>{{ isNumber(zScoreMap[p][0][j]) }}</td>
@@ -151,8 +154,7 @@ import {
   calculateZScoreMatrix,
   calculateMeanZScore,
   calculateSDMatrix,
-  calculateSDMatrixMontag,
-  arrayObjectIndexOf
+  calculateSDMatrixMontag
 } from '@/maths.js'
 import ScatterPlot from '@/components/scientist/HighchartsScatterPlot'
 import Heatmap from '@/components/scientist/Heatmap'
@@ -166,7 +168,7 @@ export default {
 
   data () {
     return {
-      results: {
+      resultsByImageSet: {
         resultsForEachImageSet: []
       },
       resultsMatrix: null,
@@ -183,10 +185,6 @@ export default {
 
   watch: {
     includeIncomplete (newVal, oldVal) {
-      // console.log(oldVal)
-      // console.log(newVal)
-      // if (this.includeIncomplete === )
-
       if (this.includeIncomplete !== null && oldVal !== null && newVal !== null) {
         localStorage.setItem(this.$route.params.id + '-includeIncomplete', newVal)
       }
@@ -203,7 +201,7 @@ export default {
 
   created () {
     const incomplete = localStorage.getItem(this.$route.params.id + '-includeIncomplete')
-    // replace with json?
+
     if (incomplete === 'false') {
       this.includeIncomplete = false
     } else if (incomplete === 'true') {
@@ -222,17 +220,17 @@ export default {
       this.$axios.post(`/result-pairs/${this.$route.params.id}/statistics`, {
         includeIncomplete: this.includeIncomplete
       }).then(data => {
-        this.results = data.data
+        this.resultsByImageSet = data.data.imageSetSequences
 
         this.resultsMatrix = null
         this.rawDataMap = []
         this.zScoreMap = []
         this.plotData = []
 
-        this.results.imageSetSequences.forEach((sequence, i) => {
-          // create a two-dimensional array of 0 values, with the dimentions of image set length * image set length
+        this.resultsByImageSet.forEach((sequence, i) => {
+          // create a two-dimensional array of 0 values,
+          // with the dimensions of image set length * image set length
           this.resultsMatrix = new Array(sequence.picture_set.pictures.length)
-
           for (var k = 0; k < this.resultsMatrix.length; k++) {
             this.resultsMatrix[k] = new Array(sequence.picture_set.pictures.length)
 
@@ -241,19 +239,18 @@ export default {
             }
           }
 
-          //
-          if (this.results.resultsForEachImageSet.length) {
-            this.results.resultsForEachImageSet[i].forEach((result, index) => {
-              let row = arrayObjectIndexOf(sequence.picture_set.pictures, result.pictureId,  'id')
-              let column = arrayObjectIndexOf(sequence.picture_set.pictures, result.wonAgainst, 'id')
-              this.resultsMatrix[row][column] += 1 // result['won'] here?
-            })
-          }
+          // fill our two-dimensional array with occurences of selected image combinations, by incrementing when we find a match
+          // images on the y-axis (column) are the images picked
+          sequence.results.forEach((result, index) => {
+            let column = sequence.picture_set.pictures.findIndex(obj => obj.id === result.wonAgainst)
+            let row = sequence.picture_set.pictures.findIndex(obj => obj.id === result.pictureId)
+            this.resultsMatrix[row][column] += 1
+          })
 
-          // save all raw data maps
+          // save the raw data map for the image set
           this.rawDataMap.push(this.resultsMatrix)
 
-          // stores calculated data for one image set
+          // calculate z-scores from the raw data map
           let zScoreArray = this.calculatePlots(this.resultsMatrix)
           this.zScoreMap.push(zScoreArray)
 
@@ -264,9 +261,9 @@ export default {
             zScores: zScoreArray
           })
         })
-
-        this.loading = false
-      }).catch(() => {
+      }).catch((err) => {
+        console.log(err)
+      }).finally(() => {
         this.loading = false
       })
     },
@@ -323,8 +320,6 @@ export default {
       } else {
         var SDArray = calculateSDMatrix($frequencyMatrix)
       }
-      // var SDArray = calculateSDMatrix($frequencyMatrix)
-      // var SDArray = calculateSDMatrixMontag($frequencyMatrix)
 
       // Calculates the high confidence interval limits
       var highCILimit = meanZScore.map(function (num, i) {

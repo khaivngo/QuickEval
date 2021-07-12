@@ -437,6 +437,8 @@ export default {
     },
 
     async loadStimuli () {
+      this.disableNextBtn = true
+
       // clear the hide image timer to reset and ensure the timer always starts from the correct time
       // or is wiped if we move to a new image set
       if (window.hideTimeout) {
@@ -581,6 +583,7 @@ export default {
         picture_id_selected: pictureSelected.id,
         picture_id_left: pictureLeft.id,
         picture_id_right: pictureRight.id,
+        picture_sequence: 34,
         client_side_timer: clientSideTimer,
         chose_none: 0,
         artifact_marks: this.shapes

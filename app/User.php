@@ -44,4 +44,14 @@ class User extends Authenticatable
     public function scientist_request () {
         return $this->hasOne(ScientistRequest::class);
     }
+
+    # pivot table
+    public function picture_sets () {
+        return $this->belongsToMany(PictureSet::class);
+    }
+
+    # pivot table
+    public function invited_experiments () {
+        return $this->belongsToMany(Experiment::class);
+    }
 }

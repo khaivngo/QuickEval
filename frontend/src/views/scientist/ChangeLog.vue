@@ -53,7 +53,7 @@
               </td>
               <td class="pt-3 pb-3">
                 Remove the "next"-button in paired experiments, and instead proceed to the next step automatically when
-                selecting a radio input. Add keyboard icons as well.
+                selecting a radio input. Add keyboard icon labels as well.
               </td>
             </tr>
             <tr>

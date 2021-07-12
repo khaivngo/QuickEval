@@ -153,18 +153,20 @@ class ResultPairsController extends Controller
     $results = [];
 
     # get every experiment sequence of type image set, with respective images (filter out original image)
-    $data = ExperimentQueue::with(['experiment_sequences' => function ($query) {
-        $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
-          ->with(['picture_set.pictures' => function ($query) { $query->where('is_original', 0); }]);
+    $data = ExperimentQueue::with([
+      'experiment_sequences' => function ($query) {
+        $query
+          ->where('experiment_sequences.picture_queue_id', '!=', NULL)
+          ->with([
+            'picture_set.pictures' => function ($query) {
+              $query->where('is_original', 0);
+            }
+          ]);
       }])
       ->where('experiment_id', '=', $id)
-      ->get();
+      ->first();
 
-    $results['imageSetSequences'] = $data[0]->experiment_sequences;
-
-
-    // ! statistics are wrong when using the same image set in one experiment.
-    // We should use picture_sequence_id
+    $results['imageSetSequences'] = $data->experiment_sequences;
 
 
     $matchThese = ['experiment_id' => $id];
@@ -174,19 +176,25 @@ class ResultPairsController extends Controller
     // }
 
     $paired_results = ExperimentResult
-      ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+      ::with(
+        'paired_results.picture_left',
+        'paired_results.picture_right',
+        'paired_results.picture_selected'
+      )
       ->withCount('paired_results')
       ->where($matchThese)
       ->get();
 
-    # filter unfinished experiments
+    # filter out unfinished experiments
     if ($request->includeIncomplete == false) {
+      # for every picture set experiment_sequence get the count of pictures used (amount of comparisons)
       $sequences = Experiment::with([
-        # for every picture set experiment_sequence get the count of pictures used
         'sequences' => function ($query) {
-          $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
-            $query->withCount('picture_sequence');
-          }]);
+          $query->where('picture_queue_id', '!=', null)->with([
+            'picture_queue' => function ($query) {
+              $query->withCount('picture_sequence');
+            }
+          ]);
         }
       ])->find($id);
 
@@ -196,13 +204,14 @@ class ResultPairsController extends Controller
       }, 0);
       $total = $total_comparisons / 2;
 
-      # only get the completed results (if observers results match total comparisons)
+      # only get the completed results (if the observer's results match total comparisons)
       $completed = $paired_results->filter(function ($value, $key) use ($total) {
         return $total == $value->paired_results_count;
       });
 
       $paired_results = $completed;
     }
+
 
     $data = [];
     foreach ($paired_results as $result)
@@ -217,7 +226,7 @@ class ResultPairsController extends Controller
         $arr['pictureId'] = $res->picture_selected->id;
         $arr['name']      = $res->picture_selected->name;
 
-        $arr['won'] = 1; // if none chosen = 0?     @param  {int} $points   amount of points to add... 1 for paired?
+        $arr['won'] = 1;
 
         # if right was selected, it won against left
         if ($arr['pictureId'] == $arr['right']) {
@@ -234,15 +243,23 @@ class ResultPairsController extends Controller
 
     # group selected image results by image set
     $new = [];
-    foreach ($data as $result) {
-      foreach ($results['imageSetSequences'] as $key => $sequence) {
-        foreach ($sequence['picture_set']['pictures'] as $image) {
+    # loop through every experiment sequence
+    foreach ($results['imageSetSequences'] as $key => $sequence) {
+      # loop through every picture in the current experiment sequence
+      foreach ($sequence['picture_set']['pictures'] as $image) {
+        # loop through results
+        foreach ($data as $result) {
+          # if the picture id in the current result matches
+          # the picture id of the current picture in the current experiment sequence
           if ($result['pictureId'] == $image['id']) {
+            # push the result into a new array at the sequence key position
             $new[$key][] = $result;
           }
         }
       }
+      $results['imageSetSequences'][$key]['results'] = $new[$key];
     }
+
     $results['resultsForEachImageSet'] = $new;
 
 
@@ -256,6 +273,7 @@ class ResultPairsController extends Controller
       'picture_id_selected'   => $request->picture_id_selected,
       'picture_id_left'       => $request->picture_id_left,
       'picture_id_right'      => $request->picture_id_right,
+      'picture_sequence_id'   => $request->picture_sequence,
       'client_side_timer'     => $request->client_side_timer,
       'chose_none'            => $request->chose_none
     ]);

@@ -248,7 +248,7 @@ function calculateSlope(y, x) {
     var sum_yy = 0
 
     for (var i = 0; i < y.length; i++) {
-      if (y[i]<3 && y[i] > -3)
+      if (y[i] < 3 && y[i] > -3)
       {
         sum_x += x[i]
         sum_y += y[i]

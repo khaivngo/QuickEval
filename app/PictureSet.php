@@ -29,4 +29,10 @@ class PictureSet extends Model
     public function experiment_sequences () {
         return $this->hasMany(ExperimentSequence::class);
     }
+
+    # pivot table
+    public function users () {
+        return $this->belongsToMany(User::class)
+            ->as('picture_set_user');
+    }
 }
