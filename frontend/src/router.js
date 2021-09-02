@@ -102,6 +102,7 @@ export default new VueRouter({
     { path: '/experiment/3/:id', component: loadView('observer/experiment/CategoryJudgement'),  name: 'Category Judgement' },
     { path: '/experiment/4/:id', component: loadView('observer/experiment/ArtifactMarking'),    name: 'Artifact Marking' },
     { path: '/experiment/5/:id', component: loadView('observer/experiment/TripletComparison'),  name: 'Triplet Comparison' },
+    { path: '/experiment/6/:id', component: loadView('observer/experiment/MagnitudeEstimation'),name: 'Magnitude Estimation' },
 
     /* catch all non-existing routes */
     {

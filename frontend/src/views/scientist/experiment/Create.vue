@@ -317,14 +317,31 @@
 
         <v-stepper-content :step="showCategories.id" v-if="showCategories">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-1">{{ showCategories.title }}</h2>
-            <p class="body-1">
-              Add the categories the observer use to rate the images.
-            </p>
-            <Categories
-              :categories="experiment.categories"
-              @added="onCategory"
-            />
+            <template v-if="experimentType === 6">
+              <h2 class="mb-1">Scale Slider Settings</h2>
+              <!-- <p class="body-1">
+                Add max/min value of the slider.
+              </p> -->
+              <div class="d-flex mt-12" style="width: 250px;">
+                <v-text-field v-model="form.slider.minValue" label="min value" dense outlined class="mr-2"></v-text-field>
+                <v-text-field v-model="form.slider.maxValue" label="max value" dense outlined></v-text-field>
+              </div>
+
+              <div class="mt-10">
+                <v-text-field v-model="form.slider.minLabel" label="min label" dense outlined></v-text-field>
+                <v-text-field v-model="form.slider.maxLabel" label="max label" dense outlined class="mt-4"></v-text-field>
+              </div>
+            </template>
+            <template v-else>
+              <h2 class="mb-1">{{ showCategories.title }}</h2>
+              <p class="body-1">
+                Add the categories the observer use to rate the images.
+              </p>
+              <Categories
+                :categories="experiment.categories"
+                @added="onCategory"
+              />
+            </template>
           </v-card>
         </v-stepper-content>
 
@@ -542,7 +559,14 @@ export default {
         sequences: [],
         observerMetas: [],
         categories: [],
-        collaborators: []
+        collaborators: [],
+
+        slider: {
+          minValue: 0,
+          maxValue: 10,
+          minLabel: 'fully transparent',
+          maxLabel: 'fully opaque'
+        }
       },
 
       loaders: {
@@ -601,7 +625,7 @@ export default {
      */
     experimentType (newVal, oldVal) {
       // if rating -> non rating
-      if ((oldVal === null || oldVal === 3 || oldVal === 5) && (newVal === 1 || newVal === 2 || newVal === 4)) {
+      if ((oldVal === null || oldVal === 3 || oldVal === 5 || oldVal === 6) && (newVal === 1 || newVal === 2 || newVal === 4)) {
         // if categories, remove
         if (this.showCategories) {
           --this.steps[4].id
@@ -611,7 +635,7 @@ export default {
           })
         }
       // if non rating -> rating
-      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5)) {
+      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5 || newVal === 6)) {
         // if no categories, add
         ++this.steps[3].id // this.steps.find(step => step.title === 'Categories').id = 4
         ++this.steps[4].id

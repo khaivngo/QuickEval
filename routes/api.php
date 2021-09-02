@@ -10,6 +10,8 @@ use App\Http\Controllers\ExperimentTypesController;
 use App\Http\Controllers\ObserverMetasController;
 use App\Http\Controllers\ExperimentSequencesController;
 use App\Http\Controllers\ExperimentCategoriesController;
+use App\Http\Controllers\ExperimentSlidersController;
+use App\Http\Controllers\ResultMagnitudeEstimationsController;
 use App\Http\Controllers\ExperimentObserverMetasController;
 use App\Http\Controllers\PicturesController;
 use App\Http\Controllers\ResultPairsController;
@@ -80,6 +82,10 @@ Route::middleware('auth:api')->group(function () {
 
     # experiment categories
     Route::get('/experiment/{experiment}/categories', [ExperimentCategoriesController::class, 'index']);
+
+    # experiment sliders/magnitudes
+    Route::get('/experiment/{experiment}/sliders', [ExperimentSlidersController::class, 'index']);
+    Route::post('/result-magnitude-estimations',   [ResultMagnitudeEstimationsController::class, 'store']);
 
     # experiment observer metas
     Route::get('/experiment-observer-metas/{id}', [ExperimentObserverMetasController::class, 'index']);

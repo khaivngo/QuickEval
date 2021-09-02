@@ -332,6 +332,17 @@ class ExperimentsController extends Controller
             }
           }
 
+          if ($experiment->experiment_type_id == 6)
+          {
+            $cat = \App\ExperimentSlider::create([
+              'experiment_id' => $experiment->id,
+              'min_value'   => $request->slider['minValue'],
+              'max_value'   => $request->slider['maxValue'],
+              'min_label'   => $request->slider['minLabel'],
+              'max_label'   => $request->slider['maxLabel']
+            ]);
+          }
+
           // TODO: check that the user owns the image set
           // TODO: check that the user owns the instruction
           // foreach ($request->sequences as $group_key => list($step)) {
