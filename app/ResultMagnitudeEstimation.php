@@ -25,4 +25,8 @@ class ResultMagnitudeEstimation extends Model
         'chose_none' => 'integer',
         'client_side_timer' => 'integer',
     ];
+
+    public function picture () {
+        return $this->belongsTo(Picture::class, 'picture_id_left');
+    }
 }

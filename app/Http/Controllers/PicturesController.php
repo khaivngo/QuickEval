@@ -42,7 +42,8 @@ class PicturesController extends Controller
         }
       }
 
-      return response()->json($pics);
+      // return response()->json($pics);
+      return response($pics);
     }
 
     protected function upload () {

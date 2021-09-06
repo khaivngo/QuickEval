@@ -36,6 +36,7 @@ Route::post('/result-paired/export',     [ResultPairsController::class, 'export'
 Route::post('/result-triplet/export',    [ResultTripletsController::class, 'export']    );
 Route::post('/result-rank-order/export', [ResultRankOrdersController::class, 'export']  );
 Route::post('/result-category/export',   [ResultCategoriesController::class, 'export']  );
+Route::post('/result-magnitude/export',  [ResultMagnitudeEstimationsController::class, 'export']);
 
 
 # Note: auth:api middleware gives access to the user object

@@ -13,7 +13,7 @@
           persistent
           width="500"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ on }">
             <v-btn color="primary" outlined icon text class="ml-5 mt-1" v-on="on">
               <v-icon>mdi-pencil</v-icon>
               <!-- add file -->

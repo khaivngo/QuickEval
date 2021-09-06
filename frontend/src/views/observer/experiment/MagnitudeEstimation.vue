@@ -124,16 +124,16 @@
       </v-col>
     </v-row>
 
-    <v-layout ref="navAction" pt-4 pl-0 pr-0 pb-4 ma-0 justify-center align-center>
+    <v-layout ref="navAction" pt-8 pl-0 pr-0 pb-4 ma-0 justify-center align-center>
       <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
         <v-layout pa-0 ma-0 justify-center align-center class="flex-column">
-          <div class="d-flex align-center">
-            <div class="pl-2 pr-2" style="position: relative;">
-              <div class="d-flex align-center" style="max-width: 700px;">
-                <div style="max-width: 100px; text-align: center;" class="pr-4">
+          <div class="d-flex align-center" style="width: 100%;">
+            <div class="pl-2 pr-2 flex-grow-1">
+              <div class="d-flex align-center">
+                <div style="max-width: 100px; text-align: center;" class="pr-4 flex-grow-0 flex-shrink-0">
                   {{ minLabel }}
                 </div>
-                <div style="width: 700px;">
+                <div class="pb-4 flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
                   <v-slider
                     ref="slider"
                     v-model="selectedMagnitude"
@@ -142,12 +142,15 @@
                     :min="minValue"
                     :max="maxValue"
                     thumb-label="always"
-                    ticks
+                    :thumb-size="24"
+                    ticks="always"
+                    :tick-labels="tickLabels"
                     hide-details
                     color="#444"
+                    @change="updateActiveLabel"
                   ></v-slider>
                 </div>
-                <div style="max-width: 100px; text-align: center;" class="pl-4">
+                <div style="max-width: 100px; text-align: center;" class="pl-4 flex-grow-0 flex-shrink-0">
                   {{ maxLabel }}
                 </div>
               </div>
@@ -189,7 +192,7 @@ import ArtifactMarker from '@/components/ArtifactMarker'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 
 export default {
-  name: 'category-experiment-view',
+  name: 'magnitude-experiment-view',
 
   components: {
     // InstructionsDialog,
@@ -213,6 +216,7 @@ export default {
       minLabel: 'low',
       maxLabel: 'high',
       selectedMagnitude: null,
+      tickLabels: [],
 
       stimuli: [],
 
@@ -269,14 +273,14 @@ export default {
       })
 
       this.$axios.get(`/experiment/${this.experiment.id}/sliders`).then((payload) => {
-        // this.categories = payload.data
-        console.log(payload.data[0].max_value)
         this.maxValue = payload.data[0].max_value
         this.minValue = payload.data[0].min_value
         this.maxLabel = payload.data[0].max_label
         this.minLabel = payload.data[0].min_label
 
-        this.selectedMagnitude = Math.round(this.maxValue / 2)
+        this.resetSliderPosition()
+        // this.$nextTick(() => this.createTickLabels())
+        this.createTickLabels()
       })
 
       // if localStorage does not exists for this experiment fetch new data
@@ -300,7 +304,7 @@ export default {
 
     closeAndNext () {
       this.instructionDialog = false
-      this.focusSelect()
+      // this.focusSelect()
       this.nextStep()
     },
 
@@ -319,7 +323,7 @@ export default {
       this.nextStep()
       this.calculateLayout()
       this.setKeyboardShortcuts()
-      this.focusSelect()
+      // this.focusSelect()
     },
 
     startNewExperiment () {
@@ -333,16 +337,12 @@ export default {
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
 
           this.countTotalComparisons()
-
           this.resetProgress()
           this.getProgress()
-
           this.nextStep()
-
           this.calculateLayout()
-
           this.setKeyboardShortcuts()
-          this.focusSelect()
+          // this.focusSelect()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -413,7 +413,7 @@ export default {
           }
 
           this.saveProgress()
-          this.focusSelect()
+          // this.focusSelect()
           this.nextStep()
         } catch (err) {
           alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
@@ -432,7 +432,7 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
-      this.focusSelect()
+      // this.focusSelect()
 
       ++this.sequenceIndex
       // move on to the next experiment sequence
@@ -448,6 +448,8 @@ export default {
       if (window.hideTimeout) {
         window.clearTimeout(window.hideTimeout)
       }
+
+      this.resetSliderPosition()
 
       var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
@@ -509,7 +511,7 @@ export default {
     setKeyboardShortcuts () {
       window.addEventListener('keydown', (e) => {
         // enter / arrow right / space
-        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
+        if (e.keyCode === 13) { // e.keyCode === 39 || e.keyCode === 32
           if (this.selectedMagnitude !== null && this.disableNextBtn === false) {
             // this.nextStep()
             this.saveAnswer()
@@ -528,6 +530,43 @@ export default {
         //   // }
         // }
       })
+    },
+
+    createTickLabels () {
+      const ticks = this.maxValue - this.minValue + 1
+
+      this.tickLabels = Array.from({ length: ticks }, (v, k) => {
+        return '' + (this.minValue + k) // save the numbers as strings, since the number 9 will be ignored by the slider component and not used as a label
+      })
+
+      this.$nextTick(() => {
+        const ticksLabels = document.querySelectorAll('.v-slider__ticks-container .v-slider__tick-label')
+        ticksLabels[0].style.marginLeft = '-2px'
+        ticksLabels[ticksLabels.length - 1].style.marginLeft = '4px'
+        for (let label of ticksLabels) {
+          label.style.fontSize = '12px'
+        }
+      })
+
+      // console.log(this.$refs.slider)
+    },
+
+    updateActiveLabel () {
+      console.log('changed')
+      // console.log(this.selectedMagnitude)
+
+      // const ticksLabels = document.querySelectorAll('.v-slider__ticks-container .v-slider__tick-label')
+      // for (let label of ticksLabels) {
+      //   if (label.innerHTML) {
+
+      //   }
+      //   label.style.fontSize = '12px'
+      // }
+    },
+
+    resetSliderPosition () {
+      this.selectedMagnitude = Math.round((this.minValue + this.maxValue) / 2)
+      this.updateActiveLabel()
     },
 
     /**
@@ -568,11 +607,11 @@ export default {
       return this.$axios.post('/result-magnitude-estimations', data)
     },
 
-    focusSelect () {
-      window.setTimeout(() => {
-        this.$refs.select.focus()
-      }, 400)
-    },
+    // focusSelect () {
+    //   window.setTimeout(() => {
+    //     this.$refs.select.focus()
+    //   }, 400)
+    // },
 
     onFinish () {
       this.originalImage = ''

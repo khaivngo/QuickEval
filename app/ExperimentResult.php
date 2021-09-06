@@ -60,6 +60,10 @@ class ExperimentResult extends Model
         return $this->hasMany(ResultCategory::class);
     }
 
+    public function magnitude_results () {
+        return $this->hasMany(ResultMagnitudeEstimation::class);
+    }
+
     public function image_artifact_results () {
         return $this->hasMany(ResultImageArtifact::class);
     }
