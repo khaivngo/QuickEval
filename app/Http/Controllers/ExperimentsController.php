@@ -141,6 +141,10 @@ class ExperimentsController extends Controller
         $experiment['categories'] = $all;
       }
 
+      if ($experiment->experiment_type_id === 6) {
+        $experiment['slider'] = \App\ExperimentSlider::where('experiment_id', $request->id)->first();
+      }
+
       return $experiment;
     }
 
@@ -334,7 +338,7 @@ class ExperimentsController extends Controller
 
           if ($experiment->experiment_type_id == 6)
           {
-            $cat = \App\ExperimentSlider::create([
+            \App\ExperimentSlider::create([
               'experiment_id' => $experiment->id,
               'min_value'   => $request->slider['minValue'],
               'max_value'   => $request->slider['maxValue'],
@@ -800,6 +804,17 @@ class ExperimentsController extends Controller
                 ]);
               }
             }
+          }
+
+          if ($experiment->experiment_type_id == 6)
+          {
+            \App\ExperimentSlider::create([
+              'experiment_id' => $experiment->id,
+              'min_value'   => $request->slider['minValue'],
+              'max_value'   => $request->slider['maxValue'],
+              'min_label'   => $request->slider['minLabel'],
+              'max_label'   => $request->slider['maxLabel']
+            ]);
           }
 
           // TODO: check that the user owns the image set

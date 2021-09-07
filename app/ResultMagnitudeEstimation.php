@@ -26,6 +26,10 @@ class ResultMagnitudeEstimation extends Model
         'client_side_timer' => 'integer',
     ];
 
+    public function experiment_result () {
+        return $this->belongsTo(ExperimentResult::class);
+    }
+
     public function picture () {
         return $this->belongsTo(Picture::class, 'picture_id_left');
     }

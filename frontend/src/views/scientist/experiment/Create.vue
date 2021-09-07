@@ -783,6 +783,13 @@ export default {
           this.form.samePairTwice    = response.data.same_pair
           this.form.algorithm        = response.data.picture_sequence_algorithm
 
+          if (response.data.experiment_type_id === 6) {
+            this.form.slider.minValue = response.data.slider.min_value
+            this.form.slider.maxValue = response.data.slider.max_value
+            this.form.slider.minLabel = response.data.slider.min_label
+            this.form.slider.maxLabel = response.data.slider.max_label
+          }
+
           this.loaders.fetching = false
         })
         .catch(err => {

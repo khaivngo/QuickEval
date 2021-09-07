@@ -84,9 +84,8 @@ Route::middleware('auth:api')->group(function () {
     # experiment categories
     Route::get('/experiment/{experiment}/categories', [ExperimentCategoriesController::class, 'index']);
 
-    # experiment sliders/magnitudes
+    # experiment sliders
     Route::get('/experiment/{experiment}/sliders', [ExperimentSlidersController::class, 'index']);
-    Route::post('/result-magnitude-estimations',   [ResultMagnitudeEstimationsController::class, 'store']);
 
     # experiment observer metas
     Route::get('/experiment-observer-metas/{id}', [ExperimentObserverMetasController::class, 'index']);
@@ -109,6 +108,10 @@ Route::middleware('auth:api')->group(function () {
     # category results
     Route::post('/result-categories/{id}/statistics', [ResultCategoriesController::class, 'results_grouped_by_image_sets']);
     Route::post('/result-categories',                 [ResultCategoriesController::class, 'store']);
+
+    # magnitude results
+    Route::post('/result-magnitude-estimations/{id}/statistics', [ResultCategoriesController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-magnitude-estimations',   [ResultMagnitudeEstimationsController::class, 'store']);
 
     # rank order results
     Route::post('/result-rank-orders/{id}/statistics', [ResultRankOrdersController::class, 'results_grouped_by_image_sets']);
