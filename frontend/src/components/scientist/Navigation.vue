@@ -12,7 +12,7 @@
           link
           @click="$router.push(item.url)"
         >
-          <v-list-item-icon>
+          <v-list-item-icon class="mr-5">
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
