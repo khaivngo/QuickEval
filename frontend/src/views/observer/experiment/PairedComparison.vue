@@ -128,7 +128,7 @@
         <!-- @click="selectedRadio = 'left'" -->
         <div class="panzoom d-flex justify-center align-center">
           <img
-            v-if="!experiment.artifact_marking"
+            v-if="!experiment.artifact_marking && leftType === 'jpg'"
             id="picture-left"
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
@@ -141,6 +141,12 @@
               :imageURL="leftCanvas"
               :tool="drawingTool"
             />
+          </div>
+          <div v-if="leftType === 'mp4'">
+            <video style="width: 100%;" controls>
+              <source :src="leftImage" :type="'video/'+leftType">
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </v-col>
@@ -166,7 +172,7 @@
         <!-- @click="selectedRadio = 'right'" -->
         <div class="panzoom d-flex justify-center align-center">
           <img
-            v-if="!experiment.artifact_marking"
+            v-if="!experiment.artifact_marking && rightType === 'jpg'"
             id="picture-right"
             class="picture"
             :class="isLoadRight === false ? 'hide' : ''"
@@ -179,6 +185,12 @@
               :imageURL="rightCanvas"
               :tool="drawingTool"
             />
+          </div>
+          <div v-if="rightType === 'mp4'">
+            <video controls style="width: 100%; display: block;">
+              <source :src="rightImage" :type="'video/'+rightType">
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </v-col>
@@ -278,7 +290,9 @@ export default {
 
       originalImage: '',
       leftImage: '',
+      leftType: '', // change
       rightImage: '',
+      rightType: '', // change
       leftCanvas: '',
       rightCanvas: '',
 
@@ -344,11 +358,15 @@ export default {
     })
   },
 
+  // onDestroy () {
+  //   document.removeEventListener('keydown', nameOfFunction)
+  // },
+
   watch: {
     originalImage () {
       this.calculateLayout()
     },
-    selectedRadio (newVal, oldVal) {
+    selectedRadio (newVal) {
       if (newVal !== null && ['left', 'right'].includes(newVal)) {
         this.saveAnswer()
       }
@@ -356,7 +374,7 @@ export default {
   },
 
   destroyed () {
-    // window.removeEventListener('keydown')
+    // window.removeEventListener('keydown', functionName)
   },
 
   methods: {
@@ -419,8 +437,10 @@ export default {
 
     loadInstructions () {
       this.leftImage     = ''
+      this.leftType      = ''
       this.originalImage = ''
       this.rightImage    = ''
+      this.rightType     = ''
 
       this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
       this.instructionDialog = true
@@ -458,8 +478,16 @@ export default {
 
       // prepare to load reproduction images
       var images = [
-        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path },
-        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
+        {
+          img: new Image(),
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path,
+          extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.extension
+        },
+        {
+          img: new Image(),
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path,
+          extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.extension
+        }
       ]
 
       // we use a object because sometimes the image is the same image but we still want
@@ -475,34 +503,84 @@ export default {
         }
       }
 
-      var imageCount = images.length
       var imagesLoaded = 0
       // attach onload events to every reproduction image
-      for (var i = 0; i < imageCount; i++) {
-        images[i].img.src = images[i].path
-        images[i].img.onload = () => {
+      for (var i = 0; i < images.length; i++) {
+        if (images[i].extension === 'jpg') {
+          images[i].img.src = images[i].path
+          images[i].img.onload = () => {
+            imagesLoaded++
+            // when all images loaded
+            if (imagesLoaded === images.length) {
+              // hide images
+              this.isLoadLeft  = false
+              this.isLoadRight = false
+
+              // then set source
+              if (images[0].extension === 'jpg') this.leftImage  = images[0].img.src
+              if (images[1].extension === 'jpg') this.rightImage = images[1].img.src
+
+              if (images[0].extension === 'jpg') this.leftType  = images[0].extension
+              if (images[1].extension === 'jpg') this.rightType = images[1].extension
+
+              if (images[0].extension === 'mp4') this.leftImage  = images[0].path
+              if (images[1].extension === 'mp4') this.rightImage = images[1].path
+
+              if (images[0].extension === 'mp4') this.leftType  = images[0].extension
+              if (images[1].extension === 'mp4') this.rightType = images[1].extension
+
+              // show a blank screen inbetween image switching,
+              // if scientist set up delay
+              window.setTimeout(() => {
+                // show left and right image
+                this.isLoadLeft  = true
+                this.isLoadRight = true
+
+                if (hideTimer) {
+                  window.hideTimeout = window.setTimeout(() => {
+                    this.isLoadLeft  = false
+                    this.isLoadRight = false
+                  }, hideTimer)
+                }
+
+                // starts or overrides existing timer
+                this.timeElapsed = new Date()
+                this.disableNextBtn = false
+              }, this.experiment.delay)
+            }
+          }
+        }
+
+        if (images[i].extension === 'mp4') {
           imagesLoaded++
-          // when all images loaded
-          if (imagesLoaded === imageCount) {
+          if (imagesLoaded === images.length) {
             // hide images
-            this.isLoadLeft = false
+            this.isLoadLeft  = false
             this.isLoadRight = false
-            // this.leftImage = ''
-            // this.rightImage = ''
+
             // then set source
-            this.leftImage = images[0].img.src
-            this.rightImage = images[1].img.src
+            if (images[0].extension === 'mp4') this.leftImage  = images[0].path
+            if (images[1].extension === 'mp4') this.rightImage = images[1].path
+
+            if (images[0].extension === 'mp4') this.leftType  = images[0].extension
+            if (images[1].extension === 'mp4') this.rightType = images[1].extension
+
+            if (images[0].extension === 'jpg') this.leftImage  = images[0].img.src
+            if (images[1].extension === 'jpg') this.rightImage = images[1].img.src
+
+            if (images[0].extension === 'jpg') this.leftType  = images[0].extension
+            if (images[1].extension === 'jpg') this.rightType = images[1].extension
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay
             window.setTimeout(() => {
               // show left and right image
-              this.isLoadLeft = true
+              this.isLoadLeft  = true
               this.isLoadRight = true
 
               if (hideTimer) {
                 window.hideTimeout = window.setTimeout(() => {
-                  this.isLoadLeft = false
+                  this.isLoadLeft  = false
                   this.isLoadRight = false
                 }, hideTimer)
               }
@@ -542,7 +620,6 @@ export default {
             this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
             seconds
           )
-          // let response =
 
           this.selectedRadio = null
           this.shapes = {}
@@ -639,7 +716,9 @@ export default {
       this.disableNextBtn = false
       this.originalImage = ''
       this.leftImage = ''
+      this.leftType = ''
       this.rightImage = ''
+      this.rightType = ''
 
       // TODO: spinner while await
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)

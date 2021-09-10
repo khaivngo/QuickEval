@@ -27,14 +27,19 @@ class PicturesController extends Controller
       $files = $request->file('files');
 
       $pics = [];
-      if (! empty($files)) {
-        foreach ($files as $file) {
-          $path = $file->store('public/' . $image_set_id); // store() will automatically generate a unique file name
+      if (!empty($files))
+      {
+        foreach ($files as $file)
+        {
+          # store() will automatically generate a unique file name
+          $path = $file->store('public/' . $image_set_id);
+          # add public/ add the begining of the path
           $path = str_replace('public/', "", $path);
+
           $picture = Picture::create([
-            // 'user_id' => auth()->user()->id,
             'name' => $file->getClientOriginalName(),
             'path' => $path,
+            'extension' => $file->extension(),
             'is_original' => $is_original,
             'picture_set_id' => $image_set_id
           ]);
@@ -42,7 +47,6 @@ class PicturesController extends Controller
         }
       }
 
-      // return response()->json($pics);
       return response($pics);
     }
 
