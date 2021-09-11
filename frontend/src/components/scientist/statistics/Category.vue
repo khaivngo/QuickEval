@@ -66,14 +66,14 @@
               </v-btn>
             </template>
             <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-              Number of times each image/category combination is selected.
+              Number of times each stimulus/category combination is selected.
             </div>
           </v-tooltip>
         </div>
         <table class="table bordered hovered">
           <thead>
             <tr>
-              <th>Image</th>
+              <th>Stimulus</th>
               <th v-for="(cat, m) in group.picture_set.pictures[0].categories" :key="m" class="overflow-wrap">
                 {{ cat.category.title }}
               </th>

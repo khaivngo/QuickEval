@@ -48,7 +48,12 @@
         </v-list-item-group>
       </v-list>
 
-      <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
+      <v-progress-linear
+        v-if="loading"
+        indeterminate
+        class="ma-0"
+        :height="2"
+      ></v-progress-linear>
     </div>
 
     <!-- the menu above is position fixed, so we put a "mold" below -->
@@ -122,7 +127,7 @@ export default {
       this.creating = true
 
       const data = {
-        title: 'Untitled image set',
+        title: 'Untitled stimuli group',
         description: ' '
       }
 

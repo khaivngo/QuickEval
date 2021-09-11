@@ -128,25 +128,25 @@
         <!-- @click="selectedRadio = 'left'" -->
         <div class="panzoom d-flex justify-center align-center">
           <img
-            v-if="!experiment.artifact_marking && leftType === 'jpg'"
+            v-if="!experiment.artifact_marking && leftType === 'image'"
             id="picture-left"
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
             tabindex="0"
           />
+          <div v-if="!experiment.artifact_marking && leftType === 'video'">
+            <video style="width: 100%;" controls>
+              <source :src="leftImage" :type="'video/'+leftExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
               :imageURL="leftCanvas"
               :tool="drawingTool"
             />
-          </div>
-          <div v-if="leftType === 'mp4'">
-            <video style="width: 100%;" controls>
-              <source :src="leftImage" :type="'video/'+leftType">
-              Your browser does not support the video tag.
-            </video>
           </div>
         </div>
       </v-col>
@@ -172,25 +172,25 @@
         <!-- @click="selectedRadio = 'right'" -->
         <div class="panzoom d-flex justify-center align-center">
           <img
-            v-if="!experiment.artifact_marking && rightType === 'jpg'"
+            v-if="!experiment.artifact_marking && rightType === 'image'"
             id="picture-right"
             class="picture"
             :class="isLoadRight === false ? 'hide' : ''"
             :src="rightImage"
             tabindex="0"
           />
+          <div v-if="!experiment.artifact_marking && rightType === 'video'">
+            <video controls style="width: 100%; display: block;">
+              <source :src="rightImage" :type="'video/'+rightExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
               :imageURL="rightCanvas"
               :tool="drawingTool"
             />
-          </div>
-          <div v-if="rightType === 'mp4'">
-            <video controls style="width: 100%; display: block;">
-              <source :src="rightImage" :type="'video/'+rightType">
-              Your browser does not support the video tag.
-            </video>
           </div>
         </div>
       </v-col>
@@ -295,6 +295,8 @@ export default {
       rightType: '', // change
       leftCanvas: '',
       rightCanvas: '',
+      leftExtension: '',
+      rightExtension: '',
 
       timeElapsed: null,
 
@@ -506,7 +508,7 @@ export default {
       var imagesLoaded = 0
       // attach onload events to every reproduction image
       for (var i = 0; i < images.length; i++) {
-        if (images[i].extension === 'jpg') {
+        if (['jpg'].includes(images[i].extension)) {
           images[i].img.src = images[i].path
           images[i].img.onload = () => {
             imagesLoaded++
@@ -517,18 +519,27 @@ export default {
               this.isLoadRight = false
 
               // then set source
-              if (images[0].extension === 'jpg') this.leftImage  = images[0].img.src
-              if (images[1].extension === 'jpg') this.rightImage = images[1].img.src
+              if (['jpg'].includes(images[0].extension)) {
+                this.leftExtension = images[0].extension
+                this.leftImage = images[0].img.src
+                this.leftType  = 'image'
+              } else if (images[0].extension === 'mp4') {
+                this.leftExtension = images[0].extension
+                this.leftImage = images[0].path
+                this.leftType  = 'video'
+              }
 
-              if (images[0].extension === 'jpg') this.leftType  = images[0].extension
-              if (images[1].extension === 'jpg') this.rightType = images[1].extension
+              if (['jpg'].includes(images[0].extension)) {
+                this.rightExtension = images[1].extension
+                this.rightImage = images[1].img.src
+                this.rightType  = 'image'
+              } else if (['mp4'].includes(images[0].extension)) {
+                this.rightExtension = images[1].extension
+                this.rightImage = images[1].path
+                this.rightType  = 'video'
+              }
 
-              if (images[0].extension === 'mp4') this.leftImage  = images[0].path
-              if (images[1].extension === 'mp4') this.rightImage = images[1].path
-
-              if (images[0].extension === 'mp4') this.leftType  = images[0].extension
-              if (images[1].extension === 'mp4') this.rightType = images[1].extension
-
+              // before showing images:
               // show a blank screen inbetween image switching,
               // if scientist set up delay
               window.setTimeout(() => {
@@ -551,7 +562,7 @@ export default {
           }
         }
 
-        if (images[i].extension === 'mp4') {
+        if (['mp4'].includes(images[i].extension)) {
           imagesLoaded++
           if (imagesLoaded === images.length) {
             // hide images
@@ -559,17 +570,25 @@ export default {
             this.isLoadRight = false
 
             // then set source
-            if (images[0].extension === 'mp4') this.leftImage  = images[0].path
-            if (images[1].extension === 'mp4') this.rightImage = images[1].path
+            if (['jpg'].includes(images[0].extension)) {
+              this.leftExtension = images[0].extension
+              this.leftImage = images[0].img.src
+              this.leftType  = 'image'
+            } else if (['mp4'].includes(images[0].extension)) {
+              this.leftExtension = images[0].extension
+              this.leftImage = images[0].path
+              this.leftType  = 'video'
+            }
 
-            if (images[0].extension === 'mp4') this.leftType  = images[0].extension
-            if (images[1].extension === 'mp4') this.rightType = images[1].extension
-
-            if (images[0].extension === 'jpg') this.leftImage  = images[0].img.src
-            if (images[1].extension === 'jpg') this.rightImage = images[1].img.src
-
-            if (images[0].extension === 'jpg') this.leftType  = images[0].extension
-            if (images[1].extension === 'jpg') this.rightType = images[1].extension
+            if (['jpg'].includes(images[0].extension)) {
+              this.rightExtension = images[1].extension
+              this.rightImage = images[1].img.src
+              this.rightType  = 'image'
+            } else if (['mp4'].includes(images[0].extension)) {
+              this.rightExtension = images[1].extension
+              this.rightImage = images[1].path
+              this.rightType  = 'video'
+            }
 
             // show a blank screen inbetween image switching,
             // if scientist set up delay

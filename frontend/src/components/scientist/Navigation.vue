@@ -26,7 +26,7 @@
           @click="$router.push('/scientist/changelog')"
           class="qe-changelog-link"
         >
-          <v-list-item-icon>
+          <v-list-item-icon class="mr-5">
             <v-icon>mdi-format-list-bulleted</v-icon>
           </v-list-item-icon>
 
@@ -45,7 +45,7 @@ export default {
     return {
       items: [
         { title: 'Dashboard', url: '/scientist/dashboard', icon: 'mdi-view-dashboard-outline' },
-        { title: 'Your Image Sets', url: '/scientist/image-sets', icon: 'mdi-tooltip-image-outline' },
+        { title: 'Your Stimuli Groups', url: '/scientist/image-sets', icon: 'mdi-tooltip-image-outline' },
         { title: 'Your Experiments', url: '/scientist/experiments', icon: 'mdi-picture-in-picture-top-right-outline' }
         // { title: 'Changelog', url: '/scientist/changelog', icon: 'mdi-format-list-bulleted' }
         // picture-in-picture-top-right-outline

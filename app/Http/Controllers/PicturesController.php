@@ -13,12 +13,18 @@ use Illuminate\Http\Request;
 class PicturesController extends Controller
 {
     public function index ($id) {
-      return Picture::where('id', $id)->first();
+      return Picture::where('id', $id)
+        ->first();
     }
 
     // public function store (Request $request, PictureSet $picture_set) {
     public function store (Request $request) {
       // if ($picture_set->user_id !== auth()->user()->id) {
+      //   return response()->json('Unauthorized', 401);
+      // }
+
+      # TODO: auth is not accessible because this method call is outside middleware
+      // if (auth()->user()->role < 2) {
       //   return response()->json('Unauthorized', 401);
       // }
 
