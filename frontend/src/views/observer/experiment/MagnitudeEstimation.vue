@@ -138,7 +138,7 @@
                     ref="slider"
                     v-model="selectedMagnitude"
                     :disabled="disableNextBtn"
-                    step="1"
+                    :step="interval"
                     :min="minValue"
                     :max="maxValue"
                     thumb-label="always"
@@ -217,6 +217,7 @@ export default {
       maxLabel: 'high',
       selectedMagnitude: null,
       tickLabels: [],
+      interval: 1,
 
       stimuli: [],
 
@@ -533,22 +534,41 @@ export default {
     },
 
     createTickLabels () {
-      const ticks = this.maxValue - this.minValue + 1
+      let ticks = this.maxValue - this.minValue + 1
 
       this.tickLabels = Array.from({ length: ticks }, (v, k) => {
-        return '' + (this.minValue + k) // save the numbers as strings, since the number 9 will be ignored by the slider component and not used as a label
+        // if we have many steps then skip every nth label
+
+        if (ticks > 10) {
+          if (k % 2 !== 0) {
+            return null
+          }
+        }
+
+        if (ticks > 20) {
+          if (k % 4 !== 0) {
+            return null
+          }
+        }
+
+        // save the numbers as strings, since the number 0 will be ignored by the slider component as a label
+        return '' + (this.minValue + k)
+        // return this.interval > 1
+        //   ? '' + ((this.minValue + k) * this.interval)
+        //   : '' + (this.minValue + k)
       })
 
+      // adjust margin and font size after labels have been added to the slider
       this.$nextTick(() => {
         const ticksLabels = document.querySelectorAll('.v-slider__ticks-container .v-slider__tick-label')
+        // move first and last label slightly for better alignment
         ticksLabels[0].style.marginLeft = '-2px'
         ticksLabels[ticksLabels.length - 1].style.marginLeft = '4px'
+
         for (let label of ticksLabels) {
           label.style.fontSize = '12px'
         }
       })
-
-      // console.log(this.$refs.slider)
     },
 
     updateActiveLabel () {
@@ -565,7 +585,7 @@ export default {
     },
 
     resetSliderPosition () {
-      this.selectedMagnitude = Math.round((this.minValue + this.maxValue) / 2)
+      this.selectedMagnitude = Math.round((this.minValue + this.maxValue) / 2) - 1
       this.updateActiveLabel()
     },
 
