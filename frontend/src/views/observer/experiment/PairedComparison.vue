@@ -297,6 +297,8 @@ export default {
       rightCanvas: '',
       leftExtension: '',
       rightExtension: '',
+      videoFormats: ['m4p', 'webm', '3g2', '3gp', 'aaf', 'asf', 'avchd', 'avi', 'drc', 'flv', 'm2v', 'm3u8', 'm4v', 'mkv', 'mng', 'mov', 'mp2', 'mp4', 'mpe', 'mpeg', 'mpg', 'mpv', 'mxf', 'nsv', 'ogg', 'ogv', 'qt', 'rm', 'rmvb', 'roq', 'svi', 'vob', 'wmv', 'yuv'],
+      imageFormats: ['jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'png', 'gif', 'webp', 'tiff', 'tif', 'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'bmp', 'dib', 'heif', 'heic', 'ind', 'indd', 'indt', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2', 'svg', 'svgz', 'ai', 'eps', 'pdf'],
 
       timeElapsed: null,
 
@@ -508,7 +510,7 @@ export default {
       var imagesLoaded = 0
       // attach onload events to every reproduction image
       for (var i = 0; i < images.length; i++) {
-        if (['jpg'].includes(images[i].extension)) {
+        if (this.imageFormats.includes(images[i].extension)) {
           images[i].img.src = images[i].path
           images[i].img.onload = () => {
             imagesLoaded++
@@ -519,21 +521,21 @@ export default {
               this.isLoadRight = false
 
               // then set source
-              if (['jpg'].includes(images[0].extension)) {
+              if (this.allowedImageFormat(images[0].extension)) {
                 this.leftExtension = images[0].extension
                 this.leftImage = images[0].img.src
                 this.leftType  = 'image'
-              } else if (images[0].extension === 'mp4') {
+              } else if (this.allowedVideoFormat(images[0].extension)) {
                 this.leftExtension = images[0].extension
                 this.leftImage = images[0].path
                 this.leftType  = 'video'
               }
 
-              if (['jpg'].includes(images[0].extension)) {
+              if (this.allowedImageFormat(images[1].extension)) {
                 this.rightExtension = images[1].extension
                 this.rightImage = images[1].img.src
                 this.rightType  = 'image'
-              } else if (['mp4'].includes(images[0].extension)) {
+              } else if (this.allowedVideoFormat(images[1].extension)) {
                 this.rightExtension = images[1].extension
                 this.rightImage = images[1].path
                 this.rightType  = 'video'
@@ -562,7 +564,7 @@ export default {
           }
         }
 
-        if (['mp4'].includes(images[i].extension)) {
+        if (this.videoFormats.includes(images[i].extension)) {
           imagesLoaded++
           if (imagesLoaded === images.length) {
             // hide images
@@ -570,21 +572,21 @@ export default {
             this.isLoadRight = false
 
             // then set source
-            if (['jpg'].includes(images[0].extension)) {
+            if (this.allowedImageFormat(images[0].extension)) {
               this.leftExtension = images[0].extension
               this.leftImage = images[0].img.src
               this.leftType  = 'image'
-            } else if (['mp4'].includes(images[0].extension)) {
+            } else if (this.allowedVideoFormat(images[0].extension)) {
               this.leftExtension = images[0].extension
               this.leftImage = images[0].path
               this.leftType  = 'video'
             }
 
-            if (['jpg'].includes(images[0].extension)) {
+            if (this.allowedImageFormat(images[1].extension)) {
               this.rightExtension = images[1].extension
               this.rightImage = images[1].img.src
               this.rightType  = 'image'
-            } else if (['mp4'].includes(images[0].extension)) {
+            } else if (this.allowedVideoFormat(images[1].extension)) {
               this.rightExtension = images[1].extension
               this.rightImage = images[1].path
               this.rightType  = 'video'
@@ -701,6 +703,22 @@ export default {
       }, 0)
 
       this.totalComparisons = stimuliCount
+    },
+
+    /**
+     * @param strings
+     * @returns boolean
+     */
+    allowedImageFormat (extension) {
+      return this.imageFormats.includes(extension.toLowerCase())
+    },
+
+    /**
+     * @param strings
+     * @returns Boolean
+     */
+    allowedVideoFormat (extension) {
+      return this.videoFormats.includes(extension.toLowerCase())
     },
 
     /**
