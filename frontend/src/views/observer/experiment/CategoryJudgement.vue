@@ -521,6 +521,11 @@ export default {
         }
       }
 
+      // var vid = document.getElementById('myVideo')
+      // vid.oncanplaythrough = function () {
+      //   //
+      // }
+
       var imgLeft = new Image()
       imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
       imgLeft.onload = () => {

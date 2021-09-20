@@ -18,19 +18,13 @@
         Psychometric image evaluation the quick way.
       </p>
 
-      <!-- <p>Brought to you by The Norwegian Colour and Visual Computing Laboratory <span style="font-size: 1em;">🎨 💻</span></p> -->
-      <!-- <p>rank order, paired comparison, triplet comparison, category judgement, artifact marking</p> -->
-      <!-- <h3 class="font-weight-bold subtitle-1 mt-12">Supports</h3> -->
-      <!-- <ul class="mb-5">
-        <li style="margin-bottom: 0.2em;">Rank order</li>
-        <li style="margin-bottom: 0.2em;">Paired comparison</li>
-        <li style="margin-bottom: 0.2em;">Triplet comparison</li>
-        <li style="margin-bottom: 0.2em;">Category judgement</li>
-        <li style="margin-bottom: 0.2em;">Artifact marking</li>
-      </ul> -->
+      <!--
+        <p>Brought to you by The Norwegian Colour and Visual Computing Laboratory
+        <span style="font-size: 1em;">🎨 💻</span></p>
+      -->
       <p class="body-1">
         Paired comparison  / Category judgement / Artifact marking /<br>
-        Triplet comparison / Rank order
+        Triplet comparison / Rank order / Magnitude Estimation
       </p>
 
       <v-row class="mt-12">
@@ -67,7 +61,7 @@
               :src="require('@/assets/colourlab-logo.png')"
               contain
               class="mt-4"
-              max-width="280"
+              max-width="261"
             ></v-img>
           </v-col>
           <v-col>
@@ -75,7 +69,7 @@
               :src="require('@/assets/ntnu-logo-slogan.png')"
               contain
               class="mt-5"
-              max-width="200"
+              max-width="171"
             ></v-img>
           </v-col>
         </v-row>
@@ -119,9 +113,7 @@ export default {
   created () {
     this.$axios.get(`/user`).then(response => {
       if (response.data) {
-        if (response.data.role && response.data.role < 2) {
-          this.$router.push('/observer')
-        } else if (response.data.role && response.data.role > 2) {
+        if (response.data.role && response.data.role > 2) {
           this.$router.push('/scientist')
         }
       }

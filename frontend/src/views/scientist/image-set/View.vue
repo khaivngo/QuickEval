@@ -93,7 +93,9 @@
       <div class="mt-12 pt-6">
         <v-row align="center">
           <v-col cols="auto" class="pa-0 ma-0">
-            <h2 class="text-h6">Images</h2>
+            <h2 class="text-h6 font-weight-bold">
+              Stimuli
+            </h2>
           </v-col>
 
           <v-col
@@ -149,8 +151,8 @@
       <div class="mt-12 pt-12">
         <v-row v-if="original.length > 0">
           <v-col cols="12" class="ml-0 pl-0">
-            <h3 class="text-h6">
-              Reference/original image
+            <h3 class="text-h6 font-weight-bold">
+              Reference/original stimulus
             </h3>
           </v-col>
           <v-col
@@ -205,18 +207,18 @@
         </v-row>
 
         <div v-if="original.length === 0" class="ma-0 pa-0">
-          <v-row align="center">
-            <v-col class="pl-0 ml-0">
-              <h2 class="text-h6 mb-2 ml-0 pl-0">
-                Reference image/original
+          <v-row align="center" class="pb-0 mb-0">
+            <v-col class="pl-0 pb-0 ml-0">
+              <h2 class="text-h6 mb-2 ml-0 pl-0 font-weight-bold">
+                Reference/original stimulus
                 <span class="body-1">(optional)</span>
               </h2>
             </v-col>
           </v-row>
 
-          <v-row class="mb-6" align="center">
-            <p class="ma-0">
-              Upload the original, uncompressed, image of the image set.
+          <v-row class="mb-6 pt-0 mt-0" align="center">
+            <p class="ma-0 pt-0 body-2">
+              Upload the original, uncompressed, stimulus of the stimuli group.
             </p>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -336,14 +338,14 @@ export default {
     },
 
     destroy () {
-      if (confirm('Delete image set?')) {
+      if (confirm('Delete stimuli group?')) {
         this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
           if (response.data) {
             EventBus.$emit('image-set-deleted', response.data)
-            EventBus.$emit('success', 'Image set has been deleted successfully')
+            EventBus.$emit('success', 'Stimuli group has been deleted successfully')
             this.$router.push('/scientist/image-sets')
           } else {
-            EventBus.$emit('error', 'Could not delete image set')
+            EventBus.$emit('error', 'Could not delete stimuli group')
           }
         })
       }

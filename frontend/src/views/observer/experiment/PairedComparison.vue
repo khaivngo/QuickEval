@@ -135,11 +135,15 @@
             :src="leftImage"
             tabindex="0"
           />
-          <div v-if="!experiment.artifact_marking && leftType === 'video'">
-            <video style="width: 100%;" controls>
+          <div v-if="!experiment.artifact_marking && leftType === 'video'" style="position: relative;">
+            <video loop style="width: 100%; pointer-events: none;" ref="videoPlayer">
               <source :src="leftImage" :type="'video/'+leftExtension">
               Your browser does not support the video tag.
             </video>
+            <button type="button" @click="playAllVideos" style="color: white; position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%;">
+              <!-- Play -->
+              <v-icon style="font-size: 60px; z-index: 100;" color="white">mdi-play-circle</v-icon>
+            </button>
           </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
@@ -180,10 +184,13 @@
             tabindex="0"
           />
           <div v-if="!experiment.artifact_marking && rightType === 'video'">
-            <video controls style="width: 100%; display: block;">
+            <video loop style="width: 100%; display: block; pointer-events: none;" ref="videoPlayer2">
               <source :src="rightImage" :type="'video/'+rightExtension">
               Your browser does not support the video tag.
             </video>
+            <button type="button" @click="playAllVideos">
+              Play
+            </button>
           </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
@@ -703,6 +710,30 @@ export default {
       }, 0)
 
       this.totalComparisons = stimuliCount
+    },
+
+    playAllVideos (e) {
+      let playButton = e.target
+      var videos = document.querySelectorAll('video')
+      // console.log(this.$refs.videoPlayer)
+      // let video2 = this.$refs.videoPlayer2
+      console.log(videos)
+      for (const video of videos) {
+        if (video.paused === true) {
+          video.play()
+          // playButton.innerHTML = 'Pause'
+          playButton.style.opacity = 0
+        } else {
+          video.pause()
+          // playButton.innerHTML = 'Play'
+          playButton.style.opacity = 1
+        }
+      }
+
+      // var playButton = document.getElementById("play_button")
+      // // Event listener for the play/pause button
+      // playButton.addEventListener("click", function() {
+      // })
     },
 
     /**

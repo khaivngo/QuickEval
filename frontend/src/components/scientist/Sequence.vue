@@ -38,7 +38,7 @@
                     v-model="event.value"
                     item-text="title"
                     item-value="id"
-                    label="Select image set"
+                    label="Select stimuli group"
                     outlined
                     dense
                     hide-details
@@ -101,7 +101,7 @@
                         ></v-checkbox>
                       </template>
                       <div class="pl-0 pr-0 pt-1 pb-1 body-1">
-                        Display the original image of the image set alongside the reproductions.<br>
+                        Display the original stimulus of the stimuli group alongside the reproductions.<br>
                         As a reference for the observer.
                       </div>
                     </v-tooltip>
@@ -145,7 +145,7 @@
                                   </v-btn>
                                 </template>
                                 <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                                  Show the image set's stimuli for the specified time before hiding it.
+                                  Show the stimuli group's stimuli for the specified time before hiding it.
                                   If the observer does not rate the image before the time runs out,
                                   they will have to rate it based on their memory.
                                   Keep field empty to never hide.
@@ -187,7 +187,7 @@
                         ></v-checkbox>
                       </template>
                       <div class="pl-0 pr-0 pt-1 pb-1 body-1">
-                        Randomize order of image sets.
+                        Randomize order of stimuli groups.
                       </div>
                     </v-tooltip>
                   </div>
@@ -260,7 +260,7 @@
           @click="add('imageSet')"
         >
           <v-icon class="mr-2" :size="20">mdi-tooltip-image-outline</v-icon>
-          image set
+          stimuli group
         </v-btn>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
@@ -280,9 +280,9 @@
     <v-dialog v-model="openNewImageSet" persistent scrollable max-width="800">
       <v-card>
         <v-card-title class="headline" style="border-bottom: 1px solid #ddd;">
-          Create Image Set
+          Create Stimuli Group
         </v-card-title>
-        <v-card-text class="pt-8 pb-8">
+        <v-card-text class="pt-8 pb-8" style="color: #000;">
           <v-layout align-center>
             <v-text-field
               v-model="newImageSet.name"
@@ -345,10 +345,10 @@
           </div> -->
 
           <div class="pl-4 pr-4" :class="(!newImageSet.imageSetId) ? 'not-interactable' : ''">
-            <div class="mt-4 pt-6" >
+            <div class="mt-4 pt-6">
               <v-row align="center">
                 <v-col cols="auto" class="pa-0 ma-0">
-                  <h2 class="text-h6">Images</h2>
+                  <h2 class="text-h6">Stimuli</h2>
                 </v-col>
 
                 <v-col
@@ -405,7 +405,7 @@
               <v-row v-if="original.length > 0">
                 <v-col cols="12" class="pl-0 ml-0">
                   <h3 class="text-h6">
-                    Reference/original image
+                    Reference/original
                   </h3>
                 </v-col>
                 <v-col
@@ -462,14 +462,14 @@
               <div v-if="original.length === 0" class="ma-0 pa-0">
                 <v-row align="center">
                   <h2 class="text-h6 mb-2 pl-0 ml-0">
-                    Reference image/original
+                    Reference/original
                     <span class="body-1">(optional)</span>
                   </h2>
                 </v-row>
 
                 <v-row class="mb-6" align="center">
                   <p class="ma-0">
-                    Upload the original, uncompressed, image of the image set.
+                    Upload the original, uncompressed, stimulus of the stimuli group.
                   </p>
                   <v-tooltip top>
                     <template v-slot:activator="{ on }">
@@ -627,10 +627,11 @@ export default {
 
   computed: {
     /**
-     * Group adjucent event types:
-     * [instruction, imageSet, imageSet] --> [[instruction], [imageSet, imageSet]]
-     * We can now display a "randomize" order option for a image set group
-     * inbetween instructions.
+     * Group adjucent event types. So that we can now display a "randomize" order option
+     * for a image set group inbetween instructions.
+     *
+     * @input  [instruction, imageSet, imageSet]
+     * @output [[instruction], [imageSet, imageSet]]
      */
     eventsGrouped () {
       return this.events.reduce(function (prev, curr) {

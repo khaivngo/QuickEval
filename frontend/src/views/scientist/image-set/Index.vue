@@ -147,14 +147,14 @@ export default {
     },
 
     destroy (id, arrayIndex) {
-      if (confirm('Delete image set?')) {
+      if (confirm('Delete stimuli group?')) {
         this.$axios.delete(`/picture-set/${id}`).then((response) => {
           if (response.data === 'deleted_picture_set') {
             this.imageSets.splice(arrayIndex, 1)
 
-            EventBus.$emit('success', 'Image set has been deleted successfully')
+            EventBus.$emit('success', 'Stimuli group has been deleted successfully')
           } else {
-            EventBus.$emit('error', 'Could not delete image set')
+            EventBus.$emit('error', 'Could not delete stimuli group')
           }
         })
       }

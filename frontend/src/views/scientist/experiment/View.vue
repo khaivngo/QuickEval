@@ -1,6 +1,6 @@
 <template>
   <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1"> <!-- @mouseenter="fadeOut" @mouseleave="fadeIn" -->
-    <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
+    <v-progress-linear indeterminate class="ma-0" v-if="loading"></v-progress-linear>
 
     <div v-if="!loading">
       <v-row justify="space-between" align="center">
@@ -165,7 +165,7 @@
                       <v-col cols="12" sm="6" md="6" class="pa-0">
                         <v-checkbox
                           v-model="exportFlags.imageSets"
-                          label="Image sets"
+                          label="Stimuli groups"
                           class="mt-0"
                         ></v-checkbox>
                       </v-col>
