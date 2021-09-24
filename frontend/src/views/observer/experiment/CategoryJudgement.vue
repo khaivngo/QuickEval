@@ -101,12 +101,18 @@
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
-            v-if="!experiment.artifact_marking"
+            v-if="!experiment.artifact_marking && leftType === 'image'"
             id="picture-left"
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
           />
+          <div v-if="!experiment.artifact_marking && leftType === 'video'" style="position: relative;">
+            <video loop controls style="width: 100%;" ref="videoPlayer" class="video-player">
+              <source :src="leftImage" :type="'video/'+leftExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -144,24 +150,7 @@
                 outlined
                 class="ma-0 pt-0"
                 background-color="#bbb"
-              >
-                <!-- <template slot="label">
-                  <div class="d-flex align-center">
-                    Click or select with
-                    <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="15"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="m 2.75,24 h 18.5 C 22.767,24 24,22.767 24,21.25 V 2.75 C 24,1.233 22.767,0 21.25,0 H 2.75 C 1.233,0 0,1.233 0,2.75 v 18.5 C 0,22.767 1.233,24 2.75,24 Z M 4.56,11.957 C 4.678,11.68 4.95,11.5 5.25,11.5 H 9 V 4.75 C 9,4.336 9.336,4 9.75,4 h 4.5 C 14.664,4 15,4.336 15,4.75 v 6.75 h 3.75 c 0.301,0 0.573,0.18 0.69,0.457 0.118,0.276 0.058,0.597 -0.15,0.813 l -6.75,7 c -0.283,0.293 -0.797,0.293 -1.08,0 l -6.75,-7 C 4.501,12.554 4.442,12.233 4.56,11.957 Z"
-                        id="path2"
-                      />
-                    </svg>
-                  </div>
-                </template> -->
-              </v-select>
+              ></v-select>
 
               <div class="d-flex align-center" style="position: absolute; top: 13px; right: 50px;">
                 <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
@@ -192,44 +181,6 @@
                     <path style="fill:#333;" :style="(selectedCategory === null) ? 'fill: #535353;' : ''" d="M25,2H9C8.449,2,8,2.449,8,3c0,0,0,7,0,9s-2,2-2,2H1c-0.551,0-1,0.449-1,1v8c0,0.551,0.449,1,1,1h24   c0.551,0,1-0.449,1-1V3C26,2.449,25.551,2,25,2z M22,14c0,1.436-1.336,4-4,4h-3.586l1.793,1.793c0.391,0.391,0.391,1.023,0,1.414   C16.012,21.402,15.756,21.5,15.5,21.5s-0.512-0.098-0.707-0.293l-3.5-3.5c-0.391-0.391-0.391-1.023,0-1.414l3.5-3.5   c0.391-0.391,1.023-0.391,1.414,0s0.391,1.023,0,1.414L14.414,16H18c1.398,0,2-1.518,2-2v-2c0-0.553,0.447-1,1-1s1,0.447,1,1V14z"/>
                   </g>
                 </svg>
-                <!-- <svg
-                   xmlns="http://www.w3.org/2000/svg"
-                   style="opacity:0.9;"
-                   height="22.944914"
-                   viewBox="0 0 41.381356 28.983049"
-                   version="1.1"
-                   id="svg4"
-                   width="41.381355"
-                >
-                  <rect
-                     style="opacity:1;fill:#333;fill-opacity:1;stroke:none;stroke-width:1.58024037;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.01005028"
-                     id="rect20"
-                     width="52.271187"
-                     height="28.983049"
-                     x="-5.2436438"
-                     y="0"
-                     rx="4.0677967"
-                     ry="4.0677967"
-                  />
-                  <text
-                     xml:space="preserve"
-                     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';letter-spacing:0px;word-spacing:0px;fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.49189663"
-                     x="-0.50927722"
-                     y="19.566446"
-                     id="text24"
-                  >
-                    <tspan
-                       id="tspan22"
-                       x="-0.50927722"
-                       y="19.566446"
-                       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';fill:#808080;stroke-width:1.49189663"
-                    >
-                      Enter
-                    </tspan>
-                  </text>
-                </svg> -->
-
-                <!-- <v-icon>mdi-chevron-right</v-icon> -->
               </v-btn>
             </div>
           </div>
@@ -295,6 +246,11 @@ export default {
 
       originalImage: '',
       leftImage: '',
+      leftType: '',
+      leftExtension: '',
+
+      videoFormats: ['m4p', 'webm', '3g2', '3gp', 'aaf', 'asf', 'avchd', 'avi', 'drc', 'flv', 'm2v', 'm3u8', 'm4v', 'mkv', 'mng', 'mov', 'mp2', 'mp4', 'mpe', 'mpeg', 'mpg', 'mpv', 'mxf', 'nsv', 'ogg', 'ogv', 'qt', 'rm', 'rmvb', 'roq', 'svi', 'vob', 'wmv', 'yuv'],
+      imageFormats: ['jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'png', 'gif', 'webp', 'tiff', 'tif', 'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'bmp', 'dib', 'heif', 'heic', 'ind', 'indd', 'indt', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2', 'svg', 'svgz', 'ai', 'eps', 'pdf'],
 
       startTime: null,
 
@@ -521,31 +477,83 @@ export default {
         }
       }
 
-      // var vid = document.getElementById('myVideo')
-      // vid.oncanplaythrough = function () {
-      //   //
-      // }
-
-      var imgLeft = new Image()
-      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
-      imgLeft.onload = () => {
-        this.isLoadLeft = false
-        this.leftImage = imgLeft.src
-
-        window.setTimeout(() => {
-          this.isLoadLeft = true
-          this.startTime = new Date()
-
-          if (hideTimer) {
-            window.hideTimeout = window.setTimeout(() => {
-              this.isLoadLeft = false
-            }, hideTimer)
-          }
-
-          // this.focusSelect()
-          this.disableNextBtn = false
-        }, this.experiment.delay)
+      // var imgLeft = new Image()
+      // imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
+      var imgLeft = {
+        img: new Image(),
+        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path,
+        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.extension
       }
+
+      if (this.videoFormats.includes(imgLeft.extension)) {
+        this.leftType = 'video'
+        // this.leftImage = imgLeft.path
+
+        this.$nextTick(() => {
+          this.isLoadLeft = false
+          this.leftExtension = imgLeft.extension
+
+          var vid = document.querySelector('video')
+          vid.src = imgLeft.path
+
+          vid.load() // force new video to begin loading
+          vid.oncanplaythrough = () => {
+            window.setTimeout(() => {
+              this.isLoadLeft = true
+              this.startTime = new Date()
+
+              if (hideTimer) {
+                window.hideTimeout = window.setTimeout(() => {
+                  this.isLoadLeft = false
+                }, hideTimer)
+              }
+
+              // this.focusSelect()
+              vid.play()
+              this.disableNextBtn = false
+            }, this.experiment.delay)
+          }
+        })
+      } else {
+        imgLeft.img.src = imgLeft.path
+        imgLeft.img.onload = () => {
+          this.isLoadLeft = false
+
+          this.leftType = 'image'
+          this.leftExtension = imgLeft.extension
+          this.leftImage = imgLeft.img.src
+
+          window.setTimeout(() => {
+            this.isLoadLeft = true
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                this.isLoadLeft = false
+              }, hideTimer)
+            }
+
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+      }
+    },
+
+    /**
+     * @param string
+     * @returns boolean
+     */
+    allowedImageFormat (extension) {
+      return this.imageFormats.includes(extension.toLowerCase())
+    },
+
+    /**
+     * @param string
+     * @returns Boolean
+     */
+    allowedVideoFormat (extension) {
+      return this.videoFormats.includes(extension.toLowerCase())
     },
 
     calculateLayout () {

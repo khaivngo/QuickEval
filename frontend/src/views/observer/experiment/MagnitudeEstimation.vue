@@ -101,12 +101,18 @@
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
-            v-if="!experiment.artifact_marking"
+            v-if="!experiment.artifact_marking && leftType === 'image'"
             id="picture-left"
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="leftImage"
           />
+          <div v-if="!experiment.artifact_marking && leftType === 'video'" style="position: relative;">
+            <video loop controls style="width: 100%;" ref="videoPlayer" class="video-player">
+              <source :src="leftImage" :type="'video/'+leftExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -242,6 +248,11 @@ export default {
 
       originalImage: '',
       leftImage: '',
+      leftType: '',
+      leftExtension: '',
+
+      videoFormats: ['m4p', 'webm', '3g2', '3gp', 'aaf', 'asf', 'avchd', 'avi', 'drc', 'flv', 'm2v', 'm3u8', 'm4v', 'mkv', 'mng', 'mov', 'mp2', 'mp4', 'mpe', 'mpeg', 'mpg', 'mpv', 'mxf', 'nsv', 'ogg', 'ogv', 'qt', 'rm', 'rmvb', 'roq', 'svi', 'vob', 'wmv', 'yuv'],
+      imageFormats: ['jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'png', 'gif', 'webp', 'tiff', 'tif', 'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'bmp', 'dib', 'heif', 'heic', 'ind', 'indd', 'indt', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2', 'svg', 'svgz', 'ai', 'eps', 'pdf'],
 
       startTime: null,
 
@@ -473,25 +484,64 @@ export default {
         }
       }
 
-      var imgLeft = new Image()
-      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
-      imgLeft.onload = () => {
-        this.isLoadLeft = false
-        this.leftImage = imgLeft.src
+      var imgLeft = {
+        img: new Image(),
+        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path,
+        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.extension
+      }
 
-        window.setTimeout(() => {
-          this.isLoadLeft = true
-          this.startTime = new Date()
+      if (this.videoFormats.includes(imgLeft.extension)) {
+        this.leftType = 'video'
+        // this.leftImage = imgLeft.path
 
-          if (hideTimer) {
-            window.hideTimeout = window.setTimeout(() => {
-              this.isLoadLeft = false
-            }, hideTimer)
+        this.$nextTick(() => {
+          this.isLoadLeft = false
+          this.leftExtension = imgLeft.extension
+
+          var vid = document.querySelector('video')
+          vid.src = imgLeft.path
+
+          vid.load() // force new video to begin loading
+          vid.oncanplaythrough = () => {
+            window.setTimeout(() => {
+              this.isLoadLeft = true
+              this.startTime = new Date()
+
+              if (hideTimer) {
+                window.hideTimeout = window.setTimeout(() => {
+                  this.isLoadLeft = false
+                }, hideTimer)
+              }
+
+              // this.focusSelect()
+              vid.play()
+              this.disableNextBtn = false
+            }, this.experiment.delay)
           }
+        })
+      } else {
+        imgLeft.img.src = imgLeft.path
+        imgLeft.img.onload = () => {
+          this.isLoadLeft = false
 
-          // this.focusSelect()
-          this.disableNextBtn = false
-        }, this.experiment.delay)
+          this.leftType = 'image'
+          this.leftExtension = imgLeft.extension
+          this.leftImage = imgLeft.img.src
+
+          window.setTimeout(() => {
+            this.isLoadLeft = true
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                this.isLoadLeft = false
+              }, hideTimer)
+            }
+
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
       }
     },
 
@@ -567,6 +617,22 @@ export default {
     resetSliderPosition () {
       this.selectedMagnitude = Math.round((this.minValue + this.maxValue) / 2)
       this.updateActiveLabel()
+    },
+
+    /**
+     * @param string
+     * @returns boolean
+     */
+    allowedImageFormat (extension) {
+      return this.imageFormats.includes(extension.toLowerCase())
+    },
+
+    /**
+     * @param string
+     * @returns Boolean
+     */
+    allowedVideoFormat (extension) {
+      return this.videoFormats.includes(extension.toLowerCase())
     },
 
     /**

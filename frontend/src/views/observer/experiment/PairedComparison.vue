@@ -136,14 +136,14 @@
             tabindex="0"
           />
           <div v-if="!experiment.artifact_marking && leftType === 'video'" style="position: relative;">
-            <video loop style="width: 100%; pointer-events: none;" ref="videoPlayer">
+            <video loop muted controls style="width: 100%;" class="video1" ref="videoPlayer">
+              <!-- pointer-events: none; -->
               <source :src="leftImage" :type="'video/'+leftExtension">
               Your browser does not support the video tag.
             </video>
-            <button type="button" @click="playAllVideos" style="color: white; position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%;">
-              <!-- Play -->
+            <!-- <button type="button" style="color: white; position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%;">
               <v-icon style="font-size: 60px; z-index: 100;" color="white">mdi-play-circle</v-icon>
-            </button>
+            </button> -->
           </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
@@ -184,13 +184,14 @@
             tabindex="0"
           />
           <div v-if="!experiment.artifact_marking && rightType === 'video'">
-            <video loop style="width: 100%; display: block; pointer-events: none;" ref="videoPlayer2">
+            <video loop muted controls style="width: 100%; display: block;" class="video2" ref="videoPlayer2">
+              <!-- pointer-events: none; -->
               <source :src="rightImage" :type="'video/'+rightExtension">
               Your browser does not support the video tag.
             </video>
-            <button type="button" @click="playAllVideos">
+            <!-- <button type="button" @click="playAllVideos">
               Play
-            </button>
+            </button> -->
           </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
@@ -476,6 +477,47 @@ export default {
 
       var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
+      var hideThenShow = () => {
+        // hide images
+        this.isLoadLeft  = false
+        this.isLoadRight = false
+
+        // then set source
+
+        // before showing images:
+        // show a blank screen inbetween image switching,
+        // if scientist set up delay
+        window.setTimeout(() => {
+          // show left and right image
+          this.isLoadLeft  = true
+          this.isLoadRight = true
+
+          if (hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              this.isLoadLeft  = false
+              this.isLoadRight = false
+            }, hideTimer)
+          }
+
+          // starts or overrides existing timer
+          this.timeElapsed = new Date()
+          this.disableNextBtn = false
+        }, this.experiment.delay)
+      }
+
+      // we use a object because sometimes the image is the same image but we still want
+      // to trigger watch in child components
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
+        }
+        this.rightCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
+        }
+      }
+
       // set original if it exists for the current experiment sequence
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
@@ -501,125 +543,112 @@ export default {
         }
       ]
 
-      // we use a object because sometimes the image is the same image but we still want
-      // to trigger watch in child components
-      if (this.experiment.artifact_marking) {
-        this.leftCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
-        }
-        this.rightCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
-        }
-      }
-
       var imagesLoaded = 0
-      // attach onload events to every reproduction image
-      for (var i = 0; i < images.length; i++) {
-        if (this.imageFormats.includes(images[i].extension)) {
-          images[i].img.src = images[i].path
-          images[i].img.onload = () => {
-            imagesLoaded++
-            // when all images loaded
-            if (imagesLoaded === images.length) {
-              // hide images
-              this.isLoadLeft  = false
-              this.isLoadRight = false
-
-              // then set source
-              if (this.allowedImageFormat(images[0].extension)) {
-                this.leftExtension = images[0].extension
-                this.leftImage = images[0].img.src
-                this.leftType  = 'image'
-              } else if (this.allowedVideoFormat(images[0].extension)) {
-                this.leftExtension = images[0].extension
-                this.leftImage = images[0].path
-                this.leftType  = 'video'
-              }
-
-              if (this.allowedImageFormat(images[1].extension)) {
-                this.rightExtension = images[1].extension
-                this.rightImage = images[1].img.src
-                this.rightType  = 'image'
-              } else if (this.allowedVideoFormat(images[1].extension)) {
-                this.rightExtension = images[1].extension
-                this.rightImage = images[1].path
-                this.rightType  = 'video'
-              }
-
-              // before showing images:
-              // show a blank screen inbetween image switching,
-              // if scientist set up delay
-              window.setTimeout(() => {
-                // show left and right image
-                this.isLoadLeft  = true
-                this.isLoadRight = true
-
-                if (hideTimer) {
-                  window.hideTimeout = window.setTimeout(() => {
-                    this.isLoadLeft  = false
-                    this.isLoadRight = false
-                  }, hideTimer)
-                }
-
-                // starts or overrides existing timer
-                this.timeElapsed = new Date()
-                this.disableNextBtn = false
-              }, this.experiment.delay)
-            }
-          }
-        }
-
-        if (this.videoFormats.includes(images[i].extension)) {
+      // this.leftType  = this.allowedImageFormat(images[0].extension) ? 'image' : 'video'
+      // this.rightType = this.allowedVideoFormat(images[1].extension) ? 'video' : 'image'
+      // is the left image of type video or image?
+      if (this.allowedImageFormat(images[0].extension)) {
+        this.leftExtension = images[0].extension
+        // this.leftImage = images[0].img.src
+        // this.leftImage = images[0].path
+        this.leftType  = 'image'
+        images[0].img.src = images[0].path
+        images[0].img.onload = () => {
           imagesLoaded++
+          this.leftImage = images[0].path
+          // when all images loaded
           if (imagesLoaded === images.length) {
-            // hide images
-            this.isLoadLeft  = false
-            this.isLoadRight = false
-
-            // then set source
-            if (this.allowedImageFormat(images[0].extension)) {
-              this.leftExtension = images[0].extension
-              this.leftImage = images[0].img.src
-              this.leftType  = 'image'
-            } else if (this.allowedVideoFormat(images[0].extension)) {
-              this.leftExtension = images[0].extension
-              this.leftImage = images[0].path
-              this.leftType  = 'video'
-            }
-
-            if (this.allowedImageFormat(images[1].extension)) {
-              this.rightExtension = images[1].extension
-              this.rightImage = images[1].img.src
-              this.rightType  = 'image'
-            } else if (this.allowedVideoFormat(images[1].extension)) {
-              this.rightExtension = images[1].extension
-              this.rightImage = images[1].path
-              this.rightType  = 'video'
-            }
-
-            // show a blank screen inbetween image switching,
-            // if scientist set up delay
-            window.setTimeout(() => {
-              // show left and right image
-              this.isLoadLeft  = true
-              this.isLoadRight = true
-
-              if (hideTimer) {
-                window.hideTimeout = window.setTimeout(() => {
-                  this.isLoadLeft  = false
-                  this.isLoadRight = false
-                }, hideTimer)
-              }
-
-              // starts or overrides existing timer
-              this.timeElapsed = new Date()
-              this.disableNextBtn = false
-            }, this.experiment.delay)
+            hideThenShow()
           }
         }
+        // this.elem = this.$refs.videoPlayer[0].$el
+      } else if (this.allowedVideoFormat(images[0].extension)) {
+        this.leftExtension = images[0].extension
+        this.leftImage = images[0].path
+        this.leftType  = 'video'
+        this.$nextTick(() => { // make sure dom is updated with the new this.left/rightType = 'video' so that v-if is triggered and querySelector is able to find the element
+          let vid = document.querySelector('.video1')
+          vid.src = images[0].path
+
+          vid.load() // force new video to begin loading
+          vid.oncanplaythrough = () => {
+            imagesLoaded++
+            if (imagesLoaded === images.length) {
+              hideThenShow()
+              let vid2 = document.querySelector('.video2')
+              vid.play()
+              vid2.play()
+            }
+          }
+        })
       }
+      // is the right image of type video or image?
+      if (this.allowedImageFormat(images[1].extension)) {
+        this.rightExtension = images[1].extension
+        // this.rightImage = images[1].img.src
+        // this.rightImage = images[1].path
+        this.rightType  = 'image'
+        images[1].img.src = images[1].path
+        images[1].img.onload = () => {
+          ++imagesLoaded
+          this.rightImage = images[1].path
+          // when all images loaded
+          if (imagesLoaded === images.length) {
+            hideThenShow()
+          }
+        }
+      } else if (this.allowedVideoFormat(images[1].extension)) {
+        this.rightExtension = images[1].extension
+        this.rightImage = images[1].path
+        this.rightType  = 'video'
+        this.$nextTick(() => { // make sure dom is updated with the new this.left/rightType = 'video' so that v-if is triggered and querySelector is able to find the element
+          let vid2 = document.querySelector('.video2')
+          vid2.src = images[1].path
+
+          vid2.load() // force new video to begin loading
+          vid2.oncanplaythrough = () => {
+            ++imagesLoaded
+            if (imagesLoaded === images.length) {
+              hideThenShow()
+              let vid = document.querySelector('.video1')
+              vid2.play()
+              vid.play()
+            }
+          }
+        })
+      }
+
+      // attach onload events to every reproduction stimuli,
+      // so we can hold off showing stimuli until they are all loaded
+      // var imagesLoaded = 0
+      // for (var i = 0; i < images.length; i++) {
+      //   // console.log(i)
+      //   if (this.imageFormats.includes(images[i].extension)) {
+      //     console.log(i)
+      //     images[i].img.src = images[i].path
+      //     images[i].img.onload = () => {
+      //       imagesLoaded++
+      //       // when all images loaded
+      //       if (imagesLoaded === images.length) {
+      //         hideThenShow()
+      //       }
+      //     }
+      //   } else {
+      //     this.$nextTick(() => { // make sure dom is updated with the new this.left/rightType = 'video' so that v-if is triggered and querySelector is able to find the element
+      //       var vid = document.querySelector('video')
+      //       console.log(i)
+      //       vid.src = images[i].path
+
+      //       vid.load() // force new video to begin loading
+      //       vid.oncanplaythrough = () => {
+      //         imagesLoaded++
+      //         if (imagesLoaded === images.length) {
+      //           hideThenShow()
+      //         }
+      //       }
+      //     })
+      //   }
+      // }
     },
 
     async saveAnswer () {
@@ -737,7 +766,7 @@ export default {
     },
 
     /**
-     * @param strings
+     * @param string
      * @returns boolean
      */
     allowedImageFormat (extension) {
@@ -745,7 +774,7 @@ export default {
     },
 
     /**
-     * @param strings
+     * @param string
      * @returns Boolean
      */
     allowedVideoFormat (extension) {
