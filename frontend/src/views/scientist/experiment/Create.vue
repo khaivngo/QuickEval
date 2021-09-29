@@ -85,7 +85,7 @@
                   </template>
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Describe what the experiment is all about.<br>
-                    This description will be available to the observers.
+                    This description will be available to the observers before they start the experiment.
                   </div>
                 </v-tooltip>
               </v-col>
@@ -335,7 +335,7 @@
             <template v-else>
               <h2 class="mb-1">{{ showCategories.title }}</h2>
               <p class="body-1">
-                Add the categories the observer use to rate the images.
+                Add the categories the observer use to rate the stimuli.
               </p>
               <Categories
                 :categories="experiment.categories"

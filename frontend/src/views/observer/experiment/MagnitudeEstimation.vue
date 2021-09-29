@@ -100,18 +100,8 @@
         class="picture-container fill-height mt-0 mr-2 mb-0 pb-2"
       >
         <div class="panzoom d-flex justify-center align-center">
-          <img
-            v-if="!experiment.artifact_marking && leftType === 'image'"
-            id="picture-left"
-            class="picture"
-            :class="isLoadLeft === false ? 'hide' : ''"
-            :src="leftImage"
-          />
-          <div v-if="!experiment.artifact_marking && leftType === 'video'" style="position: relative;">
-            <video loop controls style="width: 100%;" ref="videoPlayer" class="video-player">
-              <source :src="leftImage" :type="'video/'+leftExtension">
-              Your browser does not support the video tag.
-            </video>
+          <div v-if="!experiment.artifact_marking" class="stimuli-container" style="position: relative;">
+            <!-- load stimulus here -->
           </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
@@ -125,7 +115,18 @@
 
       <v-col v-show="originalImage" class="picture-container fill-height mt-0 ml-2 mb-0 pb-2">
         <div class="panzoom d-flex justify-center align-center stretch">
-          <img id="picture-original" class="picture" :src="originalImage"/>
+          <img
+            v-if="originalType === 'image'"
+            id="picture-original"
+            class="picture"
+            :src="originalImage"
+          />
+          <div v-if="originalType === 'video'" style="position: relative;">
+            <video loop controls style="width: 100%;" ref="videoPlayer" class="video-player">
+              <source :src="originalImage" :type="'video/'+originalExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -247,6 +248,8 @@ export default {
       finished: false,
 
       originalImage: '',
+      originalType: '',
+      originalExtension: '',
       leftImage: '',
       leftType: '',
       leftExtension: '',
@@ -470,7 +473,18 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
+        if (this.allowedImageFormat(this.originalExtension)) {
+          this.originalType = 'image'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        } else {
+          this.originalType = 'video'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        }
       } else {
         this.originalImage = ''
       }
@@ -491,50 +505,70 @@ export default {
       }
 
       if (this.videoFormats.includes(imgLeft.extension)) {
-        this.leftType = 'video'
-        // this.leftImage = imgLeft.path
+        // create new video element and start loading stimulus
+        var tempVideo = document.createElement('video')
+        tempVideo.src = imgLeft.path
+        tempVideo.autoplay = true
+        tempVideo.loop = true
+        tempVideo.controls = true
+        tempVideo.style.width = '100%'
+        tempVideo.classList.add('stimulus')
+        tempVideo.classList.add('hide')
 
-        this.$nextTick(() => {
-          this.isLoadLeft = false
-          this.leftExtension = imgLeft.extension
+        var loadNewVideo = () => {
+          // this event may be called multiple times on some browsers, therefore remove it
+          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
 
-          var vid = document.querySelector('video')
-          vid.src = imgLeft.path
-
-          vid.load() // force new video to begin loading
-          vid.oncanplaythrough = () => {
-            window.setTimeout(() => {
-              this.isLoadLeft = true
-              this.startTime = new Date()
-
-              if (hideTimer) {
-                window.hideTimeout = window.setTimeout(() => {
-                  this.isLoadLeft = false
-                }, hideTimer)
-              }
-
-              // this.focusSelect()
-              vid.play()
-              this.disableNextBtn = false
-            }, this.experiment.delay)
+          let container = document.querySelector('.stimuli-container')
+          let prevVideo = document.querySelector('.stimuli-container .stimulus')
+          if (prevVideo) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
           }
-        })
-      } else {
-        imgLeft.img.src = imgLeft.path
-        imgLeft.img.onload = () => {
-          this.isLoadLeft = false
-
-          this.leftType = 'image'
-          this.leftExtension = imgLeft.extension
-          this.leftImage = imgLeft.img.src
+          container.appendChild(tempVideo)
 
           window.setTimeout(() => {
-            this.isLoadLeft = true
+            tempVideo.classList.remove('hide')
             this.startTime = new Date()
 
             if (hideTimer) {
               window.hideTimeout = window.setTimeout(() => {
-                this.isLoadLeft = false
+                tempVideo.classList.add('hide')
+              }, hideTimer)
+            }
+            tempVideo.play()
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempVideo.load()
+        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+      } else {
+        var tempImage = document.createElement('img')
+        tempImage.src = imgLeft.path
+        // tempImage.style.width = '100%'
+        tempImage.classList.add('stimulus')
+        tempImage.classList.add('hide')
+
+        var loadNewImage = () => {
+          tempImage.removeEventListener('load', loadNewImage, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevImage = document.querySelector('.stimuli-container .stimulus')
+          if (prevImage) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
+          }
+          container.appendChild(tempImage)
+
+          window.setTimeout(() => {
+            tempImage.classList.remove('hide')
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                tempVideo.classList.add('hide')
               }, hideTimer)
             }
 
@@ -542,6 +576,8 @@ export default {
             this.disableNextBtn = false
           }, this.experiment.delay)
         }
+
+        tempImage.addEventListener('load', loadNewImage, false)
       }
     },
 

@@ -162,10 +162,17 @@
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
+            v-if="originalType === 'image'"
             id="picture-original"
             class="picture"
             :src="originalImage"
           />
+          <div v-if="originalType === 'video'" style="position: relative;">
+            <video loop controls style="width: 100%; display: block;" ref="videoPlayer" class="video-player">
+              <source :src="originalImage" :type="'video/'+originalExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
       </v-col>
 
@@ -183,7 +190,7 @@
             :src="rightImage"
             tabindex="0"
           />
-          <div v-if="!experiment.artifact_marking && rightType === 'video'">
+          <div v-if="!experiment.artifact_marking && rightType === 'video'" style="position: relative;">
             <video loop muted controls style="width: 100%; display: block;" class="video2" ref="videoPlayer2">
               <!-- pointer-events: none; -->
               <source :src="rightImage" :type="'video/'+rightExtension">
@@ -297,6 +304,8 @@ export default {
       finished: false,
 
       originalImage: '',
+      originalType: '',
+      originalExtension: '',
       leftImage: '',
       leftType: '', // change
       rightImage: '',
@@ -524,7 +533,18 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
+        if (this.allowedImageFormat(this.originalExtension)) {
+          this.originalType = 'image'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        } else {
+          this.originalType = 'video'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        }
       } else {
         this.originalImage = ''
       }

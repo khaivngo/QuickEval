@@ -125,6 +125,7 @@
             </div>
 
             <v-img
+              v-if="imageFormats.includes(image.extension)"
               :src="$UPLOADS_FOLDER + image.path"
               aspect-ratio="1"
               class="grey lighten-2"
@@ -140,6 +141,16 @@
                 </v-layout>
               </template>
             </v-img>
+            <video
+              v-if="videoFormats.includes(image.extension)"
+              loop controls
+              style="width: 100%;"
+              class="video-player"
+            >
+              <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
+              <source :src="$UPLOADS_FOLDER + image.path" :type="`video/${image.extension}`">
+              Your browser does not support the video tag.
+            </video>
 
             <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
               {{ image.name }}
@@ -185,6 +196,7 @@
             </div>
 
             <v-img
+              v-if="imageFormats.includes(original[0].extension)"
               :src="$UPLOADS_FOLDER + original[0].path"
               aspect-ratio="1"
               class="grey lighten-2"
@@ -200,6 +212,17 @@
                 </v-layout>
               </template>
             </v-img>
+            <video
+              v-if="videoFormats.includes(original[0].extension)"
+              loop controls
+              style="width: 100%;"
+              class="video-player"
+            >
+              <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
+              <source :src="$UPLOADS_FOLDER + original[0].path" :type="`video/${original[0].extension}`">
+              Your browser does not support the video tag.
+            </video>
+
             <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
               {{ original[0].name }}
             </h5>
@@ -314,7 +337,7 @@ export default {
       return this.$axios.get(`/picture-set/${this.imageSetId}`).then((response) => {
         this.imageSet = response.data
 
-        if (this.imageSet.title === 'Untitled image set') {
+        if (this.imageSet.title === 'Untitled stimuli group') {
           this.editTitle = true
         }
 
