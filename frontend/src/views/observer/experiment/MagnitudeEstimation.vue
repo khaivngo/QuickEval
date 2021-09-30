@@ -568,7 +568,7 @@ export default {
 
             if (hideTimer) {
               window.hideTimeout = window.setTimeout(() => {
-                tempVideo.classList.add('hide')
+                tempImage.classList.add('hide')
               }, hideTimer)
             }
 
