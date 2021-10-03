@@ -296,6 +296,10 @@ export default {
     })
   },
 
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
+  },
+
   watch: {
     originalImage () {
       this.calculateLayout()
@@ -604,27 +608,31 @@ export default {
     },
 
     setKeyboardShortcuts () {
-      window.addEventListener('keydown', (e) => {
-        // enter / arrow right / space
-        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
+      window.addEventListener('keydown', this.onKeyPress)
+    },
+
+    onKeyPress (e) {
+      switch (e.code) {
+        // case 'ArrowRight':
+        // case 'Space':
+        case 'Enter':
           if (this.selectedCategory !== null && this.disableNextBtn === false) {
-            // this.nextStep()
             this.saveAnswer()
           }
-        }
+          break
 
-        if (e.keyCode === 27) { // esc
-          this.abort()
-        }
+        case 'Escape':
+          this.abortDialog = true
+          break
+      }
 
-        // down or up arrow
-        // if (e.keyCode === 40 || e.keyCode === 38) {
-        //   console.log(this.$refs.select)
-        //   // if () {
-        //   // this.$refs.select.activateMenu()
-        //   // }
-        // }
-      })
+      // down or up arrow
+      // if (e.keyCode === 40 || e.keyCode === 38) {
+      //   console.log(this.$refs.select)
+      //   // if () {
+      //   // this.$refs.select.activateMenu()
+      //   // }
+      // }
     },
 
     /**
@@ -673,6 +681,7 @@ export default {
       this.originalImage = ''
       this.leftImage = ''
       this.disableNextBtn = false
+      this.wipeActiveStimuli()
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -680,9 +689,16 @@ export default {
       this.finished = true
     },
 
+    wipeActiveStimuli () {
+      const container = document.querySelector('.stimuli-container')
+      const active = document.querySelector('.stimuli-container .stimulus')
+      if (active) {
+        container.removeChild(active)
+      }
+    },
+
     abort () {
       this.removeProgress()
-      this.abortDialog = true
       this.$router.push('/observer')
     },
 

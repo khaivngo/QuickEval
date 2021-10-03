@@ -307,6 +307,10 @@ export default {
     })
   },
 
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
+  },
+
   watch: {
     originalImage () {
       this.calculateLayout()
@@ -318,7 +322,7 @@ export default {
 
     closeAndNext () {
       this.instructionDialog = false
-      // this.focusSelect()
+      this.focusSlider()
       this.nextStep()
     },
 
@@ -337,7 +341,7 @@ export default {
       this.nextStep()
       this.calculateLayout()
       this.setKeyboardShortcuts()
-      // this.focusSelect()
+      this.focusSlider()
     },
 
     startNewExperiment () {
@@ -356,7 +360,7 @@ export default {
           this.nextStep()
           this.calculateLayout()
           this.setKeyboardShortcuts()
-          // this.focusSelect()
+          this.focusSlider()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -427,8 +431,8 @@ export default {
           }
 
           this.saveProgress()
-          // this.focusSelect()
           this.nextStep()
+          this.focusSlider()
         } catch (err) {
           alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
           this.disableNextBtn = false
@@ -446,7 +450,7 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
-      // this.focusSelect()
+      this.focusSelect()
 
       ++this.sequenceIndex
       // move on to the next experiment sequence
@@ -594,28 +598,33 @@ export default {
       })
     },
 
+    focusSlider () {
+      window.setTimeout(() => {
+        // console.log(this.$refs.slider)
+        // this.$refs.slider.isFocused = true
+        // this.$refs.slider.$el.focus()
+        // this.$refs.slider.$el.children[0].children[0].children[0].focus()
+        // this.$nextTick(() => this.$refs.slider.$el.children[0].children[0].children[0].focus())
+      }, 400)
+    },
+
     setKeyboardShortcuts () {
-      window.addEventListener('keydown', (e) => {
-        // enter / arrow right / space
-        if (e.keyCode === 13) { // e.keyCode === 39 || e.keyCode === 32
+      window.addEventListener('keydown', this.onKeyPress)
+    },
+
+    onKeyPress (e) {
+      switch (e.code) {
+        case 'Enter':
+        case 'Space':
           if (this.selectedMagnitude !== null && this.disableNextBtn === false) {
-            // this.nextStep()
             this.saveAnswer()
           }
-        }
+          break
 
-        if (e.keyCode === 27) { // esc
-          this.abort()
-        }
-
-        // down or up arrow
-        // if (e.keyCode === 40 || e.keyCode === 38) {
-        //   console.log(this.$refs.select)
-        //   // if () {
-        //   // this.$refs.select.activateMenu()
-        //   // }
-        // }
-      })
+        case 'Escape':
+          this.abortDialog = true
+          break
+      }
     },
 
     createTickLabels () {
@@ -638,7 +647,7 @@ export default {
     },
 
     updateActiveLabel () {
-      console.log('changed')
+      // console.log('changed')
       // console.log(this.selectedMagnitude)
 
       // const ticksLabels = document.querySelectorAll('.v-slider__ticks-container .v-slider__tick-label')
@@ -709,16 +718,11 @@ export default {
       return this.$axios.post('/result-magnitude-estimations', data)
     },
 
-    // focusSelect () {
-    //   window.setTimeout(() => {
-    //     this.$refs.select.focus()
-    //   }, 400)
-    // },
-
     onFinish () {
       this.originalImage = ''
       this.leftImage = ''
       this.disableNextBtn = false
+      this.wipeActiveStimuli()
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -726,9 +730,16 @@ export default {
       this.finished = true
     },
 
+    wipeActiveStimuli () {
+      const container = document.querySelector('.stimuli-container')
+      const active = document.querySelector('.stimuli-container .stimulus')
+      if (active) {
+        container.removeChild(active)
+      }
+    },
+
     abort () {
       this.removeProgress()
-      this.abortDialog = true
       this.$router.push('/observer')
     },
 

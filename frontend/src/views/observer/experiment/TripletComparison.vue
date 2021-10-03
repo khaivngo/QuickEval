@@ -347,20 +347,12 @@ export default {
         this.continueExistingExperiment()
       }
 
-      window.addEventListener('keydown', (e) => {
-        // if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
-        // enter / arrow right / space
-        //   if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
-        //     this.next()
-        //   }
-        // }
-
-        // esc
-        if (e.keyCode === 27) {
-          this.abort()
-        }
-      })
+      window.addEventListener('keydown', this.onKeyPress)
     })
+  },
+
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
   },
 
   watch: {
@@ -646,6 +638,20 @@ export default {
       return this.$axios.post('/result-triplets', data)
     },
 
+    onKeyPress (e) {
+      // if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
+      // enter / arrow right / space
+      //   if (this.selectedCategoryLeft !== null && this.selectedCategoryMiddle !== null && this.selectedCategoryRight !== null) {
+      //     this.next()
+      //   }
+      // }
+
+      // esc
+      if (e.code === 'Escape') {
+        this.abortDialog = true
+      }
+    },
+
     calculateLayout () {
       this.$nextTick(() => {
         let navMain = 30
@@ -691,7 +697,6 @@ export default {
 
     abort () {
       this.removeProgress()
-      this.abortDialog = true
       this.$router.push('/observer')
     },
 

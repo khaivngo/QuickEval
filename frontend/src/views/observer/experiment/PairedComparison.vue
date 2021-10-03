@@ -153,9 +153,9 @@
             :src="originalImage"
           />
           <div v-if="originalType === 'video'" style="position: relative;">
-            <video loop controls style="width: 100%; display: block;" ref="videoPlayer" class="video-player">
-              <source :src="originalImage" :type="'video/'+originalExtension">
-              Your browser does not support the video tag.
+            <video :src="originalImage" loop controls style="width: 100%; display: block;" ref="videoPlayer" class="video-player">
+              <!-- <source :src="originalImage"> -->
+              <!-- Your browser does not support the video tag. -->
             </video>
           </div>
         </div>
@@ -287,6 +287,9 @@ export default {
       videoFormats: ['m4p', 'webm', '3g2', '3gp', 'aaf', 'asf', 'avchd', 'avi', 'drc', 'flv', 'm2v', 'm3u8', 'm4v', 'mkv', 'mng', 'mov', 'mp2', 'mp4', 'mpe', 'mpeg', 'mpg', 'mpv', 'mxf', 'nsv', 'ogg', 'ogv', 'qt', 'rm', 'rmvb', 'roq', 'svi', 'vob', 'wmv', 'yuv'],
       imageFormats: ['jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'png', 'gif', 'webp', 'tiff', 'tif', 'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'bmp', 'dib', 'heif', 'heic', 'ind', 'indd', 'indt', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2', 'svg', 'svgz', 'ai', 'eps', 'pdf'],
 
+      currentStimuli: [],
+      currentOriginal: [],
+
       timeElapsed: null,
 
       shapes: {},
@@ -324,34 +327,13 @@ export default {
       } else {
         this.continueExistingExperiment()
       }
-
-      // create some hotkeys
-      window.addEventListener('keydown', (e) => {
-        // arrow left
-        if (e.keyCode === 37) {
-          if (this.disableNextBtn === false) {
-            this.selectedRadio = 'left'
-          }
-        }
-
-        // arrow right
-        if (e.keyCode === 39) {
-          if (this.disableNextBtn === false) {
-            this.selectedRadio = 'right'
-          }
-        }
-
-        // esc
-        if (e.keyCode === 27) {
-          this.abort()
-        }
-      })
     })
   },
 
-  // onDestroy () {
-  //   document.removeEventListener('keydown', nameOfFunction)
-  // },
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
+    // window.onkeydown = null
+  },
 
   watch: {
     originalImage () {
@@ -362,10 +344,6 @@ export default {
         this.saveAnswer()
       }
     }
-  },
-
-  destroyed () {
-    // window.removeEventListener('keydown', functionName)
   },
 
   methods: {
@@ -379,13 +357,11 @@ export default {
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
 
           this.countTotalComparisons()
-
           this.resetProgress()
           this.getProgress()
-
           this.nextStep()
-
           this.calculateLayout()
+          this.setKeyboardShortcuts()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -399,6 +375,29 @@ export default {
       this.countTotalComparisons()
       this.nextStep()
       this.calculateLayout()
+      this.setKeyboardShortcuts()
+    },
+
+    setKeyboardShortcuts () {
+      window.addEventListener('keydown', this.onKeyPress)
+    },
+
+    onKeyPress (e) {
+      switch (e.code) {
+        case 'ArrowLeft':
+        case 'KeyA':
+          if (this.disableNextBtn === false) this.selectedRadio = 'left'
+          break
+
+        case 'ArrowRight':
+        case 'KeyD':
+          if (this.disableNextBtn === false) this.selectedRadio = 'right'
+          break
+
+        case 'Escape':
+          this.abortDialog = true
+          break
+      }
     },
 
     closeAndNext () {
@@ -456,16 +455,18 @@ export default {
 
       var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
+      this.currentStimuli  = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex]
+
       // we use a object because sometimes the image is the same image but we still want
       // to trigger watch in child components
       if (this.experiment.artifact_marking) {
         this.leftCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
+          image: this.currentStimuli[0].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
         }
         this.rightCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
+          image: this.currentStimuli[1].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
         }
       }
 
@@ -475,33 +476,25 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
-        if (this.allowedImageFormat(this.originalExtension)) {
-          this.originalType = 'image'
-          this.$nextTick(() => {
-            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
-          })
-        } else {
-          this.originalType = 'video'
-          this.$nextTick(() => {
-            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
-          })
-        }
+        this.currentOriginal = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0]
+        this.originalType = this.allowedImageFormat(this.currentOriginal.extension) ? 'image' : 'video'
+
+        this.$nextTick(() => {
+          this.originalImage = this.$UPLOADS_FOLDER + this.currentOriginal.path
+        })
       } else {
         this.originalImage = ''
       }
 
-      // prepare to load reproduction images
+      // prepare to load reproduction stimuli
       var images = [
         {
-          img: new Image(),
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path,
-          extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.extension
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path,
+          extension: this.currentStimuli[0].picture.extension
         },
         {
-          img: new Image(),
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path,
-          extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.extension
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path,
+          extension: this.currentStimuli[1].picture.extension
         }
       ]
 
@@ -528,6 +521,8 @@ export default {
 
           this.startTime = new Date()
 
+          // if the scientist have chosen to hide the stimuli after a certain time
+          // start a timeout to hide the images
           if (hideTimer) {
             window.hideTimeout = window.setTimeout(() => {
               newNode.classList.add('hide')
@@ -546,7 +541,7 @@ export default {
       // is the left image of type video or image?
       if (this.allowedImageFormat(images[0].extension)) {
         var tempImage = document.createElement('img')
-        tempImage.src = images[0].path
+        tempImage.src = this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
         // tempImage.style.width = '100%'
         tempImage.classList.add('stimulus1')
         tempImage.classList.add('hide')
@@ -562,11 +557,10 @@ export default {
         }
 
         tempImage.addEventListener('load', loadNewImage, false)
-        // this.elem = this.$refs.videoPlayer[0].$el
       } else if (this.allowedVideoFormat(images[0].extension)) {
         // create new video element and start loading stimulus
         var tempVideo = document.createElement('video')
-        tempVideo.src = images[0].path
+        tempVideo.src = this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
         tempVideo.autoplay = true // replace with video.play() for more control?
         tempVideo.loop = true
         tempVideo.controls = true
@@ -588,10 +582,10 @@ export default {
         tempVideo.load()
         tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
       }
-      // is the right image of type video or image?
+      // is the right stimulus of type video or image?
       if (this.allowedImageFormat(images[1].extension)) {
         var tempImage2 = document.createElement('img')
-        tempImage2.src = images[1].path
+        tempImage2.src = this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
         tempImage2.classList.add('stimulus2')
         tempImage2.classList.add('hide')
         this.rightImage = tempImage2
@@ -606,11 +600,10 @@ export default {
         }
 
         tempImage2.addEventListener('load', loadNewImage, false)
-        // this.elem = this.$refs.videoPlayer[0].$el
       } else if (this.allowedVideoFormat(images[1].extension)) {
         // create new video element and start loading stimulus
         var tempVideo2 = document.createElement('video')
-        tempVideo2.src = images[1].path
+        tempVideo2.src = this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
         tempVideo2.autoplay = true
         tempVideo2.loop = true
         tempVideo2.controls = true
@@ -799,7 +792,9 @@ export default {
       this.leftType = ''
       this.rightImage = ''
       this.rightType = ''
+      this.wipeActiveStimuli()
 
+      // remove this? we'll have make sure it's not needed other places
       // TODO: spinner while await
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -807,8 +802,21 @@ export default {
       this.finished = true
     },
 
+    wipeActiveStimuli () {
+      let container = document.querySelector('.stimuli-container1')
+      let prevImage = document.querySelector('.stimuli-container1 .stimulus1')
+      if (prevImage) {
+        container.removeChild(prevImage)
+      }
+
+      let container2 = document.querySelector('.stimuli-container2')
+      let prevImage2 = document.querySelector('.stimuli-container2 .stimulus2')
+      if (prevImage2) {
+        container2.removeChild(prevImage2)
+      }
+    },
+
     abort () {
-      this.abortDialog = true
       this.removeProgress()
       this.$router.push('/observer')
     },
