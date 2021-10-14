@@ -226,6 +226,7 @@
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
+import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 import mixin from '@/mixins/FileFormats.js'
 
 export default {
@@ -276,7 +277,7 @@ export default {
       leftCanvas: '',
       rightCanvas: '',
 
-      timeElapsed: null,
+      startTime: null,
       disableNextBtn: false,
 
       shapes: {},
@@ -334,6 +335,8 @@ export default {
   },
 
   methods: {
+    datetimeToSeconds: datetimeToSeconds,
+
     startNewExperiment () {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
@@ -498,9 +501,9 @@ export default {
 
         // hide the previous stimuli and set a timer for showing (unhide) the new stimuli
         window.setTimeout(() => {
-          let newNode  = document.querySelector('.stimuli-container1 .stimulus1')
+          let newNode1  = document.querySelector('.stimuli-container1 .stimulus1')
           let newNode2 = document.querySelector('.stimuli-container2 .stimulus2')
-          newNode.classList.remove('hide')
+          newNode1.classList.remove('hide')
           newNode2.classList.remove('hide')
 
           this.startTime = new Date()
@@ -509,7 +512,7 @@ export default {
           // start a timeout to hide the images
           if (hideTimer) {
             window.hideTimeout = window.setTimeout(() => {
-              newNode.classList.add('hide')
+              newNode1.classList.add('hide')
               newNode2.classList.add('hide')
             }, hideTimer)
           }
@@ -582,11 +585,12 @@ export default {
 
         // record the current time
         let endTime = new Date()
-        // subtract the current time with the start time (when images completed loading)
-        let timeDiff = endTime - this.timeElapsed // in ms
-        // strip the ms and get seconds
-        timeDiff /= 1000
-        let seconds = Math.round(timeDiff)
+        // // subtract the current time with the start time (when images completed loading)
+        // let timeDiff = endTime - this.startTime // in ms
+        // // strip the ms and get seconds
+        // timeDiff /= 1000
+        // let seconds = Math.round(timeDiff)
+        let seconds = datetimeToSeconds(this.startTime, endTime)
 
         try {
           await this.store(

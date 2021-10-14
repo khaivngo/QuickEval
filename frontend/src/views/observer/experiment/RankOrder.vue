@@ -269,7 +269,7 @@ export default {
       leftImage: '',
       rightImage: '',
 
-      timeElapsed: null,
+      startTime: null,
 
       totalComparisons: 0
     }
@@ -468,7 +468,7 @@ export default {
         // record the current time
         let endTime = new Date()
         // get the number of seconds between endTime and startTime
-        let seconds = datetimeToSeconds(this.timeElapsed, endTime)
+        let seconds = datetimeToSeconds(this.startTime, endTime)
 
         try {
           // let response =
@@ -555,7 +555,7 @@ export default {
       this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[1].picture.path
 
       // starts or overrides existing timer
-      this.timeElapsed = new Date()
+      this.startTime = new Date()
     },
 
     async getExperiment (experimentId) {

@@ -478,7 +478,7 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
         this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
-        if (this.allowedImageFormat(this.originalExtension)) {
+        if (this.isImage(this.originalExtension)) {
           this.originalType = 'image'
           this.$nextTick(() => {
             this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
