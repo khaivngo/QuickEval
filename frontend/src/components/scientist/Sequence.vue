@@ -378,7 +378,7 @@
                   </div>
 
                   <v-img
-                    v-if="imageFormats.includes(image.extension)"
+                    v-if="isImage(image.extension)"
                     :src="$UPLOADS_FOLDER + image.path"
                     aspect-ratio="1"
                     class="grey lighten-2"
@@ -395,7 +395,7 @@
                     </template>
                   </v-img>
                   <video
-                    v-if="videoFormats.includes(image.extension)"
+                    v-if="isVideo(image.extension)"
                     loop controls
                     style="width: 100%;"
                     class="video-player"
@@ -449,7 +449,7 @@
                   </div>
 
                   <v-img
-                    v-if="imageFormats.includes(original[0].extension)"
+                    v-if="isImage(original[0].extension)"
                     :src="$UPLOADS_FOLDER + original[0].path"
                     aspect-ratio="1"
                     class="grey lighten-2"
@@ -466,7 +466,7 @@
                     </template>
                   </v-img>
                   <video
-                    v-if="videoFormats.includes(original[0].extension)"
+                    v-if="isVideo(original[0].extension)"
                     loop controls
                     style="width: 100%;"
                     class="video-player"
@@ -575,6 +575,7 @@ import Uppy from '@/components/scientist/Uppy'
 import Tiptap from '@/components/Tiptap'
 import ActionMenu from '@/components/scientist/ActionMenu'
 import EventBus from '@/eventBus'
+import mixin from '@/mixins/FileFormats.js'
 
 import { storage } from '@/stores/store.js'
 
@@ -585,6 +586,8 @@ export default {
     Tiptap,
     ActionMenu
   },
+
+  mixins: [mixin],
 
   props: {
     sequences: {

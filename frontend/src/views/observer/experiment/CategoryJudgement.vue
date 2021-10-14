@@ -122,7 +122,7 @@
             :src="originalImage"
           />
           <div v-if="originalType === 'video'" style="position: relative;">
-            <video loop controls style="width: 100%;" ref="videoPlayer" class="video-player">
+            <video loop controls autoplay style="width: 100%;" ref="videoPlayer" class="video-player">
               <source :src="originalImage" :type="'video/'+originalExtension">
               Your browser does not support the video tag.
             </video>
@@ -202,6 +202,7 @@ import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   name: 'category-experiment-view',
@@ -212,6 +213,8 @@ export default {
     ArtifactMarkerToolbar,
     ArtifactMarker
   },
+
+  mixins: [mixin],
 
   data () {
     return {
@@ -249,9 +252,6 @@ export default {
       originalType: '',
       originalExtension: '',
       leftImage: '',
-
-      videoFormats: ['m4p', 'webm', '3g2', '3gp', 'aaf', 'asf', 'avchd', 'avi', 'drc', 'flv', 'm2v', 'm3u8', 'm4v', 'mkv', 'mng', 'mov', 'mp2', 'mp4', 'mpe', 'mpeg', 'mpg', 'mpv', 'mxf', 'nsv', 'ogg', 'ogv', 'qt', 'rm', 'rmvb', 'roq', 'svi', 'vob', 'wmv', 'yuv'],
-      imageFormats: ['jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'png', 'gif', 'webp', 'tiff', 'tif', 'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'bmp', 'dib', 'heif', 'heic', 'ind', 'indd', 'indt', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2', 'svg', 'svgz', 'ai', 'eps', 'pdf'],
 
       startTime: null,
 
@@ -501,7 +501,7 @@ export default {
         extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.extension
       }
 
-      if (this.videoFormats.includes(imgLeft.extension)) {
+      if (this.isVideo(imgLeft.extension)) {
         // create new video element and start loading stimulus
         var tempVideo = document.createElement('video')
         tempVideo.src = imgLeft.path
@@ -576,22 +576,6 @@ export default {
 
         tempImage.addEventListener('load', loadNewImage, false)
       }
-    },
-
-    /**
-     * @param string
-     * @returns boolean
-     */
-    allowedImageFormat (extension) {
-      return this.imageFormats.includes(extension.toLowerCase())
-    },
-
-    /**
-     * @param string
-     * @returns Boolean
-     */
-    allowedVideoFormat (extension) {
-      return this.videoFormats.includes(extension.toLowerCase())
     },
 
     calculateLayout () {

@@ -153,10 +153,11 @@
             :src="originalImage"
           />
           <div v-if="originalType === 'video'" style="position: relative;">
-            <video :src="originalImage" loop controls style="width: 100%; display: block;" ref="videoPlayer" class="video-player">
-              <!-- <source :src="originalImage"> -->
-              <!-- Your browser does not support the video tag. -->
-            </video>
+            <video
+              :src="originalImage"
+              autoplay loop controls
+              style="display: block;"
+            ></video>
           </div>
         </div>
       </v-col>
@@ -225,6 +226,7 @@
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   name: 'paired-experiment-view',
@@ -235,6 +237,8 @@ export default {
     ArtifactMarker
   },
 
+  mixins: [mixin],
+
   data () {
     return {
       experiment: {
@@ -244,53 +248,36 @@ export default {
         background_colour: '808080',
         delay: 200
       },
+      experimentResult: null,
+      totalComparisons: 0,
 
       howToDialog: false,
+      abortDialog: false,
+      instructionDialog: false,
+      instructionText: 'Rate the images.',
+      finished: false,
 
-      stimuli: [],
-
-      selectedRadio: null,
-
+      stimuli: [], // whole stimuli queue
       index: 0,
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
-      totalComparisons: 0,
-      experimentResult: null,
 
-      isLoadLeft: false,
-      isLoadRight: false,
-
+      selectedRadio: null,
       selectedStimuli: null,
-
-      disableNextBtn: false,
-
-      cols: 6,
-
-      instructionText: 'Rate the images.',
-
-      abortDialog: false,
-      instructionDialog: false,
-      finished: false,
 
       originalImage: '',
       originalType: '',
-      originalExtension: '',
-      leftImage: '',
-      leftType: '', // change
-      rightImage: '',
-      rightType: '', // change
-      leftCanvas: '',
-      rightCanvas: '',
-      leftExtension: '',
-      rightExtension: '',
-      videoFormats: ['m4p', 'webm', '3g2', '3gp', 'aaf', 'asf', 'avchd', 'avi', 'drc', 'flv', 'm2v', 'm3u8', 'm4v', 'mkv', 'mng', 'mov', 'mp2', 'mp4', 'mpe', 'mpeg', 'mpg', 'mpv', 'mxf', 'nsv', 'ogg', 'ogv', 'qt', 'rm', 'rmvb', 'roq', 'svi', 'vob', 'wmv', 'yuv'],
-      imageFormats: ['jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'png', 'gif', 'webp', 'tiff', 'tif', 'psd', 'raw', 'arw', 'cr2', 'nrw', 'k25', 'bmp', 'dib', 'heif', 'heic', 'ind', 'indd', 'indt', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm', 'mj2', 'svg', 'svgz', 'ai', 'eps', 'pdf'],
 
+      activeDOMStimuli: [],
       currentStimuli: [],
       currentOriginal: [],
 
+      leftCanvas: '',
+      rightCanvas: '',
+
       timeElapsed: null,
+      disableNextBtn: false,
 
       shapes: {},
       drawingTool: ''
@@ -426,11 +413,9 @@ export default {
     },
 
     loadInstructions () {
-      this.leftImage     = ''
-      this.leftType      = ''
       this.originalImage = ''
-      this.rightImage    = ''
-      this.rightType     = ''
+      this.activeDOMStimuli = []
+      this.currentStimuli = []
 
       this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
       this.instructionDialog = true
@@ -447,6 +432,8 @@ export default {
     },
 
     async loadStimuli () {
+      var stimuliLoaded = 0
+
       // clear the hide image timer to reset and ensure the timer always starts from the correct time
       // or is wiped if we move to a new image set
       if (window.hideTimeout) {
@@ -477,7 +464,7 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
         this.currentOriginal = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0]
-        this.originalType = this.allowedImageFormat(this.currentOriginal.extension) ? 'image' : 'video'
+        this.originalType = this.isImage(this.currentOriginal.extension) ? 'image' : 'video'
 
         this.$nextTick(() => {
           this.originalImage = this.$UPLOADS_FOLDER + this.currentOriginal.path
@@ -499,22 +486,19 @@ export default {
       ]
 
       var showLoadedStimuli = () => {
-        let container = document.querySelector('.stimuli-container1')
-        let prevImage = document.querySelector('.stimuli-container1 .stimulus1')
-        if (prevImage) {
-          container.removeChild(prevImage)
-        }
-        container.appendChild(this.leftImage)
+        // append the new stimuli elements into the DOM, their hidden by CSS for now
+        this.activeDOMStimuli.forEach((stimuli, index) => {
+          let container   = document.querySelector('.stimuli-container' + (index + 1))
+          let prevStimuli = document.querySelector('.stimuli-container' + (index + 1) + ' .stimulus' + (index + 1))
+          if (prevStimuli) {
+            container.removeChild(prevStimuli)
+          }
+          container.appendChild(stimuli)
+        })
 
-        let container2 = document.querySelector('.stimuli-container2')
-        let prevImage2 = document.querySelector('.stimuli-container2 .stimulus2')
-        if (prevImage2) {
-          container2.removeChild(prevImage2)
-        }
-        container2.appendChild(this.rightImage)
-
+        // hide the previous stimuli and set a timer for showing (unhide) the new stimuli
         window.setTimeout(() => {
-          let newNode = document.querySelector('.stimuli-container1 .stimulus1')
+          let newNode  = document.querySelector('.stimuli-container1 .stimulus1')
           let newNode2 = document.querySelector('.stimuli-container2 .stimulus2')
           newNode.classList.remove('hide')
           newNode2.classList.remove('hide')
@@ -530,101 +514,59 @@ export default {
             }, hideTimer)
           }
 
-          // this.focusSelect()
           this.disableNextBtn = false
         }, this.experiment.delay)
       }
 
-      var stimuliLoaded = 0
-      // this.leftType  = this.allowedImageFormat(images[0].extension) ? 'image' : 'video'
-      // this.rightType = this.allowedVideoFormat(images[1].extension) ? 'video' : 'image'
-      // is the left image of type video or image?
-      if (this.allowedImageFormat(images[0].extension)) {
-        var tempImage = document.createElement('img')
-        tempImage.src = this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
-        // tempImage.style.width = '100%'
-        tempImage.classList.add('stimulus1')
-        tempImage.classList.add('hide')
-        this.leftImage = tempImage
+      images.forEach((image, i) => {
+        if (this.isImage(image.extension)) {
+          var tempImage = document.createElement('img')
+          tempImage.src = image.path
+          // tempImage.style.width = '100%'
+          tempImage.display = 'block'
+          tempImage.classList.add('stimulus' + (i + 1))
+          tempImage.classList.add('hide')
 
-        var loadNewImage = () => {
-          tempImage.removeEventListener('load', loadNewImage, false)
+          this.activeDOMStimuli[i] = tempImage
 
-          ++stimuliLoaded
-          if (stimuliLoaded === images.length) {
-            showLoadedStimuli()
+          var loadNewImage = () => {
+            tempImage.removeEventListener('load', loadNewImage, false)
+
+            ++stimuliLoaded
+            if (stimuliLoaded === images.length) {
+              showLoadedStimuli()
+            }
           }
-        }
 
-        tempImage.addEventListener('load', loadNewImage, false)
-      } else if (this.allowedVideoFormat(images[0].extension)) {
-        // create new video element and start loading stimulus
-        var tempVideo = document.createElement('video')
-        tempVideo.src = this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
-        tempVideo.autoplay = true // replace with video.play() for more control?
-        tempVideo.loop = true
-        tempVideo.controls = true
-        tempVideo.style.width = '100%'
-        tempVideo.classList.add('stimulus1')
-        tempVideo.classList.add('hide')
-        this.leftImage = tempVideo
+          tempImage.addEventListener('load', loadNewImage, false)
+        } else if (this.isVideo(image.extension)) {
+          // create new video element and start loading stimulus
+          var tempVideo = document.createElement('video')
+          tempVideo.src = image.path
+          tempVideo.autoplay = true // replace with video.play() for more control?
+          tempVideo.loop = true
+          tempVideo.controls = true
+          // tempVideo.style.width = '100%'
+          tempVideo.display = 'block'
+          tempVideo.classList.add('stimulus' + (i + 1))
+          tempVideo.classList.add('hide')
 
-        var loadNewVideo = () => {
-          // this event may be called multiple times on some browsers, therefore remove it
-          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+          this.activeDOMStimuli[i] = tempVideo
 
-          ++stimuliLoaded
-          if (stimuliLoaded === images.length) {
-            showLoadedStimuli()
+          var loadNewVideo = () => {
+            // this event may be called multiple times on some browsers, therefore remove it
+            tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+            ++stimuliLoaded
+            if (stimuliLoaded === images.length) {
+              showLoadedStimuli()
+            }
           }
+
+          tempVideo.load()
+          tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
         }
-
-        tempVideo.load()
-        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
-      }
-      // is the right stimulus of type video or image?
-      if (this.allowedImageFormat(images[1].extension)) {
-        var tempImage2 = document.createElement('img')
-        tempImage2.src = this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
-        tempImage2.classList.add('stimulus2')
-        tempImage2.classList.add('hide')
-        this.rightImage = tempImage2
-
-        let loadNewImage = () => {
-          tempImage2.removeEventListener('load', loadNewImage, false)
-
-          ++stimuliLoaded
-          if (stimuliLoaded === images.length) {
-            showLoadedStimuli()
-          }
-        }
-
-        tempImage2.addEventListener('load', loadNewImage, false)
-      } else if (this.allowedVideoFormat(images[1].extension)) {
-        // create new video element and start loading stimulus
-        var tempVideo2 = document.createElement('video')
-        tempVideo2.src = this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
-        tempVideo2.autoplay = true
-        tempVideo2.loop = true
-        tempVideo2.controls = true
-        tempVideo2.style.width = '100%'
-        tempVideo2.classList.add('stimulus2')
-        tempVideo2.classList.add('hide')
-        this.rightImage = tempVideo2
-
-        let loadNewVideo = () => {
-          // this event may be called multiple times on some browsers, therefore remove it
-          tempVideo2.removeEventListener('canplaythrough', loadNewVideo, false)
-
-          ++stimuliLoaded
-          if (stimuliLoaded === images.length) {
-            showLoadedStimuli()
-          }
-        }
-
-        tempVideo2.load()
-        tempVideo2.addEventListener('canplaythrough', loadNewVideo, false)
-      }
+      })
     },
 
     async saveAnswer () {
@@ -742,22 +684,6 @@ export default {
     },
 
     /**
-     * @param string
-     * @returns boolean
-     */
-    allowedImageFormat (extension) {
-      return this.imageFormats.includes(extension.toLowerCase())
-    },
-
-    /**
-     * @param string
-     * @returns Boolean
-     */
-    allowedVideoFormat (extension) {
-      return this.videoFormats.includes(extension.toLowerCase())
-    },
-
-    /**
      * Figure out how much height room is left on the page for the image panners to fill.
      */
     calculateLayout () {
@@ -788,10 +714,8 @@ export default {
       this.selectedRadio = null
       this.disableNextBtn = false
       this.originalImage = ''
-      this.leftImage = ''
-      this.leftType = ''
-      this.rightImage = ''
-      this.rightType = ''
+      this.activeDOMStimuli = []
+      this.currentStimuli = []
       this.wipeActiveStimuli()
 
       // remove this? we'll have make sure it's not needed other places

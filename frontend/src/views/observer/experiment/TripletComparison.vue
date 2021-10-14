@@ -89,7 +89,19 @@
         v-show="originalImage"
       >
         <div class="panzoom d-flex justify-center align-center">
-          <img id="picture-original" class="picture" :src="originalImage"/>
+          <img
+            v-if="originalType === 'image'"
+            id="picture-original"
+            class="picture"
+            :src="originalImage"
+          />
+          <div v-if="originalType === 'video'" style="position: relative;">
+            <video
+              :src="originalImage"
+              autoplay loop controls
+              style="display: block;"
+            ></video>
+          </div>
         </div>
       </v-col>
 
@@ -98,12 +110,15 @@
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
       >
         <div class="panzoom d-flex justify-center align-center">
-          <img
+          <!-- <img
             v-if="!experiment.artifact_marking"
             id="picture-left" class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             :src="imageLeft"
-          />
+          /> -->
+          <div v-if="!experiment.artifact_marking" class="stimuli-container1" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -119,12 +134,15 @@
         :style="'margin-right:' + experiment.stimuli_spacing + 'px'"
       >
         <div class="panzoom d-flex justify-center align-center">
-          <img
+          <!-- <img
             v-if="!experiment.artifact_marking"
             id="picture-middle" class="picture"
             :class="isLoadMiddle === false ? 'hide' : ''"
             :src="imageMiddle"
-          />
+          /> -->
+          <div v-if="!experiment.artifact_marking" class="stimuli-container2" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -137,12 +155,15 @@
 
       <v-col class="picture-container fill-height mt-2 mb-2">
         <div class="panzoom d-flex justify-center align-center">
-          <img
+          <!-- <img
             v-if="!experiment.artifact_marking"
             id="picture-right" class="picture"
             :class="isLoadRight === false ? 'hide' : ''"
             :src="imageRight"
-          />
+          /> -->
+          <div v-if="!experiment.artifact_marking" class="stimuli-container3" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -245,6 +266,7 @@ import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   name: 'triplet-experiment-view',
@@ -254,6 +276,8 @@ export default {
     ArtifactMarkerToolbar,
     ArtifactMarker
   },
+
+  mixins: [mixin],
 
   data () {
     return {
@@ -293,14 +317,15 @@ export default {
       finished: false,
 
       originalImage: '',
-      imageLeft: '',
-      imageMiddle: '',
-      imageRight: '',
+      originalType: '',
+
+      activeDOMStimuli: [],
+      currentStimuli: [],
+      currentOriginal: [],
 
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
-      loadNextImages: true,
       firstImages: 1,
 
       startTime: null,
@@ -493,11 +518,11 @@ export default {
     },
 
     loadInstructions () {
-      this.imageLeft = ''
-      this.imageMiddle = ''
-      this.imageRight = ''
       this.originalImage = ''
-      this.loadNextImages = true
+      this.originalType = ''
+      this.activeDOMStimuli = []
+      this.currentStimuli = []
+      this.currentOriginal = []
 
       this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
       this.instructionDialog = true
@@ -513,58 +538,96 @@ export default {
     },
 
     async loadStimuli () {
+      var stimuliLoaded = 0
+
       // clear the hide image timer to reset and ensure the timer always starts from the correct time
       // or is wiped if we move to a new image set
-      if (window.hideTimeoutLeft) {
-        window.clearTimeout(window.hideTimeoutLeft)
-        window.clearTimeout(window.hideTimeoutMiddle)
-        window.clearTimeout(window.hideTimeoutRight)
+      if (window.hideTimeout) {
+        window.clearTimeout(window.hideTimeout)
       }
 
       var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
-      // set original
+      this.currentStimuli  = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex]
+
+      // we use a object because sometimes the image is the same image but we still want
+      // to trigger watch in child components
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.currentStimuli[0].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
+        }
+        this.middleCanvas = {
+          image: this.currentStimuli[1].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
+        }
+        this.rightCanvas = {
+          image: this.currentStimuli[2].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[2].picture.path
+        }
+      }
+
+      // set original if it exists for the current experiment sequence
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.currentOriginal = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0]
+        this.originalType = this.isImage(this.currentOriginal.extension) ? 'image' : 'video'
+
+        this.$nextTick(() => {
+          this.originalImage = this.$UPLOADS_FOLDER + this.currentOriginal.path
+        })
       } else {
         this.originalImage = ''
       }
 
-      if (this.experiment.artifact_marking) {
-        this.leftCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
+      // prepare to load reproduction stimuli
+      var images = [
+        {
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path,
+          extension: this.currentStimuli[0].picture.extension
+        },
+        {
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path,
+          extension: this.currentStimuli[1].picture.extension
+        },
+        {
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[2].picture.path,
+          extension: this.currentStimuli[2].picture.extension
         }
+      ]
 
-        this.middleCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
-        }
+      var showLoadedStimuli = () => {
+        // append the new stimuli elements into the DOM, their hidden by CSS for now
+        this.activeDOMStimuli.forEach((stimuli, index) => {
+          let container   = document.querySelector('.stimuli-container' + (index + 1))
+          let prevStimuli = document.querySelector('.stimuli-container' + (index + 1) + ' .stimulus' + (index + 1))
+          if (prevStimuli) {
+            container.removeChild(prevStimuli)
+          }
+          container.appendChild(stimuli)
+        })
 
-        this.rightCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.path
-        }
-      }
-
-      const imgLeft = new Image()
-      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
-      imgLeft.onload = () => {
-        this.isLoadLeft = false
-        this.imageLeft = imgLeft.src
-
+        // hide the previous stimuli and set a timer for showing (unhide) the new stimuli
         window.setTimeout(() => {
-          this.isLoadLeft = true
-          // starts or overrides existing timer
+          let newNode  = document.querySelector('.stimuli-container1 .stimulus1')
+          let newNode2 = document.querySelector('.stimuli-container2 .stimulus2')
+          let newNode3 = document.querySelector('.stimuli-container3 .stimulus3')
+          newNode.classList.remove('hide')
+          newNode2.classList.remove('hide')
+          newNode3.classList.remove('hide')
+
           this.startTime = new Date()
 
+          // if the scientist have chosen to hide the stimuli after a certain time
+          // start a timeout to hide the images
           if (hideTimer) {
             window.hideTimeout = window.setTimeout(() => {
-              this.isLoadLeft = false
+              newNode.classList.add('hide')
+              newNode2.classList.add('hide')
+              newNode3.classList.add('hide')
             }, hideTimer)
           }
 
@@ -572,47 +635,55 @@ export default {
         }, this.experiment.delay)
       }
 
-      const imgMiddle = new Image()
-      imgMiddle.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
-      imgMiddle.onload = () => {
-        this.isLoadMiddle = false
-        this.imageMiddle = imgMiddle.src
+      images.forEach((image, i) => {
+        if (this.isImage(image.extension)) {
+          var tempImage = document.createElement('img')
+          tempImage.src = image.path
+          // tempImage.style.width = '100%'
+          tempImage.display = 'block'
+          tempImage.classList.add('stimulus' + (i + 1))
+          tempImage.classList.add('hide')
 
-        window.setTimeout(() => {
-          this.isLoadMiddle = true
-          // starts or overrides existing timer
+          this.activeDOMStimuli[i] = tempImage
 
-          this.startTime = new Date()
-          if (hideTimer) {
-            window.hideTimeout = window.setTimeout(() => {
-              this.isLoadMiddle = false
-            }, hideTimer)
+          var loadNewImage = () => {
+            tempImage.removeEventListener('load', loadNewImage, false)
+
+            ++stimuliLoaded
+            if (stimuliLoaded === images.length) {
+              showLoadedStimuli()
+            }
           }
 
-          this.disableNextBtn = false
-        }, this.experiment.delay)
-      }
+          tempImage.addEventListener('load', loadNewImage, false)
+        } else if (this.isVideo(image.extension)) {
+          // create new video element and start loading stimulus
+          var tempVideo = document.createElement('video')
+          tempVideo.src = image.path
+          tempVideo.autoplay = true // replace with video.play() for more control?
+          tempVideo.loop = true
+          tempVideo.controls = true
+          // tempVideo.style.width = '100%'
+          tempVideo.display = 'block'
+          tempVideo.classList.add('stimulus' + (i + 1))
+          tempVideo.classList.add('hide')
 
-      const imgRight = new Image()
-      imgRight.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][2].picture.path
-      imgRight.onload = () => {
-        this.isLoadRight = false
-        this.imageRight = imgRight.src
+          this.activeDOMStimuli[i] = tempVideo
 
-        window.setTimeout(() => {
-          this.isLoadRight = true
-          // starts or overrides existing timer
-          this.startTime = new Date()
+          var loadNewVideo = () => {
+            // this event may be called multiple times on some browsers, therefore remove it
+            tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
 
-          if (hideTimer) {
-            window.hideTimeout = window.setTimeout(() => {
-              this.isLoadRight = false
-            }, hideTimer)
+            ++stimuliLoaded
+            if (stimuliLoaded === images.length) {
+              showLoadedStimuli()
+            }
           }
 
-          this.disableNextBtn = false
-        }, this.experiment.delay)
-      }
+          tempVideo.load()
+          tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+        }
+      })
     },
 
     async getExperiment (experimentId) {
@@ -685,9 +756,10 @@ export default {
 
     onFinish () {
       this.originalImage = ''
-      this.imageLeft = ''
-      this.imageMiddle = ''
-      this.imageRight = ''
+      this.originalType = ''
+      this.activeDOMStimuli = []
+      this.currentStimuli = []
+      this.currentOriginal = []
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
