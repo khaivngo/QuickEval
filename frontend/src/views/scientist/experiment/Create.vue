@@ -177,7 +177,7 @@
                 ></v-checkbox>
                 <p class="caption pl-8 pt-0 mt-0">
                   Gives the observer access to a drawing pen, allowing them to mark artifacts or interesting objects
-                  in the images.
+                  in the images. Does not work with videos.
                 </p>
               </v-col>
               <!-- <v-col cols="auto" class="pa-0 mb-1">

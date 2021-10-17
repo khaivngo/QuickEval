@@ -93,8 +93,8 @@
             <v-card-text></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
-              <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
+              <v-btn color="default darken-1" text @click="abortDialog = false">No, Continue</v-btn>
+              <v-btn color="red darken-1" text @click="abort">Yes, Quit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -525,7 +525,6 @@ export default {
         if (this.isImage(image.extension)) {
           var tempImage = document.createElement('img')
           tempImage.src = image.path
-          // tempImage.style.width = '100%'
           tempImage.display = 'block'
           tempImage.classList.add('stimulus' + (i + 1))
           tempImage.classList.add('hide')
@@ -548,7 +547,7 @@ export default {
           tempVideo.src = image.path
           tempVideo.autoplay = true // replace with video.play() for more control?
           tempVideo.loop = true
-          tempVideo.controls = true
+          tempVideo.controls = false
           // tempVideo.style.width = '100%'
           tempVideo.display = 'block'
           tempVideo.classList.add('stimulus' + (i + 1))
@@ -582,14 +581,12 @@ export default {
         let selectedStimuli = null
         if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
         if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
+        // if (this.selectedRadio === 'left')  selectedStimuli = this.currentStimuli[0].picture
+        // if (this.selectedRadio === 'right') selectedStimuli = this.currentStimuli[1].picture
 
         // record the current time
         let endTime = new Date()
-        // // subtract the current time with the start time (when images completed loading)
-        // let timeDiff = endTime - this.startTime // in ms
-        // // strip the ms and get seconds
-        // timeDiff /= 1000
-        // let seconds = Math.round(timeDiff)
+        // subtract the current time with the start time (when images completed loading)
         let seconds = datetimeToSeconds(this.startTime, endTime)
 
         try {
@@ -663,30 +660,6 @@ export default {
       this.totalComparisons = stimuliCount
     },
 
-    playAllVideos (e) {
-      let playButton = e.target
-      var videos = document.querySelectorAll('video')
-      // console.log(this.$refs.videoPlayer)
-      // let video2 = this.$refs.videoPlayer2
-      console.log(videos)
-      for (const video of videos) {
-        if (video.paused === true) {
-          video.play()
-          // playButton.innerHTML = 'Pause'
-          playButton.style.opacity = 0
-        } else {
-          video.pause()
-          // playButton.innerHTML = 'Play'
-          playButton.style.opacity = 1
-        }
-      }
-
-      // var playButton = document.getElementById("play_button")
-      // // Event listener for the play/pause button
-      // playButton.addEventListener("click", function() {
-      // })
-    },
-
     /**
      * Figure out how much height room is left on the page for the image panners to fill.
      */
@@ -720,7 +693,7 @@ export default {
       this.originalImage = ''
       this.activeDOMStimuli = []
       this.currentStimuli = []
-      this.wipeActiveStimuli()
+      this.wipeActiveDOMStimuli()
 
       // remove this? we'll have make sure it's not needed other places
       // TODO: spinner while await
@@ -730,7 +703,7 @@ export default {
       this.finished = true
     },
 
-    wipeActiveStimuli () {
+    wipeActiveDOMStimuli () {
       let container = document.querySelector('.stimuli-container1')
       let prevImage = document.querySelector('.stimuli-container1 .stimulus1')
       if (prevImage) {
