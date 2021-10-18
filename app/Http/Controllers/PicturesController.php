@@ -13,7 +13,8 @@ use Illuminate\Http\Request;
 class PicturesController extends Controller
 {
     public function index ($id) {
-      return Picture::where('id', $id)->first();
+      return Picture::where('id', $id)
+        ->first();
     }
 
     // public function store (Request $request, PictureSet $picture_set) {
@@ -22,19 +23,29 @@ class PicturesController extends Controller
       //   return response()->json('Unauthorized', 401);
       // }
 
+      # TODO: auth is not accessible because this method call is outside middleware
+      // if (auth()->user()->role < 2) {
+      //   return response()->json('Unauthorized', 401);
+      // }
+
       $image_set_id = $request->imageSetId;
       $is_original = ((int)$request->original == 1) ? 1 : 0;
       $files = $request->file('files');
 
       $pics = [];
-      if (! empty($files)) {
-        foreach ($files as $file) {
-          $path = $file->store('public/' . $image_set_id); // store() will automatically generate a unique file name
+      if (!empty($files))
+      {
+        foreach ($files as $file)
+        {
+          # store() will automatically generate a unique file name
+          $path = $file->store('public/' . $image_set_id);
+          # add public/ add the begining of the path
           $path = str_replace('public/', "", $path);
+
           $picture = Picture::create([
-            // 'user_id' => auth()->user()->id,
             'name' => $file->getClientOriginalName(),
             'path' => $path,
+            'extension' => $file->extension(),
             'is_original' => $is_original,
             'picture_set_id' => $image_set_id
           ]);
@@ -42,7 +53,6 @@ class PicturesController extends Controller
         }
       }
 
-      // return response()->json($pics);
       return response($pics);
     }
 

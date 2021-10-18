@@ -55,8 +55,8 @@
             <v-card-text></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
-              <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
+              <v-btn color="default darken-1" text @click="abortDialog = false">No, Continue</v-btn>
+              <v-btn color="red darken-1" text @click="abort">Yes, Quit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -70,12 +70,19 @@
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
+            v-if="isImage(leftImage.split('.').pop())"
             id="picture-left"
             class="picture"
             :class="isLoadLeft === false ? 'hide' : ''"
             @load="loadedLeft"
             :src="leftImage"
           />
+          <video
+            v-if="isVideo(leftImage.split('.').pop())"
+            :src="leftImage"
+            autoplay loop controls
+            style="display: block;"
+          ></video>
         </div>
       </v-col>
 
@@ -86,22 +93,36 @@
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
+            v-if="isImage(originalImage.split('.').pop())"
             id="picture-original"
             class="picture"
             :src="originalImage"
           />
+          <video
+            v-if="isVideo(originalImage.split('.').pop())"
+            :src="originalImage"
+            autoplay loop controls
+            style="display: block;"
+          ></video>
         </div>
       </v-col>
 
       <v-col class="picture-container fill-height mt-2 mr-2">
         <div class="panzoom d-flex justify-center align-center">
           <img
+            v-if="isImage(rightImage.split('.').pop())"
             id="picture-right"
             class="picture"
             :class="isLoadRight === false ? 'hide' : ''"
             @load="loadedRight"
             :src="rightImage"
           />
+          <video
+            v-if="isVideo(rightImage.split('.').pop())"
+            :src="rightImage"
+            autoplay loop controls
+            style="display: block;"
+          ></video>
         </div>
       </v-col>
     </v-row>
@@ -195,6 +216,7 @@
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import draggable from 'vuedraggable'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
+import mixin from '@/mixins/FileFormats.js'
 
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -205,6 +227,8 @@ export default {
     FinishedDialog,
     draggable
   },
+
+  mixins: [mixin],
 
   data () {
     return {
@@ -245,7 +269,7 @@ export default {
       leftImage: '',
       rightImage: '',
 
-      timeElapsed: null,
+      startTime: null,
 
       totalComparisons: 0
     }
@@ -341,6 +365,8 @@ export default {
     },
 
     changeLeftPannerImage (label) {
+      if (this.isVideo(this.leftImage.split('.').pop())) this.isLoadLeft = true
+
       if (this.isLoadLeft !== false) {
         this.isLoadLeft = false
 
@@ -356,6 +382,8 @@ export default {
     },
 
     changeRightPannerImage (label) {
+      if (this.isVideo(this.rightImage.split('.').pop())) this.isLoadRight = true
+
       if (this.isLoadRight !== false) {
         this.isLoadRight = false
 
@@ -440,7 +468,7 @@ export default {
         // record the current time
         let endTime = new Date()
         // get the number of seconds between endTime and startTime
-        let seconds = datetimeToSeconds(this.timeElapsed, endTime)
+        let seconds = datetimeToSeconds(this.startTime, endTime)
 
         try {
           // let response =
@@ -527,7 +555,7 @@ export default {
       this.rightImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[1].picture.path
 
       // starts or overrides existing timer
-      this.timeElapsed = new Date()
+      this.startTime = new Date()
     },
 
     async getExperiment (experimentId) {
@@ -701,7 +729,7 @@ export default {
 }
 
 .rating::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
 
 .rating::-webkit-scrollbar-thumb {

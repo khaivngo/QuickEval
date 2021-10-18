@@ -93,8 +93,8 @@
             <v-card-text></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
-              <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
+              <v-btn color="default darken-1" text @click="abortDialog = false">No, Continue</v-btn>
+              <v-btn color="red darken-1" text @click="abort">Yes, Quit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -127,14 +127,9 @@
       >
         <!-- @click="selectedRadio = 'left'" -->
         <div class="panzoom d-flex justify-center align-center">
-          <img
-            v-if="!experiment.artifact_marking"
-            id="picture-left"
-            class="picture"
-            :class="isLoadLeft === false ? 'hide' : ''"
-            :src="leftImage"
-            tabindex="0"
-          />
+          <div v-if="!experiment.artifact_marking" class="stimuli-container1" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -152,10 +147,18 @@
       >
         <div class="panzoom d-flex justify-center align-center">
           <img
+            v-if="originalType === 'image'"
             id="picture-original"
             class="picture"
             :src="originalImage"
           />
+          <div v-if="originalType === 'video'" style="position: relative;">
+            <video
+              :src="originalImage"
+              autoplay loop controls
+              style="display: block;"
+            ></video>
+          </div>
         </div>
       </v-col>
 
@@ -165,14 +168,9 @@
       >
         <!-- @click="selectedRadio = 'right'" -->
         <div class="panzoom d-flex justify-center align-center">
-          <img
-            v-if="!experiment.artifact_marking"
-            id="picture-right"
-            class="picture"
-            :class="isLoadRight === false ? 'hide' : ''"
-            :src="rightImage"
-            tabindex="0"
-          />
+          <div v-if="!experiment.artifact_marking" class="stimuli-container2" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -228,6 +226,8 @@
 import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
+import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   name: 'paired-experiment-view',
@@ -238,6 +238,8 @@ export default {
     ArtifactMarker
   },
 
+  mixins: [mixin],
+
   data () {
     return {
       experiment: {
@@ -247,42 +249,36 @@ export default {
         background_colour: '808080',
         delay: 200
       },
+      experimentResult: null,
+      totalComparisons: 0,
 
       howToDialog: false,
+      abortDialog: false,
+      instructionDialog: false,
+      instructionText: 'Rate the images.',
+      finished: false,
 
-      stimuli: [],
-
-      selectedRadio: null,
-
+      stimuli: [], // whole stimuli queue
       index: 0,
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
-      totalComparisons: 0,
-      experimentResult: null,
 
-      isLoadLeft: false,
-      isLoadRight: false,
-
+      selectedRadio: null,
       selectedStimuli: null,
 
-      disableNextBtn: false,
-
-      cols: 6,
-
-      instructionText: 'Rate the images.',
-
-      abortDialog: false,
-      instructionDialog: false,
-      finished: false,
-
       originalImage: '',
-      leftImage: '',
-      rightImage: '',
+      originalType: '',
+
+      activeDOMStimuli: [],
+      currentStimuli: [],
+      currentOriginal: [],
+
       leftCanvas: '',
       rightCanvas: '',
 
-      timeElapsed: null,
+      startTime: null,
+      disableNextBtn: false,
 
       shapes: {},
       drawingTool: ''
@@ -319,47 +315,28 @@ export default {
       } else {
         this.continueExistingExperiment()
       }
-
-      // create some hotkeys
-      window.addEventListener('keydown', (e) => {
-        // arrow left
-        if (e.keyCode === 37) {
-          if (this.disableNextBtn === false) {
-            this.selectedRadio = 'left'
-          }
-        }
-
-        // arrow right
-        if (e.keyCode === 39) {
-          if (this.disableNextBtn === false) {
-            this.selectedRadio = 'right'
-          }
-        }
-
-        // esc
-        if (e.keyCode === 27) {
-          this.abort()
-        }
-      })
     })
+  },
+
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
+    // window.onkeydown = null
   },
 
   watch: {
     originalImage () {
       this.calculateLayout()
     },
-    selectedRadio (newVal, oldVal) {
+    selectedRadio (newVal) {
       if (newVal !== null && ['left', 'right'].includes(newVal)) {
         this.saveAnswer()
       }
     }
   },
 
-  destroyed () {
-    // window.removeEventListener('keydown')
-  },
-
   methods: {
+    datetimeToSeconds: datetimeToSeconds,
+
     startNewExperiment () {
       this.$axios.get(`/experiment/${this.experiment.id}/start`).then((payload) => {
         if (payload) {
@@ -370,13 +347,11 @@ export default {
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
 
           this.countTotalComparisons()
-
           this.resetProgress()
           this.getProgress()
-
           this.nextStep()
-
           this.calculateLayout()
+          this.setKeyboardShortcuts()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -390,6 +365,29 @@ export default {
       this.countTotalComparisons()
       this.nextStep()
       this.calculateLayout()
+      this.setKeyboardShortcuts()
+    },
+
+    setKeyboardShortcuts () {
+      window.addEventListener('keydown', this.onKeyPress)
+    },
+
+    onKeyPress (e) {
+      switch (e.code) {
+        case 'ArrowLeft':
+        case 'KeyA':
+          if (this.disableNextBtn === false) this.selectedRadio = 'left'
+          break
+
+        case 'ArrowRight':
+        case 'KeyD':
+          if (this.disableNextBtn === false) this.selectedRadio = 'right'
+          break
+
+        case 'Escape':
+          this.abortDialog = true
+          break
+      }
     },
 
     closeAndNext () {
@@ -418,9 +416,9 @@ export default {
     },
 
     loadInstructions () {
-      this.leftImage     = ''
       this.originalImage = ''
-      this.rightImage    = ''
+      this.activeDOMStimuli = []
+      this.currentStimuli = []
 
       this.instructionText = this.stimuli[this.typeIndex][this.sequenceIndex].instruction.description
       this.instructionDialog = true
@@ -437,6 +435,8 @@ export default {
     },
 
     async loadStimuli () {
+      var stimuliLoaded = 0
+
       // clear the hide image timer to reset and ensure the timer always starts from the correct time
       // or is wiped if we move to a new image set
       if (window.hideTimeout) {
@@ -445,75 +445,130 @@ export default {
 
       var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
+      this.currentStimuli  = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex]
+
+      // we use a object because sometimes the image is the same image but we still want
+      // to trigger watch in child components
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.currentStimuli[0].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path
+        }
+        this.rightCanvas = {
+          image: this.currentStimuli[1].picture,
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path
+        }
+      }
+
       // set original if it exists for the current experiment sequence
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.currentOriginal = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0]
+        this.originalType = this.isImage(this.currentOriginal.extension) ? 'image' : 'video'
+
+        this.$nextTick(() => {
+          this.originalImage = this.$UPLOADS_FOLDER + this.currentOriginal.path
+        })
       } else {
         this.originalImage = ''
       }
 
-      // prepare to load reproduction images
+      // prepare to load reproduction stimuli
       var images = [
-        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path },
-        { img: new Image(), path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path }
+        {
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[0].picture.path,
+          extension: this.currentStimuli[0].picture.extension
+        },
+        {
+          path: this.$UPLOADS_FOLDER + this.currentStimuli[1].picture.path,
+          extension: this.currentStimuli[1].picture.extension
+        }
       ]
 
-      // we use a object because sometimes the image is the same image but we still want
-      // to trigger watch in child components
-      if (this.experiment.artifact_marking) {
-        this.leftCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture.path
-        }
-        this.rightCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture.path
-        }
-      }
-
-      var imageCount = images.length
-      var imagesLoaded = 0
-      // attach onload events to every reproduction image
-      for (var i = 0; i < imageCount; i++) {
-        images[i].img.src = images[i].path
-        images[i].img.onload = () => {
-          imagesLoaded++
-          // when all images loaded
-          if (imagesLoaded === imageCount) {
-            // hide images
-            this.isLoadLeft = false
-            this.isLoadRight = false
-            // this.leftImage = ''
-            // this.rightImage = ''
-            // then set source
-            this.leftImage = images[0].img.src
-            this.rightImage = images[1].img.src
-
-            // show a blank screen inbetween image switching,
-            // if scientist set up delay
-            window.setTimeout(() => {
-              // show left and right image
-              this.isLoadLeft = true
-              this.isLoadRight = true
-
-              if (hideTimer) {
-                window.hideTimeout = window.setTimeout(() => {
-                  this.isLoadLeft = false
-                  this.isLoadRight = false
-                }, hideTimer)
-              }
-
-              // starts or overrides existing timer
-              this.timeElapsed = new Date()
-              this.disableNextBtn = false
-            }, this.experiment.delay)
+      var showLoadedStimuli = () => {
+        // append the new stimuli elements into the DOM, their hidden by CSS for now
+        this.activeDOMStimuli.forEach((stimuli, index) => {
+          let container   = document.querySelector('.stimuli-container' + (index + 1))
+          let prevStimuli = document.querySelector('.stimuli-container' + (index + 1) + ' .stimulus' + (index + 1))
+          if (prevStimuli) {
+            container.removeChild(prevStimuli)
           }
-        }
+          container.appendChild(stimuli)
+        })
+
+        // hide the previous stimuli and set a timer for showing (unhide) the new stimuli
+        window.setTimeout(() => {
+          let newNode1  = document.querySelector('.stimuli-container1 .stimulus1')
+          let newNode2 = document.querySelector('.stimuli-container2 .stimulus2')
+          newNode1.classList.remove('hide')
+          newNode2.classList.remove('hide')
+
+          this.startTime = new Date()
+
+          // if the scientist have chosen to hide the stimuli after a certain time
+          // start a timeout to hide the images
+          if (hideTimer) {
+            window.hideTimeout = window.setTimeout(() => {
+              newNode1.classList.add('hide')
+              newNode2.classList.add('hide')
+            }, hideTimer)
+          }
+
+          this.disableNextBtn = false
+        }, this.experiment.delay)
       }
+
+      images.forEach((image, i) => {
+        if (this.isImage(image.extension)) {
+          var tempImage = document.createElement('img')
+          tempImage.src = image.path
+          tempImage.display = 'block'
+          tempImage.classList.add('stimulus' + (i + 1))
+          tempImage.classList.add('hide')
+
+          this.activeDOMStimuli[i] = tempImage
+
+          var loadNewImage = () => {
+            tempImage.removeEventListener('load', loadNewImage, false)
+
+            ++stimuliLoaded
+            if (stimuliLoaded === images.length) {
+              showLoadedStimuli()
+            }
+          }
+
+          tempImage.addEventListener('load', loadNewImage, false)
+        } else if (this.isVideo(image.extension)) {
+          // create new video element and start loading stimulus
+          var tempVideo = document.createElement('video')
+          tempVideo.src = image.path
+          tempVideo.autoplay = true // replace with video.play() for more control?
+          tempVideo.loop = true
+          tempVideo.controls = false
+          // tempVideo.style.width = '100%'
+          tempVideo.display = 'block'
+          tempVideo.classList.add('stimulus' + (i + 1))
+          tempVideo.classList.add('hide')
+
+          this.activeDOMStimuli[i] = tempVideo
+
+          var loadNewVideo = () => {
+            // this event may be called multiple times on some browsers, therefore remove it
+            tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+            ++stimuliLoaded
+            if (stimuliLoaded === images.length) {
+              showLoadedStimuli()
+            }
+          }
+
+          tempVideo.load()
+          tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+        }
+      })
     },
 
     async saveAnswer () {
@@ -526,14 +581,13 @@ export default {
         let selectedStimuli = null
         if (this.selectedRadio === 'left')  selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][0].picture
         if (this.selectedRadio === 'right') selectedStimuli = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture
+        // if (this.selectedRadio === 'left')  selectedStimuli = this.currentStimuli[0].picture
+        // if (this.selectedRadio === 'right') selectedStimuli = this.currentStimuli[1].picture
 
         // record the current time
         let endTime = new Date()
         // subtract the current time with the start time (when images completed loading)
-        let timeDiff = endTime - this.timeElapsed // in ms
-        // strip the ms and get seconds
-        timeDiff /= 1000
-        let seconds = Math.round(timeDiff)
+        let seconds = datetimeToSeconds(this.startTime, endTime)
 
         try {
           await this.store(
@@ -542,7 +596,6 @@ export default {
             this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex][1].picture,
             seconds
           )
-          // let response =
 
           this.selectedRadio = null
           this.shapes = {}
@@ -638,9 +691,11 @@ export default {
       this.selectedRadio = null
       this.disableNextBtn = false
       this.originalImage = ''
-      this.leftImage = ''
-      this.rightImage = ''
+      this.activeDOMStimuli = []
+      this.currentStimuli = []
+      this.wipeActiveDOMStimuli()
 
+      // remove this? we'll have make sure it's not needed other places
       // TODO: spinner while await
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -648,8 +703,21 @@ export default {
       this.finished = true
     },
 
+    wipeActiveDOMStimuli () {
+      let container = document.querySelector('.stimuli-container1')
+      let prevImage = document.querySelector('.stimuli-container1 .stimulus1')
+      if (prevImage) {
+        container.removeChild(prevImage)
+      }
+
+      let container2 = document.querySelector('.stimuli-container2')
+      let prevImage2 = document.querySelector('.stimuli-container2 .stimulus2')
+      if (prevImage2) {
+        container2.removeChild(prevImage2)
+      }
+    },
+
     abort () {
-      this.abortDialog = true
       this.removeProgress()
       this.$router.push('/observer')
     },

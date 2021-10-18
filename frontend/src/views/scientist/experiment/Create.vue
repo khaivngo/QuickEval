@@ -85,7 +85,7 @@
                   </template>
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Describe what the experiment is all about.<br>
-                    This description will be available to the observers.
+                    This description will be available to the observers before they start the experiment.
                   </div>
                 </v-tooltip>
               </v-col>
@@ -177,7 +177,7 @@
                 ></v-checkbox>
                 <p class="caption pl-8 pt-0 mt-0">
                   Gives the observer access to a drawing pen, allowing them to mark artifacts or interesting objects
-                  in the images.
+                  in the images. Does not work with videos.
                 </p>
               </v-col>
               <!-- <v-col cols="auto" class="pa-0 mb-1">
@@ -335,7 +335,7 @@
             <template v-else>
               <h2 class="mb-1">{{ showCategories.title }}</h2>
               <p class="body-1">
-                Add the categories the observer use to rate the images.
+                Add the categories the observer use to rate the stimuli.
               </p>
               <Categories
                 :categories="experiment.categories"

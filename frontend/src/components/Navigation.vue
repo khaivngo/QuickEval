@@ -8,7 +8,7 @@
 
     <v-toolbar-title class="pr-12">QuickEval</v-toolbar-title>
 
-    <v-btn v-if="!user.role" to="/" dark text class="mr-2 text-none">
+    <v-btn v-if="!user.role || user.role < 2" to="/" dark text class="mr-2 text-none">
       <span class="mr-2 font-weight-regular">
         Home
       </span>
@@ -65,6 +65,7 @@
       >
         <v-list-item-group color="primary">
           <v-list-item
+            v-if="user.role > 1"
             @click="$router.push('/user/profile')"
           >
             <v-list-item-icon class="mr-4">
@@ -78,6 +79,7 @@
           </v-list-item>
 
           <v-list-item
+            v-if="user.role > 1"
             @click="logout"
           >
             <v-list-item-icon class="mr-4">

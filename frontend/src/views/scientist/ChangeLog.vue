@@ -6,6 +6,33 @@
       </h2>
 
       <h2 class="text-h6 mt-12 mb-4 first font-weight-bold">
+        17. sep. 2021
+      </h2>
+      <v-simple-table>
+        <template v-slot:default>
+          <tbody>
+            <tr>
+              <td>
+                <v-chip outlined small color="success" class="qe-chip">added</v-chip>
+              </td>
+              <td class="pt-3 pb-3">
+                Video support. Things called "image" has been renamed to "stimuli".
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <v-chip outlined small color="primary" class="qe-chip">changed</v-chip>
+              </td>
+              <td class="pt-3 pb-3">
+                Magnitude estimation: If the slider has a high range, skip every 2 or 4 labels to avoid overlapping
+                labels.
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+
+      <h2 class="text-h6 mt-12 mb-4 first font-weight-bold">
         7. sep. 2021
       </h2>
       <v-simple-table>

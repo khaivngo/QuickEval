@@ -13,7 +13,10 @@
       Show a login modal if not logged in. Unless we're on the frontpage (already has login form)
       or reading the privacy policy.
     -->
-    <LoginModal :open="showAuth" v-if="$route.path != '/' && $route.path != '/privacy' && $route.path != '/cookies'"/>
+    <LoginModal
+      v-if="$route.path != '/' && $route.path != '/privacy' && $route.path != '/cookies'"
+      :open="showAuth"
+    />
 
     <CookiesConsent/>
 

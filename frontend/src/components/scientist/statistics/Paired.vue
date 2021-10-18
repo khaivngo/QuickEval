@@ -73,8 +73,8 @@
                       </v-btn>
                     </template>
                     <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                      Images on the y-axis are the images picked.<br><br>
-                      For example: if the value of image x and image y is 2,<br>the image on the y axis is the one picked 2 times.
+                      Stimuli on the y-axis are the stimuli picked.<br><br>
+                      For example: if the value of stimuli x and stimuli y is 2,<br>the stimuli on the y axis is the one picked 2 times.
                     </div>
                   </v-tooltip>
                 </th>

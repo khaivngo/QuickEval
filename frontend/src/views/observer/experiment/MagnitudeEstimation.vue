@@ -61,8 +61,8 @@
             <v-card-text></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
-              <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
+              <v-btn color="default darken-1" text @click="abortDialog = false">No, Continue</v-btn>
+              <v-btn color="red darken-1" text @click="abort">Yes, Quit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -100,13 +100,9 @@
         class="picture-container fill-height mt-0 mr-2 mb-0 pb-2"
       >
         <div class="panzoom d-flex justify-center align-center">
-          <img
-            v-if="!experiment.artifact_marking"
-            id="picture-left"
-            class="picture"
-            :class="isLoadLeft === false ? 'hide' : ''"
-            :src="leftImage"
-          />
+          <div v-if="!experiment.artifact_marking" class="stimuli-container" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -119,7 +115,18 @@
 
       <v-col v-show="originalImage" class="picture-container fill-height mt-0 ml-2 mb-0 pb-2">
         <div class="panzoom d-flex justify-center align-center stretch">
-          <img id="picture-original" class="picture" :src="originalImage"/>
+          <img
+            v-if="originalType === 'image'"
+            id="picture-original"
+            class="picture"
+            :src="originalImage"
+          />
+          <div v-if="originalType === 'video'" style="position: relative;">
+            <video loop controls autoplay style="width: 100%;" ref="videoPlayer" class="video-player">
+              <source :src="originalImage" :type="'video/'+originalExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -190,6 +197,7 @@ import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   name: 'magnitude-experiment-view',
@@ -200,6 +208,8 @@ export default {
     ArtifactMarkerToolbar,
     ArtifactMarker
   },
+
+  mixins: [mixin],
 
   data () {
     return {
@@ -242,7 +252,11 @@ export default {
       finished: false,
 
       originalImage: '',
+      originalType: '',
+      originalExtension: '',
       leftImage: '',
+      leftType: '',
+      leftExtension: '',
 
       startTime: null,
 
@@ -294,6 +308,10 @@ export default {
     })
   },
 
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
+  },
+
   watch: {
     originalImage () {
       this.calculateLayout()
@@ -305,7 +323,7 @@ export default {
 
     closeAndNext () {
       this.instructionDialog = false
-      // this.focusSelect()
+      this.focusSlider()
       this.nextStep()
     },
 
@@ -324,7 +342,7 @@ export default {
       this.nextStep()
       this.calculateLayout()
       this.setKeyboardShortcuts()
-      // this.focusSelect()
+      this.focusSlider()
     },
 
     startNewExperiment () {
@@ -343,7 +361,7 @@ export default {
           this.nextStep()
           this.calculateLayout()
           this.setKeyboardShortcuts()
-          // this.focusSelect()
+          this.focusSlider()
         } else {
           alert('Something went wrong. Could not start the experiment.')
         }
@@ -414,8 +432,8 @@ export default {
           }
 
           this.saveProgress()
-          // this.focusSelect()
           this.nextStep()
+          this.focusSlider()
         } catch (err) {
           alert(`Could not save your answer. Check your internet connection and please try again. If the problem persist please contact the researcher.`)
           this.disableNextBtn = false
@@ -433,7 +451,7 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
-      // this.focusSelect()
+      this.focusSelect()
 
       ++this.sequenceIndex
       // move on to the next experiment sequence
@@ -460,7 +478,18 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
+        if (this.isImage(this.originalExtension)) {
+          this.originalType = 'image'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        } else {
+          this.originalType = 'video'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        }
       } else {
         this.originalImage = ''
       }
@@ -474,25 +503,87 @@ export default {
         }
       }
 
-      var imgLeft = new Image()
-      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
-      imgLeft.onload = () => {
-        this.isLoadLeft = false
-        this.leftImage = imgLeft.src
+      var imgLeft = {
+        img: new Image(),
+        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path,
+        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.extension
+      }
 
-        window.setTimeout(() => {
-          this.isLoadLeft = true
-          this.startTime = new Date()
+      if (this.isVideo(imgLeft.extension)) {
+        // create new video element and start loading stimulus
+        var tempVideo = document.createElement('video')
+        tempVideo.src = imgLeft.path
+        tempVideo.autoplay = true
+        tempVideo.loop = true
+        tempVideo.controls = true
+        tempVideo.style.width = '100%'
+        // tempVideo.style.pointerEvents = 'none'
+        tempVideo.classList.add('stimulus')
+        tempVideo.classList.add('hide')
 
-          if (hideTimer) {
-            window.hideTimeout = window.setTimeout(() => {
-              this.isLoadLeft = false
-            }, hideTimer)
+        var loadNewVideo = () => {
+          // this event may be called multiple times on some browsers, therefore remove it
+          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevVideo = document.querySelector('.stimuli-container .stimulus')
+          if (prevVideo) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
           }
+          container.appendChild(tempVideo)
 
-          // this.focusSelect()
-          this.disableNextBtn = false
-        }, this.experiment.delay)
+          window.setTimeout(() => {
+            tempVideo.classList.remove('hide')
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                tempVideo.classList.add('hide')
+              }, hideTimer)
+            }
+            tempVideo.play()
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempVideo.load()
+        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+      } else {
+        var tempImage = document.createElement('img')
+        tempImage.src = imgLeft.path
+        // tempImage.style.width = '100%'
+        tempImage.classList.add('stimulus')
+        tempImage.classList.add('hide')
+
+        var loadNewImage = () => {
+          tempImage.removeEventListener('load', loadNewImage, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevImage = document.querySelector('.stimuli-container .stimulus')
+          if (prevImage) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
+          }
+          container.appendChild(tempImage)
+
+          window.setTimeout(() => {
+            tempImage.classList.remove('hide')
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                tempImage.classList.add('hide')
+              }, hideTimer)
+            }
+
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempImage.addEventListener('load', loadNewImage, false)
       }
     },
 
@@ -509,28 +600,33 @@ export default {
       })
     },
 
+    focusSlider () {
+      window.setTimeout(() => {
+        // console.log(this.$refs.slider)
+        // this.$refs.slider.isFocused = true
+        // this.$refs.slider.$el.focus()
+        // this.$refs.slider.$el.children[0].children[0].children[0].focus()
+        // this.$nextTick(() => this.$refs.slider.$el.children[0].children[0].children[0].focus())
+      }, 400)
+    },
+
     setKeyboardShortcuts () {
-      window.addEventListener('keydown', (e) => {
-        // enter / arrow right / space
-        if (e.keyCode === 13) { // e.keyCode === 39 || e.keyCode === 32
+      window.addEventListener('keydown', this.onKeyPress)
+    },
+
+    onKeyPress (e) {
+      switch (e.code) {
+        case 'Enter':
+        case 'Space':
           if (this.selectedMagnitude !== null && this.disableNextBtn === false) {
-            // this.nextStep()
             this.saveAnswer()
           }
-        }
+          break
 
-        if (e.keyCode === 27) { // esc
-          this.abort()
-        }
-
-        // down or up arrow
-        // if (e.keyCode === 40 || e.keyCode === 38) {
-        //   console.log(this.$refs.select)
-        //   // if () {
-        //   // this.$refs.select.activateMenu()
-        //   // }
-        // }
-      })
+        case 'Escape':
+          this.abortDialog = true
+          break
+      }
     },
 
     createTickLabels () {
@@ -572,7 +668,7 @@ export default {
     },
 
     updateActiveLabel () {
-      console.log('changed')
+      // console.log('changed')
       // console.log(this.selectedMagnitude)
 
       // const ticksLabels = document.querySelectorAll('.v-slider__ticks-container .v-slider__tick-label')
@@ -627,16 +723,11 @@ export default {
       return this.$axios.post('/result-magnitude-estimations', data)
     },
 
-    // focusSelect () {
-    //   window.setTimeout(() => {
-    //     this.$refs.select.focus()
-    //   }, 400)
-    // },
-
     onFinish () {
       this.originalImage = ''
       this.leftImage = ''
       this.disableNextBtn = false
+      this.wipeActiveStimuli()
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -644,9 +735,16 @@ export default {
       this.finished = true
     },
 
+    wipeActiveStimuli () {
+      const container = document.querySelector('.stimuli-container')
+      const active = document.querySelector('.stimuli-container .stimulus')
+      if (active) {
+        container.removeChild(active)
+      }
+    },
+
     abort () {
       this.removeProgress()
-      this.abortDialog = true
       this.$router.push('/observer')
     },
 

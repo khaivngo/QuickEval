@@ -61,8 +61,8 @@
             <v-card-text></v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="default darken-1" text @click="abortDialog = false">Continue</v-btn>
-              <v-btn color="red darken-1" text @click="abort">Quit</v-btn>
+              <v-btn color="default darken-1" text @click="abortDialog = false">No, Continue</v-btn>
+              <v-btn color="red darken-1" text @click="abort">Yes, Quit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -100,13 +100,9 @@
         class="picture-container fill-height mt-0 mr-2 mb-0 pb-2"
       >
         <div class="panzoom d-flex justify-center align-center">
-          <img
-            v-if="!experiment.artifact_marking"
-            id="picture-left"
-            class="picture"
-            :class="isLoadLeft === false ? 'hide' : ''"
-            :src="leftImage"
-          />
+          <div v-if="!experiment.artifact_marking" class="stimuli-container" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
           <div v-if="experiment.artifact_marking">
             <ArtifactMarker
               @updated="drawn"
@@ -119,7 +115,18 @@
 
       <v-col v-show="originalImage" class="picture-container fill-height mt-0 ml-2 mb-0 pb-2">
         <div class="panzoom d-flex justify-center align-center stretch">
-          <img id="picture-original" class="picture" :src="originalImage"/>
+          <img
+            v-if="originalType === 'image'"
+            id="picture-original"
+            class="picture"
+            :src="originalImage"
+          />
+          <div v-if="originalType === 'video'" style="position: relative;">
+            <video loop controls autoplay style="width: 100%;" ref="videoPlayer" class="video-player">
+              <source :src="originalImage" :type="'video/'+originalExtension">
+              Your browser does not support the video tag.
+            </video>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -144,24 +151,7 @@
                 outlined
                 class="ma-0 pt-0"
                 background-color="#bbb"
-              >
-                <!-- <template slot="label">
-                  <div class="d-flex align-center">
-                    Click or select with
-                    <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="15"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        d="m 2.75,24 h 18.5 C 22.767,24 24,22.767 24,21.25 V 2.75 C 24,1.233 22.767,0 21.25,0 H 2.75 C 1.233,0 0,1.233 0,2.75 v 18.5 C 0,22.767 1.233,24 2.75,24 Z M 4.56,11.957 C 4.678,11.68 4.95,11.5 5.25,11.5 H 9 V 4.75 C 9,4.336 9.336,4 9.75,4 h 4.5 C 14.664,4 15,4.336 15,4.75 v 6.75 h 3.75 c 0.301,0 0.573,0.18 0.69,0.457 0.118,0.276 0.058,0.597 -0.15,0.813 l -6.75,7 c -0.283,0.293 -0.797,0.293 -1.08,0 l -6.75,-7 C 4.501,12.554 4.442,12.233 4.56,11.957 Z"
-                        id="path2"
-                      />
-                    </svg>
-                  </div>
-                </template> -->
-              </v-select>
+              ></v-select>
 
               <div class="d-flex align-center" style="position: absolute; top: 13px; right: 50px;">
                 <svg class="ml-2 mr-1" enable-background="new 0 0 24 24" height="15" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m21.25 0h-18.5c-1.517 0-2.75 1.233-2.75 2.75v18.5c0 1.517 1.233 2.75 2.75 2.75h18.5c1.517 0 2.75-1.233 2.75-2.75v-18.5c0-1.517-1.233-2.75-2.75-2.75zm-1.81 12.043c-.118.277-.39.457-.69.457h-3.75v6.75c0 .414-.336.75-.75.75h-4.5c-.414 0-.75-.336-.75-.75v-6.75h-3.75c-.301 0-.573-.18-.69-.457-.118-.276-.058-.597.15-.813l6.75-7c.283-.293.797-.293 1.08 0l6.75 7c.209.216.268.537.15.813z"/></svg>
@@ -192,44 +182,6 @@
                     <path style="fill:#333;" :style="(selectedCategory === null) ? 'fill: #535353;' : ''" d="M25,2H9C8.449,2,8,2.449,8,3c0,0,0,7,0,9s-2,2-2,2H1c-0.551,0-1,0.449-1,1v8c0,0.551,0.449,1,1,1h24   c0.551,0,1-0.449,1-1V3C26,2.449,25.551,2,25,2z M22,14c0,1.436-1.336,4-4,4h-3.586l1.793,1.793c0.391,0.391,0.391,1.023,0,1.414   C16.012,21.402,15.756,21.5,15.5,21.5s-0.512-0.098-0.707-0.293l-3.5-3.5c-0.391-0.391-0.391-1.023,0-1.414l3.5-3.5   c0.391-0.391,1.023-0.391,1.414,0s0.391,1.023,0,1.414L14.414,16H18c1.398,0,2-1.518,2-2v-2c0-0.553,0.447-1,1-1s1,0.447,1,1V14z"/>
                   </g>
                 </svg>
-                <!-- <svg
-                   xmlns="http://www.w3.org/2000/svg"
-                   style="opacity:0.9;"
-                   height="22.944914"
-                   viewBox="0 0 41.381356 28.983049"
-                   version="1.1"
-                   id="svg4"
-                   width="41.381355"
-                >
-                  <rect
-                     style="opacity:1;fill:#333;fill-opacity:1;stroke:none;stroke-width:1.58024037;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.01005028"
-                     id="rect20"
-                     width="52.271187"
-                     height="28.983049"
-                     x="-5.2436438"
-                     y="0"
-                     rx="4.0677967"
-                     ry="4.0677967"
-                  />
-                  <text
-                     xml:space="preserve"
-                     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;line-height:1.25;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';letter-spacing:0px;word-spacing:0px;fill:#808080;fill-opacity:1;stroke:none;stroke-width:1.49189663"
-                     x="-0.50927722"
-                     y="19.566446"
-                     id="text24"
-                  >
-                    <tspan
-                       id="tspan22"
-                       x="-0.50927722"
-                       y="19.566446"
-                       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.91356468px;font-family:Poppins;-inkscape-font-specification:'Poppins Bold';fill:#808080;stroke-width:1.49189663"
-                    >
-                      Enter
-                    </tspan>
-                  </text>
-                </svg> -->
-
-                <!-- <v-icon>mdi-chevron-right</v-icon> -->
               </v-btn>
             </div>
           </div>
@@ -250,6 +202,7 @@ import FinishedDialog from '@/components/observer/FinishedExperimentDialog'
 import ArtifactMarkerToolbar from '@/components/ArtifactMarkerToolbar'
 import ArtifactMarker from '@/components/ArtifactMarker'
 import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   name: 'category-experiment-view',
@@ -260,6 +213,8 @@ export default {
     ArtifactMarkerToolbar,
     ArtifactMarker
   },
+
+  mixins: [mixin],
 
   data () {
     return {
@@ -294,6 +249,8 @@ export default {
       finished: false,
 
       originalImage: '',
+      originalType: '',
+      originalExtension: '',
       leftImage: '',
 
       startTime: null,
@@ -337,6 +294,10 @@ export default {
         this.continueExistingExperiment()
       }
     })
+  },
+
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyPress)
   },
 
   watch: {
@@ -507,7 +468,18 @@ export default {
         this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
         this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
-        this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+        this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
+        if (this.isImage(this.originalExtension)) {
+          this.originalType = 'image'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        } else {
+          this.originalType = 'video'
+          this.$nextTick(() => {
+            this.originalImage = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].path
+          })
+        }
       } else {
         this.originalImage = ''
       }
@@ -521,25 +493,88 @@ export default {
         }
       }
 
-      var imgLeft = new Image()
-      imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
-      imgLeft.onload = () => {
-        this.isLoadLeft = false
-        this.leftImage = imgLeft.src
+      // var imgLeft = new Image()
+      // imgLeft.src = this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
+      var imgLeft = {
+        img: new Image(),
+        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path,
+        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.extension
+      }
 
-        window.setTimeout(() => {
-          this.isLoadLeft = true
-          this.startTime = new Date()
+      if (this.isVideo(imgLeft.extension)) {
+        // create new video element and start loading stimulus
+        var tempVideo = document.createElement('video')
+        tempVideo.src = imgLeft.path
+        tempVideo.autoplay = true
+        tempVideo.loop = true
+        tempVideo.controls = true
+        tempVideo.style.width = '100%'
+        tempVideo.classList.add('stimulus')
+        tempVideo.classList.add('hide')
 
-          if (hideTimer) {
-            window.hideTimeout = window.setTimeout(() => {
-              this.isLoadLeft = false
-            }, hideTimer)
+        var loadNewVideo = () => {
+          // this event may be called multiple times on some browsers, therefore remove it
+          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevVideo = document.querySelector('.stimuli-container .stimulus')
+          if (prevVideo) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
           }
+          container.appendChild(tempVideo)
 
-          // this.focusSelect()
-          this.disableNextBtn = false
-        }, this.experiment.delay)
+          window.setTimeout(() => {
+            tempVideo.classList.remove('hide')
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                tempVideo.classList.add('hide')
+              }, hideTimer)
+            }
+            tempVideo.play()
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempVideo.load()
+        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+      } else {
+        var tempImage = document.createElement('img')
+        tempImage.src = imgLeft.path
+        // tempImage.style.width = '100%'
+        tempImage.classList.add('stimulus')
+        tempImage.classList.add('hide')
+
+        var loadNewImage = () => {
+          tempImage.removeEventListener('load', loadNewImage, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevImage = document.querySelector('.stimuli-container .stimulus')
+          if (prevImage) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
+          }
+          container.appendChild(tempImage)
+
+          window.setTimeout(() => {
+            tempImage.classList.remove('hide')
+            this.startTime = new Date()
+
+            if (hideTimer) {
+              window.hideTimeout = window.setTimeout(() => {
+                tempImage.classList.add('hide')
+              }, hideTimer)
+            }
+
+            // this.focusSelect()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempImage.addEventListener('load', loadNewImage, false)
       }
     },
 
@@ -557,27 +592,31 @@ export default {
     },
 
     setKeyboardShortcuts () {
-      window.addEventListener('keydown', (e) => {
-        // enter / arrow right / space
-        if (e.keyCode === 13 || e.keyCode === 39 || e.keyCode === 32) {
+      window.addEventListener('keydown', this.onKeyPress)
+    },
+
+    onKeyPress (e) {
+      switch (e.code) {
+        // case 'ArrowRight':
+        // case 'Space':
+        case 'Enter':
           if (this.selectedCategory !== null && this.disableNextBtn === false) {
-            // this.nextStep()
             this.saveAnswer()
           }
-        }
+          break
 
-        if (e.keyCode === 27) { // esc
-          this.abort()
-        }
+        case 'Escape':
+          this.abortDialog = true
+          break
+      }
 
-        // down or up arrow
-        // if (e.keyCode === 40 || e.keyCode === 38) {
-        //   console.log(this.$refs.select)
-        //   // if () {
-        //   // this.$refs.select.activateMenu()
-        //   // }
-        // }
-      })
+      // down or up arrow
+      // if (e.keyCode === 40 || e.keyCode === 38) {
+      //   console.log(this.$refs.select)
+      //   // if () {
+      //   // this.$refs.select.activateMenu()
+      //   // }
+      // }
     },
 
     /**
@@ -626,6 +665,7 @@ export default {
       this.originalImage = ''
       this.leftImage = ''
       this.disableNextBtn = false
+      this.wipeActiveStimuli()
 
       this.$axios.patch(`/experiment-result/${this.experimentResult}/completed`)
 
@@ -633,9 +673,16 @@ export default {
       this.finished = true
     },
 
+    wipeActiveStimuli () {
+      const container = document.querySelector('.stimuli-container')
+      const active = document.querySelector('.stimuli-container .stimulus')
+      if (active) {
+        container.removeChild(active)
+      }
+    },
+
     abort () {
       this.removeProgress()
-      this.abortDialog = true
       this.$router.push('/observer')
     },
 
