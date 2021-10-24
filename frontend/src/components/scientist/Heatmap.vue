@@ -15,12 +15,14 @@
       outlined
       dense
       hide-details
+      width="400"
+      style="width: 400px;"
     ></v-select>
 
     <v-btn
       @click="exportHeatmap()"
       :loading="exporting"
-      :disabled="selectedImage === null || savedShapes.length === 0"
+      :disabled="selectedImage === null || savedShapes.length === 0 || exporting"
       color="primary"
       class="mt-4"
     >
@@ -31,20 +33,7 @@
 
 <script>
 export default {
-  props: ['artifacts'],
-  // props: {
-  //   artifacts: {
-  //     type: Object,
-  //     default: function () {
-  //       return {}
-  //     }
-  //   }
-  // },
-
   watch: {
-    artifacts (val, old) {
-      this.format(val)
-    },
     selectedImage () {
       this.imageSelected()
     }
@@ -52,6 +41,7 @@ export default {
 
   data () {
     return {
+      artifacts: [],
       data: [],  // the matrix in a 2D array format
       maxVal: 0, // the matrix element with highest value
       CSV: '',   // the matrix in CSV format (String)
@@ -67,19 +57,27 @@ export default {
     }
   },
 
-  methods: {
-    format (val) {
-      var entries = Object.values(val)
+  async created () {
+    let artifacts = await this.$axios.get('/result-image-artifacts/' + this.$route.params.id)
+    this.artifacts = artifacts.data
 
-      entries.forEach((image) => {
-        this.titles.push({
-          id: image[0].picture.id,
-          name: image[0].picture.name,
-          path: image[0].picture.path
-        })
+    let entries = Object.values(artifacts.data)
+    entries.forEach((image) => {
+      this.titles.push({
+        id: image[0].picture.id,
+        name: image[0].picture.name,
+        path: image[0].picture.path
       })
-    },
+    })
+  },
+
+  methods: {
+    /**
+     * When selected image has changed we calculate a matrix of
+     * all artifact marks for that image.
+     */
     imageSelected () {
+      this.exporting = true
       this.savedShapes = []
 
       this.artifacts[this.selectedImage.id].forEach((artifact) => {
@@ -99,13 +97,12 @@ export default {
         vm.image.width = this.width
         vm.image.height = this.height
 
-        window.setTimeout(() => {
-          vm.createMatrix()
-        }, 4000)
+        // window.setTimeout(() => {
+        vm.createMatrix()
+
+        this.exporting = false
+        // }, 1000)
       }
-      // this.width = 1000
-      // this.height = 1000
-      // this.createMatrix()
     },
 
     /**
@@ -128,8 +125,8 @@ export default {
           }
         }
       }
-      console.log(shapesArray)
-      // Create matrix with the same dimensions as the image
+
+      // Create a matrix with the same dimensions as the image
       // (one array for each row, and one array object for each pixel in the image):
       // [
       //   [ { val: 0 }, { val: 0 }, { val: 0 } ],
@@ -142,13 +139,14 @@ export default {
           matrix[b][f] = { val: 0 }
         }
       }
-      console.log(matrix)
+
       // Set marking values to matrix elements:
       for (var g = 0; g < shapesArray.length; g++) {
         matrix[ shapesArray[g][0] ][ shapesArray[g][1] ].val++
       }
 
       this.data = matrix
+      this.exporting = false
     },
 
     /**

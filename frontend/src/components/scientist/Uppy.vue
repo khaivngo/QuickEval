@@ -92,13 +92,10 @@ export default {
     this.uppy.on('complete', (result, test) => {
       // wait 2 sec before clearing the files after upload
       // window.setTimeout(() => { this.uppy.reset() }, 2000)
-      // console.log(result)
       this.uppy.reset()
     })
 
     this.uppy.on('upload-success', (file, response) => {
-      // console.log(file)
-      console.log(response.body)
       this.$emit('uploaded', response.body)
     })
 

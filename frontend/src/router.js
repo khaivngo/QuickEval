@@ -50,13 +50,14 @@ export default new VueRouter({
       children: [
         { path: '',          component: loadView('scientist/Dashboard') },
         { path: 'dashboard', component: loadView('scientist/Dashboard') },
+        { path: 'changelog', component: loadView('scientist/ChangeLog') },
         {
           path: 'experiments',
           component: loadView('scientist/experiment/Index'),
           children: [
             { path: 'create',   component: loadView('scientist/experiment/Create') },
             { path: 'view/:id', component: loadView('scientist/experiment/View') },
-            { path: 'edit/:id', component: loadView('scientist/experiment/Create') }
+            { path: 'edit/:id', component: loadView('scientist/experiment/Create') },
           ]
         },
         {
@@ -101,6 +102,7 @@ export default new VueRouter({
     { path: '/experiment/3/:id', component: loadView('observer/experiment/CategoryJudgement'),  name: 'Category Judgement' },
     { path: '/experiment/4/:id', component: loadView('observer/experiment/ArtifactMarking'),    name: 'Artifact Marking' },
     { path: '/experiment/5/:id', component: loadView('observer/experiment/TripletComparison'),  name: 'Triplet Comparison' },
+    { path: '/experiment/6/:id', component: loadView('observer/experiment/MagnitudeEstimation'),name: 'Magnitude Estimation' },
 
     /* catch all non-existing routes */
     {

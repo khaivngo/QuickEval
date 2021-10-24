@@ -48,7 +48,12 @@
         </v-list-item-group>
       </v-list>
 
-      <v-progress-linear v-slot:progress indeterminate class="ma-0" :height="2" v-if="loading"></v-progress-linear>
+      <v-progress-linear
+        v-if="loading"
+        indeterminate
+        class="ma-0"
+        :height="2"
+      ></v-progress-linear>
     </div>
 
     <!-- the menu above is position fixed, so we put a "mold" below -->
@@ -87,7 +92,7 @@ export default {
 
   created () {
     this.loading = true
-    this.$axios.get('/picture-sets').then((response) => {
+    this.$axios.get('/picture-set').then((response) => {
       this.imageSets = response.data
 
       let activeIndex = this.imageSets.findIndex(set => set.id === parseInt(this.$route.params.id))
@@ -122,11 +127,11 @@ export default {
       this.creating = true
 
       const data = {
-        title: 'Untitled image set',
+        title: 'Untitled stimuli group',
         description: ' '
       }
 
-      this.$axios.post('/imageSet', data).then((response) => {
+      this.$axios.post('/picture-set', data).then((response) => {
         this.imageSets.unshift(response.data)
         // set active first item in imageSets array
         this.active = 0
@@ -142,14 +147,14 @@ export default {
     },
 
     destroy (id, arrayIndex) {
-      if (confirm('Delete image set?')) {
+      if (confirm('Delete stimuli group?')) {
         this.$axios.delete(`/picture-set/${id}`).then((response) => {
           if (response.data === 'deleted_picture_set') {
             this.imageSets.splice(arrayIndex, 1)
 
-            EventBus.$emit('success', 'Image set has been deleted successfully')
+            EventBus.$emit('success', 'Stimuli group has been deleted successfully')
           } else {
-            EventBus.$emit('error', 'Could not delete image set')
+            EventBus.$emit('error', 'Could not delete stimuli group')
           }
         })
       }

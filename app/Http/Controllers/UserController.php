@@ -9,21 +9,48 @@ use App\User;
 class UserController extends Controller
 {
     /**
+     * Return the logged in user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function you(Request $request)
+    {
+      return $request->user();
+    }
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        # abort if not admin
-        if (auth()->user()->role < 3)
-        {
-            return response()->json('Unauthorized', 401);
-        }
+      # abort if not admin
+      if (auth()->user()->role < 3) {
+        return response()->json('Unauthorized', 401);
+      }
 
-        return User::where('role', '>', 1)
-            ->orderBy('id', 'desc')
-            ->get();
+      return User::where('role', '>', 1)
+        ->orderBy('id', 'desc')
+        ->get();
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function search($term)
+    {
+        // with('user:id,name', 'observer_metas.observer_meta')
+        return User::where([
+            ['role', '>', 1],
+            ['name', 'LIKE', '%'.$term.'%']
+        ])
+        // LIMIT?
+        // ->orderBy('id', 'desc')
+        ->get();
     }
 
     /**
@@ -116,11 +143,19 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy ()
     {
-        //
+      // if ($user->id != auth()->user()->id) {
+      //   return response('Unauthorized', 401);
+      // }
+      $user = User::find(auth()->user()->id);
+
+      // delete images, experiments? if owner. Remove collaborator statuses.
+
+      $user->delete();
+
+      return response($user, 200);
     }
 }

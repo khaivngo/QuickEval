@@ -54,11 +54,12 @@ class ResultCategoriesController extends Controller
         $results['results'] = $data;
       }
 
-      # get all the image sets, with images, used in the experiments experiment_sequences
+      # get all the image sets, with images, used in the experiment
       if ($request->flags['imageSets']) {
         $data =
           ExperimentQueue::with(['experiment_sequences' => function ($query) {
-              $query->where('experiment_sequences.picture_queue_id', '!=', NULL)->with('picture_set.pictures');
+              $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
+                ->with('picture_set.pictures');
           }])
           ->where('experiment_id', '=', $expID)
           ->get();
@@ -116,12 +117,27 @@ class ResultCategoriesController extends Controller
         'client_side_timer'     => $request->client_side_timer
       ]);
 
+      if ($request->artifact_marks) {
+        foreach ($request->artifact_marks as $image) {
+          foreach ($image as $mark) {
+            $fill = json_encode($mark['fill']);
+            \App\ResultImageArtifact::create([
+              'experiment_result_id'  => $request->experiment_result_id,
+              'picture_id'            => $mark['picture_id'],
+              'selected_area'         => $fill,
+              'comment'               => null,
+              'client_side_timer'     => 0, // $request->client_side_timer
+            ]);
+          }
+        }
+      }
+
       if ($result) {
         return response('result_stored', 201);
       }
     }
 
-    public function statistics (Request $request, int $id) {
+    public function results_grouped_by_image_sets (Request $request, int $id) {
       $results = [];
 
       # Get the image sets used in the experiment (every image set used in experiment sequences).
@@ -139,15 +155,41 @@ class ResultCategoriesController extends Controller
 
       $matchThese = ['experiment_id' => $id];
       // exclude incomplete data?
-      if ($request->includeIncomplete == false) {
-        $matchThese['completed'] = 1;
-      }
+      // if ($request->includeIncomplete == false) {
+      //   $matchThese['completed'] = 1;
+      // }
 
       # get all results for each observer
       $observers = ExperimentResult
         ::with('category_results.picture.picture_set', 'category_results.category')
+        ->withCount('category_results')
         ->where($matchThese)
         ->get();
+
+      # filter unfinished experiments
+      if ($request->includeIncomplete == false) {
+        $sequences = Experiment::with([
+          # for every picture set experiment_sequence get the count of pictures used
+          'sequences' => function ($query) {
+            $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+              $query->withCount('picture_sequence');
+            }]);
+          }
+        ])->find($id);
+
+        # get total comparisons in experiment
+        $total_comparisons = $sequences->sequences->reduce(function ($carry, $item) {
+          return $carry + $item->picture_queue->picture_sequence_count;
+        }, 0);
+        $total = $total_comparisons;
+
+        # only get completed results
+        $filtered = $observers->filter(function ($value, $key) use ($total) {
+          return $total == $value->category_results_count;
+        });
+
+        $observers = $filtered;
+      }
 
       $data = [];
       // $hello = $observers->groupBy('picture_id_left');

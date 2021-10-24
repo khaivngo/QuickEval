@@ -13,7 +13,10 @@
       Show a login modal if not logged in. Unless we're on the frontpage (already has login form)
       or reading the privacy policy.
     -->
-    <LoginModal :open="showAuth" v-if="$route.path != '/' && $route.path != '/privacy' && $route.path != '/cookies'"/>
+    <LoginModal
+      v-if="$route.path != '/' && $route.path != '/privacy' && $route.path != '/cookies'"
+      :open="showAuth"
+    />
 
     <CookiesConsent/>
 
@@ -78,7 +81,6 @@ export default {
     }).catch(() => {
       this.showAuth = true
     })
-    // console.log()
   },
 
   mounted () {
@@ -96,9 +98,6 @@ export default {
       this.snackbar = true
     })
 
-    // EventBus.$on('registered', (payload) => {
-    //   this.showAuth = false
-    // })
     EventBus.$on('logged', (payload) => {
       this.$axios.get(`/user`).then(response => {
         this.user = response.data

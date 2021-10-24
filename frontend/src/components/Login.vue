@@ -50,6 +50,7 @@
                 :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="showNewPassword ? 'text' : 'password'"
                 @click:append="showNewPassword = !showNewPassword"
+                @keydown.enter="login"
               ></v-text-field>
             </v-col>
           </v-row>

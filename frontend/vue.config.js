@@ -1,4 +1,8 @@
 module.exports = {
+  chainWebpack: (config) => {
+    config.plugins.delete('prefetch')
+  },
+
   // proxy API requests during development
   devServer: {
     // proxy: 'http://blog.test'

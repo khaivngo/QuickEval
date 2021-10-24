@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 use App\ScientistRequest;
 use App\User;
@@ -36,14 +37,22 @@ class ScientistRequestsController extends Controller
       return response()->json('Unauthorized', 401);
     }
 
+    # update the user role to scientist
     User::where('id', $id)->update(['role' => 2]);
+
+    # tag the scientist request as accepted
     ScientistRequest::where('user_id', $id)->update(['accepted' => 1]);
 
-    // send email to marius.pedersen@ntnu.no
+    # send mail to the person being accepted
+    $user = User::find($id);
+    Mail::to($user->email)->send(new \App\Mail\AcceptedRequest());
 
     return response('permissions updated', 200);
   }
 
+  /**
+   *
+   */
   public function reject ($id)
   {
     if (auth()->user()->role != 3) {
@@ -51,6 +60,11 @@ class ScientistRequestsController extends Controller
     }
 
     ScientistRequest::where('user_id', $id)->delete();
+
+    // try {
+    //   // send mail to the person being rejected
+    //   Mail::to('robin.vigdal.bekkevold@gmail.com')->send(new \App\Mail\Rejected());
+    // } catch (Exception $ex) {}
 
     return response('deleted', 200);
   }

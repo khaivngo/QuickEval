@@ -1,6 +1,6 @@
 <template>
   <div class="pl-12 pr-12 pb-12 pt-6 flex-grow-1"> <!-- @mouseenter="fadeOut" @mouseleave="fadeIn" -->
-    <v-progress-linear v-slot:progress indeterminate class="ma-0" v-if="loading"></v-progress-linear>
+    <v-progress-linear indeterminate class="ma-0" v-if="loading"></v-progress-linear>
 
     <div v-if="!loading">
       <v-row justify="space-between" align="center">
@@ -109,10 +109,11 @@
             :loading="loading"
             loading-text="Loading... Please wait"
             hide-default-footer
-            :items-per-page="100"
+            :items-per-page="200"
           >
             <template v-slot:item.completed="{ item }">
-              <span>{{ (item.completed === 1) ? 1 : 0 }}</span>
+              <!-- <span>{{ (item.completed === 1) ? 1 : 0 }}</span> -->
+              <span>{{ item.finished }}</span>
               <!-- {{ item.paired_results_count }} / {{ totalComparisons }} -->
             </template>
           </v-data-table>
@@ -164,7 +165,7 @@
                       <v-col cols="12" sm="6" md="6" class="pa-0">
                         <v-checkbox
                           v-model="exportFlags.imageSets"
-                          label="Image sets"
+                          label="Stimuli groups"
                           class="mt-0"
                         ></v-checkbox>
                       </v-col>
@@ -179,7 +180,7 @@
                       <v-col cols="12" sm="6" md="6" class="pa-0">
                         <v-checkbox
                           v-model="exportFlags.expMeta"
-                          label="Experiment paramaters"
+                          label="Experiment parameters"
                           class="mt-0"
                         ></v-checkbox>
                       </v-col>
@@ -321,7 +322,6 @@ export default {
     this.loading = true
 
     this.getExperiment()
-    this.getExperimentResults()
   },
 
   methods: {
@@ -340,7 +340,7 @@ export default {
       })
 
       this.$axios({
-        url: `/${this.experiment.type.slug}-result/export`,
+        url: `/result-${this.experiment.type.slug}/export`,
         method: 'POST',
         responseType: 'blob', // important
         data: {
@@ -410,9 +410,17 @@ export default {
           }
 
           if (this.experiment.type.slug === 'paired') {
-            const total = this.experiment.sequences.reduce((a, b) => a + b.picture_queue.picture_sequence_count, 0)
+            const total = this.experiment.sequences.reduce((a, b) => a + parseInt(b.picture_queue.picture_sequence_count), 0)
             this.totalComparisons = total / 2
+          } else if (this.experiment.type.slug === 'triplet') {
+            const total = this.experiment.sequences.reduce((a, b) => a + parseInt(b.picture_queue.picture_sequence_count), 0)
+            this.totalComparisons = total / 3
+          } else {
+            const total = this.experiment.sequences.reduce((a, b) => a + parseInt(b.picture_queue.picture_sequence_count), 0)
+            this.totalComparisons = total
           }
+
+          this.getExperimentResults()
 
           this.loading = false
         }).catch(() => {
@@ -431,8 +439,21 @@ export default {
           })
 
           this.experimentResults.forEach(item => {
-            item.ishihara = (item.vision) ? `${item.vision}, ${item.post_eval}, ${item.degree}` : 'unknown'
-            // (${item.perc}%)
+            item.ishihara = (item.vision) ? `${item.vision}, ${item.post_eval}, ${item.degree}` : 'unknown' // ${item.perc}%
+
+            if (this.experiment.type.slug === 'paired') {
+              const parsed = parseInt(item.paired_results_count)
+              item.finished = (this.totalComparisons > parsed) ? 0 : 1
+            } else if (this.experiment.type.slug === 'category') {
+              const parsed = parseInt(item.category_results_count)
+              item.finished = (this.totalComparisons > parsed) ? 0 : 1
+            } else if (this.experiment.type.slug === 'rank-order') {
+              const parsed = parseInt(item.rank_order_results_count)
+              item.finished = (this.totalComparisons > parsed) ? 0 : 1
+            } else if (this.experiment.type.slug === 'triplet') {
+              const parsed = parseInt(item.triplet_results_count)
+              item.finished = (this.totalComparisons > parsed) ? 0 : 1
+            }
           })
 
           this.loading = false

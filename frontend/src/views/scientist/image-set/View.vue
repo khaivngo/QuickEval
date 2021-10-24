@@ -13,7 +13,7 @@
           persistent
           width="500"
         >
-          <template v-slot:activator="{ on, attrs }">
+          <template v-slot:activator="{ on }">
             <v-btn color="primary" outlined icon text class="ml-5 mt-1" v-on="on">
               <v-icon>mdi-pencil</v-icon>
               <!-- add file -->
@@ -93,7 +93,9 @@
       <div class="mt-12 pt-6">
         <v-row align="center">
           <v-col cols="auto" class="pa-0 ma-0">
-            <h2 class="text-h6">Images</h2>
+            <h2 class="text-h6 font-weight-bold">
+              Stimuli
+            </h2>
           </v-col>
 
           <v-col
@@ -123,6 +125,7 @@
             </div>
 
             <v-img
+              v-if="isImage(image.extension)"
               :src="$UPLOADS_FOLDER + image.path"
               aspect-ratio="1"
               class="grey lighten-2"
@@ -138,6 +141,16 @@
                 </v-layout>
               </template>
             </v-img>
+            <video
+              v-if="isVideo(image.extension)"
+              loop controls
+              style="width: 100%;"
+              class="video-player"
+            >
+              <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
+              <source :src="$UPLOADS_FOLDER + image.path" :type="`video/${image.extension}`">
+              Your browser does not support the video tag.
+            </video>
 
             <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
               {{ image.name }}
@@ -148,9 +161,9 @@
 
       <div class="mt-12 pt-12">
         <v-row v-if="original.length > 0">
-          <v-col cols="12">
-            <h3 class="text-h6">
-              Reference/original image
+          <v-col cols="12" class="ml-0 pl-0">
+            <h3 class="text-h6 font-weight-bold">
+              Reference/original stimulus
             </h3>
           </v-col>
           <v-col
@@ -183,6 +196,7 @@
             </div>
 
             <v-img
+              v-if="isImage(original[0].extension)"
               :src="$UPLOADS_FOLDER + original[0].path"
               aspect-ratio="1"
               class="grey lighten-2"
@@ -198,6 +212,17 @@
                 </v-layout>
               </template>
             </v-img>
+            <video
+              v-if="isVideo(original[0].extension)"
+              loop controls
+              style="width: 100%;"
+              class="video-player"
+            >
+              <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
+              <source :src="$UPLOADS_FOLDER + original[0].path" :type="`video/${original[0].extension}`">
+              Your browser does not support the video tag.
+            </video>
+
             <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
               {{ original[0].name }}
             </h5>
@@ -205,16 +230,18 @@
         </v-row>
 
         <div v-if="original.length === 0" class="ma-0 pa-0">
-          <v-row align="center">
-            <h2 class="text-h6 mb-2">
-              Reference image/original
-              <span class="body-1">(optional)</span>
-            </h2>
+          <v-row align="center" class="pb-0 mb-0">
+            <v-col class="pl-0 pb-0 ml-0">
+              <h2 class="text-h6 mb-2 ml-0 pl-0 font-weight-bold">
+                Reference/original stimulus
+                <span class="body-1">(optional)</span>
+              </h2>
+            </v-col>
           </v-row>
 
-          <v-row class="mb-6" align="center">
-            <p class="ma-0">
-              Upload the original, uncompressed, image of the image set.
+          <v-row class="mb-6 pt-0 mt-0" align="center">
+            <p class="ma-0 pt-0 body-2">
+              Upload the original, uncompressed, stimulus of the stimuli group.
             </p>
             <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -252,6 +279,7 @@ import UppyOriginal from '@/components/scientist/UppyOriginal'
 import Uppy from '@/components/scientist/Uppy'
 import ActionMenu from '@/components/scientist/ActionMenu'
 import EventBus from '@/eventBus'
+import mixin from '@/mixins/FileFormats.js'
 
 export default {
   components: {
@@ -259,6 +287,8 @@ export default {
     Uppy,
     ActionMenu
   },
+
+  mixins: [mixin],
 
   data () {
     return {
@@ -310,7 +340,7 @@ export default {
       return this.$axios.get(`/picture-set/${this.imageSetId}`).then((response) => {
         this.imageSet = response.data
 
-        if (this.imageSet.title === 'Untitled image set') {
+        if (this.imageSet.title === 'Untitled stimuli group') {
           this.editTitle = true
         }
 
@@ -334,14 +364,14 @@ export default {
     },
 
     destroy () {
-      if (confirm('Delete image set?')) {
+      if (confirm('Delete stimuli group?')) {
         this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
           if (response.data) {
             EventBus.$emit('image-set-deleted', response.data)
-            EventBus.$emit('success', 'Image set has been deleted successfully')
+            EventBus.$emit('success', 'Stimuli group has been deleted successfully')
             this.$router.push('/scientist/image-sets')
           } else {
-            EventBus.$emit('error', 'Could not delete image set')
+            EventBus.$emit('error', 'Could not delete stimuli group')
           }
         })
       }

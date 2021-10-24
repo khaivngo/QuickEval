@@ -42,6 +42,9 @@ class PictureSetsController extends Controller
     }
 
     public function store (Request $request) {
+      if (auth()->user()->role < 2) {
+        return response()->json('Unauthorized', 401);
+      }
       // $data = $request->validate([
       //     'title' => 'required|string',
       //     'user_id' => 'required'

@@ -11,24 +11,25 @@
         :items="requests"
         no-data-text="No pending requests"
         hide-default-footer
+        :items-per-page="200"
         class="mt-12"
       >
         <template v-slot:item.action="{ item }">
           <v-btn
-            :loading="loading"
-            :disabled="loading"
+            :loading="item.accepting"
+            :disabled="item.accepting"
             color="success"
             class="mr-4"
-            @click="accept(item.id)"
+            @click="accept(item)"
             small
           >
             Approve
           </v-btn>
 
           <v-btn
-            :loading="loading"
-            :disabled="loading"
-            @click="reject(item.id)"
+            :loading="item.rejecting"
+            :disabled="item.rejecting"
+            @click="reject(item)"
             small
             class="mr-0"
           >
@@ -64,41 +65,63 @@ export default {
 
   created () {
     this.loadingRequests = true
+
     this.$axios.get(`/scientist-request`).then(response => {
+      // add props to every request object so we can keep track of loading status for each
+      response.data.forEach(request => {
+        request.accepting = false
+        request.rejecting = false
+      })
+
       this.requests = response.data
+    }).catch((error) => {
+      console.log(error)
+    }).finally(() => {
       this.loadingRequests = false
     })
   },
 
   methods: {
-    async accept (id) {
-      this.loading = true
-      await this.$axios.post(`/scientist-request/${id}/accept`)
-      this.loading = false
+    accept (request) {
+      request.accepting = true
 
-      const itemToRemoveIndex = this.requests.findIndex(function (item) {
-        return item.id === id
+      this.$axios.post(`/scientist-request/${request.id}/accept`).then(response => {
+        console.log(response)
+      }).catch((error) => {
+        console.log(error)
+      }).finally(() => {
+        const itemToRemoveIndex = this.requests.findIndex(function (item) {
+          return item.id === request.id
+        })
+
+        if (itemToRemoveIndex !== -1) {
+          this.requests.splice(itemToRemoveIndex, 1)
+        }
+
+        EventBus.$emit('success', 'Request accepted successfully.')
+
+        request.accepting = false
       })
-
-      if (itemToRemoveIndex !== -1) {
-        this.requests.splice(itemToRemoveIndex, 1)
-      }
-
-      EventBus.$emit('success', 'Request accepted successfully.')
     },
 
-    async reject (id) {
-      this.loading = true
-      await this.$axios.post(`/scientist-request/${id}/reject`)
-      this.loading = false
+    reject (request) {
+      request.rejecting = true
 
-      const itemToRemoveIndex = this.requests.findIndex(function (item) {
-        return item.id === id
+      this.$axios.post(`/scientist-request/${request.id}/reject`).then(response => {
+        console.log(response)
+      }).catch((error) => {
+        console.log(error)
+      }).finally(() => {
+        const itemToRemoveIndex = this.requests.findIndex(function (item) {
+          return item.id === request.id
+        })
+
+        if (itemToRemoveIndex !== -1) {
+          this.requests.splice(itemToRemoveIndex, 1)
+        }
+
+        request.rejecting = false
       })
-
-      if (itemToRemoveIndex !== -1) {
-        this.requests.splice(itemToRemoveIndex, 1)
-      }
     }
   }
 }

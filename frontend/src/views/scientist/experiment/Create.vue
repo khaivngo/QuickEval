@@ -85,51 +85,20 @@
                   </template>
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
                     Describe what the experiment is all about.<br>
-                    This description will be available to the observers.
+                    This description will be available to the observers before they start the experiment.
                   </div>
                 </v-tooltip>
               </v-col>
             </v-row>
 
-            <!-- <v-row align="center" class="pr-5">
+            <!-- <v-row align="center" class="mt-6">
               <v-col class="pb-0 pt-0 pr-0">
-                <v-select
-                  class="mt-8"
-                  v-model="form.algorithm"
-                  :items="[
-                    { id: 1, text: 'Order of images within image sets' },
-                    {
-                      id: 2,
-                      text: 'Order of images within image sets AND order of the image sets.',
-                      caption: '(Sets will only be randomized inbetween instructions so the relationships between sets and instructions are maintained.)'
-                    }
-                  ]"
-                  item-text="text"
-                  item-value="id"
-                  :menu-props="{ maxHeight: 'auto', maxWidth: 900 }"
-                  label="Randomization Algorithm"
-                  outlined
-                  dense
-                >
-                  <template v-slot:item="data">
-                    <div style="display: block;">
-                      <div>{{ data.item.text }}</div>
-                      <div class="caption">{{ data.item.caption }}</div>
-                    </div>
-                  </template>
-                </v-select>
+                <CollaboratorsAutocomplete
+                  :collaborators="experiment.collaborators"
+                  @added="onCollaborators"
+                />
               </v-col>
-            </v-row>
-
-            <v-row v-if="form.experimentType === 1" align="center" class="mt-6">
-              <v-col cols="auto" class="pb-0 pt-0 pr-0">
-                <v-checkbox
-                  v-model="form.samePairTwice"
-                  color="success"
-                  :label="`Same pair twice (flipped)`"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="auto" class="pa-0">
+              <v-col cols="auto">
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
@@ -137,31 +106,8 @@
                     </v-btn>
                   </template>
                   <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                    Each pair of images will have their position flipped in the queue.<br>
-                    Leading to double the comparisons for the observer.
-                  </div>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-
-            <v-row align="center" class="mt-4 pt-0">
-              <v-col cols="auto" class="pt-0 pb-0 pr-0">
-                <v-checkbox
-                  v-model="form.showOriginal"
-                  color="success"
-                  :label="`Display original image`"
-                ></v-checkbox>
-              </v-col>
-              <v-col cols="auto" class="pa-0 mb-1">
-                <v-tooltip top>
-                  <template v-slot:activator="{ on }">
-                    <v-btn icon v-on="on">
-                      <v-icon color="grey lighten-1">mdi-help-circle-outline</v-icon>
-                    </v-btn>
-                  </template>
-                  <div class="pl-2 pr-2 pt-3 pb-3 body-1">
-                    Display the original image of the image set alongside the reproductions.<br>
-                    As a reference for the observer.
+                    Share the experiment with other scientists.<br>
+                    They will have full access to the experiment and results.
                   </div>
                 </v-tooltip>
               </v-col>
@@ -176,7 +122,9 @@
                   class="pb-0 mb-0"
                   hide-details
                 ></v-checkbox>
-                <p class="caption pl-8 pt-0 mt-0">Display a progress indicator in the top right corner. Example: 3/34</p>
+                <p class="caption pl-8 pt-0 mt-0">
+                  Display a progress indicator in the top right corner. Example: 3/34
+                </p>
               </v-col>
               <!-- <v-col cols="auto" class="pa-0 mb-1">
                 <v-tooltip top>
@@ -229,7 +177,7 @@
                 ></v-checkbox>
                 <p class="caption pl-8 pt-0 mt-0">
                   Gives the observer access to a drawing pen, allowing them to mark artifacts or interesting objects
-                  in the images.
+                  in the images. Does not work with videos.
                 </p>
               </v-col>
               <!-- <v-col cols="auto" class="pa-0 mb-1">
@@ -369,14 +317,31 @@
 
         <v-stepper-content :step="showCategories.id" v-if="showCategories">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <h2 class="mb-1">{{ showCategories.title }}</h2>
-            <p class="body-1">
-              Add the categories the observer use to rate the images.
-            </p>
-            <Categories
-              :categories="experiment.categories"
-              @added="onCategory"
-            />
+            <template v-if="experimentType === 6">
+              <h2 class="mb-1">Scale Slider Settings</h2>
+              <!-- <p class="body-1">
+                Add max/min value of the slider.
+              </p> -->
+              <div class="d-flex mt-12" style="width: 250px;">
+                <v-text-field v-model="form.slider.minValue" label="min value" dense outlined class="mr-2"></v-text-field>
+                <v-text-field v-model="form.slider.maxValue" label="max value" dense outlined></v-text-field>
+              </div>
+
+              <div class="mt-10">
+                <v-text-field v-model="form.slider.minLabel" label="min label" dense outlined></v-text-field>
+                <v-text-field v-model="form.slider.maxLabel" label="max label" dense outlined class="mt-4"></v-text-field>
+              </div>
+            </template>
+            <template v-else>
+              <h2 class="mb-1">{{ showCategories.title }}</h2>
+              <p class="body-1">
+                Add the categories the observer use to rate the stimuli.
+              </p>
+              <Categories
+                :categories="experiment.categories"
+                @added="onCategory"
+              />
+            </template>
           </v-card>
         </v-stepper-content>
 
@@ -534,6 +499,7 @@
 import Sequence from '@/components/scientist/Sequence'
 import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
+// import CollaboratorsAutocomplete from '@/components/scientist/CollaboratorsAutocomplete'
 import EventBus from '@/eventBus'
 import { removeArrayItem } from '@/helpers.js'
 
@@ -544,6 +510,7 @@ export default {
     Sequence,
     ObserverMetas,
     Categories
+    // CollaboratorsAutocomplete
   },
 
   data () {
@@ -566,7 +533,8 @@ export default {
       experiment: {
         sequences: [],
         metas: [],
-        categories: []
+        categories: [],
+        collaborators: []
       },
 
       form: {
@@ -583,13 +551,22 @@ export default {
         samePairTwice: false,
         bgColour: '808080',
         delay: 200,
+        hide_image_timer: null,
         stimuliSpacing: 15,
         showOriginal: false,
         showProgress: false,
         isPublic: 0,
         sequences: [],
         observerMetas: [],
-        categories: []
+        categories: [],
+        collaborators: [],
+
+        slider: {
+          minValue: 0,
+          maxValue: 10,
+          minLabel: 'fully transparent',
+          maxLabel: 'fully opaque'
+        }
       },
 
       loaders: {
@@ -648,7 +625,7 @@ export default {
      */
     experimentType (newVal, oldVal) {
       // if rating -> non rating
-      if ((oldVal === null || oldVal === 3 || oldVal === 5) && (newVal === 1 || newVal === 2 || newVal === 4)) {
+      if ((oldVal === null || oldVal === 3 || oldVal === 5 || oldVal === 6) && (newVal === 1 || newVal === 2 || newVal === 4)) {
         // if categories, remove
         if (this.showCategories) {
           --this.steps[4].id
@@ -658,7 +635,7 @@ export default {
           })
         }
       // if non rating -> rating
-      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5)) {
+      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5 || newVal === 6)) {
         // if no categories, add
         ++this.steps[3].id // this.steps.find(step => step.title === 'Categories').id = 4
         ++this.steps[4].id
@@ -708,13 +685,17 @@ export default {
       this.form.categories = values
     },
 
+    onCollaborators (values) {
+      this.form.collaborators = values
+    },
+
     store (type) {
       // determine which button has been clicked in order to show a loading spinner in that button
       this.loaders.storing = (type === 'public')
       this.loaders.saving = (type === 'hidden')
 
       // convert values from boolean to integer before saving
-      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1 // REMOVE!!!!!!!
       this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       this.form.isPublic = (type === 'hidden') ? 0 : 1
 
@@ -739,7 +720,7 @@ export default {
     update () {
       // has anyone taken the experiment?
       // if (this.experiment.results_count > 0) {
-      if (this.experiment.completed_results_count > 0) {
+      if (Number(this.experiment.completed_results_count) > 0) {
         this.disclaimerDialog = true
       } else {
         this.updateApproved()
@@ -753,14 +734,15 @@ export default {
       this.disclaimerDialog = false
 
       // convert values from boolean to integer before saving
-      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1
+      this.form.showOriginal = (this.form.showOriginal === false) ? 0 : 1 // REMOVE!!!!!!
       this.form.showProgress = (this.form.showProgress === false) ? 0 : 1
       // this.form.isPublic = (type === 'hidden') ? 0 : 1
       this.form.isPublic = 1
-      this.form.amountObservers = this.experiment.results_count
+      // this.form.amountObservers = this.experiment.results_count
+      this.form.amountObservers = Number(this.experiment.completed_results_count)
 
       this.$axios.post(`/experiment/${this.$route.params.id}/update`, this.form).then(response => {
-        if (this.experiment.results_count === 0) {
+        if (this.form.amountObservers === 0) {
           EventBus.$emit('experiment-deleted', this.experiment)
         }
         EventBus.$emit('experiment-created', response.data)
@@ -791,7 +773,7 @@ export default {
           this.form.shortDescription = response.data.short_description
           this.form.longDescription  = response.data.long_description
           this.form.experimentType   = response.data.experiment_type_id
-          this.form.timer            = response.data.title
+          this.form.timer            = response.data.timer
           this.form.ishihara         = response.data.ishihara
           this.form.artifact_marking = response.data.artifact_marking
           this.form.cvd              = response.data.allow_colour_blind
@@ -801,10 +783,17 @@ export default {
           this.form.samePairTwice    = response.data.same_pair
           this.form.algorithm        = response.data.picture_sequence_algorithm
 
+          if (response.data.experiment_type_id === 6) {
+            this.form.slider.minValue = response.data.slider.min_value
+            this.form.slider.maxValue = response.data.slider.max_value
+            this.form.slider.minLabel = response.data.slider.min_label
+            this.form.slider.maxLabel = response.data.slider.max_label
+          }
+
           this.loaders.fetching = false
         })
         .catch(err => {
-          console.warn(err)
+          console.log(err)
           this.loaders.fetching = false
         })
     }

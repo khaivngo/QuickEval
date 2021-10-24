@@ -10,8 +10,9 @@
         :headers="headers"
         :items="users"
         no-data-text="No active users"
-        hide-default-footer
         class="mt-12"
+        hide-default-footer
+        :items-per-page="200"
       >
         <template v-slot:item.action="{ item }">
           <v-select

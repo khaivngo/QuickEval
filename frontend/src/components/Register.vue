@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600px">
+  <v-dialog v-model="dialog" max-width="600px">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         color="primary"
@@ -33,7 +33,6 @@
         <v-container>
           <v-form v-model="valid">
             <v-text-field
-              class="mt-3"
               v-model.trim="email"
               :rules="[rules.required]"
               validate-on-blur
@@ -43,7 +42,6 @@
             ></v-text-field>
 
             <v-text-field
-              class="mt-3"
               v-model.trim="password"
               :rules="[rules.required, rules.min]"
               validate-on-blur
@@ -56,7 +54,6 @@
             ></v-text-field>
 
             <v-text-field
-              class="mt-3"
               v-model.trim="name"
               label="Name"
               outlined
@@ -64,7 +61,6 @@
             ></v-text-field>
 
             <v-select
-              class="mt-3"
               v-model="gender"
               :items="['Female', 'Male', 'Other', 'Rather not say']"
               label="Gender"
@@ -73,7 +69,6 @@
             ></v-select>
 
             <v-text-field
-              class="mt-3"
               v-model.trim="yob"
               label="Year of Birth"
               placeholder="yyyy"
@@ -89,6 +84,7 @@
               label="Institution"
               outlined
               dense
+              autocomplete="new-password"
             ></v-autocomplete>
 
             <v-autocomplete
@@ -99,6 +95,7 @@
               label="Country"
               outlined
               dense
+              autocomplete="new-password"
             ></v-autocomplete>
 
             <v-checkbox
@@ -205,6 +202,7 @@ export default {
           // EventBus.$emit('registered')
           this.serverErrors = ''
           this.registering = false
+          this.dialog = false
           this.$emit('success')
         }).catch((error) => {
           console.log(error)
@@ -212,6 +210,10 @@ export default {
           this.serverErrors = ''
           this.serverErrors = error.response.data
           this.registering = false
+        }).finally(() => {
+          this.registering = false
+          // this.$emit('success')
+          // EventBus.$emit('success', '')
         })
       }
     },

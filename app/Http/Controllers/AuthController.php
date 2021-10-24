@@ -119,10 +119,16 @@ class AuthController extends Controller
             'user_id'  => $user->id,
             'accepted' => 0
           ]);
-          // use App\Mail\OrderShipped;
-          // Mail::to('robin.vigdal.bekkevold@gmail.com')->send(new \App\Mail\ScientistRequest($user));
 
-          // Mail::to($user->email)->send(new \App\Mail\Receipt($user));
+          # notify admin, so they can accept/reject request
+          Mail
+            ::to(env('MAIL_USERNAME_ADMIN', false))
+            ->send(new \App\Mail\ScientistRequest($user));
+
+          # notify requester, that their account is created and awaiting admin review
+          Mail
+            ::to($user->email)
+            ->send(new \App\Mail\Receipt($user));
         }
 
         return $user;

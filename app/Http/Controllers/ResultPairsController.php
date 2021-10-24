@@ -53,8 +53,12 @@ class ResultPairsController extends Controller
 
     $observers =
       ExperimentResult
-        ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected', 'user')
-        ->whereIn('id', $request->selected)
+        ::with(
+          'paired_results.picture_left',
+          'paired_results.picture_right',
+          'paired_results.picture_selected',
+          'user'
+        )->whereIn('id', $request->selected)
         ->get();
 
     $results['observers'] = $observers;
@@ -144,70 +148,61 @@ class ResultPairsController extends Controller
     return ResultPair::where('experiment_result_id', $id)->get();
   }
 
-  public function statistics (Request $request, int $id) {
+  public function results_grouped_by_image_sets (Request $request, int $id)
+  {
     $results = [];
 
-    # REPLACE WITH RELATIONSHIP QUERY ABOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # get the image sets used in a experiment
-    $sets = DB::table('experiment_queues')
-      ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
-      ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
-      ->where([
-        ['experiment_queues.experiment_id', '=', $id],
-        ['experiment_sequences.picture_queue_id', '!=', null]
-      ])
+    # get every experiment sequence of type image set, with respective images (filter out original image)
+    $data = ExperimentQueue::with(['experiment_sequences' => function ($query) {
+        $query->where('experiment_sequences.picture_queue_id', '!=', NULL)
+          ->with(['picture_set.pictures' => function ($query) { $query->where('is_original', 0); }]);
+      }])
+      ->where('experiment_id', '=', $id)
       ->get();
-    $results['imageSets'] = $sets;
+
+    $results['imageSetSequences'] = $data[0]->experiment_sequences;
 
 
-    # each image set with belonging images
-    $d = [];
-    foreach ($sets as $set) {
-      $dd = \App\Picture::where([
-        ['picture_set_id', '=', $set->picture_set_id],
-        ['is_original', '=', 0] // filter out any original
-      ])->get();
-
-      array_push($d, $dd);
-    }
-    $results['imagesForEachImageSet'] = $d;
-
-
-    # original images
-    foreach ($sets as $key => $set) {
-      $dd = \App\Picture::where([
-        ['picture_set_id', '=', $set->picture_set_id],
-        ['is_original', '=', 1]
-      ])->first();
-
-      $results['imageUrl'][$key] = $dd;
-    }
+    // ! statistics are wrong when using the same image set in one experiment.
+    // We should use picture_sequence_id
 
 
     $matchThese = ['experiment_id' => $id];
     // exclude incomplete data?
-    if ($request->includeIncomplete == false) {
-      $matchThese['completed'] = 1;
-    }
+    // if ($request->includeIncomplete == false) {
+    //   $matchThese['completed'] = 1;
+    // }
 
     $paired_results = ExperimentResult
       ::with('paired_results.picture_left', 'paired_results.picture_right', 'paired_results.picture_selected')
+      ->withCount('paired_results')
       ->where($matchThese)
       ->get();
 
-    
-    $artifacts = ExperimentResult
-      ::with('image_artifact_results.picture')
-      ->where($matchThese)
-      ->get();
-    // $results['artifactss'] = $artifacts;
-    $merged_artifacts = [];
-    foreach ($artifacts as $hmm) {
-      array_push($merged_artifacts, $hmm->image_artifact_results);
+    # filter unfinished experiments
+    if ($request->includeIncomplete == false) {
+      $sequences = Experiment::with([
+        # for every picture set experiment_sequence get the count of pictures used
+        'sequences' => function ($query) {
+          $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+            $query->withCount('picture_sequence');
+          }]);
+        }
+      ])->find($id);
+
+      # get the total comparisons in the experiment
+      $total_comparisons = $sequences->sequences->reduce(function ($carry, $item) {
+        return $carry + $item->picture_queue->picture_sequence_count;
+      }, 0);
+      $total = $total_comparisons / 2;
+
+      # only get the completed results (if observers results match total comparisons)
+      $completed = $paired_results->filter(function ($value, $key) use ($total) {
+        return $total == $value->paired_results_count;
+      });
+
+      $paired_results = $completed;
     }
-    $collected = collect($merged_artifacts)->flatten();
-    // $results['artifactssss'] = $collected;
-    $results['artifact'] = $collected->groupBy('picture_id');
 
     $data = [];
     foreach ($paired_results as $result)
@@ -223,7 +218,6 @@ class ResultPairsController extends Controller
         $arr['name']      = $res->picture_selected->name;
 
         $arr['won'] = 1; // if none chosen = 0?     @param  {int} $points   amount of points to add... 1 for paired?
-        // $arr['po'] = 3;
 
         # if right was selected, it won against left
         if ($arr['pictureId'] == $arr['right']) {
@@ -241,8 +235,8 @@ class ResultPairsController extends Controller
     # group selected image results by image set
     $new = [];
     foreach ($data as $result) {
-      foreach ($results['imagesForEachImageSet'] as $key => $images) {
-        foreach ($images as $image) {
+      foreach ($results['imageSetSequences'] as $key => $sequence) {
+        foreach ($sequence['picture_set']['pictures'] as $image) {
           if ($result['pictureId'] == $image['id']) {
             $new[$key][] = $result;
           }
@@ -271,6 +265,7 @@ class ResultPairsController extends Controller
       foreach ($request->artifact_marks as $image) {
         foreach ($image as $mark) {
           $fill = json_encode($mark['fill']);
+          // $fill = $mark['fill'];
           // array_push($shapes, $fill);
           \App\ResultImageArtifact::create([
             'experiment_result_id'  => $request->experiment_result_id,

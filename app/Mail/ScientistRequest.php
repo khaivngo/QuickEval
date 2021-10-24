@@ -32,8 +32,6 @@ class ScientistRequest extends Mailable
      */
     public function build()
     {
-        return $this
-            ->from('no-reply@quickeval.no')
-            ->view('mail.request');
+        return $this->view('mail.request');
     }
 }

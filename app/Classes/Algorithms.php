@@ -15,7 +15,8 @@ class Algorithms {
       for ($i = $index; $i < count($images); $i++ ) {
         $pairs[$arrIndex][0] = $image['id'];
         $pairs[$arrIndex][1] = $images[$i]['id'];
-        if ($imagesShownRightAndLeft == 1) {
+        // if ($imagesShownRightAndLeft == 1) {
+        if ($imagesShownRightAndLeft == true) {
           $arrIndex++;
           $pairs[$arrIndex][0] = $images[$i]['id'];
           $pairs[$arrIndex][1] = $image['id'];

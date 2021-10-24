@@ -35,7 +35,6 @@ class AllowedTripletCount implements Rule
      */
     public function message()
     {
-        return 'Only image sets with 7, 9, 13, 15, 19, 21, 25 or 27 images (excluding original/reference)
-          is supported for Triplet Comparison.';
+        return 'Only image sets with 7, 9, 13, 15, 19, 21, 25 or 27 images (excluding original/reference) is supported for Triplet Comparison.';
     }
 }

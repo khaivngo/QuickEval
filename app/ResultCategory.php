@@ -32,10 +32,10 @@ class ResultCategory extends Model
     }
 
     public function category () {
-      return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function picture () {
-      return $this->belongsTo(Picture::class, 'picture_id_left');
+        return $this->belongsTo(Picture::class, 'picture_id_left');
     }
 }

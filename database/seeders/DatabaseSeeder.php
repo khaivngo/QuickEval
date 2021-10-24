@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Rank Order',         'slug' => 'rank-order', 'description' => ''],
             ['name' => 'Category Judgement', 'slug' => 'category',   'description' => ''],
             ['name' => 'Triplet Comparison', 'slug' => 'triplet',    'description' => ''],
+            ['name' => 'Magnitude Estimation','slug' => 'magnitude', 'description' => ''],
             // ['name' => 'Artifact Marking', 'description' => ''],
         ]);
     }

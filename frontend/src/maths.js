@@ -347,6 +347,41 @@ function calculateSDMatrix($frequencyMatrix) {
 }
 
 /**
+ * Calculates confidence intervals for each image used in the image set. From the paper "Empirical Formula for Creating Error Bars for the Method of Paired Comparison" by Ethan D. Montag
+ *
+ * @param $frequencyMatrix n*n matrix
+ * @returns {Array} Array with n elements, one for each image, with confidence intervals for each respective image
+ */
+
+function calculateSDMatrixMontag($frequencyMatrix) {
+    var length = $frequencyMatrix.length
+    var b1 = 1.76
+    var b2 = -3.08
+    var b3 = -0.613
+    var b4 = 2.55
+    var b5 = -0.491
+
+    //Initialize array
+    var SDArray = new Array(length)
+
+    //Iterates through matrix
+    for (var i = 0; i < length; i++) {
+        var total = 0
+
+        //Iterates through the row as well as the column to sum the scores for each image
+        for (var j = 0; j < length; j++) {
+            total += $frequencyMatrix[i][j]
+            total += $frequencyMatrix[j][i]
+        }
+
+        var nobs = total / (length - 1)
+        SDArray[i] = 1.96 * (b1 * Math.pow((length - b2), b3) * Math.pow((nobs - b4), b5))
+    }
+
+    return SDArray
+}
+
+/**
  * Creates a pair comparison result matrix from ranking data where table[i][j] refers to
  * the number of times image[i] was chosen over image[j]k
  *
@@ -384,7 +419,7 @@ function arrayObjectIndexOf(myArray, searchTerm, property) {
         if (myArray[i][property] === searchTerm)
             return i
     }
-    return -1;
+    return -1
 }
 
 export {
@@ -404,6 +439,7 @@ export {
   calculateZScoreMatrix,
   calculateMeanZScore,
   calculateSDMatrix,
+  calculateSDMatrixMontag,
   convertRankToPair,
   arrayObjectIndexOf
 }

@@ -68,4 +68,8 @@ class Experiment extends Model
     public function user () {
       return $this->belongsTo(User::class);
     }
+
+    public function collaborators () {
+      return $this->hasMany(ExperimentScientist::class);
+    }
 }

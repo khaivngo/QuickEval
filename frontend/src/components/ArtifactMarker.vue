@@ -14,7 +14,7 @@
 import lodashGroupBy from 'lodash/groupBy'
 import lodashEach from 'lodash/each'
 
-// keep track of unique id for each instance of this component
+// keep track of a unique id for each instance of this component
 let uuid = 0
 
 export default {
@@ -309,7 +309,7 @@ export default {
                 // save all the x and y coordinates as well as any comment
                 let fillCalculated = this.calcFill(this.points)
                 this.savedShapes.push({
-                    picture_id: this.imageURL.image.picture_id,
+                    picture_id: this.imageURL.image.id,
                     points: this.points,
                     annotation: '',
                     fill: fillCalculated
@@ -321,7 +321,7 @@ export default {
             } else if (this.TOOL == "DELETE") {
                 let fillCalculated = this.calcFill(this.points)
                 this.deleteArea.push({
-                    picture_id: this.imageURL.image.picture_id,
+                    picture_id: this.imageURL.image.id,
                     points: this.points,
                     annotation: '',
                     fill: fillCalculated

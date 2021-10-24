@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="mt-5">
-    <v-container>
+    <v-container class="pl-8">
       <v-row class="mb-12" align="center">
         <v-img
           :src="require('@/assets/logo.png')"
@@ -18,19 +18,13 @@
         Psychometric image evaluation the quick way.
       </p>
 
-      <!-- <p>Brought to you by The Norwegian Colour and Visual Computing Laboratory <span style="font-size: 1em;">🎨 💻</span></p> -->
-      <!-- <p>rank order, paired comparison, triplet comparison, category judgement, artifact marking</p> -->
-      <!-- <h3 class="font-weight-bold subtitle-1 mt-12">Supports</h3> -->
-      <!-- <ul class="mb-5">
-        <li style="margin-bottom: 0.2em;">Rank order</li>
-        <li style="margin-bottom: 0.2em;">Paired comparison</li>
-        <li style="margin-bottom: 0.2em;">Triplet comparison</li>
-        <li style="margin-bottom: 0.2em;">Category judgement</li>
-        <li style="margin-bottom: 0.2em;">Artifact marking</li>
-      </ul> -->
+      <!--
+        <p>Brought to you by The Norwegian Colour and Visual Computing Laboratory
+        <span style="font-size: 1em;">🎨 💻</span></p>
+      -->
       <p class="body-1">
         Paired comparison  / Category judgement / Artifact marking /<br>
-        Triplet comparison / Rank order
+        Triplet comparison / Rank order / Magnitude Estimation
       </p>
 
       <v-row class="mt-12">
@@ -53,21 +47,21 @@
       </v-row>
     </v-container>
 
-    <v-footer style="background: #F6F6F6; margin-top: 100px;">
-      <v-container class="pb-12">
+    <v-footer style="background: #F6F6F6; margin-top: 200px;">
+      <v-container class="pb-12 pl-8">
         <v-row>
           <!-- <p class="mt-5 mb-0 mb-12">
             The tool is provided by The Norwegian Colour and Visual Computing Laboratory.
           </p> -->
         </v-row>
 
-        <v-row>
+        <v-row justify="center">
           <v-col cols="auto" class="pr-12">
             <v-img
               :src="require('@/assets/colourlab-logo.png')"
               contain
               class="mt-4"
-              max-width="300"
+              max-width="261"
             ></v-img>
           </v-col>
           <v-col>
@@ -75,7 +69,7 @@
               :src="require('@/assets/ntnu-logo-slogan.png')"
               contain
               class="mt-5"
-              max-width="170"
+              max-width="171"
             ></v-img>
           </v-col>
         </v-row>
@@ -119,9 +113,7 @@ export default {
   created () {
     this.$axios.get(`/user`).then(response => {
       if (response.data) {
-        if (response.data.role && response.data.role < 2) {
-          this.$router.push('/observer')
-        } else if (response.data.role && response.data.role > 2) {
+        if (response.data.role && response.data.role > 2) {
           this.$router.push('/scientist')
         }
       }

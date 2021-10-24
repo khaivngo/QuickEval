@@ -37,8 +37,8 @@ class ResultRankOrdersController extends Controller
       $rankings = [];
       foreach ($request->rankings as $key => $image) {
         $rankings[$key]['experiment_result_id'] = $request->experiment_result_id;
-        $rankings[$key]['picture_set_id']       = $image['picture_set_id'];
-        $rankings[$key]['picture_id']           = $image['picture_id'];
+        $rankings[$key]['picture_set_id']       = $image['picture']['picture_set_id'];
+        $rankings[$key]['picture_id']           = $image['picture']['id'];
         $rankings[$key]['ranking']              = $key + 1;
         $rankings[$key]['client_side_timer']    = $request->client_side_timer;
       }
@@ -151,7 +151,7 @@ class ResultRankOrdersController extends Controller
     }
 
 
-    public function statistics (Request $request, int $id)
+    public function results_grouped_by_image_sets (Request $request, int $id)
     {
         $results = [];
 
@@ -170,25 +170,47 @@ class ResultRankOrdersController extends Controller
         $results['imagesForEachImageSet'] = $data[0]->experiment_sequences;
         $results['imageSets'] = $data[0]->experiment_sequences;
 
-
-        // # sorts ascending based on provided id
-        // function build_sorter($key) {
-        //     return function ($a, $b) use ($key) {
-        //         return strnatcmp($a[$key], $b[$key]);
-        //     };
-        // }
-
         $matchThese = ['experiment_id' => $id];
         // exclude incomplete data?
-        if ($request->includeIncomplete == false) {
-          $matchThese['completed'] = 1;
-        }
+        // if ($request->includeIncomplete == false) {
+        //   $matchThese['completed'] = 1;
+        // }
 
         $rank_order_results = ExperimentResult::with([
             'rank_order_results' => function ($query) { $query->orderBy('picture_id'); },
             'rank_order_results.picture'
-          ])->where($matchThese)
+          ])
+          ->withCount('rank_order_results')
+          ->where($matchThese)
           ->get();
+
+        # filter unfinished experiments
+        if ($request->includeIncomplete == false) {
+          $sequences = Experiment::with([
+            # for every picture set experiment_sequence get the count of pictures used
+            'sequences' => function ($query) {
+              $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
+                $query->withCount('picture_sequence');
+              }]);
+            }
+          ])->find($id);
+
+          // return $sequences->sequences;
+
+          # get total comparisons in experiment
+          $total_comparisons = $sequences->sequences->reduce(function ($carry, $item) {
+            return $carry + $item->picture_queue->picture_sequence_count;
+          }, 0);
+          $total = $total_comparisons;
+          // return $rank_order_results;
+
+          # only get completed results
+          $filtered = $rank_order_results->filter(function ($value, $key) use ($total) {
+            return $total == $value->rank_order_results_count;
+          });
+
+          $rank_order_results = $filtered;
+        }
 
         $data = [];
         foreach ($rank_order_results as $result) {

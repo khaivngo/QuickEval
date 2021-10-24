@@ -26,4 +26,8 @@ class Picture extends Model
     public function picture_set () {
       return $this->belongsTo(PictureSet::class);
     }
+
+    // public function picture_sequence () {
+    //   return $this->belongsTo(PictureSequence::class);
+    // }
 }

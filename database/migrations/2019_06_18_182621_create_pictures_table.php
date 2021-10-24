@@ -18,6 +18,7 @@ class CreatePicturesTable extends Migration
 
             $table->string('name')->nullable();
             $table->string('path');
+            $table->string('extension', 20);
             $table->tinyInteger('is_original')->default(0);
             $table->integer('picture_set_id');
 

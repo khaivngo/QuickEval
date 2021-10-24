@@ -32,8 +32,6 @@ class Receipt extends Mailable
      */
     public function build()
     {
-        return $this
-            ->from('no-reply@quickeval.no')
-            ->view('mail.receipt');
+        return $this->view('mail.receipt');
     }
 }
