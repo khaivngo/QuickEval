@@ -156,7 +156,6 @@
             <video
               :src="originalImage"
               autoplay loop controls
-              style="display: block;"
             ></video>
           </div>
         </div>
