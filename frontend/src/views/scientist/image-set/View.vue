@@ -94,7 +94,7 @@
         <v-row align="center">
           <v-col cols="auto" class="pa-0 ma-0">
             <h2 class="text-h6 font-weight-bold">
-              Stimuli
+              Stimuli <span class="body-1">({{ reproductions.length }})</span>
             </h2>
           </v-col>
 

@@ -43,7 +43,11 @@
 
       <h3 class="text-h6 mb-6 mt-4 font-weight-light">
         <span v-for="(imageSet, k) in rawDataMap" :key="k">
-          {{ results.imageSetSequences[k].picture_set.title }}<span v-if="k !== rawDataMap.length - 1">,</span>
+          {{ results.imageSetSequences[k].picture_set.title }}
+          <span class="body-1">
+            ({{ results.imageSetSequences[k].picture_set.pictures.length }})
+          </span>
+          <span v-if="k !== rawDataMap.length - 1">,</span>
         </span>
       </h3>
 
@@ -60,6 +64,9 @@
         >
           <h3 class="text-h6 mb-3 mt-8 font-weight-light">
             {{ results.imageSetSequences[f].picture_set.title }}
+            <span class="body-1">
+              ({{ results.imageSetSequences[f].picture_set.pictures.length }})
+            </span>
           </h3>
 
           <table class="table bordered hovered body-1">
@@ -107,6 +114,9 @@
         >
           <h3 class="text-h6 mb-3 mt-8 font-weight-light">
             {{ results.imageSetSequences[p].picture_set.title }}
+            <span class="body-1">
+              ({{ results.imageSetSequences[p].picture_set.pictures.length }})
+            </span>
           </h3>
 
           <p v-if="zScoreMap[p][3] == 1">

@@ -42,7 +42,11 @@
 
       <h3 class="text-h6 mb-6 mt-4 font-weight-light">
         <span v-for="(imageSet, iIndex) in rankedResults.imageSets" :key="iIndex">
-          {{ imageSet.picture_set.title }}<span v-if="iIndex !== rankedResults.imageSets.length - 1">,</span>
+          {{ imageSet.picture_set.title }}
+          <span class="body-1">
+            ({{ imageSet.picture_set.pictures.length }})
+          </span>
+          <span v-if="iIndex !== rankedResults.imageSets.length - 1">,</span>
         </span>
       </h3>
 
@@ -55,6 +59,9 @@
       <div v-for="(set, gIndex) in rankedResults.resultsForEachImageSet" :key="gIndex">
         <h3 class="text-h6 mb-3 mt-8 font-weight-light">
           {{ rankedResults.imagesForEachImageSet[gIndex].picture_set.title }}
+          <span class="body-1">
+            ({{ rankedResults.imagesForEachImageSet[gIndex].picture_set.pictures.length }})
+          </span>
         </h3>
 
         <div class="pa-1 d-flex justify-center align-center qe-table-title">
@@ -99,6 +106,9 @@
       <div v-for="(imageSet, b) in rankedResults.imagesForEachImageSet" :key="imageSet.id">
         <h3 class="text-h6 mb-3 mt-8 font-weight-light">
           {{ rankedResults.imagesForEachImageSet[b].picture_set.title }}
+          <span class="body-1">
+            ({{ rankedResults.imagesForEachImageSet[b].picture_set.pictures.length }})
+          </span>
         </h3>
 
         <table class="table bordered hovered">
