@@ -18,6 +18,9 @@ class PictureSetsController extends Controller
         ->get();
     }
 
+    /**
+     * All image sets in the whole database.
+     */
     public function all () {
       return PictureSet
         ::orderBy('id', 'desc')
@@ -25,14 +28,12 @@ class PictureSetsController extends Controller
     }
 
     public function find ($id) {
-      return PictureSet::with('pictures')->find($id);
+      return PictureSet
+        ::with(
+          'pictures',
+          'experiment_sequences.experiment_queue.experiment'
+        )->find($id);
     }
-
-    // public function getSet ($picture_set_id) {
-    //   return \App\Picture
-    //     ::where('picture_set_id', $picture_set_id)
-    //     ->get();
-    // }
 
     public function original ($picture_set_id) {
       return \App\Picture::where([

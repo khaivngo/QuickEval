@@ -78,7 +78,7 @@
           </template>
 
           <v-list>
-            <v-list-item @click="destroy">
+            <v-list-item @click="dialogDelete = true">
               <v-list-item-icon class="mr-4">
                 <v-icon>mdi-delete</v-icon>
               </v-list-item-icon>
@@ -271,6 +271,50 @@
         </v-row>
       </div>
     </div>
+
+    <v-dialog
+      v-model="dialogDelete"
+      width="500"
+    >
+      <v-card>
+        <div class="pa-6">
+          <h3 class="text-h6 mb-6">Are you sure you want to delete the stimuli group?</h3>
+
+          <div v-if="affectedExperiments.length > 0">
+            <h6 class="subtitle-2 mb-2">
+              This will affect these experiments:
+            </h6>
+            <ul>
+              <li v-for="(exp, index) in affectedExperiments" :key="index">
+                {{ exp.title }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            class="mr-4"
+            outlined
+            @click="dialogDelete = false"
+          >
+            No, cancel.
+          </v-btn>
+          <v-btn
+            color="error"
+            depressed
+            @click="destroy"
+          >
+            Yes, delete.
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -299,7 +343,10 @@ export default {
       creating: false,
       loading: false,
       deleting: false,
-      editTitle: false
+      editTitle: false,
+
+      dialogDelete: false,
+      affectedExperiments: []
     }
   },
 
@@ -347,6 +394,18 @@ export default {
         this.original = this.imageSet.pictures.filter(image => image.is_original === 1)
         this.reproductions = this.imageSet.pictures.filter(image => image.is_original === 0)
 
+        // every experiment that uses this stimuli group
+        // this.affectedExperiments = this.imageSet.experiment_sequences
+        //   .map(eq => eq.experiment_queue)
+        //   .map(e => e.experiment)
+
+        // some experiment may have used the stimuli group multiple times so remove any duplicates
+        // this.affectedExperiments = this.affectedExperiments.filter((thing, index, self) =>
+        //   index === self.findIndex((t) => (
+        //     t.id === thing.id
+        //   ))
+        // )
+
         this.loading = false
       })
     },
@@ -364,17 +423,16 @@ export default {
     },
 
     destroy () {
-      if (confirm('Delete stimuli group?')) {
-        this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
-          if (response.data) {
-            EventBus.$emit('image-set-deleted', response.data)
-            EventBus.$emit('success', 'Stimuli group has been deleted successfully')
-            this.$router.push('/scientist/image-sets')
-          } else {
-            EventBus.$emit('error', 'Could not delete stimuli group')
-          }
-        })
-      }
+      this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
+        if (response.data) {
+          EventBus.$emit('image-set-deleted', response.data)
+          EventBus.$emit('success', 'Stimuli group has been deleted successfully')
+          this.$router.push('/scientist/image-sets')
+          this.dialogDelete = false
+        } else {
+          EventBus.$emit('error', 'Could not delete stimuli group')
+        }
+      })
     }
   }
 }

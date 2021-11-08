@@ -39,6 +39,10 @@ class ExperimentSequence extends Model
     //     return $this->hasManyThrough(PictureSequence::class, PictureQueue::class);
     // }
 
+    public function experiment_queue () {
+        return $this->belongsTo(ExperimentQueue::class);
+    }
+
     public function picture_queue () {
         return $this->belongsTo(PictureQueue::class);
     }
