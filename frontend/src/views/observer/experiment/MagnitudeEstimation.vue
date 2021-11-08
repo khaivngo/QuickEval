@@ -451,7 +451,6 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
-      this.focusSelect()
 
       ++this.sequenceIndex
       // move on to the next experiment sequence
@@ -543,7 +542,6 @@ export default {
               }, hideTimer)
             }
             tempVideo.play()
-            // this.focusSelect()
             this.disableNextBtn = false
           }, this.experiment.delay)
         }
@@ -578,7 +576,6 @@ export default {
               }, hideTimer)
             }
 
-            // this.focusSelect()
             this.disableNextBtn = false
           }, this.experiment.delay)
         }
