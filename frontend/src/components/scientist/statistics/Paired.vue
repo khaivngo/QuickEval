@@ -56,7 +56,10 @@
       />
 
       <!-- Raw data -->
-      <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+      <div v-if="
+        rawDataMap.length > 0 &&
+        zScoreMap.length > 0
+      ">
         <h2 class="mb-3 mt-12 pt-12">Raw data</h2>
         <div
           v-for="(imageSet, f) in rawDataMap"
@@ -106,7 +109,10 @@
       </div>
 
       <!-- Z-scores -->
-      <div v-if="rawDataMap.length > 0 && zScoreMap.length > 0 && results.resultsForEachImageSet.length > 0">
+      <div v-if="
+        rawDataMap.length > 0 &&
+        zScoreMap.length > 0
+      ">
         <h2 class="mb-3 mt-12 pt-12">Z-score</h2>
         <div
           v-for="(imageSet, p) in rawDataMap"
@@ -193,8 +199,6 @@ export default {
 
   watch: {
     includeIncomplete (newVal, oldVal) {
-      // console.log(oldVal)
-      // console.log(newVal)
       // if (this.includeIncomplete === )
 
       if (this.includeIncomplete !== null && oldVal !== null && newVal !== null) {
@@ -252,13 +256,11 @@ export default {
           }
 
           //
-          if (this.results.resultsForEachImageSet.length) {
-            this.results.resultsForEachImageSet[i].forEach((result, index) => {
-              let row = arrayObjectIndexOf(sequence.picture_set.pictures, result.pictureId,  'id')
-              let column = arrayObjectIndexOf(sequence.picture_set.pictures, result.wonAgainst, 'id')
-              this.resultsMatrix[row][column] += 1 // result['won'] here?
-            })
-          }
+          this.results.resultsForEachImageSet[i].forEach((result, index) => {
+            let row = arrayObjectIndexOf(sequence.picture_set.pictures, result.pictureId,  'id')
+            let column = arrayObjectIndexOf(sequence.picture_set.pictures, result.wonAgainst, 'id')
+            this.resultsMatrix[row][column] += 1 // result['won'] here?
+          })
 
           // save all raw data maps
           this.rawDataMap.push(this.resultsMatrix)
