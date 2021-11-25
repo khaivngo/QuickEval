@@ -285,7 +285,8 @@ class ExperimentsController extends Controller
 
       # add invited collaborators to pivot table
       $user_ids = collect($request->collaborators)->pluck('id')->toArray();
-      $experiment->users()->attach($user_ids);
+      // $experiment->users()->attach($user_ids);
+      $experiment->users()->sync($user_ids);
 
       if ($experiment->id > 0)
       {
@@ -758,7 +759,8 @@ class ExperimentsController extends Controller
         Experiment::destroy($original_experiment->id);
       }
 
-      # remove any $user_ids not in the db and add any $user_ids that aren't in the database
+      # remove any $user_ids not in the database
+      # and add any $user_ids that aren't in the database
       $user_ids = collect($request->collaborators)
         ->pluck('id')
         ->toArray();
