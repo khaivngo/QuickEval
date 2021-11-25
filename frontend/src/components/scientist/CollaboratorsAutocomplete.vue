@@ -8,14 +8,14 @@
     label="Invite collaborators"
     item-text="name"
     item-value="id"
-    cache-items
     hide-no-data
     hide-selected
-    no-filter
+    cache-items
     return-object
     multiple
     outlined
   >
+  <!-- no-filter -->
   <!-- auto-select-first -->
     <template v-slot:selection="data">
       <v-chip
@@ -103,8 +103,12 @@ export default {
 
     search (term) {
       if (term === null) return
-      if (term === '') return
+      if (term === '') {
+        this.suggestedUsers = []
+        return
+      }
       // scientists have already been requested
+      if (this.suggestedUsers.length > 0) return
       if (this.isLoading) return
 
       this.isLoading = true
