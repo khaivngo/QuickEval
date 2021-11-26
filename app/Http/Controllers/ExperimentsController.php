@@ -11,6 +11,7 @@ use App\ExperimentResult;
 use App\ObserverMeta;
 use App\ExperimentObserverMeta;
 use App\Picture;
+use App\ExperimentScientist;
 
 use App\Classes\Algorithms;
 
@@ -33,13 +34,14 @@ class ExperimentsController extends Controller
         ->orderBy('id', 'desc')
         ->get();
 
-      $experiments_invited = \App\ExperimentScientist
+      $experiments_invited = ExperimentScientist
         ::with('experiment')
         ->where('user_id', auth()->user()->id)
         ->get()
         ->pluck('experiment');
 
       $merged = $experiments->merge($experiments_invited);
+
       return $merged;
     }
 
@@ -94,17 +96,13 @@ class ExperimentsController extends Controller
       ->withCount(['results', 'results as completed_results_count' => function (Builder $query) { $query->where('completed', 1); }])
       ->first();
 
-      $experiment['collaborators'] = \App\ExperimentScientist::with('user')
-        ->where('experiment_id', $request->id)
-        ->get()
-        ->pluck('user');
-
+      $experiment['collaborators'] = ExperimentScientist::with('user')->where('experiment_id', $request->id)->get()->pluck('user');
+      $collaborator_ids = $experiment['collaborators']->pluck('id')->toArray();
+      $isCollaborator = in_array(auth()->user()->id, $collaborator_ids) ? true : false;
       $isOwner = (auth()->user()->id == $experiment->user_id) ? true : false;
-      $user_ids = $experiment['collaborators']->pluck('id')->toArray();
-      $isCollaborator = in_array(auth()->user()->id, $user_ids) ? true : false;
-      // abort if you're not the creator of the experiment or an invited collaborator
+      # abort if you're not the creator of the experiment or an invited collaborator
       if ($isOwner === false && $isCollaborator === false) {
-        return response('access to requested area is forbidden', 403);
+        return response('Access to requested area is forbidden', 403);
       }
 
       $sequences = DB::table('experiment_queues')
@@ -229,13 +227,12 @@ class ExperimentsController extends Controller
         ]);
       }
 
-      # if triplet experiment: throw error if any image set does NOT contain exactly the correct amount of images
+      # if triplet experiment: throw error if any image set does NOT contain exactly the correct
+      # amount of images
       if ($request->experimentType == 5) // Triplet
       {
-        foreach ($request->sequences as $group)
-        {
-          foreach ($group as $step)
-          {
+        foreach ($request->sequences as $group) {
+          foreach ($group as $step) {
             if ($step['type'] === 'imageSet')
             {
               $images = Picture::where([
@@ -269,7 +266,11 @@ class ExperimentsController extends Controller
         'show_original'     => $request->showOriginal,
         'show_progress'     => $request->showProgress,
         'version'           => 1
-      ]); 
+      ]);
+
+      # add invited collaborators to pivot table
+      $user_ids = collect($request->collaborators)->pluck('id')->toArray();
+      $experiment->users()->sync($user_ids);
 
       if ($experiment->id > 0)
       {
@@ -307,8 +308,8 @@ class ExperimentsController extends Controller
               'user_id' => $collaborator['id']
             ];
           });
-          \App\ExperimentScientist::insert($collaborators->toArray());
-          // \App\ExperimentScientist::upsert($collaborators->toArray(), ['experiment_id', 'user_id'], []);
+          ExperimentScientist::insert($collaborators->toArray());
+          // ExperimentScientist::upsert($collaborators->toArray(), ['experiment_id', 'user_id'], []);
 
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
@@ -668,9 +669,21 @@ class ExperimentsController extends Controller
         return response()->json('Unauthorized', 401);
       }
 
-      # abort if not owner of original experiment
-      if ($original_experiment->user_id !== auth()->user()->id) {
-        return response()->json('Unauthorized', 401);
+      $collaborators = Experiment
+        ::where('id', $original_experiment->id)
+        ->with('users')
+        ->get()
+        ->pluck('users')
+        ->flatten();
+        // ->pluck('id')
+        // ->toArray();
+      $user_ids = $collaborators->pluck('id')->toArray();
+      $isCollaborator = in_array(auth()->user()->id, $user_ids) ? true : false;
+      $isOwner = (auth()->user()->id == $original_experiment->user_id) ? true : false;
+
+      # abort if you're not the creator of the experiment or an invited collaborator
+      if ($isOwner === false && $isCollaborator === false) {
+        return response('Access to requested area is forbidden.', 403);
       }
 
       $data = $request->validate([
@@ -741,6 +754,14 @@ class ExperimentsController extends Controller
         Experiment::destroy($original_experiment->id);
       }
 
+      # remove any $user_ids not in the database
+      # and add any $user_ids that aren't in the database
+      $user_ids = collect($request->collaborators)
+        ->pluck('id')
+        ->toArray();
+      // $experiment->users()->attach($user_ids);
+      $experiment->users()->sync($user_ids);
+
       // TODO: abstract store function into another file/class
       if ($experiment->id > 0)
       {
@@ -778,7 +799,7 @@ class ExperimentsController extends Controller
               'user_id' => $collaborator['id']
             ];
           });
-          \App\ExperimentScientist::insert($collaborators->toArray());
+          ExperimentScientist::insert($collaborators->toArray());
 
           // $experiment->type->slug === 'category' || $experiment->type->slug === 'triplet'
           if ($experiment->experiment_type_id == 3 || $experiment->experiment_type_id == 5)
