@@ -783,6 +783,8 @@ export default {
           this.form.showProgress     = (response.data.show_progress === 1)
           this.form.samePairTwice    = response.data.same_pair
           this.form.algorithm        = response.data.picture_sequence_algorithm
+          this.form.delay            = response.data.delay
+          this.form.stimuliSpacing   = response.data.stimuli_spacing
 
           if (response.data.experiment_type_id === 6) {
             this.form.slider.minValue = response.data.slider.min_value
