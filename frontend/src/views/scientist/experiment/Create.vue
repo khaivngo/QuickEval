@@ -310,6 +310,7 @@
             </p>
             <Sequence
               :sequences="experiment.sequences"
+              :sets="experiment.pictureSets"
               @added="onSequence"
             />
           </v-card>

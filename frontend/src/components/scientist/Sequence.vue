@@ -595,6 +595,12 @@ export default {
       default: function () {
         return []
       }
+    },
+    sets: {
+      type: Array,
+      default: function () {
+        return []
+      }
     }
   },
 
@@ -620,6 +626,12 @@ export default {
           // this.input = null
           this.$emit('added', this.eventsGrouped)
         })
+      }
+    },
+    sets: {
+      immediate: true,
+      handler (values) {
+        this.imageSets.push(...values)
       }
     }
   },
@@ -678,7 +690,7 @@ export default {
 
     // ...and the image sets dropdowns
     const imageSets = await this.getImageSets()
-    this.imageSets = imageSets.data
+    this.imageSets.push(...imageSets.data)
   },
 
   methods: {

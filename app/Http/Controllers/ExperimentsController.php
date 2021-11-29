@@ -20,8 +20,8 @@ use App\Rules\AllowedTripletCount;
 class ExperimentsController extends Controller
 {
     /**
-     * Get all experiments created by the user. With the count of total experiments results,
-     * and completed results. And all experiments the user has been invited to.
+     * Get all experiments created by the user, and all experiments the user has been invited to.
+     * With the count of total experiments results, and completed results.
      */
     public function index ()
     {
@@ -35,12 +35,21 @@ class ExperimentsController extends Controller
         ->get();
 
       $experiments_invited = ExperimentScientist
-        ::with('experiment')
+        ::with(['experiment' => function ($query) {
+          $query
+            ->withCount('results')
+            ->withCount(['results', 'results as completed_results_count' => function (Builder $query) {
+              $query->where('completed', 1);
+            }]);
+        }])
         ->where('user_id', auth()->user()->id)
         ->get()
         ->pluck('experiment');
 
-      $merged = $experiments->merge($experiments_invited);
+      # filter out null values
+      $experiments_invited_filtered = $experiments_invited->filter()->all();
+
+      $merged = $experiments->merge($experiments_invited_filtered);
 
       return $merged;
     }
@@ -105,6 +114,23 @@ class ExperimentsController extends Controller
         return response('Access to requested area is forbidden', 403);
       }
 
+      # get the experiments picture sets, if we're a collaborator (not owner)
+      if (auth()->user()->id !== $experiment->user_id) {
+        $picture_sequences = \App\ExperimentQueue::with(['experiment_sequences' => function ($query) {
+          $query->where('picture_set_id', '!=', NULL)
+            ->with('picture_set');
+        }])
+        ->where('experiment_id', '=', $experiment->id)
+        ->first();
+        $picture_sets = $picture_sequences->experiment_sequences->map(function($s) {
+          return $s->picture_set;
+        });
+        $experiment['pictureSets'] = $picture_sets;
+      } else {
+        $experiment['pictureSets'] = [];
+      }
+
+
       $sequences = DB::table('experiment_queues')
         ->join('experiment_sequences', 'experiment_sequences.experiment_queue_id', '=', 'experiment_queues.id')
         ->leftJoin('picture_sets', 'experiment_sequences.picture_set_id', '=', 'picture_sets.id')
@@ -158,9 +184,10 @@ class ExperimentsController extends Controller
           'observer_metas.observer_meta',
           // for every picture set experiment_sequence get the count of pictures used
           'sequences' => function ($query) {
-            $query->where('picture_queue_id', '!=', null)->with(['picture_queue' => function ($query) {
-              $query->withCount('picture_sequence');
-            }]);
+            $query->where('picture_queue_id', '!=', null)
+              ->with(['picture_queue' => function ($query) {
+                $query->withCount('picture_sequence');
+              }]);
           }
         ]
       )->find($request->id);
@@ -696,12 +723,20 @@ class ExperimentsController extends Controller
       {
         # has the experiment been edited before?
         # if so get the latest version
+        // $version_id = $original_experiment->first_version_id ? $original_experiment->first_version_id : $original_experiment->id;
+        // $last_version = Experiment
+        //   ::where('first_version_id', $version_id)
+        //   ->latest()
+        //   ->first();
+
         if ($original_experiment->first_version_id) {
-          $last_version = Experiment::where('first_version_id', $original_experiment->first_version_id)
+          $last_version = Experiment
+            ::where('first_version_id', $original_experiment->first_version_id)
             ->latest()
             ->first();
         } else {
-          $last_version = Experiment::where('first_version_id', $original_experiment->id)
+          $last_version = Experiment
+            ::where('first_version_id', $original_experiment->id)
             ->latest()
             ->first();
         }
@@ -711,7 +746,8 @@ class ExperimentsController extends Controller
         $original = ($original_experiment->first_version_id) ? $original_experiment->first_version_id : $original_experiment->id;
 
         $experiment = Experiment::create([
-          'user_id'           => auth()->user()->id,
+          //'user_id'           => auth()->user()->id,
+          'user_id'           => $original_experiment->user_id,
           'title'             => $request->title,
           'experiment_type_id'=> $request->experimentType,
           'picture_sequence_algorithm' => $request->algorithm,
@@ -731,7 +767,8 @@ class ExperimentsController extends Controller
         ]);
       } else {
         $experiment = Experiment::create([
-          'user_id'           => auth()->user()->id,
+          // 'user_id'           => auth()->user()->id,
+          'user_id'           => $original_experiment->user_id,
           'title'             => $request->title,
           'experiment_type_id'=> $request->experimentType,
           'picture_sequence_algorithm' => $request->algorithm,
@@ -754,12 +791,11 @@ class ExperimentsController extends Controller
         Experiment::destroy($original_experiment->id);
       }
 
-      # remove any $user_ids not in the database
-      # and add any $user_ids that aren't in the database
       $user_ids = collect($request->collaborators)
         ->pluck('id')
         ->toArray();
-      // $experiment->users()->attach($user_ids);
+      # remove any $user_ids not in the database
+      # and add any $user_ids that aren't in the database
       $experiment->users()->sync($user_ids);
 
       // TODO: abstract store function into another file/class
@@ -918,8 +954,8 @@ class ExperimentsController extends Controller
      */
     public function visibility (Request $request, Experiment $experiment)
     {
-      // if ($experiment->user_id !== auth()->user()->id) {
-      //   return response()->json('Unauthorized', 401);
+      // if ($experiment->user_id != auth()->user()->id) {
+      //   return response('Unauthorized', 401);
       // }
 
       $data = $request->validate([
