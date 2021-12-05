@@ -20,7 +20,7 @@ use App\Rules\AllowedTripletCount;
 class ExperimentsController extends Controller
 {
     /**
-     * Get all experiments created by the user, and all experiments the user has been invited to.
+     * Get all experiments created by the user and all experiments the user has been invited to.
      * With the count of total experiments results, and completed results.
      */
     public function index ()
@@ -49,9 +49,9 @@ class ExperimentsController extends Controller
       # filter out null values
       $experiments_invited_filtered = $experiments_invited->filter()->all();
 
-      $merged = $experiments->merge($experiments_invited_filtered);
+      $merged = $experiments->merge($experiments_invited_filtered)->sortByDesc('id');
 
-      return $merged;
+      return $merged->values()->all();
     }
 
     /**
