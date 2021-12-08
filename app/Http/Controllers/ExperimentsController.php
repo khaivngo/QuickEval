@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use DB;
 
 use App\Experiment;
-use App\ExperimentSequence;
-use App\ExperimentQueue;
 use App\ExperimentResult;
 use App\ObserverMeta;
 use App\ExperimentObserverMeta;
@@ -118,7 +116,7 @@ class ExperimentsController extends Controller
 
       # get the experiments picture sets, if we're a collaborator (not owner)
       if (auth()->user()->id !== $experiment->user_id) {
-        $picture_sequences = ExperimentQueue::with(['experiment_sequences' => function ($query) {
+        $picture_sequences = \App\ExperimentQueue::with(['experiment_sequences' => function ($query) {
           $query->where('picture_set_id', '!=', NULL)
             ->with('picture_set');
         }])
@@ -303,7 +301,7 @@ class ExperimentsController extends Controller
 
       if ($experiment->id > 0)
       {
-        $experiment_queue = ExperimentQueue::create([
+        $experiment_queue = \App\ExperimentQueue::create([
           'experiment_id' => $experiment->id
         ]);
 
@@ -414,6 +412,7 @@ class ExperimentsController extends Controller
                   $step['original'],
                   $step['flipped'],
                   $group[0]['randomizeGroup'],
+                  $group[0]['randomizeAcross'],
                   $step['hideImageTimer']
                 );
               }
@@ -561,15 +560,17 @@ class ExperimentsController extends Controller
       $original = null,
       $flipped = null,
       $randomize_group = null,
+      $randomize_across = null,
       $hide_image_timer = null
     ) {
-      $experiment_sequence = ExperimentSequence::create([
+      $experiment_sequence = \App\ExperimentSequence::create([
         'experiment_queue_id' => $experiment_queue_id,
         'picture_queue_id'    => $picture_queue_id,
         'instruction_id'      => $instruction_id,
         'picture_set_id'      => $picture_set_id,
         'randomize'           => $randomize,
         'randomize_group'     => $randomize_group,
+        'randomize_across'    => $randomize_across,
         'original'            => $original,
         'flipped'             => $flipped,
         'hide_image_timer'    => $hide_image_timer
@@ -584,7 +585,7 @@ class ExperimentsController extends Controller
      */
     public function start (Experiment $experiment)
     {
-      $sequences = ExperimentQueue::with(['experiment_sequences' => function ($query) {
+      $sequences = \App\ExperimentQueue::with(['experiment_sequences' => function ($query) {
           $query->with([
             'picture_set.pictures' => function ($query) { $query->where('is_original', 1); },
             'picture_queue.picture_sequence.picture',
@@ -661,17 +662,28 @@ class ExperimentsController extends Controller
       $sequence_groups = collect($all);
       $sequence_groups->transform(function ($group, $key) {
         if ($group[0]->randomize_group === 1) {
-          // return collect($group)->shuffle();
-
-          $merged = [];
-          foreach ($group as $item) {
-            $group[0]->stimuli->merge($item->stimuli);
-          }
-          return collect($group);
+          return collect($group)->shuffle();
         } else {
           return collect($group);
         }
       });
+
+      # Merge every stimuli sequences (in the group) into one stimuli sequence, and shuffle the stimuli.
+      foreach ($sequence_groups as $group) {
+        if ($group[0]->randomize_across === 1) {
+          $allStimuli = [];
+          foreach ($group as $key => $sequence) {
+            if ($group[0]->stimuli) {
+              array_push($allStimuli, ...$sequence->stimuli);
+              if ($key > 0) {
+                $group->forget($key);
+              }
+            }
+          }
+          $group[0]->stimuli = $allStimuli;
+          collect($group[0]->stimuli)->shuffle();
+        }
+      }
 
       return response($sequence_groups);
     }
@@ -809,7 +821,7 @@ class ExperimentsController extends Controller
       // TODO: abstract store function into another file/class
       if ($experiment->id > 0)
       {
-        $experiment_queue = ExperimentQueue::create([
+        $experiment_queue = \App\ExperimentQueue::create([
           'experiment_id' => $experiment->id
         ]);
 
@@ -919,6 +931,7 @@ class ExperimentsController extends Controller
                   $step['original'],
                   $step['flipped'],
                   $group[0]['randomizeGroup'],
+                  $group[0]['randomizeAcross'],
                   $step['hideImageTimer']
                 );
               }
