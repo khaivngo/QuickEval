@@ -24,6 +24,7 @@ use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ScientistRequestsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StatisticsController;
 
 
 Route::post('/register',    [AuthController::class, 'register']    );
@@ -136,6 +137,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get( '/scientist-request',             [ScientistRequestsController::class, 'index']   );
     Route::post('/scientist-request/{id}/accept', [ScientistRequestsController::class, 'accept']  );
     Route::post('/scientist-request/{id}/reject', [ScientistRequestsController::class, 'reject']  );
+
+    Route::get( '/statistics-counts',             [StatisticsController::class, 'index']   );
 
     # misc
     Route::post('/logout', [AuthController::class, 'logout']);
