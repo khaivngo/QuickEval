@@ -6,7 +6,20 @@
       </h2>
     </div>
 
-    <table class="table bordered hovered">
+    <!-- <div class="d-flex"> -->
+    <h3 class="text-h6 mt-12">Overview</h3>
+    <v-data-table
+      :loading="loading"
+      :headers="headers"
+      :items="experiments"
+      no-data-text="No experiments created"
+      class="mt-4"
+      hide-default-footer
+      :items-per-page="200"
+    ></v-data-table>
+    <!-- </div> -->
+
+    <!-- <table class="table bordered hovered">
       <thead>
         <tr>
           <th class="overflow-wrap">Experiment Title</th>
@@ -21,7 +34,7 @@
           <td>{{ experiment.completed_results_count }}</td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
   </div>
 </template>
 
@@ -29,7 +42,15 @@
 export default {
   data () {
     return {
-      experiments: []
+      headers: [
+        { text: 'Experiment Title', sortable: false, value: 'title' },
+        { text: 'Visitors', sortable: true, value: 'results_count' },
+        { text: 'Visitors completed', sortable: true, value: 'completed_results_count' }
+      ],
+
+      experiments: [],
+
+      loading: false
     }
   },
   created () {
