@@ -25,6 +25,7 @@ class ExperimentSequence extends Model
         'instruction_id' => 'integer',
         'randomize' => 'integer',
         'randomize_group' => 'integer',
+        'randomize_across' => 'integer',
         'original' => 'integer',
         'flipped' => 'integer',
         'hide_image_timer' => 'integer'

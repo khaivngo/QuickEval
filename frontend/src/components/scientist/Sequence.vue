@@ -60,7 +60,7 @@
                         ></v-checkbox>
                       </template>
                       <div class="pl-0 pr-0 pt-1 pb-1 body-1">
-                        Randomize order of stimuli.
+                        Randomize order of stimuli within stimuli set.
                       </div>
                     </v-tooltip>
                   </div>
@@ -172,10 +172,10 @@
               </v-row>
             </v-col>
             <v-col v-if="group.length > 1" cols="auto" class="pa-0 ma-0 mt-6 mb-0" style="border-left: 1px solid #999;">
-              <v-container fluid fill-height class="pa-0 ma-0 pl-6">
+              <v-container fluid fill-height class="pa-0 ma-0 pl-5 pr-5">
                 <v-col cols="auto">
                   <div class="d-flex flex-column align-center">
-                    <h6 class="caption">Randomize</h6>
+                    <h6 class="caption text-center">Randomize<br>group order</h6>
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
                         <v-checkbox
@@ -188,6 +188,29 @@
                       </template>
                       <div class="pl-0 pr-0 pt-1 pb-1 body-1">
                         Randomize order of stimuli groups.
+                      </div>
+                    </v-tooltip>
+                  </div>
+                </v-col>
+              </v-container>
+            </v-col>
+            <v-col v-if="group.length > 1" cols="auto" class="pa-0 ma-0 mt-6 mb-0" style="border-left: 1px solid #999;">
+              <v-container fluid fill-height class="pa-0 ma-0 pl-5">
+                <v-col cols="auto">
+                  <div class="d-flex flex-column align-center">
+                    <h6 class="caption text-center">Randomize<br>across groups</h6>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-checkbox
+                          v-on="on"
+                          v-model="group[0].randomizeAcross"
+                          class="ma-0 pa-0 pl-1"
+                          color="success"
+                          hide-details
+                        ></v-checkbox>
+                      </template>
+                      <div class="pl-0 pr-0 pt-1 pb-1 body-1">
+                        Randomize order of stimuli across stimuli groups.
                       </div>
                     </v-tooltip>
                   </div>
@@ -617,6 +640,7 @@ export default {
             value: value,
             randomize: Number(item.randomize),
             randomizeGroup: Number(item.randomize_group),
+            randomizeAcross: Number(item.randomize_across),
             original: Number(item.original),
             flipped: Number(item.flipped),
             hideImageTimer: item.hide_image_timer,
@@ -719,6 +743,7 @@ export default {
         value: this.input,
         randomize: true,
         randomizeGroup: false,
+        randomizeAcross: false,
         original: false,
         flipped: false,
         hideImageTimer: null,
@@ -806,6 +831,7 @@ export default {
           value: response.data.id,
           randomize: true,
           randomizeGroup: false,
+          randomizeAcross: false,
           original: false,
           flipped: false,
           hideImageTimer: null,

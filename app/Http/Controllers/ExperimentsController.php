@@ -412,6 +412,7 @@ class ExperimentsController extends Controller
                   $step['original'],
                   $step['flipped'],
                   $group[0]['randomizeGroup'],
+                  $group[0]['randomizeAcross'],
                   $step['hideImageTimer']
                 );
               }
@@ -559,6 +560,7 @@ class ExperimentsController extends Controller
       $original = null,
       $flipped = null,
       $randomize_group = null,
+      $randomize_across = null,
       $hide_image_timer = null
     ) {
       $experiment_sequence = \App\ExperimentSequence::create([
@@ -568,6 +570,7 @@ class ExperimentsController extends Controller
         'picture_set_id'      => $picture_set_id,
         'randomize'           => $randomize,
         'randomize_group'     => $randomize_group,
+        'randomize_across'    => $randomize_across,
         'original'            => $original,
         'flipped'             => $flipped,
         'hide_image_timer'    => $hide_image_timer
@@ -664,6 +667,23 @@ class ExperimentsController extends Controller
           return collect($group);
         }
       });
+
+      # Merge every stimuli sequences (in the group) into one stimuli sequence, and shuffle the stimuli.
+      foreach ($sequence_groups as $group) {
+        if ($group[0]->randomize_across === 1) {
+          $allStimuli = [];
+          foreach ($group as $key => $sequence) {
+            if ($group[0]->stimuli) {
+              array_push($allStimuli, ...$sequence->stimuli);
+              if ($key > 0) {
+                $group->forget($key);
+              }
+            }
+          }
+          $group[0]->stimuli = $allStimuli;
+          collect($group[0]->stimuli)->shuffle();
+        }
+      }
 
       return response($sequence_groups);
     }
@@ -911,6 +931,7 @@ class ExperimentsController extends Controller
                   $step['original'],
                   $step['flipped'],
                   $group[0]['randomizeGroup'],
+                  $group[0]['randomizeAcross'],
                   $step['hideImageTimer']
                 );
               }
