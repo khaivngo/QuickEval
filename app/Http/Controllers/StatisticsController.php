@@ -17,7 +17,8 @@ use App\Picture;
 class StatisticsController extends Controller
 {
     public function index () {
-        $users_count = User::where('role', '>', 1)->count();
+        $users_scientist_count = User::where('role', '>', 1)->count();
+        $users_anonymous_count = User::where('role', 1)->count();
 
         $experiments_count = Experiment::all()->count();
         $experiment_results_count = ExperimentResult::all()->count(); // where completed?
@@ -27,12 +28,13 @@ class StatisticsController extends Controller
         $result_magnitude_count = ResultMagnitudeEstimation::all()->count();
         $result_triplet_count   = ResultTriplet::all()->count();
         $result_rank_count      = ResultRankOrder::all()->count();
-        $result_total_count = $result_pair_count + $result_category_count + $result_magnitude_count + $result_triplet_count + $result_rank_count;
+        $result_total_count     = (int)$result_pair_count + (int)$result_category_count + (int)$result_magnitude_count + (int)$result_triplet_count + (int)$result_rank_count;
 
         $pictures_count = Picture::all()->count();
 
         $counts = [
-            'users' => $users_count,
+            'scientists' => $users_scientist_count,
+            'anonymous' => $users_anonymous_count,
             'experiments' => $experiments_count,
             'experimentResults' => $experiment_results_count,
             'resultsPaired' => $result_pair_count,

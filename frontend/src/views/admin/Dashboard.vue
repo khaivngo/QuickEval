@@ -14,9 +14,15 @@
       </v-col>
 
       <v-col>
-        <div class="pa-4">
-          <div class="text-h5 font-weight-bold">{{ counts.users }}</div>
-          <div>Scientists</div>
+        <div class="d-flex">
+          <div class="pa-4">
+            <div class="text-h5 font-weight-bold">{{ counts.scientists }}</div>
+            <div>Scientists</div>
+          </div>
+          <div class="pa-4">
+            <div class="text-h5 font-weight-bold">{{ counts.anonymous }}</div>
+            <div>Anonymous</div>
+          </div>
         </div>
       </v-col>
     </v-row>

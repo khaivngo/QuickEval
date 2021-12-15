@@ -45,7 +45,7 @@ export default {
       headers: [
         { text: 'Experiment Title', sortable: false, value: 'title' },
         { text: 'Visitors', sortable: true, value: 'results_count' },
-        { text: 'Visitors completed', sortable: true, value: 'completed_results_count' }
+        { text: 'Completed', sortable: true, value: 'completed_results_count' }
       ],
 
       experiments: [],

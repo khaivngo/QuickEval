@@ -210,7 +210,8 @@
                         ></v-checkbox>
                       </template>
                       <div class="pl-0 pr-0 pt-1 pb-1 body-1">
-                        Randomize order of stimuli across stimuli groups.
+                        Randomize order of stimuli across stimuli groups.<br>This randomizes everything,
+                        except for the relationship between stimuli and instructions.
                       </div>
                     </v-tooltip>
                   </div>

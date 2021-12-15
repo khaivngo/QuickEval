@@ -6,6 +6,47 @@
       </h2>
 
       <h2 class="text-h6 mt-12 mb-4 first font-weight-bold">
+        12. des. 2021
+      </h2>
+      <v-simple-table>
+        <template v-slot:default>
+          <tbody>
+            <tr>
+              <td>
+                <v-chip outlined small color="success" class="qe-chip">added</v-chip>
+              </td>
+              <td class="pt-3 pb-3">
+                Scientist can add experiment collaborators.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <v-chip outlined small color="success" class="qe-chip">added</v-chip>
+              </td>
+              <td class="pt-3 pb-3">
+                Randomization across stimuli groups.
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <v-chip outlined small color="success" class="qe-chip">added</v-chip>
+              </td>
+              <td class="pt-3 pb-3">
+                Simple usage statistics in the admin dashboard.
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+
+      <h2 class="text-h6 mt-12 mb-4 first font-weight-bold">
         17. sep. 2021
       </h2>
       <v-simple-table>

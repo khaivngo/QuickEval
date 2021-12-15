@@ -680,8 +680,7 @@ class ExperimentsController extends Controller
               }
             }
           }
-          $group[0]->stimuli = $allStimuli;
-          collect($group[0]->stimuli)->shuffle();
+          $group[0]->stimuli = collect($allStimuli)->shuffle();
         }
       }
 
