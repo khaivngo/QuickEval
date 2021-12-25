@@ -573,7 +573,7 @@ export default {
     },
 
     /**
-     * Loop through the stimuli array and count how many picture pairs we have.
+     * Loop through the stimuli array and count how many picture groups we have.
      */
     countTotalComparisons () {
       // get all groups (arrays) that contain image queues

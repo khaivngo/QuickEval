@@ -318,7 +318,7 @@
 
         <v-stepper-content :step="showCategories.id" v-if="showCategories">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <template v-if="experimentType === 6">
+            <template v-if="experimentType === 6 || experimentType === 7">
               <h2 class="mb-1">Scale Slider Settings</h2>
               <!-- <p class="body-1">
                 Add max/min value of the slider.
@@ -626,7 +626,10 @@ export default {
      */
     experimentType (newVal, oldVal) {
       // if rating -> non rating
-      if ((oldVal === null || oldVal === 3 || oldVal === 5 || oldVal === 6) && (newVal === 1 || newVal === 2 || newVal === 4)) {
+      if (
+        (oldVal === null || oldVal === 3 || oldVal === 5 || oldVal === 6 || newVal === 7) &&
+        (newVal === 1 || newVal === 2 || newVal === 4)
+      ) {
         // if categories, remove
         if (this.showCategories) {
           --this.steps[4].id
@@ -636,7 +639,10 @@ export default {
           })
         }
       // if non rating -> rating
-      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5 || newVal === 6)) {
+      } else if (
+        (oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) &&
+        (newVal === 3 || newVal === 5 || newVal === 6 || newVal === 7)
+      ) {
         // if no categories, add
         ++this.steps[3].id // this.steps.find(step => step.title === 'Categories').id = 4
         ++this.steps[4].id
@@ -786,7 +792,7 @@ export default {
           this.form.delay            = response.data.delay
           this.form.stimuliSpacing   = response.data.stimuli_spacing
 
-          if (response.data.experiment_type_id === 6) {
+          if (response.data.experiment_type_id === 6 || response.data.experiment_type_id === 7) {
             this.form.slider.minValue = response.data.slider.min_value
             this.form.slider.maxValue = response.data.slider.max_value
             this.form.slider.minLabel = response.data.slider.min_label

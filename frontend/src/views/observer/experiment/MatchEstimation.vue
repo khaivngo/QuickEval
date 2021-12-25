@@ -43,7 +43,7 @@
 
       <v-toolbar-items v-if="experiment.show_progress === 1">
         <h4 class="pt-1 mr-4" style="color: #BDBDBD;">
-          {{ index }}/{{ totalComparisons }}
+          {{ index + 1}}/{{ totalComparisons }}
         </h4>
       </v-toolbar-items>
 
@@ -235,6 +235,7 @@ export default {
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
+      sliderIndex: 0,
       experimentResult: null,
 
       totalComparisons: 0,
@@ -315,6 +316,11 @@ export default {
   watch: {
     originalImage () {
       this.calculateLayout()
+    },
+    sliderIndex (newVal, oldVal) {
+      if (newVal !== undefined) {
+        this.switchStimuli()
+      }
     }
   },
 
@@ -408,7 +414,7 @@ export default {
           // send results to db
           // let response =
           await this.store(
-            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
+            this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture,
             seconds
           )
 
@@ -416,18 +422,11 @@ export default {
           this.shapes = {}
 
           ++this.index
-          ++this.imagePairIndex
-
-          // move on to the next picture sequence
-          if (this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length === this.imagePairIndex) {
-            this.imagePairIndex = 0
-            ++this.sequenceIndex
-          }
+          ++this.sequenceIndex
 
           // move on to the next experiment sequence
           if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
             this.sequenceIndex = 0
-            this.imagePairIndex = 0
             ++this.typeIndex
           }
 
@@ -457,6 +456,98 @@ export default {
       if (this.stimuli[this.typeIndex].length === this.sequenceIndex) {
         this.sequenceIndex = 0
         ++this.typeIndex
+      }
+    },
+
+    switchStimuli () {
+      // we use a object because sometimes the image is the same image but we still want
+      // to trigger watch in child components
+      if (this.experiment.artifact_marking) {
+        this.leftCanvas = {
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture,
+          path:
+            this.$UPLOADS_FOLDER +
+            this.stimuli[this.typeIndex][this.sequenceIndex]
+              .stimuli[this.sliderIndex]
+              .picture
+              .path
+        }
+      }
+      console.log(this.sliderIndex)
+      var imgLeft = {
+        img: new Image(),
+
+        path: this.$UPLOADS_FOLDER +
+          this.stimuli[this.typeIndex][this.sequenceIndex]
+            .stimuli[this.sliderIndex].picture.path,
+
+        extension: this.stimuli[this.typeIndex][this.sequenceIndex]
+          .stimuli[this.sliderIndex]
+          .picture.extension
+      }
+
+      if (this.isVideo(imgLeft.extension)) {
+        // create new video element and start loading stimulus
+        var tempVideo = document.createElement('video')
+        tempVideo.src = imgLeft.path
+        tempVideo.autoplay = true
+        tempVideo.loop = true
+        tempVideo.controls = true
+        tempVideo.style.width = '100%'
+        // tempVideo.style.pointerEvents = 'none'
+        tempVideo.classList.add('stimulus')
+        tempVideo.classList.add('hide')
+
+        var loadNewVideo = () => {
+          // this event may be called multiple times on some browsers, therefore remove it
+          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevVideo = document.querySelector('.stimuli-container .stimulus')
+          if (prevVideo) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
+          }
+          container.appendChild(tempVideo)
+
+          window.setTimeout(() => {
+            tempVideo.classList.remove('hide')
+            this.startTime = new Date()
+
+            tempVideo.play()
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempVideo.load()
+        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+      } else {
+        var tempImage = document.createElement('img')
+        tempImage.src = imgLeft.path
+        // tempImage.style.width = '100%'
+        tempImage.classList.add('stimulus')
+        tempImage.classList.add('hide')
+
+        var loadNewImage = () => {
+          tempImage.removeEventListener('load', loadNewImage, false)
+
+          let container = document.querySelector('.stimuli-container')
+          let prevImage = document.querySelector('.stimuli-container .stimulus')
+          if (prevImage) {
+            let node = document.querySelector('.stimuli-container .stimulus')
+            container.removeChild(node)
+          }
+          container.appendChild(tempImage)
+
+          window.setTimeout(() => {
+            tempImage.classList.remove('hide')
+            this.startTime = new Date()
+
+            this.disableNextBtn = false
+          }, this.experiment.delay)
+        }
+
+        tempImage.addEventListener('load', loadNewImage, false)
       }
     },
 
@@ -497,15 +588,15 @@ export default {
       // to trigger watch in child components
       if (this.experiment.artifact_marking) {
         this.leftCanvas = {
-          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture,
-          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path
+          image: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture,
+          path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path
         }
       }
-
+      console.log(this.sliderIndex)
       var imgLeft = {
         img: new Image(),
-        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.path,
-        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.imagePairIndex].picture.extension
+        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
+        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.extension
       }
 
       if (this.isVideo(imgLeft.extension)) {
@@ -631,7 +722,6 @@ export default {
 
       this.tickLabels = Array.from({ length: ticks }, (v, k) => {
         // if we have many steps then skip every nth label
-
         if (ticks > 10) {
           if (k % 2 !== 0) {
             return null
@@ -662,17 +752,19 @@ export default {
       })
     },
 
-    updateActiveLabel () {
-      // console.log('changed')
-      // console.log(this.selectedMagnitude)
+    updateActiveLabel (label) {
+      let ticks = this.maxValue - this.minValue + 1
+      let tickLabels = Array.from({ length: ticks }, (v, k) => {
+        return this.minValue + k
+      })
+      const index = tickLabels.findIndex(item => item === label)
+      // console.log(index)
 
-      // const ticksLabels = document.querySelectorAll('.v-slider__ticks-container .v-slider__tick-label')
-      // for (let label of ticksLabels) {
-      //   if (label.innerHTML) {
-
-      //   }
-      //   label.style.fontSize = '12px'
-      // }
+      if (label !== undefined && index !== -1) {
+        this.sliderIndex = index // watch to load new images?
+      } else {
+        this.sliderIndex = Math.round((this.minValue + this.maxValue) / 2) - 1
+      }
     },
 
     resetSliderPosition () {
@@ -681,22 +773,15 @@ export default {
     },
 
     /**
-     * Loop through the stimuli array and count how many picture pairs we have.
+     * Loop through the stimuli array and count how many picture groups we have.
      * With this number we can display how many comparions the user have to rate.
      */
     countTotalComparisons () {
-      let stimuliCount = this.stimuli.reduce((accumulator, currentValue) => {
-        if (currentValue[0].hasOwnProperty('stimuli')) {
-          let total = currentValue.reduce((accu, current) => {
-            return accu + current.stimuli.length
-          }, 0)
-          return accumulator + total
-        } else {
-          return accumulator
-        }
-      }, 0)
-
-      this.totalComparisons = stimuliCount
+      this.totalComparisons = this.stimuli
+        // get all groups (arrays) that contain image queues
+        .filter(item => item[0].hasOwnProperty('picture_queue') && item[0].picture_queue !== null)
+        // count total image queues all the groups contain together
+        .reduce((accu, current) => accu + current.length, 0)
     },
 
     async getExperiment (experimentId) {
@@ -715,7 +800,7 @@ export default {
         artifact_marks: this.shapes
       }
 
-      return this.$axios.post('/result-magnitude-estimations', data)
+      return this.$axios.post('/result-match-estimations', data)
     },
 
     onFinish () {

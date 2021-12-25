@@ -11,11 +11,12 @@ use App\Http\Controllers\ObserverMetasController;
 use App\Http\Controllers\ExperimentSequencesController;
 use App\Http\Controllers\ExperimentCategoriesController;
 use App\Http\Controllers\ExperimentSlidersController;
-use App\Http\Controllers\ResultMagnitudeEstimationsController;
 use App\Http\Controllers\ExperimentObserverMetasController;
 use App\Http\Controllers\PicturesController;
 use App\Http\Controllers\ResultPairsController;
 use App\Http\Controllers\ResultCategoriesController;
+use App\Http\Controllers\ResultMagnitudeEstimationsController;
+use App\Http\Controllers\ResultMatchEstimationsController;
 use App\Http\Controllers\ResultRankOrdersController;
 use App\Http\Controllers\ResultTripletsController;
 use App\Http\Controllers\ResultObserverMetasController;
@@ -111,8 +112,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/result-categories',                 [ResultCategoriesController::class, 'store']);
 
     # magnitude results
-    Route::post('/result-magnitude-estimations/{id}/statistics', [ResultCategoriesController::class, 'results_grouped_by_image_sets']);
-    Route::post('/result-magnitude-estimations',   [ResultMagnitudeEstimationsController::class, 'store']);
+    Route::post('/result-magnitude-estimations/{id}/statistics', [ResultMagnitudeEstimationsController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-magnitude-estimations',                 [ResultMagnitudeEstimationsController::class, 'store']);
+
+    # magnitude results
+    Route::post('/result-match-estimations/{id}/statistics', [ResultMatchEstimationsController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-match-estimations',                 [ResultMatchEstimationsController::class, 'store']);
 
     # rank order results
     Route::post('/result-rank-orders/{id}/statistics', [ResultRankOrdersController::class, 'results_grouped_by_image_sets']);

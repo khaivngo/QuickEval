@@ -165,7 +165,7 @@ class ExperimentsController extends Controller
         $experiment['categories'] = $all;
       }
 
-      if ($experiment->experiment_type_id === 6) {
+      if ($experiment->experiment_type_id === 6 || $experiment->experiment_type_id === 7) {
         $experiment['slider'] = \App\ExperimentSlider::where('experiment_id', $request->id)->first();
       }
 
@@ -364,7 +364,7 @@ class ExperimentsController extends Controller
             }
           }
 
-          if ($experiment->experiment_type_id == 6)
+          if ($experiment->experiment_type_id == 6 || $experiment->experiment_type_id === 7)
           {
             \App\ExperimentSlider::create([
               'experiment_id' => $experiment->id,
@@ -882,7 +882,7 @@ class ExperimentsController extends Controller
             }
           }
 
-          if ($experiment->experiment_type_id == 6)
+          if ($experiment->experiment_type_id == 6 || $experiment->experiment_type_id === 7)
           {
             \App\ExperimentSlider::create([
               'experiment_id' => $experiment->id,
