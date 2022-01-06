@@ -29,10 +29,10 @@ class PictureSetsController extends Controller
 
     public function find ($id) {
       return PictureSet
-        ::with(
-          'pictures',
+        ::with([
+          'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); },
           'experiment_sequences.experiment_queue.experiment'
-        )->find($id);
+        ])->find($id);
     }
 
     public function original ($picture_set_id) {
@@ -78,6 +78,73 @@ class PictureSetsController extends Controller
         $picture_set->update();
 
         return response($picture_set, 200);
+    }
+
+    public function move (Request $request)
+    {
+        $left  = \App\Picture::find($request[0]);
+        $right = \App\Picture::find($request[1]);
+        $moved = \App\Picture::find($request[2]);
+
+        if (!$left) { # first position
+          $new_index = round( (0 + $right->order_index) / 2);
+          if ($new_index >= $right->order_index) {
+            $pics = PictureSet
+              ::with(['pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }])
+              ->find($moved->picture_set_id);
+
+            $modifier = 1;
+            foreach ($pics->pictures as $pic) {
+              $order_index = ($modifier * 1024);
+              $modifier = $modifier + 1;
+
+              $pic->order_index = $order_index;
+              $pic->save();
+            }
+          } else {
+            $moved->order_index = $new_index;
+          }
+        }
+        else if (!$right) { # last position
+          $new_index = round( (($left->order_index + 1024) + $left->order_index) / 2);
+          if ($new_index <= $left->order_index) {
+            $pics = PictureSet
+              ::with(['pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }])
+              ->find($moved->picture_set_id);
+
+            $modifier = 1;
+            foreach ($pics->pictures as $pic) {
+              $order_index = ($modifier * 1024);
+              $modifier = $modifier + 1;
+
+              $pic->order_index = $order_index;
+              $pic->save();
+            }
+          }
+          $moved->order_index = $new_index;
+        }
+        else {
+          $new_index = round( ($left->order_index + $right->order_index) / 2);
+          if ($new_index >= $right->order_index || $new_index <= $left->order_index) {
+            $pics = PictureSet
+              ::with(['pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }])
+              ->find($moved->picture_set_id);
+
+            $modifier = 1;
+            foreach ($pics->pictures as $pic) {
+              $order_index = ($modifier * 1024);
+              $modifier = $modifier + 1;
+
+              $pic->order_index = $order_index;
+              $pic->save();
+            }
+          }
+          $moved->order_index = $new_index;
+        }
+
+        $moved->save();
+
+        return response($moved, 200);
     }
 
     /**

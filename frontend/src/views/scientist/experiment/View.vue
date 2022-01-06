@@ -409,16 +409,7 @@ export default {
             this.exportFlags.inputsMeta = true
           }
 
-          if (this.experiment.type.slug === 'paired') {
-            const total = this.experiment.sequences.reduce((a, b) => a + parseInt(b.picture_queue.picture_sequence_count), 0)
-            this.totalComparisons = total / 2
-          } else if (this.experiment.type.slug === 'triplet') {
-            const total = this.experiment.sequences.reduce((a, b) => a + parseInt(b.picture_queue.picture_sequence_count), 0)
-            this.totalComparisons = total / 3
-          } else {
-            const total = this.experiment.sequences.reduce((a, b) => a + parseInt(b.picture_queue.picture_sequence_count), 0)
-            this.totalComparisons = total
-          }
+          this.calculateTotalComparisons()
 
           this.getExperimentResults()
 
@@ -453,6 +444,13 @@ export default {
             } else if (this.experiment.type.slug === 'triplet') {
               const parsed = parseInt(item.triplet_results_count)
               item.finished = (this.totalComparisons > parsed) ? 0 : 1
+            } else if (this.experiment.type.slug === 'magnitude') {
+              const parsed = parseInt(item.magnitude_results_count)
+              item.finished = (this.totalComparisons > parsed) ? 0 : 1
+            } else if (this.experiment.type.slug === 'match') {
+              // console.log(item.match_results_count)
+              const parsed = parseInt(item.match_results_count)
+              item.finished = (this.totalComparisons > parsed) ? 0 : 1
             }
           })
 
@@ -462,6 +460,31 @@ export default {
           console.log(err)
           this.loading = false
         })
+    },
+
+    calculateTotalComparisons () {
+      let total = this.experiment.sequences.reduce((a, b) => {
+        return a + parseInt(b.picture_queue.picture_sequence_count)
+      }, 0)
+
+      switch (this.experiment.type.slug) {
+        case 'paired':
+          this.totalComparisons = total / 2
+          break
+        case 'triplet':
+          this.totalComparisons = total / 3
+          break
+        case 'category':
+        case 'rank-order':
+          this.totalComparisons = total
+          break
+        case 'magnitude':
+        case 'match':
+          this.totalComparisons = this.experiment.sequences
+            .filter(a => a.picture_queue_id !==  null)
+            .length
+          break
+      }
     },
 
     visibility (exp) {

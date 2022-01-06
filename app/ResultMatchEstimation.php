@@ -22,7 +22,7 @@ class ResultMatchEstimation extends Model
         'experiment_result_id' => 'integer',
         'magnitude_value' => 'integer',
         'picture_id_left' => 'integer',
-        'picture_id_right' => 'integer',
+        'picture_id_original' => 'integer',
         'chose_none' => 'integer',
         'client_side_timer' => 'integer',
     ];
@@ -33,5 +33,9 @@ class ResultMatchEstimation extends Model
 
     public function picture () {
         return $this->belongsTo(Picture::class, 'picture_id_left');
+    }
+
+    public function picture_original () {
+        return $this->belongsTo(Picture::class, 'picture_id_original');
     }
 }

@@ -235,7 +235,7 @@ export default {
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
-      sliderIndex: 0,
+      sliderIndex: 1,
       experimentResult: null,
 
       totalComparisons: 0,
@@ -357,6 +357,15 @@ export default {
           this.stimuli = Object.values(payload.data)
           this.stimuli.push(['finished'])
 
+          // order the stimuli ascending by order_index
+          this.stimuli.forEach(pics => {
+            if (pics[0].hasOwnProperty('picture_set_id') && pics[0].picture_set_id !== null) {
+              pics.forEach(p => {
+                p.stimuli.sort((a, b) => parseFloat(a.picture.order_index) - parseFloat(b.picture.order_index))
+              })
+            }
+          })
+
           // save stimuli queue so that the observer will not lose progress if they refresh the page
           const stimuliQueue = JSON.stringify(this.stimuli)
           localStorage.setItem(`${this.experiment.id}-stimuliQueue`, stimuliQueue)
@@ -412,9 +421,9 @@ export default {
 
         try {
           // send results to db
-          // let response =
           await this.store(
             this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture,
+            this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0],
             seconds
           )
 
@@ -565,8 +574,8 @@ export default {
       // set or wipe original
       if (
         this.stimuli[this.typeIndex][this.sequenceIndex].hasOwnProperty('picture_set') &&
-        this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures') &&
-        this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
+        this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.hasOwnProperty('pictures')
+        // this.stimuli[this.typeIndex][this.sequenceIndex].original === 1
       ) {
         this.originalExtension = this.stimuli[this.typeIndex][this.sequenceIndex].picture_set.pictures[0].extension
         if (this.isImage(this.originalExtension)) {
@@ -788,13 +797,14 @@ export default {
       return this.$axios.get(`/experiment/${experimentId}`)
     },
 
-    async store (pictureIdLeft, clientSideTimer) {
+    async store (pictureIdLeft, pictureIdOriginal, clientSideTimer) {
       console.log(this.selectedMagnitude)
       let data = {
         experiment_result_id: this.experimentResult,
         // category_id: this.selectedCategory,
         magnitude_value: this.selectedMagnitude,
         picture_id_left: pictureIdLeft.id,
+        picture_id_original: pictureIdOriginal.id,
         client_side_timer: clientSideTimer,
         chose_none: 0,
         artifact_marks: this.shapes

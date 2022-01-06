@@ -21,6 +21,7 @@ class CreatePicturesTable extends Migration
             $table->string('extension', 20);
             $table->tinyInteger('is_original')->default(0);
             $table->integer('picture_set_id');
+            $table->integer('order_index')->nullable();
 
             $table->timestamps();
         });

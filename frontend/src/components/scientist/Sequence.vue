@@ -46,7 +46,7 @@
                   ></v-select>
                 </v-col>
 
-                <v-col cols="auto" class="pa-0 ma-0 pl-4 pr-6">
+                <v-col v-if="storage.experimentType !== 7" cols="auto" class="pa-0 ma-0 pl-4 pr-6">
                   <div class="d-flex flex-column align-center">
                     <h6 class="caption">Randomize</h6>
                     <v-tooltip top>
@@ -87,7 +87,7 @@
                   </div>
                 </v-col>
 
-                <v-col cols="auto" class="pa-0 ma-0" justify="center">
+                <v-col v-if="storage.experimentType !== 7" cols="auto" class="pa-0 ma-0" justify="center">
                   <div class="d-flex flex-column align-center">
                     <h6 class="caption">Original</h6>
                     <v-tooltip top>
@@ -194,7 +194,7 @@
                 </v-col>
               </v-container>
             </v-col>
-            <v-col v-if="group.length > 1" cols="auto" class="pa-0 ma-0 mt-6 mb-0" style="border-left: 1px solid #999;">
+            <v-col v-if="group.length > 1 && (storage.experimentType !== 2 && storage.experimentType !== 7)" cols="auto" class="pa-0 ma-0 mt-6 mb-0" style="border-left: 1px solid #999;">
               <v-container fluid fill-height class="pa-0 ma-0 pl-5">
                 <v-col cols="auto">
                   <div class="d-flex flex-column align-center">

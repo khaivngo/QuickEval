@@ -19,6 +19,7 @@ class CreateResultMatchEstimationsTable extends Migration
             $table->integer('experiment_result_id')->nullable();
 
             $table->integer('picture_id_left');
+            $table->integer('picture_id_original');
             $table->integer('magnitude_value');
 
             $table->tinyInteger('chose_none')->nullable();

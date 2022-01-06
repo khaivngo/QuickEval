@@ -115,47 +115,64 @@
         </v-row>
 
         <v-row wrap>
-          <v-col
-            v-for="(image, i) in reproductions" :key="i"
-            xs="6" sm="6" md="3" lg="3" xl="3"
-            class="pa-1"
+          <draggable
+            :list="reproductions"
+            ghost-class="ghost"
+            class="list-group"
+            v-bind="dragOptions"
+            @start="beingDragged = true"
+            @change="dragChange"
+            @end="dragEnd"
+            style="width: 100%;"
           >
-            <div style="display: flex; justify-content: flex-end;">
-              <ActionMenu :image="image" :index="i" @deleted="deleteImage"/>
-            </div>
-
-            <v-img
-              v-if="isImage(image.extension)"
-              :src="$UPLOADS_FOLDER + image.path"
-              aspect-ratio="1"
-              class="grey lighten-2"
+            <transition-group
+              type="transition"
+              :name="!beingDragged ? 'flip-list' : null"
+              style="display: flex; flex-grow: 1; width: 100%; flex-wrap: wrap;"
             >
-              <template v-slot:placeholder>
-                <v-layout
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
+              <v-col
+                v-for="(image, i) in reproductions" :key="image.id"
+                xs="12" sm="6" md="3" lg="3" xl="3"
+                class="pa-1 moveable-image"
+              >
+                <div style="display: flex; justify-content: flex-end;">
+                  <ActionMenu :image="image" :index="i" @deleted="deleteImage"/>
+                </div>
+
+                <v-img
+                  v-if="isImage(image.extension)"
+                  :src="$UPLOADS_FOLDER + image.path"
+                  aspect-ratio="1"
+                  class="grey lighten-2"
                 >
-                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                </v-layout>
-              </template>
-            </v-img>
-            <video
-              v-if="isVideo(image.extension)"
-              loop controls
-              style="width: 100%;"
-              class="video-player"
-            >
-              <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
-              <source :src="$UPLOADS_FOLDER + image.path" :type="`video/${image.extension}`">
-              Your browser does not support the video tag.
-            </video>
+                  <template v-slot:placeholder>
+                    <v-layout
+                      fill-height
+                      align-center
+                      justify-center
+                      ma-0
+                    >
+                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                    </v-layout>
+                  </template>
+                </v-img>
+                <video
+                  v-if="isVideo(image.extension)"
+                  loop controls
+                  style="width: 100%;"
+                  class="video-player"
+                >
+                  <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
+                  <source :src="$UPLOADS_FOLDER + image.path" :type="`video/${image.extension}`">
+                  Your browser does not support the video tag.
+                </video>
 
-            <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
-              {{ image.name }}
-            </h5>
-          </v-col>
+                <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
+                  {{ image.name }}
+                </h5>
+              </v-col>
+            </transition-group>
+          </draggable>
         </v-row>
       </div>
 
@@ -324,12 +341,14 @@ import Uppy from '@/components/scientist/Uppy'
 import ActionMenu from '@/components/scientist/ActionMenu'
 import EventBus from '@/eventBus'
 import mixin from '@/mixins/FileFormats.js'
+import draggable from 'vuedraggable'
 
 export default {
   components: {
     UppyOriginal,
     Uppy,
-    ActionMenu
+    ActionMenu,
+    draggable
   },
 
   mixins: [mixin],
@@ -346,7 +365,20 @@ export default {
       editTitle: false,
 
       dialogDelete: false,
-      affectedExperiments: []
+      affectedExperiments: [],
+
+      beingDragged: false
+    }
+  },
+
+  computed: {
+    dragOptions () {
+      return {
+        animation: 200,
+        group: 'description',
+        disabled: false,
+        ghostClass: 'ghost'
+      }
     }
   },
 
@@ -356,6 +388,23 @@ export default {
   },
 
   methods: {
+    dragChange (e) {
+      this.beingDragged = false
+      // console.log(e.moved.element)
+      // console.log(e)
+
+      const moved = e.moved.element.id
+      const left = (this.reproductions[e.moved.newIndex - 1] !== undefined)
+        ? this.reproductions[e.moved.newIndex - 1].id : -1
+      const right = (this.reproductions[e.moved.newIndex + 1] !== undefined)
+        ? this.reproductions[e.moved.newIndex + 1].id : -1
+
+      this.$axios.post(`/picture-set/move-image`, [left, right, moved])
+        .then((response) => {
+          console.log(response)
+        })
+    },
+
     addOriginal (files) {
       this.original.unshift(files[0])
     },
@@ -420,6 +469,9 @@ export default {
       }).catch(() => {
         this.creating = false
       })
+    },
+
+    dragEnd (e) {
     },
 
     destroy () {

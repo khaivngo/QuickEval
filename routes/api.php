@@ -39,6 +39,7 @@ Route::post('/result-triplet/export',    [ResultTripletsController::class, 'expo
 Route::post('/result-rank-order/export', [ResultRankOrdersController::class, 'export']  );
 Route::post('/result-category/export',   [ResultCategoriesController::class, 'export']  );
 Route::post('/result-magnitude/export',  [ResultMagnitudeEstimationsController::class, 'export']);
+Route::post('/result-match/export',      [ResultMatchEstimationsController::class, 'export']);
 
 
 # Note: auth:api middleware gives access to the user object
@@ -98,6 +99,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get(   '/picture-set/{id}',            [PictureSetsController::class, 'find']    );
     Route::patch( '/picture-set/{picture_set}',   [PictureSetsController::class, 'update']  );
     Route::delete('/picture-set/{id}',            [PictureSetsController::class, 'destroy'] );
+    Route::post(  '/picture-set/move-image',      [PictureSetsController::class, 'move']    );
 
     # pictures
     Route::delete('/picture/{id}', [PicturesController::class, 'destroy']   );

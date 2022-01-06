@@ -327,6 +327,9 @@
                 <v-text-field v-model="form.slider.minValue" label="min value" dense outlined class="mr-2"></v-text-field>
                 <v-text-field v-model="form.slider.maxValue" label="max value" dense outlined></v-text-field>
               </div>
+              <!-- <div style="color: red;">
+                Error: the number of steps must match the number of images in each image set.
+              </div> -->
 
               <div class="mt-10">
                 <v-text-field v-model="form.slider.minLabel" label="min label" dense outlined></v-text-field>

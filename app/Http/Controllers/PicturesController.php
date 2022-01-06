@@ -28,6 +28,14 @@ class PicturesController extends Controller
       //   return response()->json('Unauthorized', 401);
       // }
 
+      $start_count = PictureSet
+        ::find($request->imageSetId)
+        ->pictures
+        ->count();
+      // return $image_set;
+      // $start_count = count($image_set);
+      $start_count++;
+
       $image_set_id = $request->imageSetId;
       $is_original = ((int)$request->original == 1) ? 1 : 0;
       $files = $request->file('files');
@@ -42,12 +50,16 @@ class PicturesController extends Controller
           # add public/ add the begining of the path
           $path = str_replace('public/', "", $path);
 
+          $order_index = ($start_count * 1024);
+          $start_count = $start_count + 1;
+
           $picture = Picture::create([
             'name' => $file->getClientOriginalName(),
             'path' => $path,
             'extension' => $file->extension(),
             'is_original' => $is_original,
-            'picture_set_id' => $image_set_id
+            'picture_set_id' => $image_set_id,
+            'order_index' => $order_index
           ]);
           array_push($pics, $picture);
         }

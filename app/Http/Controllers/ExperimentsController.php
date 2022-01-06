@@ -16,6 +16,7 @@ use App\ExperimentScientist;
 use App\Classes\Algorithms;
 
 use App\Rules\AllowedTripletCount;
+use App\Rules\CountMustMatch;
 
 class ExperimentsController extends Controller
 {
@@ -235,7 +236,14 @@ class ExperimentsController extends Controller
       return $metas;
     }
 
-    public function store (Request $request) {
+    public function store (Request $request)
+    {
+      // $imageSets = collect($request->sequences)->filter(function ($group) {
+      //   return $group[0]['type'] === 'imageSet';
+      // });
+      // return $imageSets;
+
+
       # abort if not scientist or admin
       if (auth()->user()->role < 2) {
         return response()->json('Unauthorized', 401);
@@ -256,7 +264,7 @@ class ExperimentsController extends Controller
 
       # if triplet experiment: throw error if any image set does NOT contain exactly the correct
       # amount of images
-      if ($request->experimentType == 5) // Triplet
+      if ($request->experimentType == 5) # Triplet
       {
         foreach ($request->sequences as $group) {
           foreach ($group as $step) {
@@ -270,6 +278,33 @@ class ExperimentsController extends Controller
               # generating a triplets queue only work with a certain number of images
               $data = new Request(['imageCount' => $images->count()]);
               $this->validate($data, ['imageCount' => new AllowedTripletCount]);
+            }
+          }
+        }
+      }
+
+      # for match experiments: the number of steps in the slider must match the
+      # number of images in a image set
+      if ($request->experimentType == 7)
+      {
+        foreach ($request->sequences as $group) {
+          foreach ($group as $step) {
+            if ($step['type'] === 'imageSet')
+            {
+              $images = Picture::where([
+                ['picture_set_id', $step['value']],
+                ['is_original', 0]
+              ])->get();
+
+
+              $sliderStepsCount = (int)$request->slider['maxValue'] - ((int)$request->slider['minValue'] - 1);
+              $data = new Request([
+                'counts' => [
+                  'stimuliCount' => $images->count(),
+                  'sliderStepsCount' => $sliderStepsCount
+                ]
+              ]);
+              $this->validate($data, ['counts' => new CountMustMatch]);
             }
           }
         }
@@ -401,6 +436,11 @@ class ExperimentsController extends Controller
                 else
                 {
                   $picture_queue_id = $this->make_category_queue( $step['value'] );
+                }
+
+                # override randomize setting of Match experiments
+                if ($experiment->experiment_type_id == 7) {
+                  $step['randomize'] = false;
                 }
 
                 $this->add_experiment_sequence(
@@ -919,6 +959,11 @@ class ExperimentsController extends Controller
                 else
                 {
                   $picture_queue_id = $this->make_category_queue( $step['value'] );
+                }
+
+                # override randomize setting of Match experiments, we never want to randomize
+                if ($experiment->experiment_type_id == 7) {
+                  $step['randomize'] = false;
                 }
 
                 $this->add_experiment_sequence(
