@@ -90,6 +90,32 @@ class PictureSetsController extends Controller
       # image that has been moved
       $moved = \App\Picture::find($request[2]);
 
+      // Stimuli groups uploaded before the drag-and-drop feature was implemented will not have a order_index,
+      // so if the user tries to rearrange one of these groups then we generate a new queue for every
+      // stimuli in the group
+      if ($moved->order_index === null) {
+        $pics = PictureSet::with([
+          'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }
+        ])->find($moved->picture_set_id);
+
+        $modifier = 1;
+        foreach ($pics->pictures as $pic) {
+          $order_index = ($modifier * 1024);
+          $modifier++;
+
+          $pic->order_index = $order_index;
+          $pic->save();
+        }
+
+        $right = $pics->pictures->find( $prevElIndexNumber->id );
+        $left  = $pics->pictures->find( $nextElIndexNumber->id );
+        $new_index = floor(($left->order_index + $right->order_index) / 2);
+        $moved->order_index = $new_index;
+        $moved->save();
+
+        return 'New order queue generated.';
+      }
+
       # When there is no left image
       if (!$nextElIndexNumber) {
         // $new_index = $prevElIndexNumber->order_index - 512;
