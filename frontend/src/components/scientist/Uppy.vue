@@ -81,7 +81,8 @@ export default {
     })
 
     this.uppy.use(xhrUpload, {
-      endpoint: this.uppySettings.endpoint
+      endpoint: this.uppySettings.endpoint,
+      limit: 1
     })
 
     this.uppy.setMeta({
