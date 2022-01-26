@@ -123,6 +123,7 @@
             @start="beingDragged = true"
             @change="dragChange"
             @end="dragEnd"
+            :disabled="disableDragging"
             style="width: 100%;"
           >
             <transition-group
@@ -367,7 +368,8 @@ export default {
       dialogDelete: false,
       affectedExperiments: [],
 
-      beingDragged: false
+      beingDragged: false,
+      disableDragging: false
     }
   },
 
@@ -376,7 +378,6 @@ export default {
       return {
         animation: 200,
         group: 'description',
-        disabled: false,
         ghostClass: 'ghost'
       }
     }
@@ -388,10 +389,9 @@ export default {
   },
 
   methods: {
-    dragChange (e) {
+    async dragChange (e) {
       this.beingDragged = false
       // console.log(e.moved.element)
-      // console.log(e)
 
       const moved = e.moved.element.id
       const left = (this.reproductions[e.moved.newIndex - 1] !== undefined)
@@ -399,10 +399,10 @@ export default {
       const right = (this.reproductions[e.moved.newIndex + 1] !== undefined)
         ? this.reproductions[e.moved.newIndex + 1].id : -1
 
-      this.$axios.post(`/picture-set/move-image`, [left, right, moved])
-        .then((response) => {
-          console.log(response)
-        })
+      // disable dragging while the new position is saving on the server
+      this.disableDragging = true
+      await this.$axios.post(`/picture-set/move-image`, [left, right, moved])
+      this.disableDragging = false
     },
 
     addOriginal (files) {
@@ -493,5 +493,8 @@ export default {
 <style scoped lang="css">
   .qe-image-name {
     word-wrap: break-word;
+  }
+  .moveable-image {
+    cursor: move;
   }
 </style>
