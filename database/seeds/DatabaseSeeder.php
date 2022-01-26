@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             ['id' => 3, 'name' => 'Category Judgement', 'slug' => 'category',   'description' => ''],
             ['id' => 5, 'name' => 'Triplet Comparison', 'slug' => 'triplet',    'description' => ''],
             ['id' => 6, 'name' => 'Magnitude Estimation','slug' => 'magnitude', 'description' => ''],
+            ['id' => 7, 'name' => 'Match Estimation',    'slug' => 'match',     'description' => ''],
             // ['name' => 'Artifact Marking', 'description' => ''],
         ]);
 

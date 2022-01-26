@@ -80,72 +80,87 @@ class PictureSetsController extends Controller
         return response($picture_set, 200);
     }
 
+
     public function move (Request $request)
     {
-        $left  = \App\Picture::find($request[0]);
-        $right = \App\Picture::find($request[1]);
-        $moved = \App\Picture::find($request[2]);
+      # the image that is on the left side of the new position of the moved image
+      $nextElIndexNumber = \App\Picture::find($request[0]);
+      # the image that is on the right side of the new position of the moved image
+      $prevElIndexNumber = \App\Picture::find($request[1]);
+      # image that has been moved
+      $moved = \App\Picture::find($request[2]);
 
-        if (!$left) { # first position
-          $new_index = round( (0 + $right->order_index) / 2);
-          if ($new_index >= $right->order_index) {
-            $pics = PictureSet
-              ::with(['pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }])
-              ->find($moved->picture_set_id);
+      # When there is no left image
+      if (!$nextElIndexNumber) {
+        // $new_index = $prevElIndexNumber->order_index - 512;
+        $new_index = floor( (0 + $prevElIndexNumber->order_index) / 2 );
+      }
+      # When there is no right image
+      else if (!$prevElIndexNumber) {
+        $new_index = $nextElIndexNumber->order_index + 512;
+        // $new_index = $nextElIndexNumber->order_index + 1024;
+        // $new_index = floor( (($nextElIndexNumber->order_index + 1024) + $nextElIndexNumber->order_index) / 2 );
+      }
+      # If there are images on both the left and right side of the dragged-and-dropped image
+      else {
+        $new_index = floor(($prevElIndexNumber->order_index + $nextElIndexNumber->order_index) / 2);
+      }
 
-            $modifier = 1;
-            foreach ($pics->pictures as $pic) {
-              $order_index = ($modifier * 1024);
-              $modifier = $modifier + 1;
+      $moved->order_index = $new_index;
+      $moved->save();
 
-              $pic->order_index = $order_index;
-              $pic->save();
-            }
-          } else {
-            $moved->order_index = $new_index;
+
+      # After moving many times two indexes willl overlap, when that happens we need to reorder every index
+      if (isset($prevElIndexNumber->order_index)) {
+        if (
+          abs($moved->order_index - $prevElIndexNumber->order_index) <= 3
+        ) {
+          $pics = PictureSet::with([
+            'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }
+          ])->find($moved->picture_set_id);
+  
+          $modifier = 1;
+          foreach ($pics->pictures as $pic) {
+            $order_index = ($modifier * 1024);
+            $modifier = $modifier + 1;
+            // $modifier++;
+  
+            $pic->order_index = $order_index;
+            $pic->save();
+          }
+
+          // $right = $pics->pictures->find( $prevElIndexNumber->id );
+          // $left  = $pics->pictures->find( $nextElIndexNumber->id );
+          // $new_index = floor(($left->order_index + $right->order_index) / 2);
+          // $moved->order_index = $new_index;
+          // $moved->save();
+        }
+      }
+
+      if (isset($nextElIndexNumber->order_index)) {
+        if (
+          abs($moved->order_index - $nextElIndexNumber->order_index) <= 3
+        ) {
+          $pics = PictureSet::with([
+            'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }
+          ])->find($moved->picture_set_id);
+  
+          $modifier = 1;
+          foreach ($pics->pictures as $pic) {
+            $order_index = ($modifier * 1024);
+            $modifier = $modifier + 1;
+            // $modifier++;
+  
+            $pic->order_index = $order_index;
+            $pic->save();
           }
         }
-        else if (!$right) { # last position
-          $new_index = round( (($left->order_index + 1024) + $left->order_index) / 2);
-          if ($new_index <= $left->order_index) {
-            $pics = PictureSet
-              ::with(['pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }])
-              ->find($moved->picture_set_id);
+      }
 
-            $modifier = 1;
-            foreach ($pics->pictures as $pic) {
-              $order_index = ($modifier * 1024);
-              $modifier = $modifier + 1;
 
-              $pic->order_index = $order_index;
-              $pic->save();
-            }
-          }
-          $moved->order_index = $new_index;
-        }
-        else {
-          $new_index = round( ($left->order_index + $right->order_index) / 2);
-          if ($new_index >= $right->order_index || $new_index <= $left->order_index) {
-            $pics = PictureSet
-              ::with(['pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }])
-              ->find($moved->picture_set_id);
-
-            $modifier = 1;
-            foreach ($pics->pictures as $pic) {
-              $order_index = ($modifier * 1024);
-              $modifier = $modifier + 1;
-
-              $pic->order_index = $order_index;
-              $pic->save();
-            }
-          }
-          $moved->order_index = $new_index;
-        }
-
-        $moved->save();
-
-        return response($moved, 200);
+      return response($moved, 200);
     }
+
 
     /**
      * Remove the specified experiment from storage, if you are the rightful owner.
