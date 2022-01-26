@@ -235,7 +235,7 @@ export default {
       typeIndex: 0,
       sequenceIndex: 0,
       imagePairIndex: 0,
-      sliderIndex: 1,
+      sliderIndex: null,
       experimentResult: null,
 
       totalComparisons: 0,
@@ -294,10 +294,6 @@ export default {
         this.maxLabel = payload.data[0].max_label
         this.minLabel = payload.data[0].min_label
 
-        this.resetSliderPosition()
-        // this.$nextTick(() => this.createTickLabels())
-        this.createTickLabels()
-
         // if localStorage does not exists for this experiment fetch new data
         const exists = Number(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
         if (exists === null || exists === 0) {
@@ -343,6 +339,11 @@ export default {
     },
 
     continueExistingExperiment () {
+      // this.sliderIndex = Math.floor(this.stimuli.length / 2)
+      this.resetSliderPosition()
+      // this.$nextTick(() => this.createTickLabels())
+      this.createTickLabels()
+
       this.getProgress()
       this.countTotalComparisons()
       this.nextStep()
@@ -358,6 +359,7 @@ export default {
           this.stimuli.push(['finished'])
 
           // order the stimuli ascending by order_index
+          // TODO: do this on the server
           this.stimuli.forEach(pics => {
             if (pics[0].hasOwnProperty('picture_set_id') && pics[0].picture_set_id !== null) {
               pics.forEach(p => {
@@ -365,6 +367,18 @@ export default {
               })
             }
           })
+
+          this.resetSliderPosition()
+          this.createTickLabels()
+
+          // this.sliderIndex = Math.floor((this.minValue - this.maxValue) / 2)
+          // this.sliderIndex = Math.floor((this.stimuli.length - 1) / 2)
+          // since we're setting sliderIndex programatically we also have to update the selected magnitude
+          // this.selectedMagnitude = 7
+          // this.sliderIndex = 1
+          // this.sliderIndex = this.stimuli.findIndex(item => item === label)
+          // this.sliderIndex = Math.round((this.maxValue - this.minValue) / 2) - 1
+          // arr[Math.floor(arr.length / 2)];
 
           // save stimuli queue so that the observer will not lose progress if they refresh the page
           const stimuliQueue = JSON.stringify(this.stimuli)
@@ -482,7 +496,7 @@ export default {
               .path
         }
       }
-      console.log(this.sliderIndex)
+
       var imgLeft = {
         img: new Image(),
 
@@ -601,7 +615,7 @@ export default {
           path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path
         }
       }
-      console.log(this.sliderIndex)
+      // console.log(this.sliderIndex)
       var imgLeft = {
         img: new Image(),
         path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
@@ -767,17 +781,23 @@ export default {
         return this.minValue + k
       })
       const index = tickLabels.findIndex(item => item === label)
-      // console.log(index)
 
+      console.log(label)
       if (label !== undefined && index !== -1) {
-        this.sliderIndex = index // watch to load new images?
+        this.sliderIndex = index // use watch() to load new images?
       } else {
-        this.sliderIndex = Math.round((this.minValue + this.maxValue) / 2) - 1
+        // default to the middle position
+        this.sliderIndex = Math.floor((this.stimuli.length - 1) / 2)
+        this.selectedMagnitude = this.tickLabels[this.sliderIndex]
       }
     },
 
+    /**
+     * Set the slider position to the middle value.
+     */
     resetSliderPosition () {
-      this.selectedMagnitude = Math.round((this.minValue + this.maxValue) / 2) - 1
+      this.sliderIndex = Math.floor((this.stimuli.length - 1) / 2)
+      this.selectedMagnitude = this.tickLabels[this.sliderIndex]
       this.updateActiveLabel()
     },
 
