@@ -6,6 +6,31 @@
       </h2>
 
       <h2 class="text-h6 mt-12 mb-4 first font-weight-bold">
+        27. jan. 2022
+      </h2>
+      <v-simple-table>
+        <template v-slot:default>
+          <tbody>
+            <tr>
+              <td style="width: 100px;">
+                <v-chip outlined small color="success" class="qe-chip">added</v-chip>
+              </td>
+              <td class="pt-3 pb-3">
+                Matching experiment type. wdad ada ad
+                <!-- &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+              </td>
+            </tr>
+          </tbody>
+        </template>
+      </v-simple-table>
+
+      <h2 class="text-h6 mt-12 mb-4 first font-weight-bold">
         12. des. 2021
       </h2>
       <v-simple-table>

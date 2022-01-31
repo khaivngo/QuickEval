@@ -296,7 +296,7 @@
               </v-col>
             </v-row>
             <div class="text-caption">
-              Note: Images will not get closer than amount specified, but may be further apart<br>if images
+              Note: Images will not get closer than the amount specified, but may be further apart<br>if images
               are small or user's screen is large.
             </div>
           </v-card>

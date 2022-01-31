@@ -144,7 +144,7 @@
                   <v-slider
                     ref="slider"
                     v-model="selectedMagnitude"
-                    :disabled="disableNextBtn"
+                    :disabled="disableSlider"
                     :step="interval"
                     :min="minValue"
                     :max="maxValue"
@@ -154,6 +154,7 @@
                     :tick-labels="tickLabels"
                     hide-details
                     color="#444"
+                    :loading="disableSlider"
                     @change="updateActiveLabel"
                   ></v-slider>
                 </div>
@@ -167,7 +168,7 @@
               <v-btn
                 color="#D9D9D9"
                 @click="saveAnswer()"
-                :disabled="disableNextBtn"
+                :disabled="disableNextBtn || disableSlider"
                 :loading="disableNextBtn"
                 class="ml-6"
               >
@@ -245,6 +246,7 @@ export default {
       isLoadLeft: false,
 
       disableNextBtn: false,
+      disableSlider: false,
 
       instructionText: 'Rate the images.',
 
@@ -483,6 +485,10 @@ export default {
     },
 
     switchStimuli () {
+      // disable slider...
+      this.disableSlider = true
+      // show loading spinner
+
       // we use a object because sometimes the image is the same image but we still want
       // to trigger watch in child components
       if (this.experiment.artifact_marking) {
@@ -501,12 +507,10 @@ export default {
         img: new Image(),
 
         path: this.$UPLOADS_FOLDER +
-          this.stimuli[this.typeIndex][this.sequenceIndex]
-            .stimuli[this.sliderIndex].picture.path,
+          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
 
         extension: this.stimuli[this.typeIndex][this.sequenceIndex]
-          .stimuli[this.sliderIndex]
-          .picture.extension
+          .stimuli[this.sliderIndex].picture.extension
       }
 
       if (this.isVideo(imgLeft.extension)) {
@@ -537,8 +541,10 @@ export default {
             tempVideo.classList.remove('hide')
             this.startTime = new Date()
 
+            // enable slider
+            // hide loading spinner
             tempVideo.play()
-            this.disableNextBtn = false
+            this.disableSlider = false
           }, this.experiment.delay)
         }
 
@@ -566,7 +572,9 @@ export default {
             tempImage.classList.remove('hide')
             this.startTime = new Date()
 
-            this.disableNextBtn = false
+            // enable slider
+            // hide loading spinner
+            this.disableSlider = false
           }, this.experiment.delay)
         }
 
