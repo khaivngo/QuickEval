@@ -231,6 +231,8 @@ export default {
       interval: 1,
 
       stimuli: [],
+      DOMStimuli: [],
+      totalLoaded: 0,
 
       index: 0,
       typeIndex: 0,
@@ -316,10 +318,16 @@ export default {
       this.calculateLayout()
     },
     sliderIndex (newVal, oldVal) {
-      if (newVal !== undefined) {
-        this.switchStimuli()
+      if (
+        (newVal !== undefined && newVal !== null) &&
+        (oldVal !== undefined && oldVal !== null)
+      ) { // (oldVal !== -1 && oldVal !== null)
+        this.switchStimuli(newVal, oldVal)
       }
     }
+    // DOMStimuli () {
+    //   // console.log(oldV, newV)
+    // }
   },
 
   methods: {
@@ -484,9 +492,10 @@ export default {
       }
     },
 
-    switchStimuli () {
+    switchStimuli (newVal, oldVal) {
+      console.log(newVal, oldVal)
       // disable slider...
-      this.disableSlider = true
+      // this.disableSlider = true
       // show loading spinner
 
       // we use a object because sometimes the image is the same image but we still want
@@ -503,83 +512,118 @@ export default {
         }
       }
 
-      var imgLeft = {
-        img: new Image(),
+      // this.disableNextBtn = true
+      // this.disableSlider = true
 
-        path: this.$UPLOADS_FOLDER +
-          this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
+      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
-        extension: this.stimuli[this.typeIndex][this.sequenceIndex]
-          .stimuli[this.sliderIndex].picture.extension
+      this.DOMStimuli[oldVal].classList.add('hide')
+      // prevImage.classList.remove('hide')
+      var copy = this.DOMStimuli[this.sliderIndex]
+      let container = document.querySelector('.stimuli-container')
+      let prevImage = document.querySelector('.stimuli-container .stimulus')
+      if (prevImage) {
+        let node = document.querySelector('.stimuli-container .stimulus')
+        container.removeChild(node)
       }
+      container.appendChild(copy)
 
-      if (this.isVideo(imgLeft.extension)) {
-        // create new video element and start loading stimulus
-        var tempVideo = document.createElement('video')
-        tempVideo.src = imgLeft.path
-        tempVideo.autoplay = true
-        tempVideo.loop = true
-        tempVideo.controls = true
-        tempVideo.style.width = '100%'
-        // tempVideo.style.pointerEvents = 'none'
-        tempVideo.classList.add('stimulus')
-        tempVideo.classList.add('hide')
-
-        var loadNewVideo = () => {
-          // this event may be called multiple times on some browsers, therefore remove it
-          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
-
-          let container = document.querySelector('.stimuli-container')
-          let prevVideo = document.querySelector('.stimuli-container .stimulus')
-          if (prevVideo) {
-            let node = document.querySelector('.stimuli-container .stimulus')
-            container.removeChild(node)
-          }
-          container.appendChild(tempVideo)
-
-          window.setTimeout(() => {
-            tempVideo.classList.remove('hide')
-            this.startTime = new Date()
-
-            // enable slider
-            // hide loading spinner
-            tempVideo.play()
-            this.disableSlider = false
-          }, this.experiment.delay)
+      window.setTimeout(() => {
+        if (hideTimer) {
+          window.hideTimeout = window.setTimeout(() => {
+            prevImage.classList.add('hide')
+          }, hideTimer)
         }
 
-        tempVideo.load()
-        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
-      } else {
-        var tempImage = document.createElement('img')
-        tempImage.src = imgLeft.path
-        // tempImage.style.width = '100%'
-        tempImage.classList.add('stimulus')
-        tempImage.classList.add('hide')
+        this.DOMStimuli[newVal].classList.remove('hide')
+        copy.classList.remove('hide')
 
-        var loadNewImage = () => {
-          tempImage.removeEventListener('load', loadNewImage, false)
-
-          let container = document.querySelector('.stimuli-container')
-          let prevImage = document.querySelector('.stimuli-container .stimulus')
-          if (prevImage) {
-            let node = document.querySelector('.stimuli-container .stimulus')
-            container.removeChild(node)
-          }
-          container.appendChild(tempImage)
-
-          window.setTimeout(() => {
-            tempImage.classList.remove('hide')
-            this.startTime = new Date()
-
-            // enable slider
-            // hide loading spinner
-            this.disableSlider = false
-          }, this.experiment.delay)
+        if (copy.nodeName === 'VIDEO') {
+          // prevImage.play()
+          copy.play()
         }
 
-        tempImage.addEventListener('load', loadNewImage, false)
-      }
+        // this.disableNextBtn = false
+        this.disableSlider = false
+      }, 500)
+
+      // var imgLeft = {
+      //   img: new Image(),
+
+      //   path: this.$UPLOADS_FOLDER +
+      //     this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
+
+      //   extension: this.stimuli[this.typeIndex][this.sequenceIndex]
+      //     .stimuli[this.sliderIndex].picture.extension
+      // }
+
+      // if (this.isVideo(imgLeft.extension)) {
+      //   // create new video element and start loading stimulus
+      //   var tempVideo = document.createElement('video')
+      //   tempVideo.src = imgLeft.path
+      //   tempVideo.autoplay = true
+      //   tempVideo.loop = true
+      //   tempVideo.controls = true
+      //   tempVideo.style.width = '100%'
+      //   // tempVideo.style.pointerEvents = 'none'
+      //   tempVideo.classList.add('stimulus')
+      //   tempVideo.classList.add('hide')
+
+      //   var loadNewVideo = () => {
+      //     // this event may be called multiple times on some browsers, therefore remove it
+      //     tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+      //     let container = document.querySelector('.stimuli-container')
+      //     let prevVideo = document.querySelector('.stimuli-container .stimulus')
+      //     if (prevVideo) {
+      //       let node = document.querySelector('.stimuli-container .stimulus')
+      //       container.removeChild(node)
+      //     }
+      //     container.appendChild(tempVideo)
+
+      //     window.setTimeout(() => {
+      //       tempVideo.classList.remove('hide')
+      //       this.startTime = new Date()
+
+      //       // enable slider
+      //       // hide loading spinner
+      //       tempVideo.play()
+      //       this.disableSlider = false
+      //     }, this.experiment.delay)
+      //   }
+
+      //   tempVideo.load()
+      //   tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+      // } else {
+      //   var tempImage = document.createElement('img')
+      //   tempImage.src = imgLeft.path
+      //   // tempImage.style.width = '100%'
+      //   tempImage.classList.add('stimulus')
+      //   tempImage.classList.add('hide')
+
+      //   var loadNewImage = () => {
+      //     tempImage.removeEventListener('load', loadNewImage, false)
+
+      //     let container = document.querySelector('.stimuli-container')
+      //     let prevImage = document.querySelector('.stimuli-container .stimulus')
+      //     if (prevImage) {
+      //       let node = document.querySelector('.stimuli-container .stimulus')
+      //       container.removeChild(node)
+      //     }
+      //     container.appendChild(tempImage)
+
+      //     window.setTimeout(() => {
+      //       tempImage.classList.remove('hide')
+      //       this.startTime = new Date()
+
+      //       // enable slider
+      //       // hide loading spinner
+      //       this.disableSlider = false
+      //     }, this.experiment.delay)
+      //   }
+
+      //   tempImage.addEventListener('load', loadNewImage, false)
+      // }
     },
 
     async loadStimuli () {
@@ -590,8 +634,6 @@ export default {
       }
 
       this.resetSliderPosition()
-
-      var hideTimer = this.stimuli[this.typeIndex][this.sequenceIndex].hide_image_timer
 
       // set or wipe original
       if (
@@ -624,86 +666,156 @@ export default {
         }
       }
       // console.log(this.sliderIndex)
-      var imgLeft = {
-        img: new Image(),
-        path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
-        extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.extension
+      // var imgLeft = {
+      //   img: new Image(),
+      //   path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
+      //   extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.extension
+      // }
+
+      this.totalLoaded = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length
+
+      this.DOMStimuli = []
+      this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.forEach((item, i) => {
+        if (this.isVideo(item.picture.extension)) {
+          // create new video element and start loading stimulus
+          const tempVideo = document.createElement('video')
+          tempVideo.src = this.$UPLOADS_FOLDER + item.picture.path
+          // tempVideo.autoplay = true
+          tempVideo.loop = true
+          tempVideo.controls = true
+          tempVideo.style.width = '100%'
+          // tempVideo.style.pointerEvents = 'none'
+          tempVideo.classList.add('stimulus')
+          tempVideo.classList.add('hide')
+
+          const loadNewVideo = () => {
+            // this event may be called multiple times on some browsers, therefore remove it
+            tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+            // important to use index instead of push(), so the order is correct no matter when stimuli finish loading
+            this.DOMStimuli[i] = tempVideo
+
+            // checking length alone will not work, until all images has been loaded some indexes will be empty
+            // ES5 array methods skip empty slots. ES6 [].includes does not.
+            if (this.totalLoaded === this.DOMStimuli.length && !this.DOMStimuli.includes(undefined)) {
+              this.showFirstStimuli()
+            }
+          }
+
+          tempVideo.load()
+          tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+        } else {
+          const tempImage = document.createElement('img')
+          tempImage.src = this.$UPLOADS_FOLDER + item.picture.path
+          tempImage.classList.add('stimulus')
+          tempImage.classList.add('hide')
+
+          const loadNewImage = () => {
+            tempImage.removeEventListener('load', loadNewImage, false)
+            // important to use index instead of push(), so the order is correct no matter when stimuli finish loading
+            this.DOMStimuli[i] = tempImage
+
+            // checking length alone will not work, until all images has been loaded some indexes will be empty
+            // ES5 array methods skip empty slots. ES6 [].includes does not.
+            if (this.totalLoaded === this.DOMStimuli.length && !this.DOMStimuli.includes(undefined)) {
+              this.showFirstStimuli()
+            }
+          }
+
+          tempImage.addEventListener('load', loadNewImage, false)
+        }
+      })
+
+      // if (this.isVideo(imgLeft.extension)) {
+      //   // create new video element and start loading stimulus
+      //   var tempVideo = document.createElement('video')
+      //   tempVideo.src = imgLeft.path
+      //   tempVideo.autoplay = true
+      //   tempVideo.loop = true
+      //   tempVideo.controls = true
+      //   tempVideo.style.width = '100%'
+      //   // tempVideo.style.pointerEvents = 'none'
+      //   tempVideo.classList.add('stimulus')
+      //   tempVideo.classList.add('hide')
+
+      //   var loadNewVideo = () => {
+      //     // this event may be called multiple times on some browsers, therefore remove it
+      //     tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
+
+      //     let container = document.querySelector('.stimuli-container')
+      //     let prevVideo = document.querySelector('.stimuli-container .stimulus')
+      //     if (prevVideo) {
+      //       let node = document.querySelector('.stimuli-container .stimulus')
+      //       container.removeChild(node)
+      //     }
+      //     container.appendChild(tempVideo)
+
+      //     window.setTimeout(() => {
+      //       tempVideo.classList.remove('hide')
+      //       this.startTime = new Date()
+
+      //       if (hideTimer) {
+      //         window.hideTimeout = window.setTimeout(() => {
+      //           tempVideo.classList.add('hide')
+      //         }, hideTimer)
+      //       }
+      //       tempVideo.play()
+      //       this.disableNextBtn = false
+      //     }, this.experiment.delay)
+      //   }
+
+      //   tempVideo.load()
+      //   tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
+      // } else {
+      //   var tempImage = document.createElement('img')
+      //   tempImage.src = imgLeft.path
+      //   // tempImage.style.width = '100%'
+      //   tempImage.classList.add('stimulus')
+      //   tempImage.classList.add('hide')
+
+      //   var loadNewImage = () => {
+      //     tempImage.removeEventListener('load', loadNewImage, false)
+
+      //     let container = document.querySelector('.stimuli-container')
+      //     let prevImage = document.querySelector('.stimuli-container .stimulus')
+      //     if (prevImage) {
+      //       let node = document.querySelector('.stimuli-container .stimulus')
+      //       container.removeChild(node)
+      //     }
+      //     container.appendChild(tempImage)
+
+      //     window.setTimeout(() => {
+      //       tempImage.classList.remove('hide')
+      //       this.startTime = new Date()
+
+      //       if (hideTimer) {
+      //         window.hideTimeout = window.setTimeout(() => {
+      //           tempImage.classList.add('hide')
+      //         }, hideTimer)
+      //       }
+
+      //       this.disableNextBtn = false
+      //     }, this.experiment.delay)
+      //   }
+
+      //   tempImage.addEventListener('load', loadNewImage, false)
+      // }
+    },
+
+    showFirstStimuli () {
+      this.totalLoaded = 0
+      console.log('ready')
+
+      let container = document.querySelector('.stimuli-container')
+      let prevImage = document.querySelector('.stimuli-container .stimulus')
+      if (prevImage) {
+        let node = document.querySelector('.stimuli-container .stimulus')
+        container.removeChild(node)
       }
 
-      if (this.isVideo(imgLeft.extension)) {
-        // create new video element and start loading stimulus
-        var tempVideo = document.createElement('video')
-        tempVideo.src = imgLeft.path
-        tempVideo.autoplay = true
-        tempVideo.loop = true
-        tempVideo.controls = true
-        tempVideo.style.width = '100%'
-        // tempVideo.style.pointerEvents = 'none'
-        tempVideo.classList.add('stimulus')
-        tempVideo.classList.add('hide')
-
-        var loadNewVideo = () => {
-          // this event may be called multiple times on some browsers, therefore remove it
-          tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
-
-          let container = document.querySelector('.stimuli-container')
-          let prevVideo = document.querySelector('.stimuli-container .stimulus')
-          if (prevVideo) {
-            let node = document.querySelector('.stimuli-container .stimulus')
-            container.removeChild(node)
-          }
-          container.appendChild(tempVideo)
-
-          window.setTimeout(() => {
-            tempVideo.classList.remove('hide')
-            this.startTime = new Date()
-
-            if (hideTimer) {
-              window.hideTimeout = window.setTimeout(() => {
-                tempVideo.classList.add('hide')
-              }, hideTimer)
-            }
-            tempVideo.play()
-            this.disableNextBtn = false
-          }, this.experiment.delay)
-        }
-
-        tempVideo.load()
-        tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
-      } else {
-        var tempImage = document.createElement('img')
-        tempImage.src = imgLeft.path
-        // tempImage.style.width = '100%'
-        tempImage.classList.add('stimulus')
-        tempImage.classList.add('hide')
-
-        var loadNewImage = () => {
-          tempImage.removeEventListener('load', loadNewImage, false)
-
-          let container = document.querySelector('.stimuli-container')
-          let prevImage = document.querySelector('.stimuli-container .stimulus')
-          if (prevImage) {
-            let node = document.querySelector('.stimuli-container .stimulus')
-            container.removeChild(node)
-          }
-          container.appendChild(tempImage)
-
-          window.setTimeout(() => {
-            tempImage.classList.remove('hide')
-            this.startTime = new Date()
-
-            if (hideTimer) {
-              window.hideTimeout = window.setTimeout(() => {
-                tempImage.classList.add('hide')
-              }, hideTimer)
-            }
-
-            this.disableNextBtn = false
-          }, this.experiment.delay)
-        }
-
-        tempImage.addEventListener('load', loadNewImage, false)
-      }
+      container.appendChild(this.DOMStimuli[this.sliderIndex])
+      this.DOMStimuli[this.sliderIndex].classList.remove('hide')
+      this.disableNextBtn = false
+      this.startTime = new Date()
     },
 
     calculateLayout () {
@@ -783,23 +895,6 @@ export default {
       })
     },
 
-    updateActiveLabel (label) {
-      let ticks = this.maxValue - this.minValue + 1
-      let tickLabels = Array.from({ length: ticks }, (v, k) => {
-        return this.minValue + k
-      })
-      const index = tickLabels.findIndex(item => item === label)
-
-      console.log(label)
-      if (label !== undefined && index !== -1) {
-        this.sliderIndex = index // use watch() to load new images?
-      } else {
-        // default to the middle position
-        this.sliderIndex = Math.floor((this.stimuli.length - 1) / 2)
-        this.selectedMagnitude = this.tickLabels[this.sliderIndex]
-      }
-    },
-
     /**
      * Set the slider position to the middle value.
      */
@@ -807,6 +902,23 @@ export default {
       this.sliderIndex = Math.floor((this.stimuli.length - 1) / 2)
       this.selectedMagnitude = this.tickLabels[this.sliderIndex]
       this.updateActiveLabel()
+    },
+
+    updateActiveLabel (label) {
+      let ticks = this.maxValue - this.minValue + 1
+      let tickLabels = Array.from({ length: ticks }, (v, k) => {
+        return this.minValue + k
+      })
+      const index = tickLabels.findIndex(item => item === label)
+
+      // console.log(label)
+      if (label !== undefined && index !== -1) {
+        this.sliderIndex = index // use watch() to load new images?
+      } else {
+        // default to the middle position
+        this.sliderIndex = Math.floor((this.stimuli.length - 1) / 2)
+        this.selectedMagnitude = this.tickLabels[this.sliderIndex]
+      }
     },
 
     /**
