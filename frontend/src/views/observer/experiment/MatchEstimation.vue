@@ -84,35 +84,16 @@
     </v-layout>
 
     <v-layout ref="titles" pa-0 pt-4 ma-0 justify-center align-center>
-      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
-      </v-flex>
-
       <v-flex ml-2 mr-2 xs6 class="text-center">
         <h4 class="subtitle-1 pb-0 mb-0" v-show="originalImage">
           Original
         </h4>
       </v-flex>
+      <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
+      </v-flex>
     </v-layout>
 
     <v-row ref="images" class="fill-height justify-center ml-3 mt-0 mb-0 mr-3 pa-0">
-      <v-col
-        :style="(originalImage) ? `margin-right: ${experiment.stimuli_spacing}px` : ''"
-        class="picture-container fill-height mt-0 mr-2 mb-0 pb-2"
-      >
-        <div class="panzoom d-flex justify-center align-center">
-          <div v-if="!experiment.artifact_marking" class="stimuli-container" style="position: relative;">
-            <!-- load stimulus here -->
-          </div>
-          <div v-if="experiment.artifact_marking">
-            <ArtifactMarker
-              @updated="drawn"
-              :imageURL="leftCanvas"
-              :tool="drawingTool"
-            />
-          </div>
-        </div>
-      </v-col>
-
       <v-col v-show="originalImage" class="picture-container fill-height mt-0 ml-2 mb-0 pb-2">
         <div class="panzoom d-flex justify-center align-center stretch">
           <img
@@ -129,9 +110,30 @@
           </div>
         </div>
       </v-col>
+
+      <v-col
+        :style="(originalImage) ? `margin-left: ${experiment.stimuli_spacing}px` : ''"
+        class="picture-container fill-height mt-0 mr-2 mb-0 pb-2"
+      >
+        <div class="panzoom d-flex justify-center align-center">
+          <div v-if="!experiment.artifact_marking" class="stimuli-container" style="position: relative;">
+            <!-- load stimulus here -->
+          </div>
+          <div v-if="experiment.artifact_marking">
+            <ArtifactMarker
+              @updated="drawn"
+              :imageURL="leftCanvas"
+              :tool="drawingTool"
+            />
+          </div>
+        </div>
+      </v-col>
     </v-row>
 
     <v-layout ref="navAction" pt-8 pl-0 pr-0 pb-4 ma-0 justify-center align-center>
+      <v-flex ml-2 mr-2 xs6 v-show="originalImage" class="justify-center" justify-center align-center>
+      </v-flex>
+
       <v-flex ml-2 mr-2 xs6 class="justify-center" justify-center align-center>
         <v-layout pa-0 ma-0 justify-center align-center class="flex-column">
           <div class="d-flex align-center" style="width: 100%;">
@@ -170,7 +172,7 @@
                 @click="saveAnswer()"
                 :disabled="disableNextBtn || disableSlider"
                 :loading="disableNextBtn"
-                class="ml-6"
+                class="ml-6 mr-6"
               >
                 <span class="ml-1 mr-2">next</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 26 26" style="enable-background:new 0 0 26 26;" xml:space="preserve">
@@ -182,9 +184,6 @@
             </div>
           </div>
         </v-layout>
-      </v-flex>
-
-      <v-flex ml-2 mr-2 xs6 v-show="originalImage" class="justify-center" justify-center align-center>
       </v-flex>
     </v-layout>
 
@@ -546,87 +545,11 @@ export default {
         // this.disableNextBtn = false
         this.disableSlider = false
       }, 500)
-
-      // var imgLeft = {
-      //   img: new Image(),
-
-      //   path: this.$UPLOADS_FOLDER +
-      //     this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
-
-      //   extension: this.stimuli[this.typeIndex][this.sequenceIndex]
-      //     .stimuli[this.sliderIndex].picture.extension
-      // }
-
-      // if (this.isVideo(imgLeft.extension)) {
-      //   // create new video element and start loading stimulus
-      //   var tempVideo = document.createElement('video')
-      //   tempVideo.src = imgLeft.path
-      //   tempVideo.autoplay = true
-      //   tempVideo.loop = true
-      //   tempVideo.controls = true
-      //   tempVideo.style.width = '100%'
-      //   // tempVideo.style.pointerEvents = 'none'
-      //   tempVideo.classList.add('stimulus')
-      //   tempVideo.classList.add('hide')
-
-      //   var loadNewVideo = () => {
-      //     // this event may be called multiple times on some browsers, therefore remove it
-      //     tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
-
-      //     let container = document.querySelector('.stimuli-container')
-      //     let prevVideo = document.querySelector('.stimuli-container .stimulus')
-      //     if (prevVideo) {
-      //       let node = document.querySelector('.stimuli-container .stimulus')
-      //       container.removeChild(node)
-      //     }
-      //     container.appendChild(tempVideo)
-
-      //     window.setTimeout(() => {
-      //       tempVideo.classList.remove('hide')
-      //       this.startTime = new Date()
-
-      //       // enable slider
-      //       // hide loading spinner
-      //       tempVideo.play()
-      //       this.disableSlider = false
-      //     }, this.experiment.delay)
-      //   }
-
-      //   tempVideo.load()
-      //   tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
-      // } else {
-      //   var tempImage = document.createElement('img')
-      //   tempImage.src = imgLeft.path
-      //   // tempImage.style.width = '100%'
-      //   tempImage.classList.add('stimulus')
-      //   tempImage.classList.add('hide')
-
-      //   var loadNewImage = () => {
-      //     tempImage.removeEventListener('load', loadNewImage, false)
-
-      //     let container = document.querySelector('.stimuli-container')
-      //     let prevImage = document.querySelector('.stimuli-container .stimulus')
-      //     if (prevImage) {
-      //       let node = document.querySelector('.stimuli-container .stimulus')
-      //       container.removeChild(node)
-      //     }
-      //     container.appendChild(tempImage)
-
-      //     window.setTimeout(() => {
-      //       tempImage.classList.remove('hide')
-      //       this.startTime = new Date()
-
-      //       // enable slider
-      //       // hide loading spinner
-      //       this.disableSlider = false
-      //     }, this.experiment.delay)
-      //   }
-
-      //   tempImage.addEventListener('load', loadNewImage, false)
-      // }
     },
 
     async loadStimuli () {
+      this.disableSlider = true
+
       // clear the hide image timer to reset and ensure the timer always starts from the correct time
       // or is wiped if we move to a new image set
       if (window.hideTimeout) {
@@ -665,13 +588,8 @@ export default {
           path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path
         }
       }
-      // console.log(this.sliderIndex)
-      // var imgLeft = {
-      //   img: new Image(),
-      //   path: this.$UPLOADS_FOLDER + this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.path,
-      //   extension: this.stimuli[this.typeIndex][this.sequenceIndex].stimuli[this.sliderIndex].picture.extension
-      // }
 
+      //
       this.totalLoaded = this.stimuli[this.typeIndex][this.sequenceIndex].stimuli.length
 
       this.DOMStimuli = []
@@ -724,86 +642,10 @@ export default {
           tempImage.addEventListener('load', loadNewImage, false)
         }
       })
-
-      // if (this.isVideo(imgLeft.extension)) {
-      //   // create new video element and start loading stimulus
-      //   var tempVideo = document.createElement('video')
-      //   tempVideo.src = imgLeft.path
-      //   tempVideo.autoplay = true
-      //   tempVideo.loop = true
-      //   tempVideo.controls = true
-      //   tempVideo.style.width = '100%'
-      //   // tempVideo.style.pointerEvents = 'none'
-      //   tempVideo.classList.add('stimulus')
-      //   tempVideo.classList.add('hide')
-
-      //   var loadNewVideo = () => {
-      //     // this event may be called multiple times on some browsers, therefore remove it
-      //     tempVideo.removeEventListener('canplaythrough', loadNewVideo, false)
-
-      //     let container = document.querySelector('.stimuli-container')
-      //     let prevVideo = document.querySelector('.stimuli-container .stimulus')
-      //     if (prevVideo) {
-      //       let node = document.querySelector('.stimuli-container .stimulus')
-      //       container.removeChild(node)
-      //     }
-      //     container.appendChild(tempVideo)
-
-      //     window.setTimeout(() => {
-      //       tempVideo.classList.remove('hide')
-      //       this.startTime = new Date()
-
-      //       if (hideTimer) {
-      //         window.hideTimeout = window.setTimeout(() => {
-      //           tempVideo.classList.add('hide')
-      //         }, hideTimer)
-      //       }
-      //       tempVideo.play()
-      //       this.disableNextBtn = false
-      //     }, this.experiment.delay)
-      //   }
-
-      //   tempVideo.load()
-      //   tempVideo.addEventListener('canplaythrough', loadNewVideo, false)
-      // } else {
-      //   var tempImage = document.createElement('img')
-      //   tempImage.src = imgLeft.path
-      //   // tempImage.style.width = '100%'
-      //   tempImage.classList.add('stimulus')
-      //   tempImage.classList.add('hide')
-
-      //   var loadNewImage = () => {
-      //     tempImage.removeEventListener('load', loadNewImage, false)
-
-      //     let container = document.querySelector('.stimuli-container')
-      //     let prevImage = document.querySelector('.stimuli-container .stimulus')
-      //     if (prevImage) {
-      //       let node = document.querySelector('.stimuli-container .stimulus')
-      //       container.removeChild(node)
-      //     }
-      //     container.appendChild(tempImage)
-
-      //     window.setTimeout(() => {
-      //       tempImage.classList.remove('hide')
-      //       this.startTime = new Date()
-
-      //       if (hideTimer) {
-      //         window.hideTimeout = window.setTimeout(() => {
-      //           tempImage.classList.add('hide')
-      //         }, hideTimer)
-      //       }
-
-      //       this.disableNextBtn = false
-      //     }, this.experiment.delay)
-      //   }
-
-      //   tempImage.addEventListener('load', loadNewImage, false)
-      // }
     },
 
     showFirstStimuli () {
       this.totalLoaded = 0
-      console.log('ready')
 
       let container = document.querySelector('.stimuli-container')
       let prevImage = document.querySelector('.stimuli-container .stimulus')
@@ -815,6 +657,7 @@ export default {
       container.appendChild(this.DOMStimuli[this.sliderIndex])
       this.DOMStimuli[this.sliderIndex].classList.remove('hide')
       this.disableNextBtn = false
+      this.disableSlider = false
       this.startTime = new Date()
     },
 

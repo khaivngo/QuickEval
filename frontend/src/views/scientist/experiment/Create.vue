@@ -167,7 +167,7 @@
               </v-col> -->
             </v-row>
 
-            <v-row align="center" class="mt-0 pt-0">
+            <v-row v-if="experimentType !== 7" align="center" class="mt-0 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.artifact_marking"
