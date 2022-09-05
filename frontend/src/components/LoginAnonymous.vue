@@ -49,7 +49,16 @@ export default {
             // // if (response.data.role === 2) redirect /scientist
             EventBus.$emit('logged', response.data)
             this.loading = false
-            this.$router.push('/observer')
+
+            console.log(this.$route)
+            if (this.$route.path === '/') {
+              this.$router.push('/observer')
+            } else if (this.$route.path === '/observer' || this.$route.path === '/scientist' || this.$route.path === '/admin') {
+              this.$router.go()
+            } else {
+              this.$router.push(this.$route.path)
+            }
+
             // this.$router.go() // refresh current page
           }).catch((error) => {
             this.loading = false

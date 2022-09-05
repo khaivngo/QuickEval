@@ -793,6 +793,9 @@ export default {
         artifact_marks: this.shapes
       }
 
+      console.log(document.querySelector('.stimuli-container .stimulus').getAttribute('src').split('/').pop())
+      console.log(pictureIdLeft.path.split('/').pop())
+
       return this.$axios.post('/result-match-estimations', data)
     },
 
