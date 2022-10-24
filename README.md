@@ -27,6 +27,16 @@ Create a MySQL database with a name matching the one under DB_DATABASE in your .
 cd path/to/folder
 ```
 
+#### Install laravel dependencies
+```
+composer install
+```
+
+#### Generate unique app_key for Laravel
+```
+php artisan key:generate
+```
+
 #### Install database tables
 ```
 php artisan migrate
@@ -48,14 +58,14 @@ php artisan passport:install
 - Replace the code with the code after PASSPORT_CLIENT_SECRET in the .env file.
 ```
 
-#### Build the frontend
-```
-npm run build
-```
-
-## Run for development
+#### cd into frontend folder from cmd/terminal
 ```
 cd frontend
+```
+
+#### Install JS dependencies
+```
+npm install
 ```
 
 #### Compiles and hot-reloads for development
