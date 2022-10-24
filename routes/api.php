@@ -11,11 +11,12 @@ use App\Http\Controllers\ObserverMetasController;
 use App\Http\Controllers\ExperimentSequencesController;
 use App\Http\Controllers\ExperimentCategoriesController;
 use App\Http\Controllers\ExperimentSlidersController;
-use App\Http\Controllers\ResultMagnitudeEstimationsController;
 use App\Http\Controllers\ExperimentObserverMetasController;
 use App\Http\Controllers\PicturesController;
 use App\Http\Controllers\ResultPairsController;
 use App\Http\Controllers\ResultCategoriesController;
+use App\Http\Controllers\ResultMagnitudeEstimationsController;
+use App\Http\Controllers\ResultMatchEstimationsController;
 use App\Http\Controllers\ResultRankOrdersController;
 use App\Http\Controllers\ResultTripletsController;
 use App\Http\Controllers\ResultObserverMetasController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\InstructionsController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ScientistRequestsController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StatisticsController;
 
 
 Route::post('/register',    [AuthController::class, 'register']    );
@@ -37,6 +39,7 @@ Route::post('/result-triplet/export',    [ResultTripletsController::class, 'expo
 Route::post('/result-rank-order/export', [ResultRankOrdersController::class, 'export']  );
 Route::post('/result-category/export',   [ResultCategoriesController::class, 'export']  );
 Route::post('/result-magnitude/export',  [ResultMagnitudeEstimationsController::class, 'export']);
+Route::post('/result-match/export',      [ResultMatchEstimationsController::class, 'export']);
 
 
 # Note: auth:api middleware gives access to the user object
@@ -96,6 +99,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get(   '/picture-set/{id}',            [PictureSetsController::class, 'find']    );
     Route::patch( '/picture-set/{picture_set}',   [PictureSetsController::class, 'update']  );
     Route::delete('/picture-set/{id}',            [PictureSetsController::class, 'destroy'] );
+    Route::post(  '/picture-set/move-image',      [PictureSetsController::class, 'move']    );
 
     # pictures
     Route::delete('/picture/{id}', [PicturesController::class, 'destroy']   );
@@ -110,8 +114,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/result-categories',                 [ResultCategoriesController::class, 'store']);
 
     # magnitude results
-    Route::post('/result-magnitude-estimations/{id}/statistics', [ResultCategoriesController::class, 'results_grouped_by_image_sets']);
-    Route::post('/result-magnitude-estimations',   [ResultMagnitudeEstimationsController::class, 'store']);
+    Route::post('/result-magnitude-estimations/{id}/statistics', [ResultMagnitudeEstimationsController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-magnitude-estimations',                 [ResultMagnitudeEstimationsController::class, 'store']);
+
+    # magnitude results
+    Route::post('/result-match-estimations/{id}/statistics', [ResultMatchEstimationsController::class, 'results_grouped_by_image_sets']);
+    Route::post('/result-match-estimations',                 [ResultMatchEstimationsController::class, 'store']);
 
     # rank order results
     Route::post('/result-rank-orders/{id}/statistics', [ResultRankOrdersController::class, 'results_grouped_by_image_sets']);
@@ -136,6 +144,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get( '/scientist-request',             [ScientistRequestsController::class, 'index']   );
     Route::post('/scientist-request/{id}/accept', [ScientistRequestsController::class, 'accept']  );
     Route::post('/scientist-request/{id}/reject', [ScientistRequestsController::class, 'reject']  );
+
+    Route::get( '/statistics-counts',             [StatisticsController::class, 'index']   );
 
     # misc
     Route::post('/logout', [AuthController::class, 'logout']);

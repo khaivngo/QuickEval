@@ -18,6 +18,9 @@ class PictureSetsController extends Controller
         ->get();
     }
 
+    /**
+     * All image sets in the whole database.
+     */
     public function all () {
       return PictureSet
         ::orderBy('id', 'desc')
@@ -25,14 +28,12 @@ class PictureSetsController extends Controller
     }
 
     public function find ($id) {
-      return PictureSet::with('pictures')->find($id);
+      return PictureSet
+        ::with([
+          'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); },
+          'experiment_sequences.experiment_queue.experiment'
+        ])->find($id);
     }
-
-    // public function getSet ($picture_set_id) {
-    //   return \App\Picture
-    //     ::where('picture_set_id', $picture_set_id)
-    //     ->get();
-    // }
 
     public function original ($picture_set_id) {
       return \App\Picture::where([
@@ -78,6 +79,124 @@ class PictureSetsController extends Controller
 
         return response($picture_set, 200);
     }
+
+
+    public function move (Request $request)
+    {
+      # the image that is on the left side of the new position of the moved image
+      $nextElIndexNumber = \App\Picture::find($request[0]);
+      # the image that is on the right side of the new position of the moved image
+      $prevElIndexNumber = \App\Picture::find($request[1]);
+      # image that has been moved
+      $moved = \App\Picture::find($request[2]);
+
+      // Stimuli groups uploaded prior to the drag-and-drop feature will not have a order_index,
+      // so if the user tries to rearrange one of these groups then we generate a new queue for every
+      // stimuli in the group
+      if ($moved->order_index === null) {
+        $pics = PictureSet::with([
+          'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }
+        ])->find($moved->picture_set_id);
+
+        $modifier = 1;
+        foreach ($pics->pictures as $pic) {
+          $order_index = ($modifier * 1024);
+          $modifier++;
+
+          $pic->order_index = $order_index;
+          $pic->save();
+        }
+
+        if (!$nextElIndexNumber) {
+          $right = $pics->pictures->find( $prevElIndexNumber->id );
+          $new_index = floor( (0 + $right->order_index) / 2 );
+        } else if (!$prevElIndexNumber) {
+          $left  = $pics->pictures->find( $nextElIndexNumber->id );
+          $new_index = $left->order_index + 512;
+        } else {
+          $new_index = floor(($prevElIndexNumber->order_index + $nextElIndexNumber->order_index) / 2);
+          $right = $pics->pictures->find( $prevElIndexNumber->id );
+          $left  = $pics->pictures->find( $nextElIndexNumber->id );
+          $new_index = floor(($left->order_index + $right->order_index) / 2);
+        }
+
+        $moved->order_index = $new_index;
+        $moved->save();
+
+        return 'New order queue generated.';
+      }
+
+      # When there is no left image
+      if (!$nextElIndexNumber) {
+        // $new_index = $prevElIndexNumber->order_index - 512;
+        $new_index = floor( (0 + $prevElIndexNumber->order_index) / 2 );
+      }
+      # When there is no right image
+      else if (!$prevElIndexNumber) {
+        $new_index = $nextElIndexNumber->order_index + 512;
+        // $new_index = $nextElIndexNumber->order_index + 1024;
+        // $new_index = floor( (($nextElIndexNumber->order_index + 1024) + $nextElIndexNumber->order_index) / 2 );
+      }
+      # If there are images on both the left and right side of the dragged-and-dropped image
+      else {
+        $new_index = floor(($prevElIndexNumber->order_index + $nextElIndexNumber->order_index) / 2);
+      }
+
+      $moved->order_index = $new_index;
+      $moved->save();
+
+
+      # After moving many times two indexes willl overlap, when that happens we need to reorder every index
+      if (isset($prevElIndexNumber->order_index)) {
+        if (
+          abs($moved->order_index - $prevElIndexNumber->order_index) <= 3
+        ) {
+          $pics = PictureSet::with([
+            'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }
+          ])->find($moved->picture_set_id);
+  
+          $modifier = 1;
+          foreach ($pics->pictures as $pic) {
+            $order_index = ($modifier * 1024);
+            $modifier = $modifier + 1;
+            // $modifier++;
+  
+            $pic->order_index = $order_index;
+            $pic->save();
+          }
+
+          // $right = $pics->pictures->find( $prevElIndexNumber->id );
+          // $left  = $pics->pictures->find( $nextElIndexNumber->id );
+          // $new_index = floor(($left->order_index + $right->order_index) / 2);
+          // $moved->order_index = $new_index;
+          // $moved->save();
+        }
+      }
+
+      if (isset($nextElIndexNumber->order_index)) {
+        if (
+          abs($moved->order_index - $nextElIndexNumber->order_index) <= 3
+        ) {
+          $pics = PictureSet::with([
+            'pictures' => function ($query) { $query->orderBy('order_index', 'asc'); }
+          ])->find($moved->picture_set_id);
+  
+          $modifier = 1;
+          foreach ($pics->pictures as $pic) {
+            $order_index = ($modifier * 1024);
+            $modifier = $modifier + 1;
+            // $modifier++;
+  
+            $pic->order_index = $order_index;
+            $pic->save();
+          }
+        }
+      }
+
+
+      return response($moved, 200);
+    }
+
 
     /**
      * Remove the specified experiment from storage, if you are the rightful owner.

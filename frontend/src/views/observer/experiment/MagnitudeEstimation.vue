@@ -200,7 +200,7 @@ import { datetimeToSeconds } from '@/functions/datetimeToSeconds.js'
 import mixin from '@/mixins/FileFormats.js'
 
 export default {
-  name: 'magnitude-experiment-view',
+  name: 'match-experiment-view',
 
   components: {
     // InstructionsDialog,
@@ -296,15 +296,15 @@ export default {
         this.resetSliderPosition()
         // this.$nextTick(() => this.createTickLabels())
         this.createTickLabels()
-      })
 
-      // if localStorage does not exists for this experiment fetch new data
-      const exists = Number(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
-      if (exists === null || exists === 0) {
-        this.startNewExperiment()
-      } else {
-        this.continueExistingExperiment()
-      }
+        // if localStorage does not exists for this experiment fetch new data
+        const exists = Number(localStorage.getItem(`${this.experiment.id}-stimuliQueue`))
+        if (exists === null || exists === 0) {
+          this.startNewExperiment()
+        } else {
+          this.continueExistingExperiment()
+        }
+      })
     })
   },
 
@@ -451,7 +451,6 @@ export default {
       this.instructionDialog = true
 
       this.saveProgress()
-      this.focusSelect()
 
       ++this.sequenceIndex
       // move on to the next experiment sequence
@@ -543,7 +542,6 @@ export default {
               }, hideTimer)
             }
             tempVideo.play()
-            // this.focusSelect()
             this.disableNextBtn = false
           }, this.experiment.delay)
         }
@@ -578,7 +576,6 @@ export default {
               }, hideTimer)
             }
 
-            // this.focusSelect()
             this.disableNextBtn = false
           }, this.experiment.delay)
         }
@@ -639,9 +636,7 @@ export default {
           if (k % 2 !== 0) {
             return null
           }
-        }
-
-        if (ticks > 20) {
+        } else if (ticks > 20) {
           if (k % 4 !== 0) {
             return null
           }
@@ -719,6 +714,9 @@ export default {
         chose_none: 0,
         artifact_marks: this.shapes
       }
+
+      console.log(document.querySelector('.stimuli-container .stimulus').getAttribute('src').split('/').pop())
+      console.log(pictureIdLeft.path.split('/').pop())
 
       return this.$axios.post('/result-magnitude-estimations', data)
     },

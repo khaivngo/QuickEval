@@ -569,11 +569,17 @@ export default {
         client_side_timer: clientSideTimer
       }
 
+      // console.log(document.querySelector('.stimuli-container1 .stimulus1').getAttribute('src').split('/').pop())
+      // console.log(pictureLeft.path.split('/').pop())
+      // console.log('----')
+      // console.log(document.querySelector('.stimuli-container2 .stimulus2').getAttribute('src').split('/').pop())
+      // console.log(pictureRight.path.split('/').pop())
+
       return this.$axios.post('/result-rank-orders', data)
     },
 
     /**
-     * Loop through the stimuli array and count how many picture pairs we have.
+     * Loop through the stimuli array and count how many picture groups we have.
      */
     countTotalComparisons () {
       // get all groups (arrays) that contain image queues

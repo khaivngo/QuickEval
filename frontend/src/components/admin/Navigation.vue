@@ -41,14 +41,16 @@ export default {
   },
 
   created () {
-    if (this.$route.path.split('/')[2] === 'scientist-role-requests') {
-      this.active = 1
-    } else if (this.$route.path.split('/')[2] === 'dashboard') {
+    const page = this.$route.path.split('/')[2]
+
+    if (page === 'dashboard') {
       this.active = 0
-    } else if (this.$route.path.split('/')[2] === 'all-users') {
+    } else if (page === 'scientist-role-requests') {
+      this.active = 1
+    } else if (page === 'all-users') {
       this.active = 2
     } else {
-      this.active = 1
+      this.active = 0
     }
   }
 }

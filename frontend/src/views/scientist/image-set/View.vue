@@ -78,7 +78,7 @@
           </template>
 
           <v-list>
-            <v-list-item @click="destroy">
+            <v-list-item @click="dialogDelete = true">
               <v-list-item-icon class="mr-4">
                 <v-icon>mdi-delete</v-icon>
               </v-list-item-icon>
@@ -94,7 +94,7 @@
         <v-row align="center">
           <v-col cols="auto" class="pa-0 ma-0">
             <h2 class="text-h6 font-weight-bold">
-              Stimuli
+              Stimuli <span class="body-1">({{ reproductions.length }})</span>
             </h2>
           </v-col>
 
@@ -115,47 +115,65 @@
         </v-row>
 
         <v-row wrap>
-          <v-col
-            v-for="(image, i) in reproductions" :key="i"
-            xs="6" sm="6" md="3" lg="3" xl="3"
-            class="pa-1"
+          <draggable
+            :list="reproductions"
+            ghost-class="ghost"
+            class="list-group"
+            v-bind="dragOptions"
+            @start="beingDragged = true"
+            @change="dragChange"
+            @end="dragEnd"
+            :disabled="disableDragging"
+            style="width: 100%;"
           >
-            <div style="display: flex; justify-content: flex-end;">
-              <ActionMenu :image="image" :index="i" @deleted="deleteImage"/>
-            </div>
-
-            <v-img
-              v-if="isImage(image.extension)"
-              :src="$UPLOADS_FOLDER + image.path"
-              aspect-ratio="1"
-              class="grey lighten-2"
+            <transition-group
+              type="transition"
+              :name="!beingDragged ? 'flip-list' : null"
+              style="display: flex; flex-grow: 1; width: 100%; flex-wrap: wrap;"
             >
-              <template v-slot:placeholder>
-                <v-layout
-                  fill-height
-                  align-center
-                  justify-center
-                  ma-0
+              <v-col
+                v-for="(image, i) in reproductions" :key="image.id"
+                xs="12" sm="6" md="3" lg="3" xl="3"
+                class="pa-1 moveable-image"
+              >
+                <div style="display: flex; justify-content: flex-end;">
+                  <ActionMenu :image="image" :index="i" @deleted="deleteImage"/>
+                </div>
+
+                <v-img
+                  v-if="isImage(image.extension)"
+                  :src="$UPLOADS_FOLDER + image.path"
+                  aspect-ratio="1"
+                  class="grey lighten-2"
                 >
-                  <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                </v-layout>
-              </template>
-            </v-img>
-            <video
-              v-if="isVideo(image.extension)"
-              loop controls
-              style="width: 100%;"
-              class="video-player"
-            >
-              <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
-              <source :src="$UPLOADS_FOLDER + image.path" :type="`video/${image.extension}`">
-              Your browser does not support the video tag.
-            </video>
+                  <template v-slot:placeholder>
+                    <v-layout
+                      fill-height
+                      align-center
+                      justify-center
+                      ma-0
+                    >
+                      <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                    </v-layout>
+                  </template>
+                </v-img>
+                <video
+                  v-if="isVideo(image.extension)"
+                  loop controls
+                  style="width: 100%;"
+                  class="video-player"
+                >
+                  <!-- <source :src="image.path" :type="'video/'+leftExtension"> -->
+                  <source :src="$UPLOADS_FOLDER + image.path" :type="`video/${image.extension}`">
+                  Your browser does not support the video tag.
+                </video>
 
-            <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
-              {{ image.name }}
-            </h5>
-          </v-col>
+                <h5 class="subtitle-2 text-center qe-image-name mt-2 mb-2">
+                  {{ image.name }}
+                </h5>
+              </v-col>
+            </transition-group>
+          </draggable>
         </v-row>
       </div>
 
@@ -271,6 +289,50 @@
         </v-row>
       </div>
     </div>
+
+    <v-dialog
+      v-model="dialogDelete"
+      width="500"
+    >
+      <v-card>
+        <div class="pa-6">
+          <h3 class="text-h6 mb-6">Are you sure you want to delete the stimuli group?</h3>
+
+          <div v-if="affectedExperiments.length > 0">
+            <h6 class="subtitle-2 mb-2">
+              This will affect these experiments:
+            </h6>
+            <ul>
+              <li v-for="(exp, index) in affectedExperiments" :key="index">
+                {{ exp.title }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            class="mr-4"
+            outlined
+            @click="dialogDelete = false"
+          >
+            No, cancel.
+          </v-btn>
+          <v-btn
+            color="error"
+            depressed
+            @click="destroy"
+          >
+            Yes, delete.
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
   </div>
 </template>
 
@@ -280,12 +342,14 @@ import Uppy from '@/components/scientist/Uppy'
 import ActionMenu from '@/components/scientist/ActionMenu'
 import EventBus from '@/eventBus'
 import mixin from '@/mixins/FileFormats.js'
+import draggable from 'vuedraggable'
 
 export default {
   components: {
     UppyOriginal,
     Uppy,
-    ActionMenu
+    ActionMenu,
+    draggable
   },
 
   mixins: [mixin],
@@ -299,7 +363,23 @@ export default {
       creating: false,
       loading: false,
       deleting: false,
-      editTitle: false
+      editTitle: false,
+
+      dialogDelete: false,
+      affectedExperiments: [],
+
+      beingDragged: false,
+      disableDragging: false
+    }
+  },
+
+  computed: {
+    dragOptions () {
+      return {
+        animation: 200,
+        group: 'description',
+        ghostClass: 'ghost'
+      }
     }
   },
 
@@ -309,6 +389,22 @@ export default {
   },
 
   methods: {
+    async dragChange (e) {
+      this.beingDragged = false
+      // console.log(e.moved.element)
+
+      const moved = e.moved.element.id
+      const left = (this.reproductions[e.moved.newIndex - 1] !== undefined)
+        ? this.reproductions[e.moved.newIndex - 1].id : -1
+      const right = (this.reproductions[e.moved.newIndex + 1] !== undefined)
+        ? this.reproductions[e.moved.newIndex + 1].id : -1
+
+      // disable dragging while the new position is saving on the server
+      this.disableDragging = true
+      await this.$axios.post(`/picture-set/move-image`, [left, right, moved])
+      this.disableDragging = false
+    },
+
     addOriginal (files) {
       this.original.unshift(files[0])
     },
@@ -347,6 +443,18 @@ export default {
         this.original = this.imageSet.pictures.filter(image => image.is_original === 1)
         this.reproductions = this.imageSet.pictures.filter(image => image.is_original === 0)
 
+        // every experiment that uses this stimuli group
+        // this.affectedExperiments = this.imageSet.experiment_sequences
+        //   .map(eq => eq.experiment_queue)
+        //   .map(e => e.experiment)
+
+        // some experiment may have used the stimuli group multiple times so remove any duplicates
+        // this.affectedExperiments = this.affectedExperiments.filter((thing, index, self) =>
+        //   index === self.findIndex((t) => (
+        //     t.id === thing.id
+        //   ))
+        // )
+
         this.loading = false
       })
     },
@@ -363,18 +471,20 @@ export default {
       })
     },
 
+    dragEnd (e) {
+    },
+
     destroy () {
-      if (confirm('Delete stimuli group?')) {
-        this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
-          if (response.data) {
-            EventBus.$emit('image-set-deleted', response.data)
-            EventBus.$emit('success', 'Stimuli group has been deleted successfully')
-            this.$router.push('/scientist/image-sets')
-          } else {
-            EventBus.$emit('error', 'Could not delete stimuli group')
-          }
-        })
-      }
+      this.$axios.delete(`/picture-set/${this.imageSet.id}`).then((response) => {
+        if (response.data) {
+          EventBus.$emit('image-set-deleted', response.data)
+          EventBus.$emit('success', 'Stimuli group has been deleted successfully')
+          this.$router.push('/scientist/image-sets')
+          this.dialogDelete = false
+        } else {
+          EventBus.$emit('error', 'Could not delete stimuli group')
+        }
+      })
     }
   }
 }
@@ -383,5 +493,8 @@ export default {
 <style scoped lang="css">
   .qe-image-name {
     word-wrap: break-word;
+  }
+  .moveable-image {
+    cursor: move;
   }
 </style>

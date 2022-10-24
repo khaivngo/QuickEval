@@ -83,7 +83,7 @@ export default new VueRouter({
       path: '/admin',
       component: loadView('admin/Index'),
       children: [
-        { path: '',                         component: loadView('admin/ScientistRoleRequest') },
+        { path: '',                         component: loadView('admin/Dashboard') },
         { path: 'dashboard',                component: loadView('admin/Dashboard') },
         { path: 'scientist-role-requests',  component: loadView('admin/ScientistRoleRequest') },
         { path: 'all-users',                component: loadView('admin/AllUsers') }
@@ -103,6 +103,7 @@ export default new VueRouter({
     { path: '/experiment/4/:id', component: loadView('observer/experiment/ArtifactMarking'),    name: 'Artifact Marking' },
     { path: '/experiment/5/:id', component: loadView('observer/experiment/TripletComparison'),  name: 'Triplet Comparison' },
     { path: '/experiment/6/:id', component: loadView('observer/experiment/MagnitudeEstimation'),name: 'Magnitude Estimation' },
+    { path: '/experiment/7/:id', component: loadView('observer/experiment/MatchEstimation'),    name: 'Match Estimation' },
 
     /* catch all non-existing routes */
     {

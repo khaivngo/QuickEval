@@ -1,7 +1,10 @@
 <template>
   <div class="d-flex">
     <Navigation/>
-    <!-- the nav menu above is position fixed, so we put a "mold" below -->
+    <!--
+      the nav menu above is position fixed, so we put a "mold" below,
+      making sure the column to the right does not go beneath it
+    -->
     <div class="mold"></div>
 
     <router-view/>

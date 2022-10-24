@@ -91,7 +91,7 @@
               </v-col>
             </v-row>
 
-            <!-- <v-row align="center" class="mt-6">
+            <v-row align="center" class="mt-6">
               <v-col class="pb-0 pt-0 pr-0">
                 <CollaboratorsAutocomplete
                   :collaborators="experiment.collaborators"
@@ -111,7 +111,7 @@
                   </div>
                 </v-tooltip>
               </v-col>
-            </v-row> -->
+            </v-row>
 
             <v-row align="center" class="mt-0 mt-4 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
@@ -167,7 +167,7 @@
               </v-col> -->
             </v-row>
 
-            <v-row align="center" class="mt-0 pt-0">
+            <v-row v-if="experimentType !== 7" align="center" class="mt-0 pt-0">
               <v-col cols="auto" class="pt-0 pb-0 pr-0">
                 <v-checkbox
                   v-model="form.artifact_marking"
@@ -296,7 +296,7 @@
               </v-col>
             </v-row>
             <div class="text-caption">
-              Note: Images will not get closer than amount specified, but may be further apart<br>if images
+              Note: Images will not get closer than the amount specified, but may be further apart<br>if images
               are small or user's screen is large.
             </div>
           </v-card>
@@ -310,6 +310,7 @@
             </p>
             <Sequence
               :sequences="experiment.sequences"
+              :sets="experiment.pictureSets"
               @added="onSequence"
             />
           </v-card>
@@ -317,7 +318,7 @@
 
         <v-stepper-content :step="showCategories.id" v-if="showCategories">
           <v-card class="mb-5 pa-5 text-xs-center" flat>
-            <template v-if="experimentType === 6">
+            <template v-if="experimentType === 6 || experimentType === 7">
               <h2 class="mb-1">Scale Slider Settings</h2>
               <!-- <p class="body-1">
                 Add max/min value of the slider.
@@ -326,6 +327,9 @@
                 <v-text-field v-model="form.slider.minValue" label="min value" dense outlined class="mr-2"></v-text-field>
                 <v-text-field v-model="form.slider.maxValue" label="max value" dense outlined></v-text-field>
               </div>
+              <!-- <div style="color: red;">
+                Error: the number of steps must match the number of images in each image set.
+              </div> -->
 
               <div class="mt-10">
                 <v-text-field v-model="form.slider.minLabel" label="min label" dense outlined></v-text-field>
@@ -499,7 +503,7 @@
 import Sequence from '@/components/scientist/Sequence'
 import ObserverMetas from '@/components/scientist/ObserverMetas'
 import Categories from '@/components/scientist/Categories'
-// import CollaboratorsAutocomplete from '@/components/scientist/CollaboratorsAutocomplete'
+import CollaboratorsAutocomplete from '@/components/scientist/CollaboratorsAutocomplete'
 import EventBus from '@/eventBus'
 import { removeArrayItem } from '@/helpers.js'
 
@@ -509,8 +513,8 @@ export default {
   components: {
     Sequence,
     ObserverMetas,
-    Categories
-    // CollaboratorsAutocomplete
+    Categories,
+    CollaboratorsAutocomplete
   },
 
   data () {
@@ -625,7 +629,10 @@ export default {
      */
     experimentType (newVal, oldVal) {
       // if rating -> non rating
-      if ((oldVal === null || oldVal === 3 || oldVal === 5 || oldVal === 6) && (newVal === 1 || newVal === 2 || newVal === 4)) {
+      if (
+        (oldVal === null || oldVal === 3 || oldVal === 5 || oldVal === 6 || newVal === 7) &&
+        (newVal === 1 || newVal === 2 || newVal === 4)
+      ) {
         // if categories, remove
         if (this.showCategories) {
           --this.steps[4].id
@@ -635,7 +642,10 @@ export default {
           })
         }
       // if non rating -> rating
-      } else if ((oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) && (newVal === 3 || newVal === 5 || newVal === 6)) {
+      } else if (
+        (oldVal === null || oldVal === 1 || oldVal === 2 || oldVal === 4) &&
+        (newVal === 3 || newVal === 5 || newVal === 6 || newVal === 7)
+      ) {
         // if no categories, add
         ++this.steps[3].id // this.steps.find(step => step.title === 'Categories').id = 4
         ++this.steps[4].id
@@ -782,8 +792,10 @@ export default {
           this.form.showProgress     = (response.data.show_progress === 1)
           this.form.samePairTwice    = response.data.same_pair
           this.form.algorithm        = response.data.picture_sequence_algorithm
+          this.form.delay            = response.data.delay
+          this.form.stimuliSpacing   = response.data.stimuli_spacing
 
-          if (response.data.experiment_type_id === 6) {
+          if (response.data.experiment_type_id === 6 || response.data.experiment_type_id === 7) {
             this.form.slider.minValue = response.data.slider.min_value
             this.form.slider.maxValue = response.data.slider.max_value
             this.form.slider.minLabel = response.data.slider.min_label

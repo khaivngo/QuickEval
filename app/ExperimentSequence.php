@@ -25,6 +25,7 @@ class ExperimentSequence extends Model
         'instruction_id' => 'integer',
         'randomize' => 'integer',
         'randomize_group' => 'integer',
+        'randomize_across' => 'integer',
         'original' => 'integer',
         'flipped' => 'integer',
         'hide_image_timer' => 'integer'
@@ -38,6 +39,10 @@ class ExperimentSequence extends Model
     // public function picture_sequences () {
     //     return $this->hasManyThrough(PictureSequence::class, PictureQueue::class);
     // }
+
+    public function experiment_queue () {
+        return $this->belongsTo(ExperimentQueue::class);
+    }
 
     public function picture_queue () {
         return $this->belongsTo(PictureQueue::class);

@@ -239,14 +239,14 @@ class ResultMagnitudeEstimationsController extends Controller
         if ($request->artifact_marks) {
             foreach ($request->artifact_marks as $image) {
                 foreach ($image as $mark) {
-                $fill = json_encode($mark['fill']);
-                \App\ResultImageArtifact::create([
-                    'experiment_result_id'  => $request->experiment_result_id,
-                    'picture_id'            => $mark['picture_id'],
-                    'selected_area'         => $fill,
-                    'comment'               => null,
-                    'client_side_timer'     => 0, // $request->client_side_timer
-                ]);
+                  $fill = json_encode($mark['fill']);
+                  \App\ResultImageArtifact::create([
+                      'experiment_result_id'  => $request->experiment_result_id,
+                      'picture_id'            => $mark['picture_id'],
+                      'selected_area'         => $fill,
+                      'comment'               => null,
+                      'client_side_timer'     => 0, // $request->client_side_timer
+                  ]);
                 }
             }
         }

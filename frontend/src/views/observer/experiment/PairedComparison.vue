@@ -638,6 +638,12 @@ export default {
         artifact_marks: this.shapes
       }
 
+      console.log(document.querySelector('.stimuli-container1 .stimulus1').getAttribute('src').split('/').pop())
+      console.log(pictureLeft.path.split('/').pop())
+      console.log('----')
+      console.log(document.querySelector('.stimuli-container2 .stimulus2').getAttribute('src').split('/').pop())
+      console.log(pictureRight.path.split('/').pop())
+
       return this.$axios.post('/result-pairs', data)
     },
 

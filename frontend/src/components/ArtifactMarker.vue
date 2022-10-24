@@ -177,13 +177,13 @@ export default {
             this.ctx.moveTo(this.savedShapes[k].points.x, this.savedShapes[k].points.y)
 
             for (var d = 0; d < this.savedShapes[k].points.length; d++) {
-                this.ctx.lineTo(this.savedShapes[k].points[d].x, this.savedShapes[k].points[d].y)
+              this.ctx.lineTo(this.savedShapes[k].points[d].x, this.savedShapes[k].points[d].y)
             }
 
             if (this.ctx.isPointInPath(mouseX, mouseY)) {
-                // TODO: openAnnotationModal(k, this.savedShapes[k].annotation);
-                console.log('clicked')
-                break; /* we found the clicked polygon, no need to loop through the rest */
+              // TODO: openAnnotationModal(k, this.savedShapes[k].annotation);
+              console.log('clicked')
+              break; /* we found the clicked polygon, no need to loop through the rest */
             }
             this.ctx.closePath();
         }

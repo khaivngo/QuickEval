@@ -107,7 +107,14 @@ export default {
           this.$router.go()
         } else {
           // this.$router.go()
-          this.$router.push('/observer')
+          // this.$router.push('/observer')
+          if (this.$route.path === '/') {
+            this.$router.push('/observer')
+          } else if (this.$route.path === '/observer' || this.$route.path === '/scientist' || this.$route.path === '/admin') {
+            this.$router.go()
+          } else {
+            this.$router.push(this.$route.path)
+          }
         }
       }).catch(() => {
         this.user = { id: 0, role: 0 }

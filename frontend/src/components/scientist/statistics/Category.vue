@@ -42,7 +42,11 @@
 
       <h3 class="text-h6 mb-6 mt-4 font-weight-light">
         <span v-for="(group, gIndex) in sequences" :key="gIndex">
-          {{ group.picture_set.title }}<span v-if="gIndex !== sequences.length - 1">,</span>
+          {{ group.picture_set.title }}
+          <span class="body-1">
+            ({{ group.picture_set.pictures.length }})
+          </span>
+          <span v-if="gIndex !== sequences.length - 1">,</span>
         </span>
       </h3>
 
@@ -55,6 +59,9 @@
       <div v-for="(group, gIndex) in sequences" :key="gIndex">
         <h3 class="text-h6 mb-3 mt-8 font-weight-light">
           {{ group.picture_set.title }}
+          <span class="body-1">
+            ({{ group.picture_set.pictures.length }})
+          </span>
         </h3>
 
         <div class="pa-1 d-flex justify-center align-center qe-table-title">
@@ -98,6 +105,9 @@
         <!-- <h3 class="text-h6 mb-3 mt-12">Z-Scores</h3> -->
         <h3 class="text-h6 mb-3 mt-8 font-weight-light">
           {{ group.picture_set.title }}
+          <span class="body-1">
+            ({{ group.picture_set.pictures.length }})
+          </span>
         </h3>
 
         <table class="table bordered hovered">

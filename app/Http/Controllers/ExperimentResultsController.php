@@ -29,6 +29,7 @@ class ExperimentResultsController extends Controller
         ::with('user')
         ->withCount($slug . '_results')
         ->where('experiment_id', $experiment->id)
+        ->orderBy('id', 'desc')
         ->get();
     }
 

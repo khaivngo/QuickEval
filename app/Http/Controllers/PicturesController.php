@@ -28,6 +28,12 @@ class PicturesController extends Controller
       //   return response()->json('Unauthorized', 401);
       // }
 
+      # get the number of images in the image set so that we know where to start our order id from
+      $start_count = PictureSet
+        ::find($request->imageSetId)
+        ->pictures
+        ->count();
+
       $image_set_id = $request->imageSetId;
       $is_original = ((int)$request->original == 1) ? 1 : 0;
       $files = $request->file('files');
@@ -42,12 +48,17 @@ class PicturesController extends Controller
           # add public/ add the begining of the path
           $path = str_replace('public/', "", $path);
 
+          $start_count++;
+          # give every picture an id to identiy its order, allowing user to rearrange the order by drag and drop
+          $order_index = ($start_count * 1024);
+
           $picture = Picture::create([
             'name' => $file->getClientOriginalName(),
             'path' => $path,
             'extension' => $file->extension(),
             'is_original' => $is_original,
-            'picture_set_id' => $image_set_id
+            'picture_set_id' => $image_set_id,
+            'order_index' => $is_original ? null : $order_index
           ]);
           array_push($pics, $picture);
         }

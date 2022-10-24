@@ -25,7 +25,8 @@
     <div class="d-flex align-center mt-4">
       <v-icon small>mdi-lightbulb-on-outline</v-icon>
       <p class="caption ma-0 ml-2 mt-1 pa-0">
-        Tip: Click on the chart labels to edit the text before exporting (top right of chart). Or undo edited one's:
+        Tip: Click on the chart labels to edit the text before exporting (top right of chart).
+        Or undo edited one's here:
       </p>
       <v-btn @click="resetLabels" icon>
         <!-- Reset labels -->
